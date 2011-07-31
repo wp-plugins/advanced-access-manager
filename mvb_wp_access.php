@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced WP Access Manager
   Description: Manage user roles and capabilities
-  Version: 0.8
+  Version: 0.8.1
   Author: Vasyl Martyniuk
   Author URI: http://www.facebook.com/pages/MVB/155176374549582
  */
