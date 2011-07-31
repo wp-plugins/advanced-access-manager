@@ -94,8 +94,7 @@ class module_filterMenu extends module_User {
         $parts = preg_split('/\?/', $menu);
         if (count($parts) == 2) {
             $params = preg_split('/&/', $parts[1]);
-            if (is_array($params) && (strpos($requestedMenu, $parts[0]) !== FALSE) ) {
-               
+            if (is_array($params) && (strpos($requestedMenu, $parts[0]) !== FALSE)) {
                 foreach ($params as $param) {
                     if (strpos($requestedMenu, $param) !== FALSE) {
                         $result = TRUE;
@@ -107,10 +106,40 @@ class module_filterMenu extends module_User {
             if (strpos($requestedMenu, $parts[0]) !== FALSE) {
                 $result = TRUE;
             }
+            //TODO - Emergency solution
+            if (isset($_REQUEST['post_type']) && ($_REQUEST['post_type'] != 'post')
+                    && in_array($menu, array('edit.php', 'post-new.php'))) {
+                $result = FALSE;
+            }
         }
 
         return $result;
     }
+
+    /*
+      function _compareMenus($requestedMenu, $menu) {
+      $result = FALSE;
+
+      $parts = preg_split('/\?/', $menu);
+      if (count($parts) == 2) {
+      $params = preg_split('/&/', $parts[1]);
+      if (is_array($params) && (strpos($requestedMenu, $parts[0]) !== FALSE)) {
+      foreach ($params as $param) {
+      if (strpos($requestedMenu, $param) !== FALSE) {
+      $result = TRUE;
+      break;
+      }
+      }
+      }
+      } else {
+      if (strpos($requestedMenu, $parts[0]) !== FALSE) {
+      $result = TRUE;
+      }
+      }
+
+      return $result;
+      }
+     */
 
     function unsetMainMenuItem($menuItem) {
         global $menu, $submenu;

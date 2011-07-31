@@ -136,7 +136,7 @@ class module_optionManager extends mvb_corePlugin {
             '###message_class###' => (isset($_POST['submited']) ? 'message-active' : 'message-passive'),
             '###nonce###' => wp_nonce_field(WPACCESS_PREFIX . 'options'),
             '###metabox_general_info###' => $this->postbox('metabox-wpaccess-general', 'General Info', '<p>For <b>Main Menu</b> and <b>Metaboxes</b> select proper checkbox to restrict access to resource. For Capabilities - select proper checkbox to give new capability for role</p>'),
-            '###metabox_support###' => $this->postbox('metabox-wpaccess-support', 'Support', '<p>If you have any problems with this plugin, please mail me <a href= "mailto:admin@whimba.com" >admin@whimba.com</a> or find on <a href="http://www.theedesign.com/" target="_blank">TheeDesign.com</a></p>'),
+            '###metabox_support###' => $this->postbox('metabox-wpaccess-support', 'Support', '<p>Any questions or problems? Please mail me <a href= "mailto:admin@whimba.com" >admin@whimba.com</a> or follow me on <a href="http://www.twitter.com/whimba" target="_blank">Twitter</a></p>'),
         );
         $content = $this->templObj->updateMarkers($markerArray, $content);
 

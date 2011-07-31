@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: user, access manager, capability, role, metabox, post, create, delete, view
 Requires at least: 3.0
 Tested up to: 3.2
-Stable tag: 0.8
+Stable tag: 0.8.1
 
 Graphic interface to manage User Roles and Capabilities
 
@@ -43,6 +43,10 @@ If there is at least one user with current role, you will be not able to delete 
 3. List of Capabilities
 
 == Changelog ==
+
+= 0.8.1 =
+* Fixed issue with edit.php
+* Added to support box my twitter account
 
 = 0.8 =
 * First version
