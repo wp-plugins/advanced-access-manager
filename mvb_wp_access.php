@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced WP Access Manager
   Description: Manage user roles and capabilities
-  Version: 0.9.1
+  Version: 0.9.0
   Author: Vasyl Martyniuk
   Author URI: http://www.whimba.com
  */
