@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: user role, access manager, capability, metabox, admin menu, role manager, submenu
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 0.9.2
+Stable tag: 0.9.1
 
 Graphic interface to manage User Roles and Capabilities
 
