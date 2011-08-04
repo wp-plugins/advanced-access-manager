@@ -16,6 +16,8 @@
 
  */
 
+var formChanged = 0;
+
 jQuery(document).ready(function(){
     configureElements();
     jQuery('.change-role').bind('click', function(){
@@ -23,9 +25,27 @@ jQuery(document).ready(function(){
         jQuery(this).hide();
     });
     
-    jQuery('#role-ok').bind('click', function(){
-        var currentRoleID = jQuery('#role').val();
-        getRoleOptionList(currentRoleID);
+    jQuery('#role-ok').bind('click', function(e){
+        
+        if (formChanged > 0){
+            jQuery( "#leave-confirm" ).dialog({
+                resizable: false,
+                height: 180,
+                modal: true,
+                buttons: {
+                    "Change Role": function() {
+                        jQuery( this ).dialog( "close" );
+                        changeRole();
+                    },
+                    Cancel: function() {
+                        jQuery( this ).dialog( "close" );
+                    }
+                }
+            }); 
+        }else{
+            changeRole();
+        }
+       
     });
     
     
@@ -51,7 +71,8 @@ jQuery(document).ready(function(){
         jQuery('.new-role-name-empty').show();
         showAjaxLoader('#tabs');
         var params = {
-            'action' : 'create_newRole',
+            'action' : 'mvbam',
+            'sub_action' : 'create_role',
             '_ajax_nonce': wpaccessLocal.nonce,
             'role' : newRoleTitle
         };
@@ -87,7 +108,76 @@ jQuery(document).ready(function(){
     
     jQuery('#role-tabs').tabs();
     
+    jQuery('.deletion').bind('click', restoreDefault);
+    
+    jQuery('#wp-access').bind('change', function(e){
+        formChanged++; 
+    });
+    
+    jQuery('#role').bind('change', function(){
+        formChanged -= 1;
+    });
+    
+    window.onbeforeunload = goodbye;
+    
 });
+
+function changeRole(){
+    var currentRoleID = jQuery('#role').val();
+    getRoleOptionList(currentRoleID); 
+    formChanged = 0;
+}
+
+function submitForm(){
+    formChanged = -1;
+    jQuery('#ajax-loading').show();
+}
+
+function goodbye(e) {
+    if (formChanged > 0){
+        if(!e) e = window.event;
+        //e.cancelBubble is supported by IE - this will kill the bubbling process.
+        e.cancelBubble = true;
+        e.returnValue = 'You sure you want to leave?'; //This is displayed on the dialog
+
+        //e.stopPropagation works in Firefox.
+        if (e.stopPropagation) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+    }
+}
+
+function restoreDefault(){
+    jQuery( "#dialog-confirm" ).dialog({
+        resizable: false,
+        height:180,
+        modal: true,
+        buttons: {
+            "Restore": function() {
+                var role = jQuery('#current_role').val();
+                var params = {
+                    'action' : 'mvbam',
+                    'sub_action' : 'restore_role',
+                    '_ajax_nonce': wpaccessLocal.nonce,
+                    'role' : role
+                };
+                var _this = this;
+                jQuery.post(ajaxurl, params, function(data){
+                    if (data.status == 'success'){
+                        getRoleOptionList(role);
+                    }else{
+                    //TODO - Implement error notice
+                    }
+                    jQuery( _this ).dialog( "close" );
+                },'json');
+            },
+            Cancel: function() {
+                jQuery( this ).dialog( "close" );
+            }
+        }
+    });
+}
 
 function initiationChain(next){
     //start initiation
@@ -169,12 +259,13 @@ function deleteRole(role){
     jQuery('#delete-role-title').html(jQuery('.delete-role-table #dl-row-'+role+' td:first').html());
     jQuery( "#dialog-delete-confirm" ).dialog({
         resizable: false,
-        height:160,
+        height:180,
         modal: true,
         buttons: {
             "Delete Role": function() {
                 var params = {
-                    'action' : 'delete_newRole',
+                    'action' : 'mvbam',
+                    'sub_action' : 'delete_role',
                     '_ajax_nonce': wpaccessLocal.nonce,
                     'role' : role
                 };
@@ -213,13 +304,16 @@ function configureElements(){
         jQuery('#main-menu-options #'+id+' #whole').bind('click',{
             id: id
         }, function(){
-            jQuery('#main-menu-options #'+id+' input:checkbox').attr('checked', jQuery(this).attr('checked'));
+            var checked = (jQuery(this).attr('checked') ? true : false);
+            jQuery('#main-menu-options #'+id+' input:checkbox').attr('checked', checked);
         });
     });
     
     jQuery(".capability-item label").each(function(){
         if(jQuery(this).attr('title')){
-            jQuery(this).tooltip();
+            jQuery(this).tooltip({
+                position : 'center right'
+            });
         }
     });
     

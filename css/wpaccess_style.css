@@ -23,7 +23,7 @@
     cursor: pointer;
 }
 
-#dialog-delete-confirm{
+.dialog{
     display:none;
 }
 
@@ -123,7 +123,7 @@
 
 .tooltip {
 	display:none;
-	background:url(tooltip/black_arrow_big.png);
+	background:url(tooltip/black_big.png);
 	height:163px;
 	padding:25px 30px 10px 30px;
 	width:310px;

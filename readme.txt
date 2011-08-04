@@ -1,9 +1,9 @@
 === Advanced Access Manager ===
 Contributors: vasyl_m
-Tags: user, access manager, capability, role, metabox, post, create, delete, view
+Tags: user role, access manager, capability, metabox, admin menu, role manager, submenu
 Requires at least: 3.0
-Tested up to: 3.2
-Stable tag: 0.8.1
+Tested up to: 3.2.1
+Stable tag: 0.9.0
 
 Graphic interface to manage User Roles and Capabilities
 
@@ -43,6 +43,14 @@ If there is at least one user with current role, you will be not able to delete 
 3. List of Capabilities
 
 == Changelog ==
+
+= 0.9.0 =
+* Added Restore Default Settings functionality
+* Fixed bug with Whole Branch checkbox
+* Put tooltip on the center right position instead of center top
+* Added activation and deactivation hooks
+* Changed Tab Order on Role Manager Section
+* Implemented on unsaved page leaving notification
 
 = 0.8.1 =
 * Fixed issue with edit.php

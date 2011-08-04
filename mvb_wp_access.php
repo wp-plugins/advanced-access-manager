@@ -3,9 +3,9 @@
 /*
   Plugin Name: Advanced WP Access Manager
   Description: Manage user roles and capabilities
-  Version: 0.8.1
+  Version: 0.9.0
   Author: Vasyl Martyniuk
-  Author URI: http://www.facebook.com/pages/MVB/155176374549582
+  Author URI: http://www.whimba.com
  */
 
 /*
@@ -73,8 +73,7 @@ class mvb_WPAccess extends mvb_corePlugin {
             add_action('admin_action_initiateWM', array($this, 'initiateWM'));
             add_action('admin_action_initiateURL', array($this, 'initiateURL'));
             //ajax
-            add_action('wp_ajax_create_newRole', array($this, 'create_newRole'));
-            add_action('wp_ajax_delete_newRole', array($this, 'delete_newRole'));
+            add_action('wp_ajax_mvbam', array($this, 'ajax'));
             add_action('wp_ajax_render_metaboxList', array($this, 'render_metaboxList'));
 
             /*
@@ -101,6 +100,58 @@ class mvb_WPAccess extends mvb_corePlugin {
          * Executes after WordPress environment loaded and configured
          */
         add_action('wp_loaded', array($this, 'check'), 999);
+    }
+
+    /*
+     * Ajax interface
+     */
+
+    public function ajax() {
+
+        switch ($_POST['sub_action']) {
+            case 'restore_role':
+                $this->restore_role($_POST['role']);
+                break;
+
+            case 'create_role':
+                $this->create_role();
+                break;
+
+            case 'delete_role':
+                $this->delete_role();
+                break;
+        }
+    }
+
+    /*
+     * Restore default User Roles
+     * 
+     * @param string User Role
+     * @return bool True if success
+     */
+
+    protected function restore_role($role) {
+        global $wpdb;
+        
+        //get current roles settings
+        $or_roles = get_option(WPACCESS_PREFIX . 'original_user_roles');
+        $roles = get_option($wpdb->prefix . 'user_roles');
+        $options = get_option(WPACCESS_PREFIX . 'options');
+        
+        if (isset($roles[$role]) && ($role != 'administrator')) {
+            $roles[$role] = $or_roles[$role];
+            //save current setting to DB
+            update_option($wpdb->prefix . 'user_roles', $roles);
+            //unset all option with metaboxes and menu
+            unset($options[$role]);
+            update_option(WPACCESS_PREFIX . 'options', $options);
+            
+            $result = array('status' => 'success');
+        }else{
+            $result = array('status' => 'error');
+        }
+        
+        die(json_encode($result));
     }
 
     /*
@@ -141,6 +192,36 @@ class mvb_WPAccess extends mvb_corePlugin {
         }
 
         return $result;
+    }
+
+    /*
+     * Activation hook
+     * 
+     * Save default user settings
+     */
+
+    function activate() {
+        global $wpdb;
+
+        //get current roles settings
+        $roles = get_option($wpdb->prefix . 'user_roles');
+        //save current setting to DB
+        update_option(WPACCESS_PREFIX . 'original_user_roles', $roles);
+    }
+
+    /*
+     * Deactivation hook
+     * 
+     * Delete all record in DB related to current plugin
+     * Restore original user roles
+     */
+
+    function deactivate() {
+
+        $roles = get_option(WPACCESS_PREFIX . 'original_user_roles');
+        update_option($wpdb->prefix . 'user_roles', $roles);
+        delete_option(WPACCESS_PREFIX . 'original_user_roles');
+        delete_option(WPACCESS_PREFIX . 'options');
     }
 
     /*
@@ -290,7 +371,7 @@ class mvb_WPAccess extends mvb_corePlugin {
         die($m->renderMetaboxList($m->getTemplate()));
     }
 
-    function create_newRole() {
+    function create_role() {
 
         check_ajax_referer(WPACCESS_PREFIX . 'ajax');
 
@@ -304,7 +385,7 @@ class mvb_WPAccess extends mvb_corePlugin {
         die(json_encode($result));
     }
 
-    function delete_newRole() {
+    function delete_role() {
 
         check_ajax_referer(WPACCESS_PREFIX . 'ajax');
 
@@ -371,12 +452,7 @@ class mvb_WPAccess extends mvb_corePlugin {
 
 }
 
+register_activation_hook(__FILE__, array('mvb_WPAccess', 'activate'));
+register_deactivation_hook(__FILE__, array('mvb_WPAccess', 'deactivate'));
 add_action('init', 'init_wpaccess');
-
-function init_wpaccess() {
-    global $mvb_wpAccess;
-
-    $mvb_wpAccess = new mvb_WPAccess();
-}
-
 ?>

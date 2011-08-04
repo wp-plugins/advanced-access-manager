@@ -57,9 +57,9 @@
                             <div id="initiate-message">
                                 <p>To initiate list of metaboxes manually, copy and paste the URL to admin page on this site into text field and click "Initiate URL". List of all new metaboxes will be added automatically.</p>
                                 <div style="float:left; width:80%;">
-                                <div class="initiate-url-empty">Enter correct URL here</div>
-                                <input type="text" id="initiateURL" class="initiate-url-text" value="" />&nbsp;&nbsp;
-                                <a href="javascript:void(0);" class="button initiate-url" >Initiate URL</a>
+                                    <div class="initiate-url-empty">Enter correct URL here</div>
+                                    <input type="text" id="initiateURL" class="initiate-url-text" value="" />&nbsp;&nbsp;
+                                    <a href="javascript:void(0);" class="button initiate-url" >Initiate URL</a>
                                 </div>
                                 <div style="float:right;margin-top:8px;">
                                     <a href="javascript:void(0);" class="initiate-metaboxes button" >Refresh List</a>
@@ -166,9 +166,12 @@
                                     </div>
                                 </div>
                                 <div id="major-publishing-actions">
+                                    <div id="delete-action">
+                                        <a class="submitdelete deletion" href="#" title="Restore Default Setting for Current Role">Restore Role</a>
+                                    </div>
                                     <div id="publishing-action">
                                         <img src="###site_url###/wp-admin/images/wpspin_light.gif" style="display:none;" id="ajax-loading" alt="Saving...">
-                                        <input name="save" id="save" class="button-primary" value="Save" tabindex="5" onclick="jQuery('#ajax-loading').show();" type="submit" />
+                                        <input name="save" id="save" class="button-primary" value="Save" tabindex="5" onclick="submitForm();" type="submit" />
                                     </div>
                                     <br class="clear" />
                                 </div>
@@ -181,15 +184,10 @@
                         <div class="inside" style="width:100%; margin: 0px; padding: 0px;">
                             <div id="role-tabs" >
                                 <ul>
-                                    <li><a href="#tabs-1">Add New</a></li>
-                                    <li><a href="#tabs-2">Delete</a></li>
+                                    <li><a href="#role_tab-1">Edit</a></li>
+                                    <li><a href="#role_tab-2">Add New</a></li>
                                 </ul>
-                                <div id="tabs-1">
-                                    <div class="new-role-name-empty">Add New Role</div>
-                                    <input type="text" value="" id="new-role-name" />
-                                    <a href="javascript:void(0);" class="hide-if-no-js button" id="new-role-ok">Add</a>
-                                </div>
-                                <div id="tabs-2">
+                                <div id="role_tab-1">
                                     <!-- ###DELETE_ROLE_LIST### begin-->
                                     <table class="delete-role-table">
                                         <tbody>
@@ -206,10 +204,15 @@
                                             <!-- ###DELETE_ROLE_ITEM### end-->
                                         </tbody>
                                     </table>
-                                    <div id="dialog-delete-confirm" title="Delete Role?">
+                                    <div id="dialog-delete-confirm" class="dialog" title="Delete Role?">
                                         <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 5px 0;"></span>Please confirm deleting Role - <span id="delete-role-title"></span></p>
                                     </div>
                                     <!-- ###DELETE_ROLE_LIST### end-->
+                                </div>
+                                <div id="role_tab-2">
+                                    <div class="new-role-name-empty">Add New Role</div>
+                                    <input type="text" value="" id="new-role-name" />
+                                    <a href="javascript:void(0);" class="hide-if-no-js button" id="new-role-ok">Add</a>
                                 </div>
                             </div>
                             <div id="new-role-message-ok">
@@ -236,4 +239,10 @@
             </div>
         </div>
     </form>
+    <div id="dialog-confirm" class="dialog" title="Restore Default Role Settings?">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>All current settings will be lost. Are you sure?</p>
+    </div>
+    <div id="leave-confirm" class="dialog" title="Leave Without Saving?">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Some changed detected. Are you sure that you want to leave without saving</p>
+    </div>
 </div>

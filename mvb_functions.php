@@ -25,4 +25,10 @@ function debug($what) {
 }
  * */
 
+function init_wpaccess() {
+    static $mvb_wpAccess;
+
+    $mvb_wpAccess = new mvb_WPAccess();
+}
+
 ?>
