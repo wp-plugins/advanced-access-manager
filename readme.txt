@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: user role, access manager, capability, metabox, admin menu, role manager, submenu
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 0.9.0
+Stable tag: 0.9.1
 
 Graphic interface to manage User Roles and Capabilities
 
@@ -43,6 +43,9 @@ If there is at least one user with current role, you will be not able to delete 
 3. List of Capabilities
 
 == Changelog ==
+
+= 0.9.1 =
+* Resolved issue with deactivation hook
 
 = 0.9.0 =
 * Added Restore Default Settings functionality
