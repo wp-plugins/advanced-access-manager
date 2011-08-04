@@ -219,7 +219,9 @@ class mvb_WPAccess extends mvb_corePlugin {
     function deactivate() {
 
         $roles = get_option(WPACCESS_PREFIX . 'original_user_roles');
-        update_option($wpdb->prefix . 'user_roles', $roles);
+		if (is_array($roles) && count($roles)){
+			update_option($wpdb->prefix . 'user_roles', $roles);
+		}
         delete_option(WPACCESS_PREFIX . 'original_user_roles');
         delete_option(WPACCESS_PREFIX . 'options');
     }

@@ -44,6 +44,9 @@ If there is at least one user with current role, you will be not able to delete 
 
 == Changelog ==
 
+= 0.9.2 =
+* Resolved issue with deactivation hook
+
 = 0.9.0 =
 * Added Restore Default Settings functionality
 * Fixed bug with Whole Branch checkbox
