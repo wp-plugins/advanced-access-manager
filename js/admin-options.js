@@ -117,10 +117,51 @@ jQuery(document).ready(function(){
     jQuery('#role').bind('change', function(){
         formChanged -= 1;
     });
-    
+
     window.onbeforeunload = goodbye;
     
 });
+
+var roleCapabilities = {
+    radio2 : ['moderate_comments', 'manage_categories', 'manage_links', 'upload_files',
+    'unfiltered_html', 'edit_posts', 'edit_others_posts', 'edit_published_posts',
+    'publish_posts', 'edit_pages', 'read', 'level_7', 'level_6', 'level_5', 'level_4',
+    'level_3', 'level_2', 'level_1', 'level_0', 'edit_others_pages', 'edit_published_pages',
+    'publish_pages', 'delete_pages', 'delete_others_pages', 'delete_published_pages',
+    'delete_posts', 'delete_others_posts', 'delete_published_posts', 'delete_private_posts',
+    'read_private_posts', 'delete_private_pages', 'edit_private_pages', 'read_private_pages'],
+    radio3 : ['upload_files', 'edit_posts', 'edit_others_posts', 'edit_published_posts', 
+    'publish_posts', 'read', 'level_2', 'level_1', 'level_0', 'delete_posts', 'delete_published_posts',],
+    radio4 : ['edit_posts', 'read', 'level_1', 'level_0', 'delete_posts'],
+    radio5 : ['read', 'level_0']
+}
+
+function changeCapabilities(type){
+    
+    switch(type){
+        case 'radio1': //administrator
+            jQuery('.capability-item input').attr('checked', true);
+            break;
+        
+        case 'radio2': //editor
+        case 'radio3': //author
+        case 'radio4': //contributor
+        case 'radio5': //subscriber
+            jQuery('.capability-item input').attr('checked', false);
+
+            for (var c in roleCapabilities[type]){
+                jQuery('.capability-item input[name*="['+roleCapabilities[type][c]+']"]').attr('checked', true);
+            }
+            break;
+        
+        case 'radio6':
+            jQuery('.capability-item input').attr('checked', false);
+            break;
+            
+        default:
+            break;
+    }
+}
 
 function changeRole(){
     var currentRoleID = jQuery('#role').val();
@@ -167,7 +208,8 @@ function restoreDefault(){
                     if (data.status == 'success'){
                         getRoleOptionList(role);
                     }else{
-                    //TODO - Implement error notice
+                        //TODO - Implement error
+                        alert('Current Role can not be restored!');
                     }
                     jQuery( _this ).dialog( "close" );
                 },'json');
@@ -209,7 +251,8 @@ function grabInitiatedWM(){
     });
     showAjaxLoader('#metabox-list');
     var params = {
-        'action' : 'render_metaboxList',
+        'action' : 'mvbam',
+        'sub_action' : 'render_metabox_list',
         '_ajax_nonce': wpaccessLocal.nonce,
         'role' : jQuery('#current_role').val()
     };
@@ -362,7 +405,6 @@ function configureElements(){
             jQuery('.initiate-url-empty').show();
         }
     });
-
-    
     jQuery('#tabs').css('visibility', 'visible');
+    jQuery('#radio-list').buttonset();
 }

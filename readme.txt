@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: user role, access manager, capability, metabox, admin menu, role manager, submenu
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 0.9.0
+Stable tag: 0.9.5
 
 Graphic interface to manage User Roles and Capabilities
 
@@ -36,6 +36,14 @@ be picked by the plugin.
 
 If there is at least one user with current role, you will be not able to delete it
 
+= I deselected some Menu Items on Main Menu Tab, but they still not appear, why? =
+
+The reason is that Main Menu Tab is not directly related to list of Capabilities. 
+It means, if you selected/deselected some Menus or Submenus it will not add/delete
+capabilities to current User Role. In such way if you want to give somebody access
+to backend I'm recommending to use predefined set of options - Editor and then
+just filter Main Menu. 
+
 == Screenshots ==
 
 1. General view of Access Manager
@@ -44,8 +52,10 @@ If there is at least one user with current role, you will be not able to delete 
 
 == Changelog ==
 
-= 0.9.2 =
-* Resolved issue with deactivation hook
+= 0.9.5 =
+* Added pre-defined set of capabilities - Administrator, Editor, Author, Contributor, Subscriber and Clear All
+* Fixed bug with submenu rendered as custom WP page, for example themes.php?page=theme_options
+* Fixed bug with Add New Post submenu. If it was selected then no edit.php page was accessible.
 
 = 0.9.0 =
 * Added Restore Default Settings functionality

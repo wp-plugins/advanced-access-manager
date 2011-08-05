@@ -187,3 +187,7 @@
 #metabox-wpaccess-general p{
     text-align: justify;
 }
+
+.default-roles{
+    float:right;
+}

@@ -227,16 +227,26 @@ class module_optionManager extends mvb_corePlugin {
         $sublistTemplate = $this->templObj->retrieveSub('MAIN_MENU_SUBLIST', $itemTemplate);
         $subitemTemplate = $this->templObj->retrieveSub('MAIN_MENU_SUBITEM', $sublistTemplate);
         $list = '';
+
         if (is_array($menu)) {
             foreach ($menu as $menuItem) {
-                if (!$menuItem[0]) {
+                if (!$menuItem[0]) { //seperator
                     continue;
-                } //seperator
+                }
                 //render submenu
                 $subList = '';
                 if (isset($submenu[$menuItem[2]]) && is_array($submenu[$menuItem[2]])) {
                     foreach ($submenu[$menuItem[2]] as $submenuItem) {
                         $checked = $this->checkChecked('submenu', array($menuItem[2], $submenuItem[2]));
+                        /*
+                        if ((strpos($submenuItem[2], '.php') === FALSE)) { //create a page url
+                            $value = $menuItem[2] . (preg_match('/\?(.*){1,}$/is', $menuItem[2]) ? '&' : '?' );
+                            $value .= 'page=' . $submenuItem[2];
+                        } else {
+                            $value = $submenuItem[2];
+                        }
+                         * */
+                        
                         $markers = array(
                             '###submenu_name###' => preg_replace('/<span[^>]*?>.*?<\/span[^>]*?>/si', '', $submenuItem[0]),
                             '###value###' => $submenuItem[2],

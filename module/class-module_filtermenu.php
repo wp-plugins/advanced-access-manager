@@ -33,12 +33,38 @@ class module_filterMenu extends module_User {
         global $menu, $submenu;
 
         $userRoles = $this->getCurrentUserRole();
+        if (is_array($userRoles)) {
+            foreach ($userRoles as $role) {
+                if (is_array($this->cParams[$role]['menu'])) {
+                    foreach ($this->cParams[$role]['menu'] as $main => $data) {
+                        if ($data['whole'] == 1) {
+                            $this->unsetMainMenuItem($main);
+                        } elseif (is_array($data['sub'])) {
+                            foreach ($data['sub'] as $sub => $dummy) {
+                                $this->unsetSubMenuItem($main, $sub);
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            wp_die('You are not authorized to view this page');
+        }
+    }
 
+    function _manage() {
+        global $menu, $submenu;
+
+        $userRoles = $this->getCurrentUserRole();
+        debug($this->cParams);
+        debug($menu);
+        debug($submenu);
         if (is_array($userRoles)) {
             foreach ($userRoles as $role) {
                 if (is_array($this->cParams[$role])) {
                     foreach ($menu as $key => $menuItem) {
                         if (is_array($this->cParams[$role]['menu'][$menuItem[2]])) {
+                            echo $menuItem[2] . '<br/>';
                             if ($this->cParams[$role]['menu'][$menuItem[2]]['whole']) {
                                 $this->unsetMainMenuItem($menuItem[2]);
                             } elseif (is_array($this->cParams[$role]['menu'][$menuItem[2]]['sub'])) {
@@ -68,11 +94,13 @@ class module_filterMenu extends module_User {
                 if ($role == 'administrator') {
                     return TRUE;
                 }
+ 
                 if (is_array($this->cParams[$role]['menu'])) {
                     foreach ($this->cParams[$role]['menu'] as $menu => $sub) {
-                        if ($this->compareMenus($requestedMenu, $menu)) {
+                        if (($sub['whole']) == 1 && ($this->compareMenus($requestedMenu, $menu))) {
                             return FALSE;
                         }
+
                         if (is_array($sub['sub'])) {
                             foreach ($sub['sub'] as $subMenu => $dummy) {
                                 if ($this->compareMenus($requestedMenu, $subMenu)) {
@@ -154,16 +182,24 @@ class module_filterMenu extends module_User {
         }
     }
 
-    function unsetSubMenuItem($menuItem, $submenuItem) {
+    function unsetSubMenuItem($dummy, $submenuItem) {
         global $submenu;
 
-        if (is_array($submenu[$menuItem])) {
-            foreach ($submenu[$menuItem] as $key => $item) {
-                if ($item[2] == $submenuItem) {
-                    unset($submenu[$menuItem][$key]);
+        $result = FALSE; //not deleted
+        if (is_array($submenu)) {
+            foreach ($submenu as $main => $subs) {
+                if (is_array($subs)) {
+                    foreach ($subs as $key => $item) {
+                        if ($item[2] == $submenuItem) {
+                            unset($submenu[$main][$key]);
+                            return TRUE;
+                        }
+                    }
                 }
             }
         }
+
+        return $result;
     }
 
 }

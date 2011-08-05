@@ -128,9 +128,20 @@
                             <div class="capability-item">
                                 <input type="checkbox" name="wpaccess[###role###][advance][###title###]" value="1" ###checked### />
                                        &nbsp;&nbsp;<label title="###description###">###cap_name###</label>
-
                             </div>
                             <!-- ###CAPABILITY_ITEM### end-->
+                            <br class="clear" />
+                            
+                            <div class="default-roles">
+                                <div id="radio-list">
+                                    <input type="radio" id="radio1" name="radio" onclick="changeCapabilities('radio1');" /><label for="radio1" title="Give Administrator's List of Capabilities">Administrator</label>
+                                    <input type="radio" id="radio2" name="radio" onclick="changeCapabilities('radio2');" /><label for="radio2" title="Give Editor's List of Capabilities">Editor</label>
+                                    <input type="radio" id="radio3" name="radio" onclick="changeCapabilities('radio3');" /><label for="radio3" title="Give Author's List of Capabilities">Author</label>
+                                    <input type="radio" id="radio4" name="radio" onclick="changeCapabilities('radio4');" /><label for="radio4" title="Give Contributor's List of Capabilities">Contributor</label>
+                                    <input type="radio" id="radio5" name="radio" onclick="changeCapabilities('radio5');" /><label for="radio5" title="Give Subscriber's List of Capabilities">Subscriber</label>
+                                    <input type="radio" id="radio6" name="radio" onclick="changeCapabilities('radio6');" /><label for="radio6" title="Clear all Capabilities">Clear All</label>
+                                </div>
+                            </div>
                             <br class="clear" />
                             <!-- ###CAPABILITY_LIST### end-->
                         </div>

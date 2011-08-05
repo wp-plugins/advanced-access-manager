@@ -1,9 +1,9 @@
 <?php
 
 /*
-  Plugin Name: Advanced WP Access Manager
+  Plugin Name: Advanced Access Manager
   Description: Manage user roles and capabilities
-  Version: 0.9.0
+  Version: 0.9.5
   Author: Vasyl Martyniuk
   Author URI: http://www.whimba.com
  */
@@ -74,7 +74,6 @@ class mvb_WPAccess extends mvb_corePlugin {
             add_action('admin_action_initiateURL', array($this, 'initiateURL'));
             //ajax
             add_action('wp_ajax_mvbam', array($this, 'ajax'));
-            add_action('wp_ajax_render_metaboxList', array($this, 'render_metaboxList'));
 
             /*
              * Initialize Metabox filter hook
@@ -120,6 +119,14 @@ class mvb_WPAccess extends mvb_corePlugin {
             case 'delete_role':
                 $this->delete_role();
                 break;
+
+            case 'render_metabox_list':
+                $this->render_metabox_list();
+                break;
+
+            default:
+                die();
+                break;
         }
     }
 
@@ -132,25 +139,25 @@ class mvb_WPAccess extends mvb_corePlugin {
 
     protected function restore_role($role) {
         global $wpdb;
-        
+
         //get current roles settings
         $or_roles = get_option(WPACCESS_PREFIX . 'original_user_roles');
         $roles = get_option($wpdb->prefix . 'user_roles');
         $options = get_option(WPACCESS_PREFIX . 'options');
-        
-        if (isset($roles[$role]) && ($role != 'administrator')) {
+
+        if (isset($or_roles[$role]) && isset($roles[$role]) && ($role != 'administrator')) {
             $roles[$role] = $or_roles[$role];
             //save current setting to DB
             update_option($wpdb->prefix . 'user_roles', $roles);
             //unset all option with metaboxes and menu
             unset($options[$role]);
             update_option(WPACCESS_PREFIX . 'options', $options);
-            
+
             $result = array('status' => 'success');
-        }else{
+        } else {
             $result = array('status' => 'error');
         }
-        
+
         die(json_encode($result));
     }
 
@@ -219,9 +226,10 @@ class mvb_WPAccess extends mvb_corePlugin {
     function deactivate() {
 
         $roles = get_option(WPACCESS_PREFIX . 'original_user_roles');
-		if (is_array($roles) && count($roles)){
-			update_option($wpdb->prefix . 'user_roles', $roles);
-		}
+
+        if (is_array($roles) && count($roles)) {
+            update_option($wpdb->prefix . 'user_roles', $roles);
+        }
         delete_option(WPACCESS_PREFIX . 'original_user_roles');
         delete_option(WPACCESS_PREFIX . 'options');
     }
@@ -365,7 +373,7 @@ class mvb_WPAccess extends mvb_corePlugin {
      * @return string HTML string with result
      */
 
-    function render_metaboxList() {
+    function render_metabox_list() {
 
         check_ajax_referer(WPACCESS_PREFIX . 'ajax');
 
@@ -422,6 +430,7 @@ class mvb_WPAccess extends mvb_corePlugin {
         $uri = $_SERVER['REQUEST_URI'];
 
         $m = new module_filterMenu();
+
         if (!$m->checkAccess($uri)) {
             wp_die('<p>' . __('You do not have sufficient permissions to perform this action') . '</p>');
         }
