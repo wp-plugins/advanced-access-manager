@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage user roles and capabilities
-  Version: 0.9.5
+  Version: 0.9.6
   Author: Vasyl Martyniuk
   Author URI: http://www.whimba.com
  */
@@ -70,8 +70,6 @@ class mvb_WPAccess extends mvb_corePlugin {
             add_action('wp_print_scripts', array($this, 'wp_print_scripts'), 1);
             add_action('admin_action_render_rolelist', array($this, 'render_rolelist'));
 
-            add_action('admin_action_initiateWM', array($this, 'initiateWM'));
-            add_action('admin_action_initiateURL', array($this, 'initiateURL'));
             //ajax
             add_action('wp_ajax_mvbam', array($this, 'ajax'));
 
@@ -122,6 +120,14 @@ class mvb_WPAccess extends mvb_corePlugin {
 
             case 'render_metabox_list':
                 $this->render_metabox_list();
+                break;
+
+            case 'initiate_wm':
+                $this->initiate_wm();
+                break;
+
+            case 'initiate_url':
+                $this->initiate_url();
                 break;
 
             default:
@@ -262,7 +268,7 @@ class mvb_WPAccess extends mvb_corePlugin {
      * @return string JSON encoded string with result
      */
 
-    function initiateWM() {
+    function initiate_wm() {
         global $wp_post_types;
 
         check_ajax_referer(WPACCESS_PREFIX . 'ajax');
@@ -295,15 +301,10 @@ class mvb_WPAccess extends mvb_corePlugin {
         }
         $url = admin_url('post-new.php?post_type=' . $current) . '&grab=metaboxes';
         //grab metaboxes
-        $this->cURL($url);
-        /*
-         * TODO - By default success.
-         */
-        $result = array(
-            'result' => 'success',
-            'value' => round((($i + 1) / $typeQuant) * 100), //value for progress bar
-            'next' => ($next ? $next : '' ) //if empty, stop initialization
-        );
+        $result = $this->cURL($url);
+
+        $result['value'] = round((($i + 1) / $typeQuant) * 100); //value for progress bar
+        $result['next'] = ($next ? $next : '' ); //if empty, stop initialization
 
         die(json_encode($result));
     }
@@ -319,19 +320,17 @@ class mvb_WPAccess extends mvb_corePlugin {
      * @return string JSON encoded string with result
      */
 
-    function initiateURL() {
+    function initiate_url() {
 
         check_ajax_referer(WPACCESS_PREFIX . 'ajax');
 
         $url = esc_url($_POST['url']);
         if ($url) {
             $url = add_query_arg('grab', 'metaboxes', $url);
-            $this->cURL($url);
+            $result = $this->cURL($url);
+        } else {
+            $result = array('status' => 'error');
         }
-
-        $result = array(
-            'result' => 'success',
-        );
 
         die(json_encode($result));
     }
@@ -356,12 +355,23 @@ class mvb_WPAccess extends mvb_corePlugin {
                         ));
             }
         }
+
         $res = wp_remote_request($url, array(
             'headers' => $header,
-            'cookies' => $cookies
+            'cookies' => $cookies,
+            'timeout' => 5
                 ));
 
-        return TRUE;
+        if ($res instanceof WP_Error) {
+            $result = array(
+                'status' => 'error',
+                'url' => $url
+            );
+        } else {
+            $result = array('status' => 'success');
+        }
+
+        return $result;
     }
 
     /*

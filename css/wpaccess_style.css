@@ -117,18 +117,18 @@
 }
 
 .loading-new{
-  opacity : 0.4;
-  filter: alpha(opacity=40);
+    opacity : 0.4;
+    filter: alpha(opacity=40);
 }
 
 .tooltip {
-	display:none;
-	background:url(tooltip/black_big.png);
-	height:163px;
-	padding:25px 30px 10px 30px;
-	width:310px;
-	font-size:11px;
-	color:#fff;
+    display:none;
+    background:url(tooltip/black_big.png);
+    height:163px;
+    padding:25px 30px 10px 30px;
+    width:310px;
+    font-size:11px;
+    color:#fff;
     z-index: 1000;
 }
 
@@ -190,4 +190,63 @@
 
 .default-roles{
     float:right;
+}
+
+/* SEXY BOOKMARKS */
+div.sexy-bookmarks {
+    margin:10px 0 0 0;
+    clear: both;
+}
+
+div.sexy-bookmarks ul.socials {
+    background:transparent none;
+    border:0 none;
+    outline:0 none;
+}
+
+div.sexy-bookmarks ul.socials li {
+    display:inline;
+    float:left;
+    list-style-type:none;
+    margin:0;
+    height:29px;
+    width:55px;
+    cursor:pointer;
+    padding:0;
+    background-color:transparent;
+    border:0 none;
+    outline:0 none;
+}
+
+div.sexy-bookmarks ul.socials a {
+    display:block !important;
+    width:50px !important;
+    height:29px !important;
+    text-indent: -9999px !important;
+    background-color:transparent !important;
+}
+
+.sexy-mail {
+    background: url('images/share_friend.png') no-repeat bottom;
+}
+.sexy-mail:hover {
+    background: url('images/share_friend.png') no-repeat top;
+}
+
+.sexy-facebook {
+    background: url('images/share_facebook.png') no-repeat bottom;
+}
+.sexy-facebook:hover {
+    background: url('images/share_facebook.png') no-repeat top;
+}
+
+.sexy-twitter {
+    background: url('images/twitter.png') no-repeat bottom;
+}
+.sexy-twitter:hover {
+    background: url('images/twitter.png') no-repeat top;
+}
+
+#emergency-curl{
+    display : none;
 }

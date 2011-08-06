@@ -118,6 +118,8 @@ jQuery(document).ready(function(){
         formChanged -= 1;
     });
 
+    //jQuery('.message-active').show().delay(5000).hide('slow');
+    
     window.onbeforeunload = goodbye;
     
 });
@@ -221,23 +223,54 @@ function restoreDefault(){
     });
 }
 
+function emergencyCall(data){
+    jQuery.ajax(data.url, {
+        success : function(){ 
+            if (data.next){
+                initiationChain(data.next);
+            }else{
+                jQuery('#progressbar').progressbar("option", "value", 100);
+                grabInitiatedWM();
+            }
+        },
+        error : function(jqXHR, textStatus, errorThrown){
+            if (textStatus != 'timeout'){
+                if (data.next){
+                    initiationChain(data.next);
+                }else{
+                    jQuery('#progressbar').progressbar("option", "value", 100);
+                    grabInitiatedWM();
+                }
+            }else{
+                alert('Error Appears during Metabox initialization!');
+                jQuery('#progressbar').progressbar("option", "value", 100);
+                grabInitiatedWM();
+            }
+        },
+        timeout : 5000
+    });
+}
+
 function initiationChain(next){
     //start initiation
     var params = {
-        'action' : 'initiateWM',
+        'action' : 'mvbam',
+        'sub_action' : 'initiate_wm',
         '_ajax_nonce': wpaccessLocal.nonce,
         'next' : next
     };
-    jQuery.post(wpaccessLocal.handlerURL, params, function(data){ 
-        //alert(data);
-        if (data.result == 'success'){
-            jQuery('#progressbar').progressbar("option", "value", data.value);
-        }
-        if (data.next){
-            initiationChain(data.next);
+    jQuery.post(ajaxurl, params, function(data){
+        jQuery('#progressbar').progressbar("option", "value", data.value);
+        if (data.status == 'success'){
+            if (data.next){
+                initiationChain(data.next);
+            }else{
+                jQuery('#progressbar').progressbar("option", "value", 100);
+                grabInitiatedWM();
+            }
         }else{
-            jQuery('#progressbar').progressbar("option", "value", 100);
-            grabInitiatedWM();
+            //try directly to go to that page
+            emergencyCall(data);
         }
     }, 'json');
 }
@@ -377,16 +410,19 @@ function configureElements(){
                 value: 20
             }).show();
             var params = {
-                'action' : 'initiateURL',
+                'action' : 'mvbam',
+                'sub_action' : 'initiate_url',
                 '_ajax_nonce': wpaccessLocal.nonce,
                 'url' : val
             };
-            jQuery.post(wpaccessLocal.handlerURL, params, function(data){
-                if (data.result == 'success'){
-                    jQuery('.initiate-url-text').val('');
-                    jQuery('.initiate-url-empty').show();
+            jQuery.post(ajaxurl, params, function(data){
+                jQuery('.initiate-url-text').val('');
+                jQuery('.initiate-url-empty').show();
+                if (data.status == 'success'){
                     jQuery('#progressbar').progressbar('option', 'value', 100);
                     grabInitiatedWM();
+                }else{
+                    emergencyCall(data);
                 }
             }, 'json');
         }else{

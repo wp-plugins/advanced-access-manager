@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: user role, access manager, capability, metabox, admin menu, role manager, submenu
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 0.9.5
+Stable tag: 0.9.6
 
 Graphic interface to manage User Roles and Capabilities
 
@@ -51,6 +51,9 @@ just filter Main Menu.
 3. List of Capabilities
 
 == Changelog ==
+
+= 0.9.6 =
+* Fixed bug with Metabox initialization
 
 = 0.9.5 =
 * Added pre-defined set of capabilities - Administrator, Editor, Author, Contributor, Subscriber and Clear All
