@@ -1,0 +1,252 @@
+#tabs{
+    visibility:hidden;
+}
+
+#current-role-display{
+    font-weight: bold;
+}
+
+.plugin-logo{
+    background: url('images/logo.png') no-repeat;
+    float:left;
+    margin:10px 0 10px 30px;
+    width:40px;
+    height:40px;
+}
+
+.delete-role-table{
+    width:100%;
+}
+
+.delete-role-table tr:hover{
+    background-color: #E6E6E6;
+    cursor: pointer;
+}
+
+.dialog{
+    display:none;
+}
+
+#new-role-name{
+    font-size: 10px; 
+    width:150px;
+}
+
+.new-role-name-empty{
+    position:absolute;
+    margin: 5px 0 0 7px;
+    color: #9E9B9B;
+    font: 11px "Lucida Grande", Verdana, Arial, "Bitstream Vera Sans", sans-serif
+}
+
+.initiate-url-empty{
+    position:absolute;
+    margin: 9px 0 0 7px;
+    color: #9E9B9B;
+    font: 11px "Lucida Grande", Verdana, Arial, "Bitstream Vera Sans", sans-serif
+}
+
+.delete-role-table td{
+    font-size: 12px;
+    padding: 3px 0px;
+}
+
+.message-active{
+    display:block;
+    float:left;
+    width:70%;
+    margin: 5px 0;    
+}
+.message-passive{
+    display:none;
+}
+
+.plugin-title{ 
+    float:left;
+    margin:0px 0 0 15px;
+}
+
+.misc-role-section{
+    margin: 10px 0 0 10px;
+}
+
+.change-role{
+    font-size: 10px;
+}
+
+.misc-role-section label{
+    font-size: 11px;
+}
+
+#role-select{
+    margin-top: 5px;
+}
+
+#new-role-message-ok, #new-role-message-error{
+    display:none;
+}
+
+.mainmenu-subitem-whole{
+    width:100%;
+    margin-bottom: 5px;
+}
+.mainmenu-subitem{
+    width: 200px;
+    float: left;
+}
+
+.capability-item{
+    width: 200px;
+    margin-bottom: 5px;
+    float:left;
+    font-size: 11px;
+}
+
+.submenu-holder{
+    padding: 2px 0 5px 3px;
+}
+
+.ajax-loader-big{
+    background: url('images/ajax-loader.gif') no-repeat;
+    width:100px;
+    height:100px;
+    z-index:1999;
+    position: absolute;
+    top:0px;
+    left:0px;
+}
+
+.loading-new{
+    opacity : 0.4;
+    filter: alpha(opacity=40);
+}
+
+.tooltip {
+    display:none;
+    background:url(tooltip/black_big.png);
+    height:163px;
+    padding:25px 30px 10px 30px;
+    width:310px;
+    font-size:11px;
+    color:#fff;
+    z-index: 1000;
+}
+
+.description-table{
+    width: 100%;
+}
+
+.description-table td{
+    font-size:11px;
+}
+
+.tooltip a{
+    color: #ff853c;
+    font-weight: bold;
+}
+
+#progressbar{
+    height: 22px;
+    width:98%;
+    margin-left: auto;
+    margin-right: auto;
+    display:none;
+}
+
+.ui-progressbar-value { 
+    background-image: url(ui/images/pbar-ani.gif); 
+}
+
+.metaboxlist-holder{
+    margin-top: 10px;
+}
+
+.metabox-item{
+    width: 280px;
+    float:left;
+}
+
+.metabox-description th{
+    text-align: right;
+    font-size: 10px;
+    padding-top: 5px;
+}
+
+.metabox-description td{
+    padding: 5px 0 0 15px;
+}
+.metabox-seperator{
+    width:20px;
+    float:left;
+}
+
+.initiate-url-text{
+    width:70%;
+}
+
+#metabox-wpaccess-general p{
+    text-align: justify;
+}
+
+.default-roles{
+    float:right;
+}
+
+/* SEXY BOOKMARKS */
+div.sexy-bookmarks {
+    margin:10px 0 0 0;
+    clear: both;
+}
+
+div.sexy-bookmarks ul.socials {
+    background:transparent none;
+    border:0 none;
+    outline:0 none;
+}
+
+div.sexy-bookmarks ul.socials li {
+    display:inline;
+    float:left;
+    list-style-type:none;
+    margin:0;
+    height:29px;
+    width:55px;
+    cursor:pointer;
+    padding:0;
+    background-color:transparent;
+    border:0 none;
+    outline:0 none;
+}
+
+div.sexy-bookmarks ul.socials a {
+    display:block !important;
+    width:50px !important;
+    height:29px !important;
+    text-indent: -9999px !important;
+    background-color:transparent !important;
+}
+
+.sexy-mail {
+    background: url('images/share_friend.png') no-repeat bottom;
+}
+.sexy-mail:hover {
+    background: url('images/share_friend.png') no-repeat top;
+}
+
+.sexy-facebook {
+    background: url('images/share_facebook.png') no-repeat bottom;
+}
+.sexy-facebook:hover {
+    background: url('images/share_facebook.png') no-repeat top;
+}
+
+.sexy-twitter {
+    background: url('images/twitter.png') no-repeat bottom;
+}
+.sexy-twitter:hover {
+    background: url('images/twitter.png') no-repeat top;
+}
+
+#emergency-curl{
+    display : none;
+}
