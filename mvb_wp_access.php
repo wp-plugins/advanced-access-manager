@@ -55,13 +55,6 @@ class mvb_WPAccess extends mvb_corePlugin {
                 wp_enqueue_style('jquery-ui', WPACCESS_CSS_URL . 'ui/jquery.ui.all.css');
                 wp_enqueue_style('wpaccess-style', WPACCESS_CSS_URL . 'wpaccess_style.css');
             }
-            //dashboard filters
-            /*
-             * TODO - Implement dashboard widget filtering
-             */
-            add_action('wp_network_dashboard_setup', array($this, 'wp_network_dashboard_setup'), 999);
-            add_action('wp_user_dashboard_setup', array($this, 'wp_user_dashboard_setup'), 999);
-            add_action('wp_dashboard_setup', array($this, 'wp_dashboard_setup'), 999);
 
             /*
              * Configure Plugin Environmnet
@@ -437,12 +430,7 @@ class mvb_WPAccess extends mvb_corePlugin {
         die($m->getMainOptionsList());
     }
 
-    function wp_dashboard_setup() {
-        global $wp_meta_boxes, $wp_post_types;
-
-        //TODO
-    }
-
+   
     /*
      * Main function for checking if user has access to a page
      * 
