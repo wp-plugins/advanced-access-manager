@@ -1,9 +1,9 @@
 === Advanced Access Manager ===
 Contributors: vasyl_m
-Tags: user role, access manager, capability, metabox, admin menu, role manager, submenu
+Tags: user role, access manager, capability, metabox, admin menu, role manager, submenu, dashboard widget
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 0.9.6
+Stable tag: 0.9.7
 
 Graphic interface to manage User Roles and Capabilities
 
@@ -12,9 +12,13 @@ Graphic interface to manage User Roles and Capabilities
 You can afford to do next things with Advanced Access Manager:
 
 * Filter Admin Menu for specific User Role
+* Filter Dashboard Widgets for specific User Role
 * Filter List of Metaboxes in Edit Post page for specific User Role
 * Add or delete capabilities for User Role
 * Create or Delete User Role
+
+If you have any problems with current plugin, please send me and email or leave a
+message on Forums Posts.
 
 == Installation ==
 
@@ -52,8 +56,11 @@ just filter Main Menu.
 
 == Changelog ==
 
+= 0.9.7 =
+* Added Dashboard Widget Filtering functionality
+
 = 0.9.6 =
-* Fixed bug with Metabox initialization
+* Fixed bug with Metabox initialization if installed plugin executes wp_remove_metabox function
 
 = 0.9.5 =
 * Added pre-defined set of capabilities - Administrator, Editor, Author, Contributor, Subscriber and Clear All

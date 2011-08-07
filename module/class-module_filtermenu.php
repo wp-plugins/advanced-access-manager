@@ -52,39 +52,6 @@ class module_filterMenu extends module_User {
         }
     }
 
-    function _manage() {
-        global $menu, $submenu;
-
-        $userRoles = $this->getCurrentUserRole();
-        debug($this->cParams);
-        debug($menu);
-        debug($submenu);
-        if (is_array($userRoles)) {
-            foreach ($userRoles as $role) {
-                if (is_array($this->cParams[$role])) {
-                    foreach ($menu as $key => $menuItem) {
-                        if (is_array($this->cParams[$role]['menu'][$menuItem[2]])) {
-                            echo $menuItem[2] . '<br/>';
-                            if ($this->cParams[$role]['menu'][$menuItem[2]]['whole']) {
-                                $this->unsetMainMenuItem($menuItem[2]);
-                            } elseif (is_array($this->cParams[$role]['menu'][$menuItem[2]]['sub'])) {
-                                if (is_array($submenu[$menuItem[2]])) {
-                                    foreach ($submenu[$menuItem[2]] as $subkey => $submenuItem) {
-                                        if (isset($this->cParams[$role]['menu'][$menuItem[2]]['sub'][$submenuItem[2]])) {
-                                            $this->unsetSubMenuItem($menuItem[2], $submenuItem[2]);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            wp_die('You are not authorized to view this page');
-        }
-    }
-
     function checkAccess($requestedMenu) {
 
         $userRoles = $this->getCurrentUserRole();

@@ -29,7 +29,7 @@ class module_filterMetabox extends module_User {
         $this->cParams = get_option(WPACCESS_PREFIX . 'options');
     }
 
-    function manage() {
+    function manage($area = 'post') {
         global $wp_meta_boxes, $post;
 
         $userRoles = $this->getCurrentUserRole();
@@ -38,14 +38,34 @@ class module_filterMetabox extends module_User {
             foreach ($userRoles as $role) {
                 //   debug($this->cParams[$role]);
                 if (is_array($this->cParams[$role]) && is_array($this->cParams[$role]['metaboxes'])) {
-                    foreach ($wp_meta_boxes[$post->post_type] as $position => $metaboxes) {
-                        foreach ($metaboxes as $priority => $metaboxes1) {
-                            foreach ($metaboxes1 as $metabox => $data) {
-                                 if (isset($this->cParams[$role]['metaboxes'][$post->post_type . '-' . $metabox])) {
-                                    unset($wp_meta_boxes[$post->post_type][$position][$priority][$metabox]);
+                    switch ($area) {
+                        case 'dashboard':
+                            if (is_array($wp_meta_boxes['dashboard'])) {
+                                foreach ($wp_meta_boxes['dashboard'] as $position => $metaboxes) {
+                                    foreach ($metaboxes as $priority => $metaboxes1) {
+                                        foreach ($metaboxes1 as $metabox => $data) {
+                                            if (isset($this->cParams[$role]['metaboxes']['dashboard-' . $metabox])) {
+                                                unset($wp_meta_boxes['dashboard'][$position][$priority][$metabox]);
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                        }
+                            break;
+
+                        default:
+                            if ($wp_meta_boxes[$post->post_type]) {
+                                foreach ($wp_meta_boxes[$post->post_type] as $position => $metaboxes) {
+                                    foreach ($metaboxes as $priority => $metaboxes1) {
+                                        foreach ($metaboxes1 as $metabox => $data) {
+                                            if (isset($this->cParams[$role]['metaboxes'][$post->post_type . '-' . $metabox])) {
+                                                unset($wp_meta_boxes[$post->post_type][$position][$priority][$metabox]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            break;
                     }
                 }
             }

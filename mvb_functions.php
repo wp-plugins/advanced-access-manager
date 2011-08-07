@@ -23,7 +23,9 @@ function debug($what) {
     print_r($what);
     echo '</pre>';
 }
-*/
+ * 
+ */
+
 
 function init_wpaccess() {
     static $mvb_wpAccess;

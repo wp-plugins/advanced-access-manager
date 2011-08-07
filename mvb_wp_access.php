@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage user roles and capabilities
-  Version: 0.9.6
+  Version: 0.9.7
   Author: Vasyl Martyniuk
   Author URI: http://www.whimba.com
  */
@@ -89,7 +89,7 @@ class mvb_WPAccess extends mvb_corePlugin {
             }
 
             if ($post_type) {
-                add_filter("get_user_option_metaboxhidden_{$post_type}", array($this, 'metaboxes'), 999, 3);
+                add_action("do_meta_boxes", array($this, 'metaboxes'), 999, 3);
             }
         }
         /*
@@ -180,7 +180,7 @@ class mvb_WPAccess extends mvb_corePlugin {
      * @return mixed
      */
 
-    function metaboxes($result, $option, $user) {
+    function metaboxes($post_type, $priority, $post) {
         global $wp_meta_boxes;
 
         $currentOptions = get_option(WPACCESS_PREFIX . 'options');
@@ -197,14 +197,22 @@ class mvb_WPAccess extends mvb_corePlugin {
             if (!is_array($currentOptions['settings']['metaboxes'])) {
                 $currentOptions['settings']['metaboxes'] = array();
             }
+
             $currentOptions['settings']['metaboxes'] = array_merge($currentOptions['settings']['metaboxes'], $wp_meta_boxes);
             update_option(WPACCESS_PREFIX . 'options', $currentOptions);
         } else {
+            $screen = get_current_screen();
             $m = new module_filterMetabox();
-            $m->manage();
-        }
+            switch ($screen->id) {
+                case 'dashboard':
+                    $m->manage('dashboard');
+                    break;
 
-        return $result;
+                default:
+                    $m->manage();
+                    break;
+            }
+        }
     }
 
     /*
@@ -282,6 +290,8 @@ class mvb_WPAccess extends mvb_corePlugin {
          */
         $next = trim($_POST['next']);
         $typeList = array_keys($wp_post_types);
+        //add dashboard
+        array_unshift($typeList, 'dashboard');
         $typeQuant = count($typeList);
 
         if ($next) { //if next present, means that process continuing
@@ -299,7 +309,12 @@ class mvb_WPAccess extends mvb_corePlugin {
             $current = $typeList[0];
             $next = isset($typeList[1]) ? $typeList[1] : '';
         }
-        $url = admin_url('post-new.php?post_type=' . $current) . '&grab=metaboxes';
+        if ($current == 'dashboard') {
+            $url = admin_url('index.php') . '?grab=metaboxes';
+        } else {
+            $url = admin_url('post-new.php?post_type=' . $current) . '&grab=metaboxes';
+        }
+  
         //grab metaboxes
         $result = $this->cURL($url);
 

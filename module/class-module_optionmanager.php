@@ -239,14 +239,14 @@ class module_optionManager extends mvb_corePlugin {
                     foreach ($submenu[$menuItem[2]] as $submenuItem) {
                         $checked = $this->checkChecked('submenu', array($menuItem[2], $submenuItem[2]));
                         /*
-                        if ((strpos($submenuItem[2], '.php') === FALSE)) { //create a page url
-                            $value = $menuItem[2] . (preg_match('/\?(.*){1,}$/is', $menuItem[2]) ? '&' : '?' );
-                            $value .= 'page=' . $submenuItem[2];
-                        } else {
-                            $value = $submenuItem[2];
-                        }
+                          if ((strpos($submenuItem[2], '.php') === FALSE)) { //create a page url
+                          $value = $menuItem[2] . (preg_match('/\?(.*){1,}$/is', $menuItem[2]) ? '&' : '?' );
+                          $value .= 'page=' . $submenuItem[2];
+                          } else {
+                          $value = $submenuItem[2];
+                          }
                          * */
-                        
+
                         $markers = array(
                             '###submenu_name###' => preg_replace('/<span[^>]*?>.*?<\/span[^>]*?>/si', '', $submenuItem[0]),
                             '###value###' => $submenuItem[2],
@@ -307,13 +307,17 @@ class module_optionManager extends mvb_corePlugin {
 
         $itemTemplate = $this->templObj->retrieveSub('METABOX_LIST_ITEM', $listTemplate);
         $list = '';
+
         if (is_array($this->currentParams['settings']['metaboxes'])) {
             $plistTemplate = $this->templObj->retrieveSub('POST_METABOXES_LIST', $itemTemplate);
             $pitemTemplate = $this->templObj->retrieveSub('POST_METABOXES_ITEM', $plistTemplate);
 
             foreach ($this->currentParams['settings']['metaboxes'] as $post_type => $metaboxes) {
+
                 if (!isset($wp_post_types[$post_type])) {
-                    continue;
+                    if ($post_type != 'dashboard') {
+                        continue;
+                    }
                 }
 
                 $mList = '';
@@ -322,24 +326,27 @@ class module_optionManager extends mvb_corePlugin {
 
                         if (is_array($metaboxes2) && count($metaboxes2)) {
                             foreach ($metaboxes2 as $id => $data) {
-                                $markerArray = array(
-                                    '###priority###' => $priority,
-                                    '###internal_id###' => $post_type . '-' . $id,
-                                    '###position###' => $position,
-                                    '###checked###' => $this->checkChecked('metabox', array($post_type . '-' . $id)),
-                                    '###role###' => $this->currentRole
-                                );
-                                foreach ($data as $key => $value) {
-                                    $markerArray['###' . $key . '###'] = ($value ? $value : $data['id']);
+                                if (is_array($data)) {
+                                    $markerArray = array(
+                                        '###priority###' => $priority,
+                                        '###internal_id###' => $post_type . '-' . $id,
+                                        '###position###' => $position,
+                                        '###checked###' => $this->checkChecked('metabox', array($post_type . '-' . $id)),
+                                        '###role###' => $this->currentRole
+                                    );
+                                    foreach ($data as $key => $value) {
+                                        $markerArray['###' . $key . '###'] = ($value ? $value : $data['id']);
+                                    }
+                                    $mList .= $this->templObj->updateMarkers($markerArray, $pitemTemplate);
                                 }
-                                $mList .= $this->templObj->updateMarkers($markerArray, $pitemTemplate);
                             }
                         }
                     }
                 }
                 $tList = $this->templObj->replaceSub('POST_METABOXES_ITEM', $mList, $plistTemplate);
                 $tList = $this->templObj->replaceSub('POST_METABOXES_LIST', $mList, $itemTemplate);
-                $list .= $this->templObj->updateMarkers(array('###post_type_label###' => $wp_post_types[$post_type]->labels->name), $tList);
+                $label = ($post_type != 'dashboard' ? $wp_post_types[$post_type]->labels->name : 'Dashboard');
+                $list .= $this->templObj->updateMarkers(array('###post_type_label###' => $label), $tList);
             }
             $listTemplate = $this->templObj->replaceSub('METABOX_LIST_EMPTY', '', $listTemplate);
             $listTemplate = $this->templObj->replaceSub('METABOX_LIST_ITEM', $list, $listTemplate);
