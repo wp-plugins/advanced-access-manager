@@ -17,6 +17,8 @@ You can afford to do next things with Advanced Access Manager:
 * Add or delete capabilities for User Role
 * Create or Delete User Role
 
+[youtube http://www.youtube.com/watch?v=zkyxply_JHs]
+
 If you have any problems with current plugin, please send me and email or leave a
 message on Forums Posts.
 
