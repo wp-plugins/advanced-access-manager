@@ -376,12 +376,12 @@ function configureElements(){
     });
     
     jQuery('#main-menu-options > div').each(function(){
-        var id = jQuery(this).attr('id');
-        jQuery('#main-menu-options #'+id+' #whole').bind('click',{
-            id: id
-        }, function(){
+        //var id = jQuery(this).attr('id');
+        jQuery('#whole', this).bind('click',{
+            _this: this
+        }, function(event){
             var checked = (jQuery(this).attr('checked') ? true : false);
-            jQuery('#main-menu-options #'+id+' input:checkbox').attr('checked', checked);
+            jQuery('input:checkbox', event.data._this).attr('checked', checked);
         });
     });
     

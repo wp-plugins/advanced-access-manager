@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: user role, access manager, capability, metabox, admin menu, role manager, submenu, dashboard widget
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 0.9.8
+Stable tag: 0.9.7
 
 Graphic interface to manage User Roles and Capabilities
 
@@ -16,6 +16,8 @@ You can afford to do next things with Advanced Access Manager:
 * Filter List of Metaboxes in Edit Post page for specific User Role
 * Add or delete capabilities for User Role
 * Create or Delete User Role
+
+[youtube http://www.youtube.com/watch?v=zkyxply_JHs]
 
 If you have any problems with current plugin, please send me and email or leave a
 message on Forums Posts.
@@ -58,6 +60,8 @@ just filter Main Menu.
 
 = 0.9.8 =
 * Fixed bug with network admin dashboard
+* Fixed bug with Metabox initialization
+* Fixed bug with whole branch checkbox if menu name has incompatible symbols for element's attribute ID
 
 = 0.9.7 =
 * Added Dashboard Widget Filtering functionality

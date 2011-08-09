@@ -82,7 +82,7 @@ class mvb_WPAccess extends mvb_corePlugin {
             }
 
             if ($post_type) {
-                add_action("do_meta_boxes", array($this, 'metaboxes'), 999, 3);
+                add_action("do_meta_boxes", array($this, 'metaboxes'), 99, 3);
             }
         }
         /*
@@ -190,9 +190,10 @@ class mvb_WPAccess extends mvb_corePlugin {
             if (!is_array($currentOptions['settings']['metaboxes'])) {
                 $currentOptions['settings']['metaboxes'] = array();
             }
-
-            $currentOptions['settings']['metaboxes'] = array_merge($currentOptions['settings']['metaboxes'], $wp_meta_boxes);
-            update_option(WPACCESS_PREFIX . 'options', $currentOptions);
+            if (is_array($wp_meta_boxes[$post_type])) {
+                $currentOptions['settings']['metaboxes'][$post_type] = array_merge($currentOptions['settings']['metaboxes'][$post_type], $wp_meta_boxes[$post_type]);
+                update_option(WPACCESS_PREFIX . 'options', $currentOptions);
+            }
         } else {
             $screen = get_current_screen();
             $m = new module_filterMetabox();
@@ -307,7 +308,7 @@ class mvb_WPAccess extends mvb_corePlugin {
         } else {
             $url = admin_url('post-new.php?post_type=' . $current) . '&grab=metaboxes';
         }
-  
+
         //grab metaboxes
         $result = $this->cURL($url);
 
@@ -332,7 +333,7 @@ class mvb_WPAccess extends mvb_corePlugin {
 
         check_ajax_referer(WPACCESS_PREFIX . 'ajax');
 
-        $url = esc_url($_POST['url']);
+        $url = trim($_POST['url']);
         if ($url) {
             $url = add_query_arg('grab', 'metaboxes', $url);
             $result = $this->cURL($url);
@@ -430,7 +431,6 @@ class mvb_WPAccess extends mvb_corePlugin {
         die($m->getMainOptionsList());
     }
 
-   
     /*
      * Main function for checking if user has access to a page
      * 
