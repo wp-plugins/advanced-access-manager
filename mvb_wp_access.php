@@ -63,6 +63,9 @@ class mvb_WPAccess extends mvb_corePlugin {
             add_action('wp_print_scripts', array($this, 'wp_print_scripts'), 1);
             add_action('admin_action_render_rolelist', array($this, 'render_rolelist'));
 
+            //Add Capabilities WP core forgot to
+            add_filter('map_meta_cap', array($this, 'map_meta_cap'), 10, 4);
+
             //ajax
             add_action('wp_ajax_mvbam', array($this, 'ajax'));
 
@@ -92,11 +95,27 @@ class mvb_WPAccess extends mvb_corePlugin {
         add_action('wp_loaded', array($this, 'check'), 999);
     }
 
+    public function map_meta_cap($caps, $cap, $user_id, $args) {
+
+        switch ($cap) {
+            case 'edit_comment':
+                $caps[] = 'edit_comment';
+                break;
+
+            default:
+                break;
+        }
+
+        return $caps;
+    }
+
     /*
      * Ajax interface
      */
 
     public function ajax() {
+
+        check_ajax_referer(WPACCESS_PREFIX . 'ajax');
 
         switch ($_POST['sub_action']) {
             case 'restore_role':
@@ -123,10 +142,113 @@ class mvb_WPAccess extends mvb_corePlugin {
                 $this->initiate_url();
                 break;
 
+            case 'add_capability':
+                $this->add_capability();
+                break;
+
+            case 'delete_capability':
+                $this->delete_capability();
+                break;
+
             default:
                 die();
                 break;
         }
+    }
+
+    /*
+     * Add New Capability
+     * 
+     */
+
+    protected function add_capability() {
+        global $wpdb;
+
+        $cap = strtolower(trim($_POST['cap']));
+
+        if ($cap) {
+            $cap = str_replace(array(' ', "'", '"'), array('_', '', ''), $cap);
+            $m = new module_User();
+            $capList = $m->getAllCaps();
+
+            if (!isset($capList[$cap])) { //create new capability
+                $roles = get_option($wpdb->prefix . 'user_roles');
+                $roles['administrator']['capabilities'][$cap] = 1; //add this role for admin automatically
+                update_option($wpdb->prefix . 'user_roles', $roles);
+                //save this capability as custom created
+                $custom_caps = get_option(WPACCESS_PREFIX . 'custom_caps');
+                if (!is_array($custom_caps)) {
+                    $custom_caps = array();
+                }
+                $custom_caps[] = $cap;
+                update_option(WPACCESS_PREFIX . 'custom_caps', $custom_caps);
+                //render html
+                $tmpl = new mvb_coreTemplate();
+                $templatePath = WPACCESS_TEMPLATE_DIR . 'admin_options.html';
+                $template = $tmpl->readTemplate($templatePath);
+                $listTemplate = $tmpl->retrieveSub('CAPABILITY_LIST', $template);
+                $itemTemplate = $tmpl->retrieveSub('CAPABILITY_ITEM', $listTemplate);
+                $markers = array(
+                    '###role###' => $_POST['role'],
+                    '###title###' => $cap,
+                    '###description###' => '',
+                    '###checked###' => 'checked',
+                    '###cap_name###' => $m->getCapabilityHumanTitle($cap)
+                );
+                $titem = $tmpl->updateMarkers($markers, $itemTemplate);
+                $titem = $tmpl->replaceSub('CAPABILITY_DELETE', $tmpl->retrieveSub('CAPABILITY_DELETE', $titem), $titem);
+
+                $result = array(
+                    'status' => 'success',
+                    'html' => $titem
+                );
+            } else {
+                $result = array(
+                    'status' => 'error',
+                    'message' => 'Capability ' . $_POST['cap'] . ' already exists'
+                );
+            }
+        } else {
+            $result = array(
+                'status' => 'error',
+                'message' => 'Empty Capability'
+            );
+        }
+
+        die(json_encode($result));
+    }
+
+    /*
+     * Delete capability
+     */
+
+    protected function delete_capability() {
+        global $wpdb;
+
+        $cap = trim($_POST['cap']);
+        $custom_caps = get_option(WPACCESS_PREFIX . 'custom_caps');
+
+        if (in_array($cap, $custom_caps)) {
+            $roles = get_option($wpdb->prefix . 'user_roles');
+            if (is_array($roles)) {
+                foreach ($roles as &$role) {
+                    if (isset($role['capabilities'][$cap])) {
+                        unset($role['capabilities'][$cap]);
+                    }
+                }
+            }
+            update_option($wpdb->prefix . 'user_roles', $roles);
+            $result = array(
+                'status' => 'success'
+            );
+        } else {
+            $result = array(
+                'status' => 'error',
+                'message' => 'Current Capability can not be deleted'
+            );
+        }
+
+        die(json_encode($result));
     }
 
     /*
@@ -393,15 +515,11 @@ class mvb_WPAccess extends mvb_corePlugin {
 
     function render_metabox_list() {
 
-        check_ajax_referer(WPACCESS_PREFIX . 'ajax');
-
         $m = new module_optionManager($_POST['role']);
         die($m->renderMetaboxList($m->getTemplate()));
     }
 
     function create_role() {
-
-        check_ajax_referer(WPACCESS_PREFIX . 'ajax');
 
         $m = new module_Roles();
         $result = $m->createNewRole($_POST['role']);
@@ -415,16 +533,12 @@ class mvb_WPAccess extends mvb_corePlugin {
 
     function delete_role() {
 
-        check_ajax_referer(WPACCESS_PREFIX . 'ajax');
-
         $m = new module_Roles();
         $m->remove_role($_POST['role']);
         die();
     }
 
     function render_rolelist() {
-
-        check_ajax_referer(WPACCESS_PREFIX . 'ajax');
 
         $m = new module_optionManager($_POST['role']);
         $or_roles = get_option(WPACCESS_PREFIX . 'original_user_roles');

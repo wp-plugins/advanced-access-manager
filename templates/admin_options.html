@@ -72,8 +72,8 @@
                             <div id="metabox-list">
                                 <!-- ###METABOX_LIST_ITEM### begin-->
                                 <div>
-                                   <h4><a href="#" >###post_type_label###</a></h4>
-                                   <div>
+                                    <h4><a href="#" >###post_type_label###</a></h4>
+                                    <div>
                                         <!-- ###POST_METABOXES_LIST### begin-->    
                                         <!-- ###POST_METABOXES_ITEM### begin-->    
                                         <div class="postbox metabox-item" >
@@ -101,14 +101,14 @@
                                                 </table>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- ###POST_METABOXES_ITEM### end--> 
                                         <!-- ###POST_METABOXES_LIST### end--> 
-                                   </div>
+                                    </div>
                                 </div>
                                 <!--
                                 
-                        -->
+                                -->
                                 <!-- ###METABOX_LIST_ITEM### end-->
                                 <!-- ###METABOX_LIST_EMPTY### begin-->
                                 <div class="ui-widget">
@@ -125,14 +125,24 @@
                             <!-- ###CAPABILITY_LIST### begin-->
                             <!-- ###CAPABILITY_ITEM### begin-->
                             <div class="capability-item">
-                                <input type="checkbox" id="cap-###title###" name="wpaccess[###role###][advance][###title###]" value="1" ###checked### />
-                                       &nbsp;&nbsp;<label for="cap-###title###">###cap_name###</label>&nbsp;&nbsp;<span title="###description###" class="info">?</span>
+                                <div class="capability-name">
+                                    <input type="checkbox" id="cap-###title###" name="wpaccess[###role###][advance][###title###]" value="1" ###checked### />
+                                           &nbsp;&nbsp;<label for="cap-###title###">###cap_name###</label>
+                                </div>
+                                <div class="info" title="Click for Tooltip"><div title="###description###" class="capability-description"></div></div>
+                                <!-- ###CAPABILITY_DELETE### begin-->
+                                <div class="capability-delete" onclick="mObj.deleteCapability('###title###', '###cap_name###');" title="Delete Capability"></div>
+                                <!-- ###CAPABILITY_DELETE### end-->
+                                <br class="clear" />
                             </div>
                             <!-- ###CAPABILITY_ITEM### end-->
                             <br class="clear" />
-
-                            <div class="default-roles">
-                                <div id="radio-list">
+                            <!-- ###CAPABILITY_LIST### end-->
+                            <div class="additional-panel">
+                                <div class="new-capability">
+                                    <a href="#" id="new-capability" title="Add New Capability">Add New Cap</a>
+                                </div>
+                                <div class="default-roles">
                                     <input type="radio" id="radio1" name="radio" onclick="mObj.changeCapabilities('radio1');" /><label for="radio1" title="Give Administrator's List of Capabilities">Administrator</label>
                                     <input type="radio" id="radio2" name="radio" onclick="mObj.changeCapabilities('radio2');" /><label for="radio2" title="Give Editor's List of Capabilities">Editor</label>
                                     <input type="radio" id="radio3" name="radio" onclick="mObj.changeCapabilities('radio3');" /><label for="radio3" title="Give Author's List of Capabilities">Author</label>
@@ -140,9 +150,8 @@
                                     <input type="radio" id="radio5" name="radio" onclick="mObj.changeCapabilities('radio5');" /><label for="radio5" title="Give Subscriber's List of Capabilities">Subscriber</label>
                                     <input type="radio" id="radio6" name="radio" onclick="mObj.changeCapabilities('radio6');" /><label for="radio6" title="Clear all Capabilities">Clear All</label>
                                 </div>
+                                <br class="clear" />
                             </div>
-                            <br class="clear" />
-                            <!-- ###CAPABILITY_LIST### end-->
                         </div>
                     </div>
                     <!-- ###MAIN_OPTIONS_LIST### end-->
@@ -214,9 +223,6 @@
                                             <!-- ###DELETE_ROLE_ITEM### end-->
                                         </tbody>
                                     </table>
-                                    <div id="dialog-delete-confirm" class="dialog" title="Delete Role?">
-                                        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 5px 0;"></span>Please confirm deleting Role - <span id="delete-role-title"></span></p>
-                                    </div>
                                     <!-- ###DELETE_ROLE_LIST### end-->
                                 </div>
                                 <div id="role_tab-2">
@@ -237,7 +243,7 @@
                                 <div class="ui-widget">
                                     <div class="ui-state-error ui-corner-all" style="margin-top:5px; padding: 0 .7em;"> 
                                         <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
-                                            <strong>Error:</strong> Role Already Exists</p>
+                                            <strong>Error:</strong> Role can't be created</p>
                                     </div>
                                 </div>
                             </div>
@@ -262,10 +268,19 @@
             </div>
         </div>
     </form>
+    <div id="dialog-delete-confirm" class="dialog" title="Delete Role?">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 5px 0;"></span>Please confirm deleting Role - <b><span id="delete-role-title"></span></b></p>
+    </div>
+     <div id="dialog-delete-capability" class="dialog" title="Delete Capability?">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 5px 0;"></span>Please confirm deleting Capability - <b><span id="delete-capability-title"></span></b></p>
+    </div>
     <div id="dialog-confirm" class="dialog" title="Restore Default Role Settings?">
         <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>All current settings will be lost. Are you sure?</p>
     </div>
     <div id="leave-confirm" class="dialog" title="Leave Without Saving?">
         <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Some changed detected. Are you sure that you want to leave without saving</p>
+    </div>
+    <div id="capability-form" class="dialog" title="Add New Capability">
+        <input type="text" value="" id="new-cap" name="new-cap" />
     </div>
 </div>

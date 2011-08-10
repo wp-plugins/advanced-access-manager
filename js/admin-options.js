@@ -193,17 +193,70 @@ mvbam_object.prototype.configureMetaboxes = function(){
 }
 
 mvbam_object.prototype.configureCapabilities = function(){
-    jQuery(".capability-item span").each(function(){
+    var _this = this;
+    jQuery(".capability-description").each(function(){
         if(jQuery(this).attr('title')){
             jQuery(this).tooltip({
-                position : 'center right'
+                position : 'center right',
+                events : {
+                    def:     "click,mouseout",
+                    input:   "focus,blur",
+                    widget:  "focus mouseover,blur mouseout",
+                    tooltip: "mouseover,mouseout"
+                }
             });
         }else{
             jQuery(this).remove();
         }
     });
     
-    jQuery('#radio-list').buttonset();
+    jQuery('.default-roles').buttonset();
+    jQuery('#new-capability').button({
+        icons: {
+            primary: "ui-icon-plus"
+        }
+    }).bind('click', function(e){
+        e.preventDefault();
+        _this.addNewCapability();
+    });
+}
+
+mvbam_object.prototype.addNewCapability = function(){
+    jQuery( "#capability-form #new-cap" ).val('').focus();
+    jQuery( "#capability-form" ).dialog({
+        resizable: false,
+        height:150,
+        modal: false,
+        buttons: {
+            "Add Capability": function() {
+                var cap = jQuery( "#capability-form #new-cap" ).val();
+                
+                if (jQuery.trim(cap)){
+                    jQuery( this ).dialog( "close" );
+                    var params = {
+                        'action' : 'mvbam',
+                        'sub_action' : 'add_capability',
+                        '_ajax_nonce': wpaccessLocal.nonce,
+                        'cap' : cap,
+                        'role' : jQuery('#role').val()
+                    };
+                    jQuery.post(ajaxurl, params, function(data){
+                        if (data.status == 'success'){
+                            jQuery('.capability-item:last').after(data.html);
+                            jQuery('.capability-item:last .info').remove();
+                        }else{
+                            alert(data.message);
+                        }
+                    }, 'json');
+                }else{
+                    jQuery( "#capability-form #new-cap" ).effect('highlight', 5000);
+                }
+            },
+            Cancel: function() {
+                jQuery( this ).dialog( "close" );
+            }
+        }
+    });
 }
 
 mvbam_object.prototype.emergencyCall = function(data){
@@ -283,7 +336,7 @@ mvbam_object.prototype.grabInitiatedWM = function(){
 }
 
 mvbam_object.prototype.configureAccordion = function(selector){
-     var icons = {
+    var icons = {
         header: "ui-icon-circle-arrow-e",
         headerSelected: "ui-icon-circle-arrow-s"
     };
@@ -416,6 +469,38 @@ mvbam_object.prototype.removeAjaxLoader = function(selector){
     jQuery(selector).removeClass('loading-new');
     jQuery('.ajax-loader-big').remove();
 }
+
+mvbam_object.prototype.deleteCapability = function(cap, label){
+    jQuery('#delete-capability-title').html(label);
+    var _this = this;
+    jQuery( "#dialog-delete-capability" ).dialog({
+        resizable: false,
+        height:180,
+        modal: true,
+        buttons: {
+            "Delete Capability": function() {
+                var params = {
+                    'action' : 'mvbam',
+                    'sub_action' : 'delete_capability',
+                    '_ajax_nonce': wpaccessLocal.nonce,
+                    'cap' : cap
+                };
+                jQuery.post(ajaxurl, params, function(data){ 
+                    if (data.status == 'success'){
+                        jQuery('#cap-' + cap).parent().parent().remove();
+                    }else{
+                        alert(data.message);
+                    }
+                }, 'json');
+                jQuery( this ).dialog( "close" );
+            },
+            Cancel: function() {
+                jQuery( this ).dialog( "close" );
+            }
+        }
+    });
+}
+
 //**********************************************
 
 jQuery(document).ready(function(){
@@ -465,14 +550,14 @@ jQuery(document).ready(function(){
         }
     });
     jQuery('#new-role-name').keypress(function(event){
-        if (event.keyCode == 13){
+        if (event.which == 13){
             event.preventDefault();
             mObj.addNewRole();
         };
     });
     
     jQuery('#wp-access').keypress(function(event){
-        if (event.keyCode == 13){
+        if (event.which == 13){
             event.preventDefault();
         };
     });
@@ -501,12 +586,10 @@ jQuery(document).ready(function(){
     });
     
     jQuery('#wp-access').bind('change', function(e){
-        e.preventDefault();
         mObj.formChanged++; 
     });
     
     jQuery('#role').bind('change', function(e){
-        e.preventDefault();
         mObj.formChanged -= 1;
     });
 

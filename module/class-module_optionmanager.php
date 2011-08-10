@@ -85,6 +85,10 @@ class module_optionManager extends mvb_corePlugin {
         $templatePath = WPACCESS_TEMPLATE_DIR . 'admin_options.html';
         $this->template = $this->templObj->readTemplate($templatePath);
         $this->roles = get_option($table_prefix . 'user_roles');
+        $this->custom_caps = get_option(WPACCESS_PREFIX . 'custom_caps');
+        if (!is_array($this->custom_caps)){
+            $this->custom_caps = array();
+        }
         $roleList = array_keys($this->roles);
         /*
          * Expecting that there are more then 1 role :)
@@ -270,6 +274,7 @@ class module_optionManager extends mvb_corePlugin {
          */
         $m = new module_User();
         $capList = $m->getAllCaps();
+
         $listTemplate = $this->templObj->retrieveSub('CAPABILITY_LIST', $template);
         $itemTemplate = $this->templObj->retrieveSub('CAPABILITY_ITEM', $listTemplate);
         $list = '';
@@ -282,7 +287,13 @@ class module_optionManager extends mvb_corePlugin {
                     '###checked###' => $this->checkChecked('capability', array($cap)),
                     '###cap_name###' => $m->getCapabilityHumanTitle($cap)
                 );
-                $list .= $this->templObj->updateMarkers($markers, $itemTemplate);
+                $titem = $this->templObj->updateMarkers($markers, $itemTemplate);
+                if (!in_array($cap, $this->custom_caps)){
+                    $titem = $this->templObj->replaceSub('CAPABILITY_DELETE', '', $titem);
+                }else{
+                    $titem = $this->templObj->replaceSub('CAPABILITY_DELETE', $this->templObj->retrieveSub('CAPABILITY_DELETE', $titem), $titem);
+                }
+                $list .= $titem;
             }
         }
         $listTemplate = $this->templObj->replaceSub('CAPABILITY_ITEM', $list, $listTemplate);

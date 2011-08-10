@@ -9,13 +9,18 @@ Graphic interface to manage User Roles and Capabilities
 
 == Description ==
 
+If you want to filter Admin Menu for some User Roles or just delete unnecessary 
+dashboard widgets or metaboxes in Edit Post Page, this plugin is for you.
 You can afford to do next things with Advanced Access Manager:
 
 * Filter Admin Menu for specific User Role
 * Filter Dashboard Widgets for specific User Role
 * Filter List of Metaboxes in Edit Post page for specific User Role
-* Add or delete capabilities for User Role
-* Create or Delete User Role
+* Add new User Capabilities
+* Delete created User Capabilities
+* Create new User Roles
+* Delete any User Role
+* Save current User Roles settings and restore later
 
 [youtube http://www.youtube.com/watch?v=zkyxply_JHs]
 
@@ -66,6 +71,7 @@ After Advanced Access Manager deactivation, all setting will be restored automat
 == Changelog ==
 
 = 0.9.8 =
+* Added ability to add or remove Capabilities
 * Fixed bug with network admin dashboard
 * Fixed bug with Metabox initialization
 * Fixed bug with whole branch checkbox if menu name has incompatible symbols for element's attribute ID
@@ -76,7 +82,7 @@ After Advanced Access Manager deactivation, all setting will be restored automat
 * Changed bothering tooltip behavior
 * Fixed bug with General metabox on Access Manager Option page
 * Changed some labels
-* Added autohide for message Options Updated after 10 sec  
+* Added auto-hide for message Options Updated after 10 sec
 
 = 0.9.7 =
 * Added Dashboard Widget Filtering functionality
