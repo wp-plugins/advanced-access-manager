@@ -1,5 +1,9 @@
-#tabs{
-    visibility:hidden;
+#wp-access{
+    display:none;
+}
+
+#metabox-list{
+    margin-top: 20px;
 }
 
 #current-role-display{
@@ -41,9 +45,9 @@
 
 .initiate-url-empty{
     position:absolute;
-    margin: 9px 0 0 7px;
+    margin: 8px 0 0 7px;
     color: #9E9B9B;
-    font: 11px "Lucida Grande", Verdana, Arial, "Bitstream Vera Sans", sans-serif
+    font: 12px "Lucida Grande", Verdana, Arial, "Bitstream Vera Sans", sans-serif
 }
 
 .delete-role-table td{
@@ -145,6 +149,10 @@
     font-weight: bold;
 }
 
+.info{
+    font-weight: bold;
+}
+
 #progressbar{
     height: 22px;
     width:98%;
@@ -164,6 +172,7 @@
 .metabox-item{
     width: 280px;
     float:left;
+    margin-left: 10px;
 }
 
 .metabox-description th{
@@ -174,10 +183,6 @@
 
 .metabox-description td{
     padding: 5px 0 0 15px;
-}
-.metabox-seperator{
-    width:20px;
-    float:left;
 }
 
 .initiate-url-text{
