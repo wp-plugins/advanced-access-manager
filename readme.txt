@@ -3,19 +3,24 @@ Contributors: vasyl_m
 Tags: user role, access manager, capability, metabox, admin menu, role manager, submenu, dashboard widget
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 0.9.7
+Stable tag: 0.9.8
 
 Graphic interface to manage User Roles and Capabilities
 
 == Description ==
 
+If you want to filter Admin Menu for some User Roles or just delete unnecessary 
+dashboard widgets or metaboxes in Edit Post Page, this plugin is for you.
 You can afford to do next things with Advanced Access Manager:
 
 * Filter Admin Menu for specific User Role
 * Filter Dashboard Widgets for specific User Role
 * Filter List of Metaboxes in Edit Post page for specific User Role
-* Add or delete capabilities for User Role
-* Create or Delete User Role
+* Add new User Capabilities
+* Delete created User Capabilities
+* Create new User Roles
+* Delete any User Role
+* Save current User Roles settings and restore later
 
 [youtube http://www.youtube.com/watch?v=zkyxply_JHs]
 
@@ -48,7 +53,14 @@ The reason is that Main Menu Tab is not directly related to list of Capabilities
 It means, if you selected/deselected some Menus or Submenus it will not add/delete
 capabilities to current User Role. In such way if you want to give somebody access
 to backend I'm recommending to use predefined set of options - Editor and then
-just filter Main Menu. 
+just filter Main Menu.
+
+= What is Restore Default link near Save button? =
+
+Advanced Access Manager has implemented activation hook which will store all User
+Roles defined in system with the list of capabilities. So if you did something wrong,
+you'll be able to restore original settings.
+After Advanced Access Manager deactivation, all setting will be restored automatically.
 
 == Screenshots ==
 
@@ -57,6 +69,20 @@ just filter Main Menu.
 3. List of Capabilities
 
 == Changelog ==
+
+= 0.9.8 =
+* Added ability to add or remove Capabilities
+* Fixed bug with network admin dashboard
+* Fixed bug with Metabox initialization
+* Fixed bug with whole branch checkbox if menu name has incompatible symbols for element's attribute ID
+* Changed metabox list view
+* Auto hide/show "Restore Default" link according to current User Role
+* Optimized JavaScript and CSS
+* Deleted Empty submenu holder. For example - Comments
+* Changed bothering tooltip behavior
+* Fixed bug with General metabox on Access Manager Option page
+* Changed some labels
+* Added auto-hide for message Options Updated after 10 sec
 
 = 0.9.7 =
 * Added Dashboard Widget Filtering functionality

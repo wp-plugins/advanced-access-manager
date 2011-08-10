@@ -85,6 +85,10 @@ class module_optionManager extends mvb_corePlugin {
         $templatePath = WPACCESS_TEMPLATE_DIR . 'admin_options.html';
         $this->template = $this->templObj->readTemplate($templatePath);
         $this->roles = get_option($table_prefix . 'user_roles');
+        $this->custom_caps = get_option(WPACCESS_PREFIX . 'custom_caps');
+        if (!is_array($this->custom_caps)){
+            $this->custom_caps = array();
+        }
         $roleList = array_keys($this->roles);
         /*
          * Expecting that there are more then 1 role :)
@@ -136,7 +140,6 @@ class module_optionManager extends mvb_corePlugin {
             '###message_class###' => (isset($_POST['submited']) ? 'message-active' : 'message-passive'),
             '###nonce###' => wp_nonce_field(WPACCESS_PREFIX . 'options'),
             '###metabox_general_info###' => $this->postbox('metabox-wpaccess-general', 'General Info', '<p>For <b>Main Menu</b> and <b>Metaboxes</b> select proper checkbox to restrict access to resource. For Capabilities - select proper checkbox to give new capability for role</p>'),
-            '###metabox_support###' => $this->postbox('metabox-wpaccess-support', 'Support', '<p>Any questions or problems? Please mail me <a href= "mailto:admin@whimba.com" >admin@whimba.com</a> or follow me on <a href="http://www.twitter.com/whimba" target="_blank">Twitter</a></p>'),
         );
         $content = $this->templObj->updateMarkers($markerArray, $content);
 
@@ -238,27 +241,19 @@ class module_optionManager extends mvb_corePlugin {
                 if (isset($submenu[$menuItem[2]]) && is_array($submenu[$menuItem[2]])) {
                     foreach ($submenu[$menuItem[2]] as $submenuItem) {
                         $checked = $this->checkChecked('submenu', array($menuItem[2], $submenuItem[2]));
-                        /*
-                          if ((strpos($submenuItem[2], '.php') === FALSE)) { //create a page url
-                          $value = $menuItem[2] . (preg_match('/\?(.*){1,}$/is', $menuItem[2]) ? '&' : '?' );
-                          $value .= 'page=' . $submenuItem[2];
-                          } else {
-                          $value = $submenuItem[2];
-                          }
-                         * */
 
                         $markers = array(
-                            '###submenu_name###' => preg_replace('/<span[^>]*?>.*?<\/span[^>]*?>/si', '', $submenuItem[0]),
+                            '###submenu_name###' => $this->removeHTML($submenuItem[0]),
                             '###value###' => $submenuItem[2],
                             '###checked###' => $checked
                         );
                         $subList .= $this->templObj->updateMarkers($markers, $subitemTemplate);
                     }
+                    $subList = $this->templObj->replaceSub('MAIN_MENU_SUBITEM', $subList, $sublistTemplate);
                 }
-                $subList = $this->templObj->replaceSub('MAIN_MENU_SUBITEM', $subList, $sublistTemplate);
                 $tTempl = $this->templObj->replaceSub('MAIN_MENU_SUBLIST', $subList, $itemTemplate);
                 $markers = array(
-                    '###name###' => preg_replace('/<span[^>]*?>.*?<\/span[^>]*?>/si', '', $menuItem[0]),
+                    '###name###' => $this->removeHTML($menuItem[0]),
                     '###id###' => $menuItem[5],
                     '###menu###' => $menuItem[2],
                     '###role###' => $this->currentRole,
@@ -279,6 +274,7 @@ class module_optionManager extends mvb_corePlugin {
          */
         $m = new module_User();
         $capList = $m->getAllCaps();
+
         $listTemplate = $this->templObj->retrieveSub('CAPABILITY_LIST', $template);
         $itemTemplate = $this->templObj->retrieveSub('CAPABILITY_ITEM', $listTemplate);
         $list = '';
@@ -291,7 +287,13 @@ class module_optionManager extends mvb_corePlugin {
                     '###checked###' => $this->checkChecked('capability', array($cap)),
                     '###cap_name###' => $m->getCapabilityHumanTitle($cap)
                 );
-                $list .= $this->templObj->updateMarkers($markers, $itemTemplate);
+                $titem = $this->templObj->updateMarkers($markers, $itemTemplate);
+                if (!in_array($cap, $this->custom_caps)){
+                    $titem = $this->templObj->replaceSub('CAPABILITY_DELETE', '', $titem);
+                }else{
+                    $titem = $this->templObj->replaceSub('CAPABILITY_DELETE', $this->templObj->retrieveSub('CAPABILITY_DELETE', $titem), $titem);
+                }
+                $list .= $titem;
             }
         }
         $listTemplate = $this->templObj->replaceSub('CAPABILITY_ITEM', $list, $listTemplate);
@@ -307,6 +309,7 @@ class module_optionManager extends mvb_corePlugin {
 
         $itemTemplate = $this->templObj->retrieveSub('METABOX_LIST_ITEM', $listTemplate);
         $list = '';
+
 
         if (is_array($this->currentParams['settings']['metaboxes'])) {
             $plistTemplate = $this->templObj->retrieveSub('POST_METABOXES_LIST', $itemTemplate);
@@ -326,7 +329,10 @@ class module_optionManager extends mvb_corePlugin {
 
                         if (is_array($metaboxes2) && count($metaboxes2)) {
                             foreach ($metaboxes2 as $id => $data) {
+
                                 if (is_array($data)) {
+                                    //strip html for metaboxes. The reason - dashboard metaboxes
+                                    $data['title'] = $this->removeHTML($data['title']);
                                     $markerArray = array(
                                         '###priority###' => $priority,
                                         '###internal_id###' => $post_type . '-' . $id,
@@ -357,6 +363,18 @@ class module_optionManager extends mvb_corePlugin {
         }
 
         return $listTemplate;
+    }
+
+    function removeHTML($text) {
+        $text = preg_replace(
+                array(
+            "'<span[^>]*?>.*?</span[^>]*?>'si",
+                ), '', $text);
+
+        $text = preg_replace('/<a[^>]*href[[:space:]]*=[[:space:]]*["\']?[[:space:]]*javascript[^>]*/i', '', $text);
+
+        // Return clean content
+        return $text;
     }
 
     function checkChecked($type, $args) {
