@@ -82,7 +82,7 @@ class mvb_WPAccess extends mvb_corePlugin {
             }
 
             if ($post_type) {
-                add_action("do_meta_boxes", array($this, 'metaboxes'), 99, 3);
+                add_action("do_meta_boxes", array($this, 'metaboxes'), 999, 3);
             }
         }
         /*
@@ -183,13 +183,12 @@ class mvb_WPAccess extends mvb_corePlugin {
          * This process starts when admin click on "Refresh List" or "Initialize list"
          * on User->Access Manager page
          */
+
         if (isset($_GET['grab']) && ($_GET['grab'] == 'metaboxes')) {
-            if (!is_array($currentOptions['settings'])) {
-                $currentOptions['settings'] = array();
+            if (!is_array($currentOptions['settings']['metaboxes'][$post_type])) {
+                $currentOptions['settings']['metaboxes'][$post_type] = array();
             }
-            if (!is_array($currentOptions['settings']['metaboxes'])) {
-                $currentOptions['settings']['metaboxes'] = array();
-            }
+
             if (is_array($wp_meta_boxes[$post_type])) {
                 $currentOptions['settings']['metaboxes'][$post_type] = array_merge($currentOptions['settings']['metaboxes'][$post_type], $wp_meta_boxes[$post_type]);
                 update_option(WPACCESS_PREFIX . 'options', $currentOptions);
@@ -285,8 +284,8 @@ class mvb_WPAccess extends mvb_corePlugin {
         $next = trim($_POST['next']);
         $typeList = array_keys($wp_post_types);
         //add dashboard
-        array_unshift($typeList, 'dashboard');
-        $typeQuant = count($typeList);
+        // array_unshift($typeList, 'dashboard');
+        $typeQuant = count($typeList) + 1;
 
         if ($next) { //if next present, means that process continuing
             $i = 0;
@@ -300,13 +299,13 @@ class mvb_WPAccess extends mvb_corePlugin {
                 $next = FALSE;
             }
         } else { //this is the beggining
-            $current = $typeList[0];
-            $next = isset($typeList[1]) ? $typeList[1] : '';
+            $current = 'dashboard';
+            $next = isset($typeList[0]) ? $typeList[0] : '';
         }
         if ($current == 'dashboard') {
-            $url = admin_url('index.php') . '?grab=metaboxes';
+            $url = add_query_arg('grab', 'metaboxes', admin_url('index.php'));
         } else {
-            $url = admin_url('post-new.php?post_type=' . $current) . '&grab=metaboxes';
+            $url = add_query_arg('grab', 'metaboxes', admin_url('post-new.php?post_type=' . $current));
         }
 
         //grab metaboxes
@@ -333,7 +332,7 @@ class mvb_WPAccess extends mvb_corePlugin {
 
         check_ajax_referer(WPACCESS_PREFIX . 'ajax');
 
-        $url = trim($_POST['url']);
+        $url = $_POST['url'];
         if ($url) {
             $url = add_query_arg('grab', 'metaboxes', $url);
             $result = $this->cURL($url);
@@ -428,7 +427,13 @@ class mvb_WPAccess extends mvb_corePlugin {
         check_ajax_referer(WPACCESS_PREFIX . 'ajax');
 
         $m = new module_optionManager($_POST['role']);
-        die($m->getMainOptionsList());
+        $or_roles = get_option(WPACCESS_PREFIX . 'original_user_roles');
+        $result = array(
+            'html' => $m->getMainOptionsList(),
+            'restorable' => ($or_roles[$_POST['role']] ? TRUE : FALSE)
+        );
+
+        die(json_encode($result));
     }
 
     /*

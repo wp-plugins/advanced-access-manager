@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: user role, access manager, capability, metabox, admin menu, role manager, submenu, dashboard widget
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 0.9.7
+Stable tag: 0.9.8
 
 Graphic interface to manage User Roles and Capabilities
 
@@ -48,7 +48,14 @@ The reason is that Main Menu Tab is not directly related to list of Capabilities
 It means, if you selected/deselected some Menus or Submenus it will not add/delete
 capabilities to current User Role. In such way if you want to give somebody access
 to backend I'm recommending to use predefined set of options - Editor and then
-just filter Main Menu. 
+just filter Main Menu.
+
+= What is Restore Default link near Save button? =
+
+Advanced Access Manager has implemented activation hook which will store all User
+Roles defined in system with the list of capabilities. So if you did something wrong,
+you'll be able to restore original settings.
+After Advanced Access Manager deactivation, all setting will be restored automatically.
 
 == Screenshots ==
 
@@ -62,6 +69,14 @@ just filter Main Menu.
 * Fixed bug with network admin dashboard
 * Fixed bug with Metabox initialization
 * Fixed bug with whole branch checkbox if menu name has incompatible symbols for element's attribute ID
+* Changed metabox list view
+* Auto hide/show "Restore Default" link according to current User Role
+* Optimized JavaScript and CSS
+* Deleted Empty submenu holder. For example - Comments
+* Changed bothering tooltip behavior
+* Fixed bug with General metabox on Access Manager Option page
+* Changed some labels
+* Added autohide for message Options Updated after 10 sec  
 
 = 0.9.7 =
 * Added Dashboard Widget Filtering functionality
