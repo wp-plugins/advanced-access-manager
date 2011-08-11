@@ -343,6 +343,16 @@ class mvb_WPAccess extends mvb_corePlugin {
         $roles = get_option($wpdb->prefix . 'user_roles');
         //save current setting to DB
         update_option(WPACCESS_PREFIX . 'original_user_roles', $roles);
+        //add custom capabilities
+        $custom_caps = get_option(WPACCESS_PREFIX . 'custom_caps');
+        if (!is_array($custom_caps)) {
+            $custom_caps = array();
+        }
+        $custom_caps[] = 'edit_comment';
+        update_option(WPACCESS_PREFIX . 'custom_caps', $custom_caps);
+        $roles = get_option($wpdb->prefix . 'user_roles');
+        $roles['administrator']['capabilities']['edit_comment'] = 1; //add this role for admin automatically
+        update_option($wpdb->prefix . 'user_roles', $roles);
     }
 
     /*
