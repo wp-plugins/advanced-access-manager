@@ -1,7 +1,7 @@
 === Advanced Access Manager ===
 Contributors: vasyl_m
 Donate link: http://whimba.com/advanced-access-manager-donation/
-Tags: user role, access manager, capability, metabox, admin menu, role manager, submenu, dashboard widget
+Tags: user role, access manager, capability, metabox, user access, filter admin menu, role manager, dashboard widget, access control
 Requires at least: 3.0
 Tested up to: 3.2.1
 Stable tag: 0.9.8
