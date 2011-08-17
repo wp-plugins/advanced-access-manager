@@ -44,6 +44,12 @@ the list of metaboxes for each post in status auto-draft. So that is why you hav
 manually put the URL to the edit post page where list of additional metaboxes could
 be picked by the plugin.
 
+= I can't edit comments. What should I do? =
+
+To be able to edit comments, just go to Capabilities Tab and add new Capability - 
+"Edit Comment". For administrator it'll automatically checked and this will allow
+to configure comment editing for other roles.
+
 = Why I can't delete a Role on Role Manager metabox? =
 
 If there is at least one user with current role, you will be not able to delete it
