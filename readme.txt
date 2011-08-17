@@ -1,7 +1,7 @@
 === Advanced Access Manager ===
 Contributors: vasyl_m
 Donate link: http://whimba.com/advanced-access-manager-donation/
-Tags: user role, access manager, capability, metabox, user access, filter admin menu, role manager, dashboard widget, access control 
+Tags: user role, access manager, capability, metabox, user access, filter admin menu, role manager, dashboard widget, access control
 Requires at least: 3.0
 Tested up to: 3.2.1
 Stable tag: 0.9.8
@@ -43,6 +43,12 @@ custom metabox "Photos" only if Post Status is Published. Access Manager initiat
 the list of metaboxes for each post in status auto-draft. So that is why you have
 manually put the URL to the edit post page where list of additional metaboxes could
 be picked by the plugin.
+
+= I can't edit comments. What should I do? =
+
+To be able to edit comments, just go to Capabilities Tab and add new Capability - 
+"Edit Comment". For administrator it'll automatically checked and this will allow
+to configure comment editing for other roles.
 
 = Why I can't delete a Role on Role Manager metabox? =
 
