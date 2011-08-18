@@ -504,99 +504,102 @@ mvbam_object.prototype.deleteCapability = function(cap, label){
 //**********************************************
 
 jQuery(document).ready(function(){
-    mObj = new mvbam_object();
     
-    mObj.configureElements();
-    jQuery('.change-role').bind('click', function(e){
-        e.preventDefault();
-        jQuery('div #role-select').show();
-        jQuery(this).hide();
-    });
+    try{
+        mObj = new mvbam_object();
     
-    jQuery('#role-ok').bind('click', function(e){
-        e.preventDefault();
-        if (mObj.formChanged > 0){
-            jQuery( "#leave-confirm" ).dialog({
-                resizable: false,
-                height: 180,
-                modal: true,
-                buttons: {
-                    "Change Role": function() {
-                        jQuery( this ).dialog( "close" );
-                        mObj.changeRole();
-                    },
-                    Cancel: function() {
-                        jQuery( this ).dialog( "close" );
+        mObj.configureElements();
+        jQuery('.change-role').bind('click', function(e){
+            e.preventDefault();
+            jQuery('div #role-select').show();
+            jQuery(this).hide();
+        });
+    
+        jQuery('#role-ok').bind('click', function(e){
+            e.preventDefault();
+            if (mObj.formChanged > 0){
+                jQuery( "#leave-confirm" ).dialog({
+                    resizable: false,
+                    height: 180,
+                    modal: true,
+                    buttons: {
+                        "Change Role": function() {
+                            jQuery( this ).dialog( "close" );
+                            mObj.changeRole();
+                        },
+                        Cancel: function() {
+                            jQuery( this ).dialog( "close" );
+                        }
                     }
-                }
-            }); 
-        }else{
-            mObj.changeRole();
-        }
+                }); 
+            }else{
+                mObj.changeRole();
+            }
        
-    });
+        });
     
     
-    jQuery('.new-role-name-empty').click(function(e){
-        e.preventDefault();
-        jQuery('#new-role-name').focus();
-    });
-    jQuery('#new-role-name').focus(function(){
-        jQuery('.new-role-name-empty').hide();
-    });
-    jQuery('#new-role-name').blur(function(){
-        if (!jQuery.trim(jQuery(this).val())){
-            jQuery('.new-role-name-empty').show();
-        }
-    });
-    jQuery('#new-role-name').keypress(function(event){
-        if (event.which == 13){
-            event.preventDefault();
-            mObj.addNewRole();
-        };
-    });
+        jQuery('.new-role-name-empty').click(function(e){
+            e.preventDefault();
+            jQuery('#new-role-name').focus();
+        });
+        jQuery('#new-role-name').focus(function(){
+            jQuery('.new-role-name-empty').hide();
+        });
+        jQuery('#new-role-name').blur(function(){
+            if (!jQuery.trim(jQuery(this).val())){
+                jQuery('.new-role-name-empty').show();
+            }
+        });
+        jQuery('#new-role-name').keypress(function(event){
+            if (event.which == 13){
+                event.preventDefault();
+                mObj.addNewRole();
+            };
+        });
     
-    jQuery('#wp-access').keypress(function(event){
-        if (event.which == 13){
-            event.preventDefault();
-        };
-    });
+        jQuery('#wp-access').keypress(function(event){
+            if (event.which == 13){
+                event.preventDefault();
+            };
+        });
    
-    jQuery('#new-role-ok').bind('click', function(e){
-        e.preventDefault();
-        mObj.addNewRole();
-    });
+        jQuery('#new-role-ok').bind('click', function(e){
+            e.preventDefault();
+            mObj.addNewRole();
+        });
     
-    jQuery('#role-cancel').bind('click', function(e){
-        e.preventDefault();
-        jQuery('div #role-select').hide();
-        jQuery('.change-role').show();
-    });
-    jQuery('#new-role-cancel').bind('click', function(e){
-        e.preventDefault();
-        jQuery('div #new-role-form').hide();
-        jQuery('.change-role').show();
-    });
+        jQuery('#role-cancel').bind('click', function(e){
+            e.preventDefault();
+            jQuery('div #role-select').hide();
+            jQuery('.change-role').show();
+        });
+        jQuery('#new-role-cancel').bind('click', function(e){
+            e.preventDefault();
+            jQuery('div #new-role-form').hide();
+            jQuery('.change-role').show();
+        });
     
-    jQuery('#role-tabs').tabs();
+        jQuery('#role-tabs').tabs();
     
-    jQuery('.deletion').bind('click', function(e){
-        e.preventDefault();
-        mObj.restoreDefault();
-    });
+        jQuery('.deletion').bind('click', function(e){
+            e.preventDefault();
+            mObj.restoreDefault();
+        });
     
-    jQuery('#wp-access').bind('change', function(e){
-        mObj.formChanged++; 
-    });
-    
-    jQuery('#role').bind('change', function(e){
-        mObj.formChanged -= 1;
-    });
+        jQuery('#wp-access').bind('change', function(e){
+            mObj.formChanged++; 
+        });
+        jQuery('#role').bind('change', function(e){
+            mObj.formChanged -= 1;
+        });
 
-    jQuery('.message-active').show().delay(5000).hide('slow');
+        jQuery('.message-active').show().delay(5000).hide('slow');
     
-    //window.onbeforeunload = mObj.goodbye;
+        //window.onbeforeunload = mObj.goodbye;
     
-    jQuery('#wp-access').show();
-    
+        jQuery('#wp-access').show();
+    }catch(err){
+        jQuery('#wp-access').show();
+    }
 });

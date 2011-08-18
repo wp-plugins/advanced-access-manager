@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage user roles and capabilities
-  Version: 0.9.8
+  Version: 1.0
   Author: Vasyl Martyniuk
   Author URI: http://www.whimba.com
  */
@@ -343,6 +343,7 @@ class mvb_WPAccess extends mvb_corePlugin {
         $roles = get_option($wpdb->prefix . 'user_roles');
         //save current setting to DB
         update_option(WPACCESS_PREFIX . 'original_user_roles', $roles);
+        //add custom capabilities
         //add custom capabilities
         $custom_caps = get_option(WPACCESS_PREFIX . 'custom_caps');
         if (!is_array($custom_caps)) {

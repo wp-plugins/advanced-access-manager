@@ -86,7 +86,7 @@ class module_optionManager extends mvb_corePlugin {
         $this->template = $this->templObj->readTemplate($templatePath);
         $this->roles = get_option($table_prefix . 'user_roles');
         $this->custom_caps = get_option(WPACCESS_PREFIX . 'custom_caps');
-        if (!is_array($this->custom_caps)){
+        if (!is_array($this->custom_caps)) {
             $this->custom_caps = array();
         }
         $roleList = array_keys($this->roles);
@@ -139,10 +139,12 @@ class module_optionManager extends mvb_corePlugin {
             '###site_url###' => get_option('siteurl'),
             '###message_class###' => (isset($_POST['submited']) ? 'message-active' : 'message-passive'),
             '###nonce###' => wp_nonce_field(WPACCESS_PREFIX . 'options'),
-            '###metabox_general_info###' => $this->postbox('metabox-wpaccess-general', 'General Info', '<p>For <b>Main Menu</b> and <b>Metaboxes</b> select proper checkbox to restrict access to resource. For Capabilities - select proper checkbox to give new capability for role</p>'),
+            '###metabox_general_info###' => $this->postbox('metabox-wpaccess-general', 'General Info', '<p>For <b>Main Menu</b> and <b>Metaboxes&Widgets</b> select proper checkbox to restrict access to resource. For <b>Capabilities</b> - select proper checkbox to give new capability to role</p>'),
         );
         $content = $this->templObj->updateMarkers($markerArray, $content);
-
+        //add filter to future add-ons
+        $content = apply_filters(WPACCESS_PREFIX . 'option_page', $content);
+        
         if ($this->return) {
             return $content;
         } else {
@@ -288,9 +290,9 @@ class module_optionManager extends mvb_corePlugin {
                     '###cap_name###' => $m->getCapabilityHumanTitle($cap)
                 );
                 $titem = $this->templObj->updateMarkers($markers, $itemTemplate);
-                if (!in_array($cap, $this->custom_caps)){
+                if (!in_array($cap, $this->custom_caps)) {
                     $titem = $this->templObj->replaceSub('CAPABILITY_DELETE', '', $titem);
-                }else{
+                } else {
                     $titem = $this->templObj->replaceSub('CAPABILITY_DELETE', $this->templObj->retrieveSub('CAPABILITY_DELETE', $titem), $titem);
                 }
                 $list .= $titem;

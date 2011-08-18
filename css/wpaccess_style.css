@@ -314,6 +314,13 @@ div.sexy-bookmarks ul.socials a {
     background: url('images/twitter.png') no-repeat top;
 }
 
+.sexy-linkedin {
+    background: url('images/linkedin.png') no-repeat bottom;
+}
+.sexy-linkedin:hover {
+    background: url('images/linkedin.png') no-repeat top;
+}
+
 #emergency-curl{
     display : none;
 }

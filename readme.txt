@@ -4,7 +4,7 @@ Donate link: http://whimba.com/advanced-access-manager-donation/
 Tags: user role, access manager, capability, metabox, user access, filter admin menu, role manager, dashboard widget, access control
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 0.9.8
+Stable tag: 1.0
 
 Graphic interface to manage User Roles and Capabilities
 
@@ -12,7 +12,7 @@ Graphic interface to manage User Roles and Capabilities
 
 If you want to filter Admin Menu for some User Roles or just delete unnecessary 
 dashboard widgets or metaboxes in Edit Post Page, this plugin is for you.
-You can afford to do next things with Advanced Access Manager:
+You can do following things with Advanced Access Manager:
 
 * Filter Admin Menu for specific User Role
 * Filter Dashboard Widgets for specific User Role
@@ -35,37 +35,33 @@ message on Forums Posts.
 3. Find Access Manager under Users Admin Menu
 
 == Frequently Asked Questions ==
+ 
+= What is "Initiate URL" button for, under "Metaboxes & Widgets" Tab? =
 
-= What is "Initiate URL" Button for, under Metaboxes tab? =
-
-Sometimes list of additional metaboxes are conditional on edit post page. Like show
-custom metabox "Photos" only if Post Status is Published. Access Manager initiates
-the list of metaboxes for each post in status auto-draft. So that is why you have
-manually put the URL to the edit post page where list of additional metaboxes could
-be picked by the plugin.
+Sometimes list of additional metaboxes is conditional on edit post page. Like e.g.
+display custom metabox "Photos" only if Post Status is Published. Access Manager 
+initiates the list of metaboxes for each post in status auto-draft. So that is why
+you have to put manually the URL to the edit post page where list of additional 
+metaboxes can be picked by the plugin.
 
 = I can't edit comments. What should I do? =
 
-To be able to edit comments, just go to Capabilities Tab and add new Capability - 
-"Edit Comment". For administrator it'll automatically checked and this will allow
+To be able to edit comments, just go to "Capabilities" Tab and add new Capability - 
+"Edit Comment". For administrator it'll automatically be added and this will let
 to configure comment editing for other roles.
 
-= Why I can't delete a Role on Role Manager metabox? =
+= I unchecked some Menus on "Main Menu" Tab but they are still not shown. Why? =
 
-If there is at least one user with current role, you will be not able to delete it
-
-= I deselected some Menu Items on Main Menu Tab, but they still not appear, why? =
-
-The reason is that Main Menu Tab is not directly related to list of Capabilities. 
-It means, if you selected/deselected some Menus or Submenus it will not add/delete
-capabilities to current User Role. In such way if you want to give somebody access
-to backend I'm recommending to use predefined set of options - Editor and then
+The reason is that "Main Menu" Tab is not directly related to list of Capabilities. 
+It means, if you selected/deselected some Menu or Submenu it will not add or delete
+correct capabilities to current User Role. In such way if you want to give somebody 
+access to backend I recommend to use predefined set of options "Editor" and then
 just filter Main Menu.
 
-= What is Restore Default link near Save button? =
+= What is "Restore Default" link near Save button? =
 
 Advanced Access Manager has implemented activation hook which will store all User
-Roles defined in system with the list of capabilities. So if you did something wrong,
+Roles defined in the system with the list of capabilities. So if you did something wrong,
 you'll be able to restore original settings.
 After Advanced Access Manager deactivation, all setting will be restored automatically.
 
@@ -76,6 +72,10 @@ After Advanced Access Manager deactivation, all setting will be restored automat
 3. List of Capabilities
 
 == Changelog ==
+
+= 1.0 =
+* Fixed issue with comment editing
+* Implemented JavaScript error catching
 
 = 0.9.8 =
 * Added ability to add or remove Capabilities
