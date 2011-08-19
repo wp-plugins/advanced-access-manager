@@ -23,6 +23,8 @@ You can do following things with Advanced Access Manager:
 * Delete any User Role
 * Save current User Roles settings and restore later
 
+For additional features, I'm working on now, you can read on my <a href="http://whimba.com/new-features-in-advanced-access-manager/" target="_blank">website</a>.
+
 [youtube http://www.youtube.com/watch?v=zkyxply_JHs]
 
 If you have any problems with current plugin, please send me an email or leave a
