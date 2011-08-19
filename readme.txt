@@ -1,7 +1,7 @@
 === Advanced Access Manager ===
 Contributors: vasyl_m
 Donate link: http://whimba.com/advanced-access-manager-donation/
-Tags: user role, access manager, capability, metabox, user access, filter admin menu, role manager, dashboard widget, access control
+Tags: user role, access manager, filter posts, user control, capability, metabox, user access, filter menu, role manager, filter pages, dashboard widget, access control, expire link, expire
 Requires at least: 3.0
 Tested up to: 3.2.1
 Stable tag: 1.0
@@ -23,7 +23,7 @@ You can do following things with Advanced Access Manager:
 * Delete any User Role
 * Save current User Roles settings and restore later
 
-For additional features, I'm working on now, you can read on my <a href="http://whimba.com/new-features-in-advanced-access-manager/" target="_blank">website</a>.
+About additional features, I'm working on now, you can find on my <a href="http://whimba.com/new-features-in-advanced-access-manager/" target="_blank">website</a>.
 
 [youtube http://www.youtube.com/watch?v=zkyxply_JHs]
 
