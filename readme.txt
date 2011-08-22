@@ -37,6 +37,13 @@ message on Forums Posts.
 3. Find Access Manager under Users Admin Menu
 
 == Frequently Asked Questions ==
+
+= It is not working! Why? =
+
+Actually it works. To make Advanced Access Manager good looking and easy to navigate,
+I'm using the latest JavaScript libraries - jQuery and jQuery UI. And this is a standard
+for today. If you have installed plugins out of date, you, probably will have some problems.
+In such way, please <a href="mailto:admin@whimba.com">contact me</a> or leave a message on a Forums Posts.   
  
 = What is "Initiate URL" button for, under "Metaboxes & Widgets" Tab? =
 
