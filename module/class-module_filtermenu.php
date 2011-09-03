@@ -35,11 +35,11 @@ class module_filterMenu extends module_User {
         $userRoles = $this->getCurrentUserRole();
         if (is_array($userRoles)) {
             foreach ($userRoles as $role) {
-                if (is_array($this->cParams[$role]['menu'])) {
+                if (isset($this->cParams[$role]['menu']) && is_array($this->cParams[$role]['menu'])) {
                     foreach ($this->cParams[$role]['menu'] as $main => $data) {
-                        if ($data['whole'] == 1) {
+                        if (isset($data['whole']) && ($data['whole'] == 1)) {
                             $this->unsetMainMenuItem($main);
-                        } elseif (is_array($data['sub'])) {
+                        } elseif (isset($data['sub']) && is_array($data['sub'])) {
                             foreach ($data['sub'] as $sub => $dummy) {
                                 $this->unsetSubMenuItem($main, $sub);
                             }
@@ -47,9 +47,48 @@ class module_filterMenu extends module_User {
                     }
                 }
             }
+
+            $menu = $this->getRoleMenu($userRoles[0]);
         } else {
             wp_die('You are not authorized to view this page');
         }
+    }
+
+    //TODO - This is a copy from optionmanager
+
+    protected function getRoleMenu($c_role) {
+        global $menu;
+
+        $menu_order = get_option(WPACCESS_PREFIX . 'menu_order');
+
+        $r_menu = $menu;
+        ksort($r_menu);
+
+        if (isset($menu_order[$c_role]) && is_array($menu_order[$c_role])) {//reorganize menu according to role
+            if (is_array($menu)) {
+                $w_menu = array();
+                foreach ($menu_order[$c_role] as $mid) {
+                    foreach ($menu as $data) {
+                        if (isset($data[5]) && ($data[5] == $mid)) {
+                            $w_menu[] = $data;
+                        }
+                    }
+                }
+
+                $cur_pos = 0;
+                foreach ($r_menu as &$data) {
+                    for ($i = 0; $i < count($w_menu); $i++) {
+                        if (isset($data[5]) && ($w_menu[$i][5] == $data[5])) {
+                            $data = $w_menu[$cur_pos++];
+                            break;
+                        }
+                    }
+                }
+                // debug($r_menu);
+            }
+        }
+
+        return $r_menu;
     }
 
     function checkAccess($requestedMenu) {
@@ -58,17 +97,17 @@ class module_filterMenu extends module_User {
 
         if (is_array($userRoles)) {
             foreach ($userRoles as $role) {
-                if ($role == 'administrator') {
+                if ($role == WPACCESS_ADMIN_ROLE) {
                     return TRUE;
                 }
- 
-                if (is_array($this->cParams[$role]['menu'])) {
+
+                if (isset($this->cParams[$role]['menu']) && is_array($this->cParams[$role]['menu'])) {
                     foreach ($this->cParams[$role]['menu'] as $menu => $sub) {
-                        if (($sub['whole']) == 1 && ($this->compareMenus($requestedMenu, $menu))) {
+                        if (isset($sub['whole']) && ($sub['whole'] == 1) && ($this->compareMenus($requestedMenu, $menu))) {
                             return FALSE;
                         }
 
-                        if (is_array($sub['sub'])) {
+                        if (isset($sub['sub']) && is_array($sub['sub'])) {
                             foreach ($sub['sub'] as $subMenu => $dummy) {
                                 if ($this->compareMenus($requestedMenu, $subMenu)) {
                                     return FALSE;
@@ -110,31 +149,6 @@ class module_filterMenu extends module_User {
 
         return $result;
     }
-
-    /*
-      function _compareMenus($requestedMenu, $menu) {
-      $result = FALSE;
-
-      $parts = preg_split('/\?/', $menu);
-      if (count($parts) == 2) {
-      $params = preg_split('/&/', $parts[1]);
-      if (is_array($params) && (strpos($requestedMenu, $parts[0]) !== FALSE)) {
-      foreach ($params as $param) {
-      if (strpos($requestedMenu, $param) !== FALSE) {
-      $result = TRUE;
-      break;
-      }
-      }
-      }
-      } else {
-      if (strpos($requestedMenu, $parts[0]) !== FALSE) {
-      $result = TRUE;
-      }
-      }
-
-      return $result;
-      }
-     */
 
     function unsetMainMenuItem($menuItem) {
         global $menu, $submenu;

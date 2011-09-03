@@ -1,18 +1,18 @@
 === Advanced Access Manager ===
 Contributors: vasyl_m
 Donate link: http://whimba.com/advanced-access-manager-donation/
-Tags: user role, access manager, filter posts, user control, capability, metabox, user access, filter menu, role manager, filter pages, dashboard widget, access control, expire link, expire
+Tags: access manager, access-control, capability, dashboard widget, expire, expire link, filter menu, filter pages, filter posts, metabox, role manager, user access, user control, user role
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 1.0
+Stable tag: 1.2
 
-Graphic interface to manage User Roles and Capabilities
+Graphic interface to manage User Roles, Capabilities and Post/Page Access
 
 == Description ==
 
 If you want to filter Admin Menu for some User Roles or just delete unnecessary 
-dashboard widgets or metaboxes in Edit Post Page, this plugin is for you.
-You can do following things with Advanced Access Manager:
+dashboard widgets or metaboxes in Edit Post Page or filter the list of posts, pages and categories, 
+this plugin is for you. You can do following things with Advanced Access Manager:
 
 * Filter Admin Menu for specific User Role
 * Filter Dashboard Widgets for specific User Role
@@ -22,13 +22,20 @@ You can do following things with Advanced Access Manager:
 * Create new User Roles
 * Delete any User Role
 * Save current User Roles settings and restore later
+* NEW! View the list of Posts Pages and Categories in a nice hierarchical tree 
+* NEW! Filter Posts and Post Categories
+* NEW! Filter Pages and Sub Pages
+* NEW! Set expiration Date for specific Posts, Pages or even Categories
+* NEW! Reorganize Order of Main Menu for specific User Role
 
-About additional features, I'm working on now, you can find on my <a href="http://whimba.com/new-features-in-advanced-access-manager/" target="_blank">website</a>.
+PLEASE NOTICE, that if filter not only Front-End Posts, Pages and Categories, but
+also and Back-End.
 
 [youtube http://www.youtube.com/watch?v=zkyxply_JHs]
 
 If you have any problems with current plugin, please send me an email or leave a
 message on Forums Posts.
+
 
 == Installation ==
 
@@ -40,10 +47,11 @@ message on Forums Posts.
 
 = It is not working! Why? =
 
-Actually it works. To make Advanced Access Manager good looking and easy to navigate,
-I'm using the latest JavaScript libraries - jQuery and jQuery UI. And this is a standard
-for today. If you have installed plugins out of date, you, probably will have some problems.
-In such way, please <a href="mailto:admin@whimba.com">contact me</a> or leave a message on a Forums Posts.   
+Actually it works. This plugin was tested by hundreds of people and it is also
+successfully work on more the 10 projects I did. The reason it can behaviors strange
+is incompatibility with plugins which are not following the simply WordPress rules.
+Many plugins just print additional JavaScript libraries without any reason and 
+this is the most frequent reason of conflicts.
  
 = What is "Initiate URL" button for, under "Metaboxes & Widgets" Tab? =
 
@@ -79,8 +87,14 @@ After Advanced Access Manager deactivation, all setting will be restored automat
 1. General view of Access Manager
 2. List of Metaboxes to Manage
 3. List of Capabilities
+4. Post/Page Tree View
 
 == Changelog ==
+
+= 1.2 =
+* Fixed some notice messages reported by llucax
+* Added ability to sort Admin Menu
+* Added ability to filter Posts, Categories and Pages
 
 = 1.0 =
 * Fixed issue with comment editing

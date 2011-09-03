@@ -26,6 +26,30 @@ function mvbam_object(){
     this.formChanged = 0;
     
     /*
+     * Indicate that we are soring Main Menu
+     * 
+     * @var bool
+     * @access private
+     */
+    this.sorting = false;
+    
+    /*
+     *Indicate that sorting has been present
+     *
+     *@var bool
+     *@access private
+     */
+    this.sorted = false;
+    
+    /*
+     * Continue submition
+     * 
+     * @var bool
+     * @access private
+     */
+    this.submiting = false;
+    
+    /*
      * Array of pre-defined capabilities for default WP roles
      * 
      * @var array
@@ -85,13 +109,21 @@ mvbam_object.prototype.addNewRole = function(){
     }, 'json'); 
 }
 
-mvbam_object.prototype.showAjaxLoader = function(selector){
+mvbam_object.prototype.showAjaxLoader = function(selector, type){
     jQuery(selector).addClass('loading-new');
-    jQuery(selector).prepend('<div class="ajax-loader-big"></div>');
-    jQuery('.ajax-loader-big').css({
-        top: 150,
-        left: jQuery(selector).width()/2 - 25 
+    var l_class = (type == 'small' ? 'ajax-loader-small' : 'ajax-loader-big');
+    
+    jQuery(selector).prepend('<div class="' + l_class +'"></div>');
+    jQuery('.' + l_class).css({
+        top: jQuery(selector).height()/2 - (type == 'small' ? 16 : 50),
+        left: jQuery(selector).width()/2 - (type == 'small' ? 8 : 25) 
     });
+}
+
+mvbam_object.prototype.removeAjaxLoader = function(selector, type){
+    jQuery(selector).removeClass('loading-new');
+    var l_class = (type == 'small' ? 'ajax-loader-small' : 'ajax-loader-big');
+    jQuery('.' + l_class).remove();
 }
 
 mvbam_object.prototype.getRoleOptionList = function(currentRoleID){
@@ -104,6 +136,10 @@ mvbam_object.prototype.getRoleOptionList = function(currentRoleID){
     };
     jQuery('#current_role').val(currentRoleID);
     var _this = this;
+    //restore some params
+    this.sorting = false;
+    this.sorted = false;
+    
     jQuery.post(wpaccessLocal.handlerURL, params, function(data){
         jQuery('#tabs').tabs('destroy');
         jQuery('#tabs').replaceWith(data.html);
@@ -115,7 +151,8 @@ mvbam_object.prototype.getRoleOptionList = function(currentRoleID){
         if (data.restorable){
             //sorry to lazy to create my own style :)
             jQuery('#delete-action').show();
-        }else{
+        }
+        else{
             jQuery('#delete-action').hide();
         }
     }, 'json');
@@ -125,6 +162,7 @@ mvbam_object.prototype.configureElements = function(){
     this.configureMainMenu();
     this.configureMetaboxes();
     this.configureCapabilities();
+    this.postPage();
 }
 
 mvbam_object.prototype.configureMainMenu = function(){
@@ -138,12 +176,99 @@ mvbam_object.prototype.configureMainMenu = function(){
             jQuery('input:checkbox', event.data._this).attr('checked', checked);
         });
     });
+    var _this = this;
+    //add reorganize menu functionality
+    jQuery('#reorganize').button();
+    jQuery('#reorganize').bind('click', function(event){
+        event.preventDefault();
+        if (_this.sorting){
+            jQuery('#sorting-tip').hide();
+            jQuery('#reorganize').button('option', 'label', 'Reorganize');
+            //save confirmation message
+            if (_this.sorted){
+                jQuery( "#dialog-reorder-confirm #role-title" ).html(jQuery('#current-role-display').html());
+                jQuery( "#dialog-reorder-confirm" ).dialog({
+                    resizable: false,
+                    height:180,
+                    modal: true,
+                    buttons: {
+                        "Yes": function() {
+                            _this.saveMenuOrder(false);
+                            jQuery( this ).dialog( "close" );
+                        },
+                        "Apply for All": function() {
+                            _this.saveMenuOrder(true);
+                            jQuery( this ).dialog( "close" );
+                        }
+                    }
+                });
+            }
+            _this.configureAccordion('#main-menu-options');
+        }else{
+            jQuery('#sorting-tip').show();
+            jQuery('#reorganize').button('option', 'label', 'Save Order');
+            _this.configureAccordion('#main-menu-options', true);
+        }
+        _this.sorting = !_this.sorting;
+    });
+    
+    //check Add-ons
+    var params = {
+        action: "mvbam",
+        sub_action : 'check_addons',
+        '_ajax_nonce': wpaccessLocal.nonce
+    }
+    jQuery.post(ajaxurl, params, function(data){
+        if (data.status == 'success' && data.available){
+            jQuery('.addons-info').removeClass('dialog');
+            jQuery('.addons-info').bind('click', function(event){
+                event.preventDefault();
+                jQuery( "#addons-notice" ).dialog({
+                    resizable: false,
+                    height:190,
+                    modal: true,
+                    buttons: {
+                        OK: function() {
+                            jQuery( this ).dialog( "close" );
+                        }
+                    }
+                });
+            });
+        } 
+    }, 'json');   
+}
+
+mvbam_object.prototype.saveMenuOrder = function(apply_all){
+    this.sorted = false;
+    this.sorting = false;
+    var _this = this;
+    var params = {
+        'action' : 'mvbam',
+        'sub_action' : 'save_order',
+        '_ajax_nonce': wpaccessLocal.nonce,
+        'apply_all' : (apply_all ? 1 : 0),
+        'role' : jQuery('#role').val(),
+        'menu' : new Array()
+    }
+    //get list of menus in proper order
+    jQuery('#main-menu-options > div').each(function(){
+        params.menu.push(jQuery(this).attr('id'));
+    });
+    
+    jQuery.post(ajaxurl, params, function(data){
+        if (data.status == 'success'){
+            if (_this.submiting){
+                jQuery('#wp-access').submit();
+            }
+        }
+    }, 'json');
 }
 
 mvbam_object.prototype.configureMetaboxes = function(){
     this.configureAccordion('#metabox-list');
     var _this = this;
     jQuery('.initiate-metaboxes').bind('click', function(event){
+        event.preventDefault();
         jQuery('#initiate-message').hide();
         jQuery('#progressbar').progressbar({
             value: 0
@@ -152,6 +277,7 @@ mvbam_object.prototype.configureMetaboxes = function(){
     });
     
     jQuery('.initiate-url').bind('click', function(event){
+        event.preventDefault();
         var val = jQuery('.initiate-url-text').val();
         if (jQuery.trim(val)){
             jQuery('#initiate-message').hide();
@@ -180,6 +306,7 @@ mvbam_object.prototype.configureMetaboxes = function(){
     });
     
     jQuery('.initiate-url-empty').click(function(){
+        event.preventDefault();
         jQuery('#initiateURL').focus();
     });
     jQuery('#initiateURL').focus(function(){
@@ -219,6 +346,24 @@ mvbam_object.prototype.configureCapabilities = function(){
         e.preventDefault();
         _this.addNewCapability();
     });
+}
+
+mvbam_object.prototype.postPage = function(){
+    jQuery("#tree").treeview({
+        url: ajaxurl,
+        // add some additional, dynamic data and request with POST
+        ajax: {
+            data : {
+                action: "mvbam",
+                sub_action : 'get_treeview',
+                '_ajax_nonce': wpaccessLocal.nonce
+            },
+            type : 'post'
+        },
+        animated: "medium",
+        control:"#sidetreecontrol",
+        persist: "location"
+    });        
 }
 
 mvbam_object.prototype.addNewCapability = function(){
@@ -335,19 +480,39 @@ mvbam_object.prototype.grabInitiatedWM = function(){
     });
 }
 
-mvbam_object.prototype.configureAccordion = function(selector){
+mvbam_object.prototype.configureAccordion = function(selector, sortable){
+    
     var icons = {
         header: "ui-icon-circle-arrow-e",
         headerSelected: "ui-icon-circle-arrow-s"
     };
-
-    jQuery(selector).accordion({
-        collapsible: true,
-        header: 'h4',
-        autoHeight: false,
-        icons: icons,
-        active: -1
-    });
+    var _this = this;
+    jQuery(selector).accordion('destroy');
+    if (sortable === true){
+        jQuery(selector).accordion({
+            collapsible: true,
+            header: 'h4',
+            autoHeight: false,
+            icons: icons,
+            active: -1
+        }).sortable({
+            axis: "y",
+            handle: "h4",
+            stop: function() {
+                stop = true;
+                _this.sorted = true;
+            }
+        });
+    }else{
+        jQuery(selector).sortable('destroy');
+        jQuery(selector).accordion({
+            collapsible: true,
+            header: 'h4',
+            autoHeight: false,
+            icons: icons,
+            active: -1
+        });
+    }
 }
 
 mvbam_object.prototype.deleteRole = function(role){
@@ -415,6 +580,15 @@ mvbam_object.prototype.changeRole = function(){
 mvbam_object.prototype.submitForm = function(){
     this.formChanged = -1;
     jQuery('#ajax-loading').show();
+    var result = true;
+    //check if user still reorganizing menu
+    if (this.sorting && this.sorted){
+        this.submiting = true;
+        this.saveMenuOrder(false); //apply only for one role
+        result = false; //wait until ordering saves
+    }
+    
+    return result;
 }
 
 mvbam_object.prototype.goodbye = function(e){
@@ -465,9 +639,95 @@ mvbam_object.prototype.restoreDefault = function(){
     });
 }
 
-mvbam_object.prototype.removeAjaxLoader = function(selector){
-    jQuery(selector).removeClass('loading-new');
-    jQuery('.ajax-loader-big').remove();
+mvbam_object.prototype.loadInfo = function(event, type, id){
+    
+    if (typeof(event.preventDefault) != 'undefined'){ //for IE
+        event.preventDefault();
+    }else{
+        event.returnValue = false;
+    }
+    this.showAjaxLoader('.post-information', 'small');
+    var _this = this;
+    var params = {
+        'action' : 'mvbam',
+        'sub_action' : 'get_info',
+        '_ajax_nonce': wpaccessLocal.nonce,
+        'type' : type,
+        'role' : jQuery('#role').val(),
+        'id' : id
+    }
+    
+    jQuery.post(ajaxurl, params, function(data){
+        _this.removeAjaxLoader('.post-information', 'small');
+        if (data.status == 'success'){
+            var pi = jQuery('.post-information');
+            jQuery('#post-date', pi).html(data.html);
+            
+            //stop bothering user that detected form changes
+            jQuery('input', pi).bind('change', function(){
+                _this.formChanged--;
+            });
+             
+            //configure information
+            jQuery('#restrict_expire', pi).datepicker({
+                'minDate' : new Date()
+            });
+            jQuery('.info > div', pi).tooltip({
+                position : 'center right',
+                events : {
+                    def:     "click,mouseout",
+                    input:   "focus,blur",
+                    widget:  "focus mouseover,blur mouseout",
+                    tooltip: "mouseover,mouseout"
+                }
+            });
+            jQuery('.save-postinfo', pi).bind('click', function(event){
+                _this.showAjaxLoader('.post-information', 'small');
+                event.preventDefault(); 
+                //save information
+                var params = {
+                    'action' : 'mvbam',
+                    'sub_action' : 'save_info',
+                    '_ajax_nonce': wpaccessLocal.nonce,
+                    'type' : type,
+                    'role' : jQuery('#role').val(),
+                    'restrict' : jQuery('input[name="restrict_access"]', pi).attr('checked'),
+                    'restrict_expire' : jQuery('#restrict_expire', pi).val(),
+                    'id' : id
+                }
+                jQuery.post(ajaxurl, params, function(data){
+                    _this.removeAjaxLoader('.post-information', 'small');
+                    if (data.status == 'success'){
+                        jQuery('#expire-success-message', pi).show().delay(5000).hide('slow');
+                    }else{
+                        jQuery('#expire-error-message', pi).show().delay(10000).hide('slow');
+                        if (data.message){
+                            jQuery( "#addon-proposal #addon-message" ).html(data.message);
+                            jQuery( "#addon-proposal" ).dialog({
+                                resizable: false,
+                                height:190,
+                                modal: true,
+                                buttons: {
+                                    OK: function() {
+                                        jQuery( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }, 'json');
+            });
+        }else{
+            //TODO - Implement error
+            alert('Error during information grabbing!');
+        }
+    },'json');
+}
+
+mvbam_object.prototype.handleError = function(err){
+    
+    jQuery('#error-message #error-text').html(err.toString());
+    jQuery('#error-message').removeClass('message-passive');
 }
 
 mvbam_object.prototype.deleteCapability = function(cap, label){
@@ -508,7 +768,6 @@ jQuery(document).ready(function(){
     try{
         mObj = new mvbam_object();
     
-        mObj.configureElements();
         jQuery('.change-role').bind('click', function(e){
             e.preventDefault();
             jQuery('div #role-select').show();
@@ -586,7 +845,7 @@ jQuery(document).ready(function(){
             e.preventDefault();
             mObj.restoreDefault();
         });
-    
+
         jQuery('#wp-access').bind('change', function(e){
             mObj.formChanged++; 
         });
@@ -597,9 +856,15 @@ jQuery(document).ready(function(){
         jQuery('.message-active').show().delay(5000).hide('slow');
     
         //window.onbeforeunload = mObj.goodbye;
-    
+        mObj.configureElements();
+
         jQuery('#wp-access').show();
     }catch(err){
+        mObj.handleError(err);
         jQuery('#wp-access').show();
     }
 });
+
+function loadInfo(event, type, id){
+    mObj.loadInfo(event, type, id);
+}

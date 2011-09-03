@@ -208,4 +208,38 @@ $capabilitiesDesc = array(
     'administrator' => '<b>Description does not exist</b>',
     'update_themes' => '<b>Description does not exist</b>',
 );
+
+$upgrade_restriction = 'Install <a href="http://whimba.com/plugins/advanced-access-manager/add-ons/" target="_blank">Extend Restriction</a> to be able to set more then ' . WPACCESS_RESTRICTION_LIMIT . ' restrictions for one Role';
+
+$restrict_message = '<p>You do not have sufficient permissions to perform this action</p>';
+
+$help_context = '
+    <p><h3>General Information</h3></p>
+    <p>If you want to filter Admin Menu for some User Roles or just delete unnecessary dashboard widgets or metaboxes in Edit Post Page, this plugin is for you.
+       You can do following things with Advanced Access Manager:</p>
+<ul>
+<li>Filter Admin Menu for specific User Role</li>
+<li>Filter Dashboard Widgets for specific User Role</li>
+<li>Filter List of Metaboxes in Edit Post page for specific User Role</li>
+<li>Add new User Capabilities</li>
+<li>Delete created User Capabilities</li>
+<li>Create new User Roles</li>
+<li>Delete any User Role</li>
+<li>Save current User Roles settings and restore later</li>
+<li>View the list of Posts Pages and Categories in a nice hierarchical tree</li>
+<li>Filter Posts and Post Categories</li>
+<li>Filter Pages and Sub Pages</li>
+<li>Set expiration Date for specific Posts, Pages or even Categories</li>
+<li>Reorganize Order of Main Menu for specific User Role</li>
+</ul>
+    <p><h3>Main Menu</h3></p>
+    <p>Under Main Menu Tab there is a list of admin menu and submenus. You can Restrict access to certain menus of submenus by checking proper checkbox.
+    Also you can reorganize the menu order by draggin and dropping menus in order you want.</p>
+    <p><h3>Metabox & Widgets</h3></p>
+    <p>This section allows you to filter the list of metaboxes (sections to the Write Post, Write Page, and Write Link editing pages) and dashboard widgets.</p>
+    <p><h3>Capabilities</h3></p>
+    <p>This is more advanced Tab which allows to create different combinations of User Roles for current User Role. If you are not familiar with Capabilities please read <a href="http://codex.wordpress.org/Roles_and_Capabilities" target="_blank">Roles and Capabilities</a>.</p>
+    <p><h3>Posts & Pages</h3></p>
+    <p>Tree View of Posts (grouped into categories) and Pages (organized hierarchically according to Parent Page parameter) where you can restrict access to certain page or post or the whole category for current User Role. There is also possibility to set expiration date to posts or pages.</p>
+';
 ?>

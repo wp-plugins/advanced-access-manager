@@ -77,31 +77,31 @@ class module_optionManager extends mvb_corePlugin {
      */
 
     function __construct($curentRole = FALSE, $return = FALSE) {
-        global $table_prefix;
+        global $wpdb;
 
-        $this->pObj = $pObj;
         $this->return = $return;
         $this->templObj = new mvb_coreTemplate();
         $templatePath = WPACCESS_TEMPLATE_DIR . 'admin_options.html';
         $this->template = $this->templObj->readTemplate($templatePath);
-        $this->roles = get_option($table_prefix . 'user_roles');
+        $this->roles = get_option($wpdb->prefix . 'user_roles');
         $this->custom_caps = get_option(WPACCESS_PREFIX . 'custom_caps');
         if (!is_array($this->custom_caps)) {
             $this->custom_caps = array();
         }
+
         $roleList = array_keys($this->roles);
         /*
          * Expecting that there are more then 1 role :)
          * Any way is event one, not a big deal 
          */
-        $defaultRole = ($roleList[0] == 'administrator' ? $roleList[1] : $roleList[0]);
+        $defaultRole = ($roleList[0] == WPACCESS_ADMIN_ROLE ? $roleList[1] : $roleList[0]);
         if (!$curentRole) {
             $this->currentRole = $defaultRole;
         } else {
             /*
              * If someone tried to cheat
              */
-            $this->currentRole = ($curentRole != 'administrator' ? $curentRole : $defaultRole);
+            $this->currentRole = ($curentRole != WPACCESS_ADMIN_ROLE ? $curentRole : $defaultRole);
         }
 
         $this->currentParams = get_option(WPACCESS_PREFIX . 'options');
@@ -114,19 +114,22 @@ class module_optionManager extends mvb_corePlugin {
     }
 
     function manage() {
-        global $table_prefix;
+        global $wpdb;
 
         if (isset($_POST['submited'])) {
-            $params = $_POST['wpaccess'];
-            $this->currentParams[$this->currentRole]['menu'] = $params[$this->currentRole]['menu'];
-            $this->currentParams[$this->currentRole]['metaboxes'] = $params[$this->currentRole]['metabox'];
+            $params = (isset($_POST['wpaccess']) ? $_POST['wpaccess'] : array());
+            
+            $this->currentParams[$this->currentRole] = array(
+                'menu' => (isset($params[$this->currentRole]['menu']) ? $params[$this->currentRole]['menu'] : array()),
+                'metaboxes' => (isset($params[$this->currentRole]['metabox']) ? $params[$this->currentRole]['metabox'] : array()),
+            );
             update_option(WPACCESS_PREFIX . 'options', $this->currentParams);
 
             /*
              * Update Role's Capabilities
              */
-            $this->roles[$this->currentRole]['capabilities'] = $params[$this->currentRole]['advance'];
-            update_option($table_prefix . 'user_roles', $this->roles);
+            $this->roles[$this->currentRole]['capabilities'] = (isset($params[$this->currentRole]['advance']) ? $params[$this->currentRole]['advance'] : array());
+            update_option($wpdb->prefix . 'user_roles', $this->roles);
         }
 
         $mainHolder = $this->postbox('metabox-wpaccess-options', 'Options List', $this->getMainOptionsList());
@@ -144,7 +147,7 @@ class module_optionManager extends mvb_corePlugin {
         $content = $this->templObj->updateMarkers($markerArray, $content);
         //add filter to future add-ons
         $content = apply_filters(WPACCESS_PREFIX . 'option_page', $content);
-        
+
         if ($this->return) {
             return $content;
         } else {
@@ -159,7 +162,7 @@ class module_optionManager extends mvb_corePlugin {
         $list = '';
         if (is_array($this->roles)) {
             foreach ($this->roles as $role => $data) {
-                if ($role == 'administrator') {
+                if ($role == WPACCESS_ADMIN_ROLE) {
                     continue;
                 }
                 $list .= $this->renderDeleteRoleItem($role, $data, $itemTemplate);
@@ -206,7 +209,7 @@ class module_optionManager extends mvb_corePlugin {
         $list = '';
         if (is_array($this->roles)) {
             foreach ($this->roles as $role => $data) {
-                if ($role == 'administrator') {
+                if ($role == WPACCESS_ADMIN_ROLE) {
                     continue;
                 }
 
@@ -223,7 +226,9 @@ class module_optionManager extends mvb_corePlugin {
     }
 
     function renderMainMenuOptions($template) {
-        global $menu, $submenu, $capabilitiesDesc;
+        global $submenu, $capabilitiesDesc;
+
+        $s_menu = $this->getRoleMenu();
         /*
          * First Tab - Main Menu
          */
@@ -233,8 +238,8 @@ class module_optionManager extends mvb_corePlugin {
         $subitemTemplate = $this->templObj->retrieveSub('MAIN_MENU_SUBITEM', $sublistTemplate);
         $list = '';
 
-        if (is_array($menu)) {
-            foreach ($menu as $menuItem) {
+        if (is_array($s_menu)) {
+            foreach ($s_menu as $menuItem) {
                 if (!$menuItem[0]) { //seperator
                     continue;
                 }
@@ -282,10 +287,11 @@ class module_optionManager extends mvb_corePlugin {
         $list = '';
         if (is_array($capList)) {
             foreach ($capList as $cap => $dump) {
+                $desc = (isset($capabilitiesDesc[$cap]) ? htmlspecialchars($capabilitiesDesc[$cap], ENT_QUOTES) : '');
                 $markers = array(
                     '###role###' => $this->currentRole,
                     '###title###' => $cap,
-                    '###description###' => htmlspecialchars($capabilitiesDesc[$cap], ENT_QUOTES),
+                    '###description###' => $desc,
                     '###checked###' => $this->checkChecked('capability', array($cap)),
                     '###cap_name###' => $m->getCapabilityHumanTitle($cap)
                 );
@@ -301,7 +307,43 @@ class module_optionManager extends mvb_corePlugin {
         $listTemplate = $this->templObj->replaceSub('CAPABILITY_ITEM', $list, $listTemplate);
         $template = $this->templObj->replaceSub('CAPABILITY_LIST', $listTemplate, $template);
 
+        //Posts & Pages
+        $template = $this->templObj->replaceSub('POST_INFORMATION', '', $template);
+
         return $template;
+    }
+
+    protected function getRoleMenu() {
+        global $menu;
+
+        $menu_order = get_option(WPACCESS_PREFIX . 'menu_order');
+
+        $r_menu = $menu;
+        ksort($r_menu);
+
+        if (isset($menu_order[$this->currentRole]) && is_array($menu_order[$this->currentRole])) {//reorganize menu according to role
+            if (is_array($menu)) {
+                $w_menu = array();
+                foreach ($menu_order[$this->currentRole] as $mid) {
+                    foreach ($menu as $data) {
+                        if (isset($data[5]) && ($data[5] == $mid)) {
+                            $w_menu[] = $data;
+                        }
+                    }
+                }
+                $cur_pos = 0;
+                foreach ($r_menu as &$data) {
+                    for ($i = 0; $i < count($w_menu); $i++) {
+                        if (isset($data[5]) && ($w_menu[$i][5] == $data[5])) {
+                            $data = $w_menu[$cur_pos++];
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $r_menu;
     }
 
     function renderMetaboxList($template) {
@@ -313,7 +355,7 @@ class module_optionManager extends mvb_corePlugin {
         $list = '';
 
 
-        if (is_array($this->currentParams['settings']['metaboxes'])) {
+        if (isset($this->currentParams['settings']['metaboxes']) && is_array($this->currentParams['settings']['metaboxes'])) {
             $plistTemplate = $this->templObj->retrieveSub('POST_METABOXES_LIST', $itemTemplate);
             $pitemTemplate = $this->templObj->retrieveSub('POST_METABOXES_ITEM', $plistTemplate);
 
@@ -336,15 +378,15 @@ class module_optionManager extends mvb_corePlugin {
                                     //strip html for metaboxes. The reason - dashboard metaboxes
                                     $data['title'] = $this->removeHTML($data['title']);
                                     $markerArray = array(
+                                        '###title###' => $this->removeHTML($data['title']),
+                                        '###short_id###' => (strlen($data['id']) > 25 ? substr($data['id'], 0, 22) . '...' : $data['id']),
+                                        '###id###' => $data['id'],
                                         '###priority###' => $priority,
                                         '###internal_id###' => $post_type . '-' . $id,
                                         '###position###' => $position,
                                         '###checked###' => $this->checkChecked('metabox', array($post_type . '-' . $id)),
                                         '###role###' => $this->currentRole
                                     );
-                                    foreach ($data as $key => $value) {
-                                        $markerArray['###' . $key . '###'] = ($value ? $value : $data['id']);
-                                    }
                                     $mList .= $this->templObj->updateMarkers($markerArray, $pitemTemplate);
                                 }
                             }
@@ -380,30 +422,37 @@ class module_optionManager extends mvb_corePlugin {
     }
 
     function checkChecked($type, $args) {
+
         $checked = '';
+
         switch ($type) {
             case 'submenu':
-                if ($this->currentParams[$this->currentRole]['menu'][$args[0]]['sub'][$args[1]] ||
-                        $this->currentParams[$this->currentRole]['menu'][$args[0]]['whole']) {
-
-                    $checked = 'checked';
+                $c_menu = &$this->currentParams[$this->currentRole]['menu'];
+                if (isset($c_menu[$args[0]])) {
+                    if (isset($c_menu[$args[0]]['sub'][$args[1]]) || 
+                            (isset($c_menu[$args[0]]['whole']) && $c_menu[$args[0]]['whole'])) {
+                        $checked = 'checked';
+                    }
                 }
                 break;
 
             case 'menu':
-                if ($this->currentParams[$this->currentRole]['menu'][$args[0]]['whole']) {
+                $c_menu = &$this->currentParams[$this->currentRole]['menu'];
+                if (isset($c_menu[$args[0]]['whole']) && $c_menu[$args[0]]['whole']) {
                     $checked = 'checked';
                 }
                 break;
 
             case 'capability':
-                if (isset($this->roles[$this->currentRole][capabilities][$args[0]])) {
+                $c_cap = &$this->roles[$this->currentRole]['capabilities'];
+                if (isset($c_cap[$args[0]])) {
                     $checked = 'checked';
                 }
                 break;
 
             case 'metabox':
-                if (isset($this->currentParams[$this->currentRole]['metaboxes'][$args[0]])) {
+                $c_meta = &$this->currentParams[$this->currentRole]['metaboxes'];
+                if (isset($c_meta[$args[0]])) {
                     $checked = 'checked';
                 }
                 break;

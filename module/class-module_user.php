@@ -25,11 +25,13 @@ class module_User extends WP_User {
     }
 
     function getCurrentUserRole() {
-        if (is_array($this->data->{$this->cap_key})){
+
+        if (is_object($this->data) && is_array($this->data->{$this->cap_key})) {
             $result = array_keys($this->data->{$this->cap_key});
-        }else{
+        } else {
             $result = array();
         }
+
         return $result;
     }
 
@@ -50,7 +52,6 @@ class module_User extends WP_User {
 
         return implode(' ', $parts);
     }
-
 
 }
 

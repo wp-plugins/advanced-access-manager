@@ -133,6 +133,15 @@
     top:0px;
     left:0px;
 }
+.ajax-loader-small{
+    background: url('images/ajax-loader-small.gif') no-repeat;
+    width:32px;
+    height:32px;
+    z-index:1999;
+    position: absolute;
+    top:0px;
+    left:0px;
+}
 
 .loading-new{
     opacity : 0.4;
@@ -323,4 +332,71 @@ div.sexy-bookmarks ul.socials a {
 
 #emergency-curl{
     display : none;
+}
+
+.post-information{
+    width:45%;
+    float:right;
+    position: relative;
+}
+
+.info-table{
+    margin: 3px 0 5px 7px;
+}
+
+.info-table th{
+    padding-top: 5px;
+    text-align: left;
+    font-size: 12px;
+}
+
+.info-table td{
+    padding-top: 5px;
+    padding-left: 7px;
+}
+
+.save-postinfo{
+    float:right;
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
+
+#error-message{
+    width : 70%;
+}
+
+#error-text{
+    font-weight: bold;
+}
+
+#reorganize{
+    float:right;
+    margin-bottom: 5px;
+}
+#sorting-tip{
+    font-size: 11px;
+}
+
+.addons-info{
+    float:right;
+    margin: 10px 30px 0 0;
+    cursor: pointer;
+    width:auto;
+    padding: 5px 0 0 33px;
+    color: #0861a5;
+    font-size: 11px;
+    height:32px;
+    background: url('images/inform.png') no-repeat;
+}
+
+.metabox-id{
+    color: #06c;
+}
+
+.metabox-priority{
+    color: #ff853c;
+}
+
+.metabox-position{
+    color: #333333;
 }

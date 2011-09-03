@@ -37,7 +37,7 @@ class module_filterMetabox extends module_User {
         if (is_array($userRoles)) {
             foreach ($userRoles as $role) {
                 //   debug($this->cParams[$role]);
-                if (is_array($this->cParams[$role]) && is_array($this->cParams[$role]['metaboxes'])) {
+                if (isset($this->cParams[$role]) && is_array($this->cParams[$role]['metaboxes'])) {
                     switch ($area) {
                         case 'dashboard':
                             if (is_array($wp_meta_boxes['dashboard'])) {

@@ -29,7 +29,8 @@ define('WPACCESS_DIRNAME', basename(WPACCESS_BASE_DIR));
  * Plugin constants
  */
 define('WPACCESS_BASE_URL', WP_PLUGIN_URL . '/' . WPACCESS_DIRNAME . '/');
-
+define('WPACCESS_ADMIN_ROLE', 'administrator');
+define('WPACCESS_RESTRICTION_LIMIT', 5);
 
 define('WPACCESS_TEMPLATE_DIR', WPACCESS_BASE_DIR . 'templates/');
 define('WPACCESS_CSS_URL', WPACCESS_BASE_URL . 'css/');
