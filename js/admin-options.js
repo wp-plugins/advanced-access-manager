@@ -178,12 +178,13 @@ mvbam_object.prototype.configureMainMenu = function(){
     });
     var _this = this;
     //add reorganize menu functionality
-    jQuery('#reorganize').button();
+    //jQuery('#reorganize').button();
     jQuery('#reorganize').bind('click', function(event){
         event.preventDefault();
         if (_this.sorting){
             jQuery('#sorting-tip').hide();
-            jQuery('#reorganize').button('option', 'label', 'Reorganize');
+            //jQuery('#reorganize').button('option', 'label', 'Reorganize');
+            jQuery('#reorganize span').html('Reorganize');
             //save confirmation message
             if (_this.sorted){
                 jQuery( "#dialog-reorder-confirm #role-title" ).html(jQuery('#current-role-display').html());
@@ -206,7 +207,8 @@ mvbam_object.prototype.configureMainMenu = function(){
             _this.configureAccordion('#main-menu-options');
         }else{
             jQuery('#sorting-tip').show();
-            jQuery('#reorganize').button('option', 'label', 'Save Order');
+            //jQuery('#reorganize').button('option', 'label', 'Save Order');
+            jQuery('#reorganize span').html('Save Order');
             _this.configureAccordion('#main-menu-options', true);
         }
         _this.sorting = !_this.sorting;
@@ -337,12 +339,13 @@ mvbam_object.prototype.configureCapabilities = function(){
         }
     });
     
-    jQuery('.default-roles').buttonset();
-    jQuery('#new-capability').button({
-        icons: {
-            primary: "ui-icon-plus"
-        }
-    }).bind('click', function(e){
+    jQuery('.default-roles > a').each(function(){
+        var id = jQuery(this).attr('id');
+        jQuery(this).bind('click', function(event){
+            _this.changeCapabilities(event, id);
+        })
+    });
+    jQuery('#new-capability').bind('click', function(e){
         e.preventDefault();
         _this.addNewCapability();
     });
@@ -546,7 +549,10 @@ mvbam_object.prototype.deleteRole = function(role){
     });
 }
 
-mvbam_object.prototype.changeCapabilities = function(type){
+mvbam_object.prototype.changeCapabilities = function(event, type){
+    
+    event.preventDefault();
+    
     switch(type){
         case 'radio1': //administrator
             jQuery('.capability-item input').attr('checked', true);

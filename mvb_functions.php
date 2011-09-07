@@ -17,13 +17,13 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  
  */
-
+/*
 function debug($what) {
     echo '<pre>';
     print_r($what);
     echo '</pre>';
 }
-
+*/
 
 
 function init_wpaccess() {

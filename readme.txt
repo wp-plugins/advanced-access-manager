@@ -4,7 +4,7 @@ Donate link: http://whimba.com/advanced-access-manager-donation/
 Tags: access manager, access-control, capability, dashboard widget, expire, expire link, filter menu, filter pages, filter posts, metabox, role manager, user access, user control, user role
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 1.2
+Stable tag: 1.2.1
 
 Graphic interface to manage User Roles, Capabilities and Post/Page Access
 
@@ -28,7 +28,7 @@ this plugin is for you. You can do following things with Advanced Access Manager
 * NEW! Set expiration Date for specific Posts, Pages or even Categories
 * NEW! Reorganize Order of Main Menu for specific User Role
 
-PLEASE NOTICE, that if filter not only Front-End Posts, Pages and Categories, but
+PLEASE NOTICE, that it filters not only Front-End Posts, Pages and Categories, but
 also and Back-End.
 
 [youtube http://www.youtube.com/watch?v=zkyxply_JHs]
@@ -90,6 +90,10 @@ After Advanced Access Manager deactivation, all setting will be restored automat
 4. Post/Page Tree View
 
 == Changelog ==
+
+= 1.2.1 =
+* Fixed issue with propAttr jQuery IU incompatibility
+* Added filters for checkAccess and compareMenu results
 
 = 1.2 =
 * Fixed some notice messages reported by llucax

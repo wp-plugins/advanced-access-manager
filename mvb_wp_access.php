@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage user roles and capabilities
-  Version: 1.2
+  Version: 1.2.1
   Author: Vasyl Martyniuk
   Author URI: http://www.whimba.com
  */
@@ -448,7 +448,12 @@ class mvb_WPAccess extends mvb_corePlugin {
             $uri = $_SERVER['REQUEST_URI'];
             $m = new module_filterMenu();
 
-            if (!$m->checkAccess($uri)) {
+            //TODO - Move this action to checkAcess
+            $access = $m->checkAccess($uri);
+            //filter
+            $access = apply_filters(WPACCESS_PREFIX . 'check_access', $access, $uri);
+            
+            if (!$access) {
                 wp_die($restrict_message);
             }
 
@@ -617,7 +622,7 @@ class mvb_WPAccess extends mvb_corePlugin {
         if ($data['restrict'] && !trim($data['expire'])) {
             $result = 1;
         } elseif ($data['restrict'] && trim($data['expire'])) {
-             if ($data['expire'] >= time()) {
+            if ($data['expire'] >= time()) {
                 $result = 1;
             }
         } elseif (trim($data['expire'])) {

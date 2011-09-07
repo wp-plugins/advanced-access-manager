@@ -147,7 +147,7 @@ class module_filterMenu extends module_User {
             }
         }
 
-        return $result;
+        return apply_filters(WPACCESS_PREFIX . 'compare_menu', $result, $requestedMenu, $menu);
     }
 
     function unsetMainMenuItem($menuItem) {
