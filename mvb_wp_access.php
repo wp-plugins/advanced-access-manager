@@ -132,6 +132,7 @@ class mvb_WPAccess extends mvb_corePlugin {
             }
         } else {
             add_action('wp', array($this, 'wp_front'));
+            add_filter('get_pages', array($this, 'get_pages'));
         }
 
         add_filter('get_terms', array($this, 'get_terms'), 10, 3);
@@ -183,6 +184,23 @@ class mvb_WPAccess extends mvb_corePlugin {
         }
 
         return $contextual_help;
+    }
+    
+    /*
+     * Filter Front Menu
+     * 
+     */
+    public function get_pages($pages){
+        
+       if (is_array($pages)){ //filter all pages which are not allowed
+           foreach($pages as $i => $page){
+               if (!$this->checkRestriction('page', $page->ID)){
+                   unset($pages[$i]);
+               }
+           }
+       }
+        
+        return $pages;
     }
 
     public function pre_get_posts($query) {
