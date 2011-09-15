@@ -48,6 +48,8 @@ global $wp_version;
 $exit_msg = 'Advanced Access Manager requires WordPress 3.1 or newer. '
         . '<a href="http://codex.wordpress.org/Upgrading_WordPress">Update now!</a>';
 
+//error_reporting(E_ALL);
+
 if (version_compare($wp_version, '3.1', '<')) {
     exit($exit_msg);
 }
@@ -91,6 +93,7 @@ class mvb_WPAccess extends mvb_corePlugin {
         $this->restrictions = $this->getRestrictions();
         $this->user = new module_User();
         $this->roles = new module_Roles();
+        $this->menu = new module_filterMenu();
 
         if (is_admin()) {
 
@@ -131,6 +134,7 @@ class mvb_WPAccess extends mvb_corePlugin {
                 add_action("do_meta_boxes", array($this, 'metaboxes'), 999, 3);
             }
         } else {
+            add_action('wp_before_admin_bar_render', array($this, 'wp_before_admin_bar_render'));
             add_action('wp', array($this, 'wp_front'));
             add_filter('get_pages', array($this, 'get_pages'));
         }
@@ -184,6 +188,19 @@ class mvb_WPAccess extends mvb_corePlugin {
         }
 
         return $contextual_help;
+    }
+    
+    /*
+     * Filter Admin Top Bar
+     * 
+     */
+    public function wp_before_admin_bar_render(){
+        global $wp_admin_bar;
+        
+        if (is_object($wp_admin_bar) && isset($wp_admin_bar->menu)){
+            $this->filter_top_bar($wp_admin_bar->menu);
+        }
+        
     }
     
     /*
@@ -494,10 +511,9 @@ class mvb_WPAccess extends mvb_corePlugin {
 
         if (is_admin()) {
             $uri = $_SERVER['REQUEST_URI'];
-            $m = new module_filterMenu();
 
             //TODO - Move this action to checkAcess
-            $access = $m->checkAccess($uri);
+            $access = $this->menu->checkAccess($uri);
             //filter
             $access = apply_filters(WPACCESS_PREFIX . 'check_access', $access, $uri);
 
@@ -599,8 +615,7 @@ class mvb_WPAccess extends mvb_corePlugin {
         //init the list of key parameters
         $this->init_key_params();
         //filter the menu
-        $m = new module_filterMenu();
-        $m->manage();
+        $this->menu->manage();
     }
 
     /*
@@ -1435,6 +1450,31 @@ class mvb_WPAccess extends mvb_corePlugin {
                 }
             }
             update_option(WPACCESS_PREFIX . 'key_params', $keys);
+        }
+    }
+    
+    private function filter_top_bar(&$menu, $level = 0){
+        
+        if ($level > 999){
+            return; //save step
+        }
+
+        if (is_object($menu)){
+            foreach($menu as $item => &$data){
+                if (isset($data['href']) && !isset($data['children'])&& !$this->menu->checkAccess($data['href'])){
+                    unset($menu->{$item});
+                }elseif(isset($data['children'])){
+                    $this->filter_top_bar($data['children'], $level + 1);
+                    if (count($data['children'])){
+                        foreach($data['children'] as $key => $value){
+                            $data['href'] = $value['href'];
+                            break;
+                        }
+                    }else{
+                        unset($menu[$item]);
+                    }
+                }
+            }
         }
     }
 

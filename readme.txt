@@ -95,7 +95,9 @@ After Advanced Access Manager deactivation, all setting will be restored automat
 * Change some interface button to WordPress default
 * Deleted General Info metabox
 * Improved check Access algorithm for compatibility with non standard links
-* Split restriction on Front-end and Back-end 
+* Split restriction on Front-end and Back-end
+* Added Page Menu Filtering
+* Added Admin Top Menu Filtering 
 
 = 1.2.1 =
 * Fixed issue with propAttr jQuery IU incompatibility

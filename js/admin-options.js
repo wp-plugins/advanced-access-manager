@@ -847,6 +847,7 @@ jQuery(document).ready(function(){
         });
     
         jQuery('#role-tabs').tabs();
+        jQuery('#transfer-tabs').tabs();
     
         jQuery('.deletion').bind('click', function(e){
             e.preventDefault();
