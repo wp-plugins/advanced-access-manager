@@ -22,11 +22,24 @@ class module_filterMenu extends module_User {
 
     private $cParams;
 
-    function __construct() {
+    /*
+     * Main Object
+     * 
+     * @var object
+     * @access protected
+     */
+    protected $pObj;
 
+    function __construct($pObj) {
+
+        $this->pObj = $pObj;
         parent::__construct();
 
-        $this->cParams = get_option(WPACCESS_PREFIX . 'options');
+        $this->cParams = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'options', array());
+        $keyParams = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'key_params', array());
+        $keyParams = (is_array($keyParams) ? $keyParams : array());
+
+        $this->keyParams = array_keys($keyParams); //TODO - Save in array format
     }
 
     function manage() {
@@ -59,7 +72,7 @@ class module_filterMenu extends module_User {
     protected function getRoleMenu($c_role) {
         global $menu;
 
-        $menu_order = get_option(WPACCESS_PREFIX . 'menu_order');
+        $menu_order = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'menu_order', array());
 
         $r_menu = $menu;
         ksort($r_menu);
@@ -91,26 +104,32 @@ class module_filterMenu extends module_User {
         return $r_menu;
     }
 
+    /*
+     * Check if User has Access to current page
+     * 
+     * @param string Current Requested URI
+     * @return bool TRUE if access granded
+     */
+
     function checkAccess($requestedMenu) {
 
-        $userRoles = $this->getCurrentUserRole();
+        if (!$this->pObj->is_super) {
+            $userRoles = $this->getCurrentUserRole();
+            if (is_array($userRoles)) {
+                //get base file
+                $parts = $this->get_parts($requestedMenu);
+                foreach ($userRoles as $role) {
+                    if (isset($this->cParams[$role]['menu']) && is_array($this->cParams[$role]['menu'])) {
+                        foreach ($this->cParams[$role]['menu'] as $menu => $sub) {
+                            if ($this->compareMenus($parts, $menu)) {
+                                return FALSE;
+                            }
 
-        if (is_array($userRoles)) {
-            foreach ($userRoles as $role) {
-                if ($role == WPACCESS_ADMIN_ROLE) {
-                    return TRUE;
-                }
-
-                if (isset($this->cParams[$role]['menu']) && is_array($this->cParams[$role]['menu'])) {
-                    foreach ($this->cParams[$role]['menu'] as $menu => $sub) {
-                        if (isset($sub['whole']) && ($sub['whole'] == 1) && ($this->compareMenus($requestedMenu, $menu))) {
-                            return FALSE;
-                        }
-
-                        if (isset($sub['sub']) && is_array($sub['sub'])) {
-                            foreach ($sub['sub'] as $subMenu => $dummy) {
-                                if ($this->compareMenus($requestedMenu, $subMenu)) {
-                                    return FALSE;
+                            if (isset($sub['sub']) && is_array($sub['sub'])) {
+                                foreach ($sub['sub'] as $subMenu => $dummy) {
+                                    if ($this->compareMenus($parts, $subMenu)) {
+                                        return FALSE;
+                                    }
                                 }
                             }
                         }
@@ -118,36 +137,50 @@ class module_filterMenu extends module_User {
                 }
             }
         }
-
+        
         return TRUE;
     }
 
-    function compareMenus($requestedMenu, $menu) {
+    function compareMenus($parts, $menu) {
+
+        $compare = $this->get_parts($menu);
+        $c_params = array_intersect($parts, $compare);
         $result = FALSE;
 
-        $parts = preg_split('/\?/', $menu);
-        if (count($parts) == 2) {
-            $params = preg_split('/&/', $parts[1]);
-            if (is_array($params) && (strpos($requestedMenu, $parts[0]) !== FALSE)) {
-                foreach ($params as $param) {
-                    if (strpos($requestedMenu, $param) !== FALSE) {
-                        $result = TRUE;
-                        break;
-                    }
+        if (count($c_params) == count($parts)) { //equal menus
+            $result = TRUE;
+        } elseif (count($c_params)) { //probably similar
+            $diff = array_diff($parts, $compare);
+            $result = TRUE;
+
+            foreach ($diff as $d) {
+                $td = preg_split('/=/', $d);
+                if (in_array($td[0], $this->keyParams)) {
+                    $result = FALSE;
+                    break;
                 }
-            }
-        } else {
-            if (strpos($requestedMenu, $parts[0]) !== FALSE) {
-                $result = TRUE;
-            }
-            //TODO - Emergency solution
-            if (isset($_REQUEST['post_type']) && ($_REQUEST['post_type'] != 'post')
-                    && in_array($menu, array('edit.php', 'post-new.php'))) {
-                $result = FALSE;
             }
         }
 
-        return apply_filters(WPACCESS_PREFIX . 'compare_menu', $result, $requestedMenu, $menu);
+        return $result;
+    }
+
+    function get_parts($requestedMenu) {
+
+        //this is for only one case - edit.php
+        if ($requestedMenu == 'edit.php') {
+            $requestedMenu .= '?post_type=post';
+        }
+        //splite requested URI
+        $parts = preg_split('/\?/', $requestedMenu);
+        $result = array(basename($parts[0]));
+
+        if (count($parts) > 1) { //no parameters
+            $params = preg_split('/&|&amp;/', $parts[1]);
+            $result = array_merge($result, $params);
+        }
+
+        return $result;
     }
 
     function unsetMainMenuItem($menuItem) {

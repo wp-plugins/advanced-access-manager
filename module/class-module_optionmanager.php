@@ -20,21 +20,12 @@
 
 class module_optionManager extends mvb_corePlugin {
     /*
-     * Indicate if return rendered HTML or
-     * print it
-     * 
-     * @var bool
-     * @access private
-     */
-
-    private $return;
-
-    /*
      * Template object holder
      * 
      * @var object <mvb_coreTemplate>
      * @access private
      */
+
     private $templObj;
 
     /*
@@ -70,42 +61,172 @@ class module_optionManager extends mvb_corePlugin {
     private $currentParams;
 
     /*
+     * Main Object
+     * 
+     * @var object
+     * @access protected
+     */
+    protected $pObj;
+
+    /*
      * Initiate an object and other parameters
      * 
      * @param string Current role to work with
-     * @param bool If TRUE, then return rendered HTML to the caller
+     * @param object Main Object
      */
 
-    function __construct($curentRole = FALSE, $return = FALSE) {
-        global $wpdb;
+    function __construct($pObj, $curentRole = FALSE) {
 
-        $this->return = $return;
+        $this->pObj = $pObj;
         $this->templObj = new mvb_coreTemplate();
         $templatePath = WPACCESS_TEMPLATE_DIR . 'admin_options.html';
         $this->template = $this->templObj->readTemplate($templatePath);
-        $this->roles = get_option($wpdb->prefix . 'user_roles');
-        $this->custom_caps = get_option(WPACCESS_PREFIX . 'custom_caps');
+        $this->roles = $this->get_roles();
+        $this->custom_caps = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'custom_caps', array());
         if (!is_array($this->custom_caps)) {
             $this->custom_caps = array();
         }
 
-        $roleList = array_keys($this->roles);
-        /*
-         * Expecting that there are more then 1 role :)
-         * Any way is event one, not a big deal 
-         */
-        $defaultRole = ($roleList[0] == WPACCESS_ADMIN_ROLE ? $roleList[1] : $roleList[0]);
-        if (!$curentRole) {
-            $this->currentRole = $defaultRole;
-        } else {
-            /*
-             * If someone tried to cheat
-             */
-            $this->currentRole = ($curentRole != WPACCESS_ADMIN_ROLE ? $curentRole : $defaultRole);
+        $this->set_currentRole($curentRole);
+
+        $this->currentParams = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'options', array());
+        $this->userSummary = count_users();
+    }
+
+    /*
+     * Render Configuration file
+     * 
+     * @param string filepath
+     * @return bool Result of rendering
+     */
+
+    public function render_config($file) {
+
+        require_once(WPACCESS_BASE_DIR . 'module/Zend/Config.php');
+        require_once(WPACCESS_BASE_DIR . 'module/Zend/Config/Writer/Ini.php');
+
+        // Create the config object
+        $config = new Zend_Config(array(), true);
+        $config->header = array();
+        $config->general = array();
+        $config->general->options = $this->get_encode_option(WPACCESS_PREFIX . 'options');
+        $config->general->restrictions = $this->get_encode_option(WPACCESS_PREFIX . 'restrictions');
+        $config->general->menu_order = $this->get_encode_option(WPACCESS_PREFIX . 'menu_order');
+        $config->general->roles = base64_encode(serialize(array_keys($this->roles)));
+
+        $config->header->version = $this->pObj->get_current_version();
+        $config->header->date = date('m/d/Y H:i:s');
+        $config->header->author = get_current_user_id();
+
+        $config->role = array();
+
+        foreach ($this->roles as $role => $data) {
+            $config->{$role} = array();
+            $config->setExtend($role, 'role');
+            $config->{$role}->capabilities = base64_encode(serialize($this->roles[$role]['capabilities']));
         }
 
-        $this->currentParams = get_option(WPACCESS_PREFIX . 'options');
-        $this->userSummary = count_users();
+        // Write the config file in one of the following ways:
+        $writer = new Zend_Config_Writer_Ini(array('config' => $config,
+                    'filename' => $file));
+        $writer->write();
+    }
+    
+     function get_encode_option($option){
+        
+        $data = $this->pObj->get_blog_option($option, array());
+        $data = base64_encode(serialize($data));
+        
+        return $data;
+    }
+
+    public function import_config() {
+
+        $file_name = trim($_POST['file_name']);
+        $file_path = WPACCESS_BASE_DIR . 'backups/' . $file_name;
+        $result = array('status' => 'error');
+
+        if ($file_name && file_exists($file_path)) {
+            require_once(WPACCESS_BASE_DIR . 'module/Zend/Config.php');
+            require_once(WPACCESS_BASE_DIR . 'module/Zend/Config/Ini.php');
+
+            $config = new Zend_Config_Ini($file_path);
+
+            //get general information
+            $options = unserialize(base64_decode($config->general->options));
+            $restric = unserialize(base64_decode($config->general->restrictions));
+            $menu_or = unserialize(base64_decode($config->general->menu_order));
+            if (is_array($options)) {
+                $this->pObj->update_blog_option(WPACCESS_PREFIX . 'options', $options);
+            }
+            if (is_array($restric)) {
+                $this->pObj->update_blog_option(WPACCESS_PREFIX . 'restrictions', $restric);
+            }
+            if (is_array($menu_or)) {
+                $this->pObj->update_blog_option(WPACCESS_PREFIX . 'menu_order', $menu_or);
+            }
+
+            $role_lt = unserialize(base64_decode($config->general->roles));
+
+            if (is_array($role_lt)) {
+                foreach ($role_lt as $role) {
+                    $caps = unserialize(base64_decode($config->{$role}->capabilities));
+                    if (isset($this->roles[$role])) { //do not create a new role, just skip it
+                        $this->roles[$role]['capabilities'] = $caps;
+                    }
+                }
+                //Update Role's Capabilities
+                $this->pObj->update_blog_option('user_roles', $this->roles);
+            }
+
+            $redirect = add_query_arg(array(
+                'current_role' => $_POST['role'],
+                'show_message' => 1), admin_url('users.php?page=wp_access'));
+            $result = array(
+                'status' => 'success',
+                'redirect' => $redirect
+            );
+        }
+
+        return $result;
+    }
+
+    function get_roles() {
+        global $wpdb;
+
+        $roles = $this->pObj->get_blog_option('user_roles', array());
+
+        if (!is_array($roles)) {
+            $roles = array();
+        }
+        if (!$this->pObj->is_super && isset($roles[WPACCESS_ADMIN_ROLE])) {
+            //exclude Administrator from list of allowed roles
+            unset($roles[WPACCESS_ADMIN_ROLE]);
+        }
+
+        return $roles;
+    }
+
+    function set_currentRole($role) {
+
+        $result = TRUE;
+        if ($this->role_exists($role)) {
+            $this->currentRole = $role;
+        } elseif (count($this->roles)) {
+            $t_list = array_keys($this->roles);
+            $this->currentRole = $t_list[0];
+        } else {
+            $result = FALSE;
+        }
+
+        return $result;
+    }
+
+    function role_exists($role) {
+
+        $exists = (isset($this->roles[$role]) ? TRUE : FALSE);
+
+        return $exists;
     }
 
     function getTemplate() {
@@ -114,45 +235,49 @@ class module_optionManager extends mvb_corePlugin {
     }
 
     function manage() {
-        global $wpdb;
-
-        if (isset($_POST['submited'])) {
-            $params = (isset($_POST['wpaccess']) ? $_POST['wpaccess'] : array());
-            
-            $this->currentParams[$this->currentRole] = array(
-                'menu' => (isset($params[$this->currentRole]['menu']) ? $params[$this->currentRole]['menu'] : array()),
-                'metaboxes' => (isset($params[$this->currentRole]['metabox']) ? $params[$this->currentRole]['metabox'] : array()),
-            );
-            update_option(WPACCESS_PREFIX . 'options', $this->currentParams);
-
-            /*
-             * Update Role's Capabilities
-             */
-            $this->roles[$this->currentRole]['capabilities'] = (isset($params[$this->currentRole]['advance']) ? $params[$this->currentRole]['advance'] : array());
-            update_option($wpdb->prefix . 'user_roles', $this->roles);
-        }
 
         $mainHolder = $this->postbox('metabox-wpaccess-options', 'Options List', $this->getMainOptionsList());
         $this->template = $this->renderRoleSelector($this->template);
         $this->template = $this->renderDeleteRoleList($this->template);
         $content = $this->templObj->replaceSub('MAIN_OPTIONS_LIST', $mainHolder, $this->template);
+        $blog = $this->pObj->get_current_blog();
         $markerArray = array(
             '###current_role###' => $this->roles[$this->currentRole]['name'],
+            '###form_action###' => admin_url('users.php?page=wp_access'),
             '###current_role_id###' => $this->currentRole,
-            '###site_url###' => get_option('siteurl'),
-            '###message_class###' => (isset($_POST['submited']) ? 'message-active' : 'message-passive'),
+            '###site_url###' => $blog['url'],
+            '###message_class###' => ( (isset($_POST['submited']) || isset($_GET['show_message'])) ? 'message-active' : 'message-passive'),
             '###nonce###' => wp_nonce_field(WPACCESS_PREFIX . 'options'),
-            '###metabox_general_info###' => $this->postbox('metabox-wpaccess-general', 'General Info', '<p>For <b>Main Menu</b> and <b>Metaboxes&Widgets</b> select proper checkbox to restrict access to resource. For <b>Capabilities</b> - select proper checkbox to give new capability to role</p>'),
         );
         $content = $this->templObj->updateMarkers($markerArray, $content);
         //add filter to future add-ons
         $content = apply_filters(WPACCESS_PREFIX . 'option_page', $content);
 
-        if ($this->return) {
-            return $content;
-        } else {
-            echo $content;
+        echo $content;
+    }
+
+    function do_save() {
+        if (isset($_POST['submited'])) {
+            $params = (isset($_POST['wpaccess']) ? $_POST['wpaccess'] : array());
+
+            $this->currentParams[$this->currentRole] = array(
+                'menu' => $this->prepareMenu($params),
+                'metaboxes' => (isset($params[$this->currentRole]['metabox']) ? $params[$this->currentRole]['metabox'] : array()),
+            );
+
+            $this->pObj->update_blog_option(WPACCESS_PREFIX . 'options', $this->currentParams);
+
+            //Update Role's Capabilities
+            $this->roles[$this->currentRole]['capabilities'] = (isset($params[$this->currentRole]['advance']) ? $params[$this->currentRole]['advance'] : array());
+            $this->pObj->update_blog_option('user_roles', $this->roles);
         }
+    }
+
+    function prepareMenu($params) {
+
+        $r_menu = (isset($params[$this->currentRole]['menu']) ? $params[$this->currentRole]['menu'] : array());
+
+        return $r_menu;
     }
 
     function renderDeleteRoleList($template) {
@@ -162,9 +287,6 @@ class module_optionManager extends mvb_corePlugin {
         $list = '';
         if (is_array($this->roles)) {
             foreach ($this->roles as $role => $data) {
-                if ($role == WPACCESS_ADMIN_ROLE) {
-                    continue;
-                }
                 $list .= $this->renderDeleteRoleItem($role, $data, $itemTemplate);
             }
         }
@@ -209,10 +331,6 @@ class module_optionManager extends mvb_corePlugin {
         $list = '';
         if (is_array($this->roles)) {
             foreach ($this->roles as $role => $data) {
-                if ($role == WPACCESS_ADMIN_ROLE) {
-                    continue;
-                }
-
                 $markers = array(
                     '###value###' => $role,
                     '###title###' => stripcslashes($data['name']) . '&nbsp;', //nicer view :)
@@ -279,8 +397,7 @@ class module_optionManager extends mvb_corePlugin {
         /*
          * Third Tab - Advance Settings
          */
-        $m = new module_User();
-        $capList = $m->getAllCaps();
+        $capList = $this->pObj->user->getAllCaps();
 
         $listTemplate = $this->templObj->retrieveSub('CAPABILITY_LIST', $template);
         $itemTemplate = $this->templObj->retrieveSub('CAPABILITY_ITEM', $listTemplate);
@@ -293,7 +410,7 @@ class module_optionManager extends mvb_corePlugin {
                     '###title###' => $cap,
                     '###description###' => $desc,
                     '###checked###' => $this->checkChecked('capability', array($cap)),
-                    '###cap_name###' => $m->getCapabilityHumanTitle($cap)
+                    '###cap_name###' => $this->pObj->user->getCapabilityHumanTitle($cap)
                 );
                 $titem = $this->templObj->updateMarkers($markers, $itemTemplate);
                 if (!in_array($cap, $this->custom_caps)) {
@@ -316,7 +433,7 @@ class module_optionManager extends mvb_corePlugin {
     protected function getRoleMenu() {
         global $menu;
 
-        $menu_order = get_option(WPACCESS_PREFIX . 'menu_order');
+        $menu_order = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'menu_order', array());
 
         $r_menu = $menu;
         ksort($r_menu);
@@ -429,7 +546,7 @@ class module_optionManager extends mvb_corePlugin {
             case 'submenu':
                 $c_menu = &$this->currentParams[$this->currentRole]['menu'];
                 if (isset($c_menu[$args[0]])) {
-                    if (isset($c_menu[$args[0]]['sub'][$args[1]]) || 
+                    if (isset($c_menu[$args[0]]['sub'][$args[1]]) ||
                             (isset($c_menu[$args[0]]['whole']) && $c_menu[$args[0]]['whole'])) {
                         $checked = 'checked';
                     }

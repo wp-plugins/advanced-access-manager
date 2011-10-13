@@ -146,11 +146,12 @@
 .loading-new{
     opacity : 0.4;
     filter: alpha(opacity=40);
+    -ms-filter: Alpha(Opacity=40);
 }
 
 .tooltip {
     display:none;
-    background:url(tooltip/black_big.png);
+    background:url(images/black_big.png);
     height:163px;
     padding:25px 30px 10px 30px;
     width:310px;
@@ -158,18 +159,6 @@
     color:#fff;
     z-index: 1000;
 }
-/*
-.tooltip {
-                display:none;
-                background-color:#ffa;
-                border:1px solid #cc9;
-                padding:3px;
-                font-size:13px;
-                -moz-box-shadow: 2px 2px 11px #666;
-                -webkit-box-shadow: 2px 2px 11px #666;
-        }
-
-*/
 
 .description-table{
     width: 100%;
@@ -399,4 +388,73 @@ div.sexy-bookmarks ul.socials a {
 
 .metabox-position{
     color: #333333;
+}
+
+.export-conf{
+    background: url('images/export.png') no-repeat;
+    float: right;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+}
+
+.import-conf{
+    background: url('images/import.png') no-repeat;
+    float: right;
+    margin-right: 5px;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+}
+
+.restore-conf{
+    background: url('images/restore.png') no-repeat;
+    float: right;
+    margin-left: 5px;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+}
+
+.import-form{
+    font-size: 12px;
+    text-align: justify;
+    margin-top: 10px;
+}
+
+.notice-highlight{
+    color: #FF0000;
+    font-weight: bold;
+}
+
+.additional-actions{
+    float:left;
+    width: 40%;
+}
+
+.save-action{
+    float: right;
+}
+
+#fileupload{
+    margin-top: 5px;
+    margin-left: 3px;
+}
+
+.facebook-loading{
+    display: none;
+    background: url('images/facebook-loading.gif') no-repeat;
+    width: 16px;
+    height: 11px;
+    margin-left: 3px;
+    padding-left: 20px;
+    font-style: italic;
+    font-size: 11px;
+}
+
+.import-steps{
+    display: none;
+    font-style: italic;
+    font-size: 12px;
+    margin-top: 10px;
 }

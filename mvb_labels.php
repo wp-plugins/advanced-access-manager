@@ -238,7 +238,7 @@ $help_context = '
     <p><h3>Metabox & Widgets</h3></p>
     <p>This section allows you to filter the list of metaboxes (sections to the Write Post, Write Page, and Write Link editing pages) and dashboard widgets.</p>
     <p><h3>Capabilities</h3></p>
-    <p>This is more advanced Tab which allows to create different combinations of User Roles for current User Role. If you are not familiar with Capabilities please read <a href="http://codex.wordpress.org/Roles_and_Capabilities" target="_blank">Roles and Capabilities</a>.</p>
+    <p>This is more advanced Tab which allows to create different combinations of Capabilities for current User Role. If you are not familiar with Capabilities please read <a href="http://codex.wordpress.org/Roles_and_Capabilities" target="_blank">Roles and Capabilities</a>.</p>
     <p><h3>Posts & Pages</h3></p>
     <p>Tree View of Posts (grouped into categories) and Pages (organized hierarchically according to Parent Page parameter) where you can restrict access to certain page or post or the whole category for current User Role. There is also possibility to set expiration date to posts or pages.</p>
 ';

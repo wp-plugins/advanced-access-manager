@@ -21,6 +21,7 @@
 class module_User extends WP_User {
 
     function __construct() {
+
         parent::__construct(get_current_user_id());
     }
 

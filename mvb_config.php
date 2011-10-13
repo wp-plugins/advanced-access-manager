@@ -35,6 +35,14 @@ define('WPACCESS_RESTRICTION_LIMIT', 5);
 define('WPACCESS_TEMPLATE_DIR', WPACCESS_BASE_DIR . 'templates/');
 define('WPACCESS_CSS_URL', WPACCESS_BASE_URL . 'css/');
 define('WPACCESS_JS_URL', WPACCESS_BASE_URL . 'js/');
+
+define('WPACCESS_RESTRICT_NO', 0);
+define('WPACCESS_RESTRICT_BACK', 1);
+define('WPACCESS_RESTRICT_FRONT', 2);
+define('WPACCESS_RESTRICT_BOTH', 3);
+
+$path = WPACCESS_BASE_DIR . 'module/';
+set_include_path(get_include_path() . PATH_SEPARATOR . $path);
 //load general files
 require_once('mvb_functions.php');
 require_once('mvb_labels.php');
@@ -61,4 +69,5 @@ $defCapabilities = array(
     'read' => 1,
     'level_0' => 1
 );
+
 ?>

@@ -21,6 +21,7 @@
 class module_Roles extends WP_Roles {
 
     function __construct() {
+
         parent::__construct();
     }
 
@@ -52,7 +53,7 @@ class module_Roles extends WP_Roles {
             'result' => $status,
             'new_role' => $newRole,
         );
-        
+
         return $result;
     }
 

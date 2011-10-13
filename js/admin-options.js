@@ -68,6 +68,62 @@ function mvbam_object(){
         radio4 : ['edit_posts', 'read', 'level_1', 'level_0', 'delete_posts'],
         radio5 : ['read', 'level_0']
     }
+    
+    /*
+     * Uploading config file
+     * 
+     * @var int
+     */
+    this.UPLOADING_CONFIG = 1;
+    
+    /*
+     * Config file uploaded
+     * 
+     * @var int
+     */
+    this.UPLOADED_CONFIG = 2;
+    
+    /*
+     *Paring uploaded configuration file
+     *
+     *@var int
+     */
+    this.PARSING_CONFIG = 4;
+    
+    /*
+     *Backup current configuration for emergancy situation
+     *
+     *@var int
+     */
+    this.BACKUP_CONFIG = 8;
+    
+    /*
+     *Importing configurations from uploaded file
+     *
+     *@var int
+     */
+    this.IMPORT_CONFIG = 16;
+    
+    /*
+     *Restore previous configuration if error during importing
+     *
+     *@var int
+     */
+    this.RESTORE_CONFIG = 256;
+    
+    /*
+     *Clean up all working materials during importing
+     *
+     *@var int
+     */
+    this.CLEANUP_CONFIG = 32;
+    
+    /*
+     * Current importing status
+     * 
+     * @var int
+     */
+    this.import_status = 0;
 }
 
 /*
@@ -89,7 +145,7 @@ mvbam_object.prototype.addNewRole = function(){
         'role' : newRoleTitle
     };
     var _this = this;
-    jQuery.post(ajaxurl, params, function(data){  
+    jQuery.post(wpaccessLocal.ajaxurl, params, function(data){  
         if (data.result == 'success'){
             var nOption = '<option value="'+data.new_role+'">'+newRoleTitle+'</option>';
             jQuery('#role option:last').after(nOption);
@@ -184,7 +240,7 @@ mvbam_object.prototype.configureMainMenu = function(){
         if (_this.sorting){
             jQuery('#sorting-tip').hide();
             //jQuery('#reorganize').button('option', 'label', 'Reorganize');
-            jQuery('#reorganize span').html('Reorganize');
+            jQuery('#reorganize').html('Reorganize');
             //save confirmation message
             if (_this.sorted){
                 jQuery( "#dialog-reorder-confirm #role-title" ).html(jQuery('#current-role-display').html());
@@ -208,7 +264,7 @@ mvbam_object.prototype.configureMainMenu = function(){
         }else{
             jQuery('#sorting-tip').show();
             //jQuery('#reorganize').button('option', 'label', 'Save Order');
-            jQuery('#reorganize span').html('Save Order');
+            jQuery('#reorganize').html('Save Order');
             _this.configureAccordion('#main-menu-options', true);
         }
         _this.sorting = !_this.sorting;
@@ -220,7 +276,7 @@ mvbam_object.prototype.configureMainMenu = function(){
         sub_action : 'check_addons',
         '_ajax_nonce': wpaccessLocal.nonce
     }
-    jQuery.post(ajaxurl, params, function(data){
+    jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
         if (data.status == 'success' && data.available){
             jQuery('.addons-info').removeClass('dialog');
             jQuery('.addons-info').bind('click', function(event){
@@ -257,7 +313,7 @@ mvbam_object.prototype.saveMenuOrder = function(apply_all){
         params.menu.push(jQuery(this).attr('id'));
     });
     
-    jQuery.post(ajaxurl, params, function(data){
+    jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
         if (data.status == 'success'){
             if (_this.submiting){
                 jQuery('#wp-access').submit();
@@ -292,7 +348,7 @@ mvbam_object.prototype.configureMetaboxes = function(){
                 '_ajax_nonce': wpaccessLocal.nonce,
                 'url' : val
             };
-            jQuery.post(ajaxurl, params, function(data){
+            jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
                 jQuery('.initiate-url-text').val('');
                 jQuery('.initiate-url-empty').show();
                 if (data.status == 'success'){
@@ -353,7 +409,7 @@ mvbam_object.prototype.configureCapabilities = function(){
 
 mvbam_object.prototype.postPage = function(){
     jQuery("#tree").treeview({
-        url: ajaxurl,
+        url: wpaccessLocal.ajaxurl,
         // add some additional, dynamic data and request with POST
         ajax: {
             data : {
@@ -388,7 +444,7 @@ mvbam_object.prototype.addNewCapability = function(){
                         'cap' : cap,
                         'role' : jQuery('#role').val()
                     };
-                    jQuery.post(ajaxurl, params, function(data){
+                    jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
                         if (data.status == 'success'){
                             jQuery('.capability-item:last').after(data.html);
                             jQuery('.capability-item:last .info').remove();
@@ -446,7 +502,7 @@ mvbam_object.prototype.initiationChain = function(next){
         'next' : next
     };
     var _this = this;
-    jQuery.post(ajaxurl, params, function(data){
+    jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
         jQuery('#progressbar').progressbar("option", "value", data.value);
         if (data.status == 'success'){
             if (data.next){
@@ -477,7 +533,7 @@ mvbam_object.prototype.grabInitiatedWM = function(){
         'role' : jQuery('#current_role').val()
     };
     var _this = this;    
-    jQuery.post(ajaxurl, params, function(data){
+    jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
         jQuery('#metabox-list').replaceWith(data);
         _this.configureAccordion('#metabox-list');
     });
@@ -533,7 +589,7 @@ mvbam_object.prototype.deleteRole = function(role){
                     '_ajax_nonce': wpaccessLocal.nonce,
                     'role' : role
                 };
-                jQuery.post(ajaxurl, params, function(){ 
+                jQuery.post(wpaccessLocal.ajaxurl, params, function(){ 
                     jQuery('.delete-role-table #dl-row-' + role).remove();
                     if (jQuery('#role option[value="'+role+'"]').attr('selected')){
                         _this.getRoleOptionList(jQuery('#role option:first').val());
@@ -628,7 +684,7 @@ mvbam_object.prototype.restoreDefault = function(){
                     'role' : role
                 };
                 var _dialog = this;
-                jQuery.post(ajaxurl, params, function(data){
+                jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
                     if (data.status == 'success'){
                         _this.getRoleOptionList(role);
                     }else{
@@ -663,7 +719,7 @@ mvbam_object.prototype.loadInfo = function(event, type, id){
         'id' : id
     }
     
-    jQuery.post(ajaxurl, params, function(data){
+    jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
         _this.removeAjaxLoader('.post-information', 'small');
         if (data.status == 'success'){
             var pi = jQuery('.post-information');
@@ -698,10 +754,11 @@ mvbam_object.prototype.loadInfo = function(event, type, id){
                     'type' : type,
                     'role' : jQuery('#role').val(),
                     'restrict' : jQuery('input[name="restrict_access"]', pi).attr('checked'),
+                    'restrict_front' : jQuery('input[name="restrict_front_access"]', pi).attr('checked'),
                     'restrict_expire' : jQuery('#restrict_expire', pi).val(),
                     'id' : id
                 }
-                jQuery.post(ajaxurl, params, function(data){
+                jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
                     _this.removeAjaxLoader('.post-information', 'small');
                     if (data.status == 'success'){
                         jQuery('#expire-success-message', pi).show().delay(5000).hide('slow');
@@ -736,9 +793,98 @@ mvbam_object.prototype.handleError = function(err){
     jQuery('#error-message').removeClass('message-passive');
 }
 
+
+mvbam_object.prototype.importConf = function(){
+    
+    var _this = this;
+    
+    jQuery( "#import-config" ).dialog({
+        resizable: false,
+        height:250,
+        width: 300,
+        modal: true,
+        buttons: {
+            "Import": function() {
+                
+                jQuery('.import-form').hide();
+                jQuery('.import-steps').show();
+                _this.import_status = _this.PARSING_CONFIG;
+                
+                var params = {
+                    'action' : 'mvbam',
+                    'sub_action' : 'import_config',
+                    '_ajax_nonce': wpaccessLocal.nonce,
+                    'role' : jQuery('#current_role').val(),
+                    'file_name' : jQuery('#config_file_name').val()
+                }
+                var _dialog = this;
+                jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
+                    jQuery('.import-form').show();
+                    jQuery('.import-steps').hide();
+                    jQuery('#config_file_name').val('');
+                    if (data.status == 'success'){
+                        window.location.href = data.redirect;
+                        jQuery( _dialog ).dialog( "close" );
+                    }else{
+                        alert('Error during importing');
+                    }
+                }, 'json'); 
+            },
+            Cancel: function() {
+                jQuery( this ).dialog( "close" );
+            }
+        },
+        open: function(event, ui) { 
+            jQuery('#fileupload').fileupload({
+                dataType: 'json',
+                url: wpaccessLocal.ajaxurl,
+                autoUpload : true,
+                acceptFileTypes : /(\.|\/)(ini)$/i,
+                formData : [
+                {
+                    name : 'action', 
+                    value : 'mvbam'
+                },  
+
+                {
+                    name : 'sub_action', 
+                    value : 'upload_config'
+                },  
+
+                {
+                    name : '_ajax_nonce', 
+                    value : wpaccessLocal.nonce
+                },  
+                ],
+                done: function (e, data) {
+                    jQuery('#import-config .facebook-loading').hide();
+                    if (data.result.status == 'success'){
+                        jQuery('#config_file_name').val(data.result.file_name);
+                        _this.import_status = _this.UPLOADED_CONFIG;
+                    }
+                },
+                fail: function (e, data) {
+                // data.errorThrown;
+                //TODO - one more status 
+                },
+                start : function (e) {
+                    jQuery('#import-config .facebook-loading').show();
+                    _this.import_status = _this.UPLOADING_CONFIG;
+                }
+            });
+        }
+    });
+}
+
+mvbam_object.prototype.exportConf = function(){
+    var url = wpaccessLocal.ajaxurl + '?action=mvbam&sub_action=export&_ajax_nonce=' + wpaccessLocal.nonce;
+    jQuery("#exportIFrame").attr("src", url);
+}
+
 mvbam_object.prototype.deleteCapability = function(cap, label){
     jQuery('#delete-capability-title').html(label);
     var _this = this;
+    
     jQuery( "#dialog-delete-capability" ).dialog({
         resizable: false,
         height:180,
@@ -751,7 +897,7 @@ mvbam_object.prototype.deleteCapability = function(cap, label){
                     '_ajax_nonce': wpaccessLocal.nonce,
                     'cap' : cap
                 };
-                jQuery.post(ajaxurl, params, function(data){ 
+                jQuery.post(wpaccessLocal.ajaxurl, params, function(data){ 
                     if (data.status == 'success'){
                         jQuery('#cap-' + cap).parent().parent().remove();
                     }else{
@@ -800,7 +946,6 @@ jQuery(document).ready(function(){
             }else{
                 mObj.changeRole();
             }
-       
         });
     
     
@@ -847,7 +992,7 @@ jQuery(document).ready(function(){
     
         jQuery('#role-tabs').tabs();
     
-        jQuery('.deletion').bind('click', function(e){
+        jQuery('.restore-conf').bind('click', function(e){
             e.preventDefault();
             mObj.restoreDefault();
         });
@@ -863,7 +1008,15 @@ jQuery(document).ready(function(){
     
         //window.onbeforeunload = mObj.goodbye;
         mObj.configureElements();
-
+        
+        jQuery('.import-conf').bind('click', function(){
+            mObj.importConf(); 
+        });
+        
+        jQuery('.export-conf').bind('click', function(){
+            mObj.exportConf(); 
+        });
+        
         jQuery('#wp-access').show();
     }catch(err){
         mObj.handleError(err);

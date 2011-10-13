@@ -2,9 +2,9 @@
 Contributors: vasyl_m
 Donate link: http://whimba.com/advanced-access-manager-donation/
 Tags: access manager, access-control, capability, dashboard widget, expire, expire link, filter menu, filter pages, filter posts, metabox, role manager, user access, user control, user role
-Requires at least: 3.0
+Requires at least: 3.2
 Tested up to: 3.2.1
-Stable tag: 1.2.1
+Stable tag: 1.3
 
 Graphic interface to manage User Roles, Capabilities and Post/Page Access
 
@@ -22,11 +22,14 @@ this plugin is for you. You can do following things with Advanced Access Manager
 * Create new User Roles
 * Delete any User Role
 * Save current User Roles settings and restore later
-* NEW! View the list of Posts Pages and Categories in a nice hierarchical tree 
-* NEW! Filter Posts and Post Categories
-* NEW! Filter Pages and Sub Pages
-* NEW! Set expiration Date for specific Posts, Pages or even Categories
-* NEW! Reorganize Order of Main Menu for specific User Role
+* View the list of Posts Pages and Categories in a nice hierarchical tree 
+* Filter Posts and Post Categories
+* Filter Pages and Sub Pages
+* Set expiration Date for specific Posts, Pages or even Categories
+* Reorganize Order of Main Menu for specific User Role
+* Super Administrator can manager site administrators
+* NEW! Import/Export Advanced Access Manager configurations
+* NEW! Support Custom Post Types 
 
 PLEASE NOTICE, that it filters not only Front-End Posts, Pages and Categories, but
 also and Back-End.
@@ -48,7 +51,7 @@ message on Forums Posts.
 = It is not working! Why? =
 
 Actually it works. This plugin was tested by hundreds of people and it is also
-successfully work on more the 10 projects I did. The reason it can behaviors strange
+successfully work on more the 20 projects I did. The reason it can behaviors strange
 is incompatibility with plugins which are not following the simply WordPress rules.
 Many plugins just print additional JavaScript libraries without any reason and 
 this is the most frequent reason of conflicts.
@@ -75,12 +78,6 @@ correct capabilities to current User Role. In such way if you want to give someb
 access to backend I recommend to use predefined set of options "Editor" and then
 just filter Main Menu.
 
-= What is "Restore Default" link near Save button? =
-
-Advanced Access Manager has implemented activation hook which will store all User
-Roles defined in the system with the list of capabilities. So if you did something wrong,
-you'll be able to restore original settings.
-After Advanced Access Manager deactivation, all setting will be restored automatically.
 
 == Screenshots ==
 
@@ -90,6 +87,15 @@ After Advanced Access Manager deactivation, all setting will be restored automat
 4. Post/Page Tree View
 
 == Changelog ==
+
+= 1.3 =
+* Change some interface button to WordPress default
+* Deleted General Info metabox
+* Improved check Access algorithm for compatibility with non standard links
+* Split restriction on Front-end and Back-end
+* Added Page Menu Filtering
+* Added Admin Top Menu Filtering
+* Added Import/Export Configuration functionality 
 
 = 1.2.1 =
 * Fixed issue with propAttr jQuery IU incompatibility

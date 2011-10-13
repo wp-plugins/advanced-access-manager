@@ -21,12 +21,15 @@
 class module_filterMetabox extends module_User {
 
     private $cParams;
+    
+    protected $pObj;
 
-    function __construct() {
+    function __construct($pObj) {
 
+        $this->pObj = $pObj;
         parent::__construct();
 
-        $this->cParams = get_option(WPACCESS_PREFIX . 'options');
+        $this->cParams = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'options');
     }
 
     function manage($area = 'post') {

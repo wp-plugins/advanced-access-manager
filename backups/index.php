@@ -18,16 +18,4 @@
 
  */
 
-function aam_debug($what) {
-    echo '<pre>';
-    print_r($what);
-    echo '</pre>';
-}
-
-function init_wpaccess() {
-    global $mvb_wpAccess;
-
-    $mvb_wpAccess = new mvb_WPAccess();
-}
-
 ?>
