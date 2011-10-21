@@ -38,7 +38,16 @@ class module_User extends WP_User {
 
     function getAllCaps() {
 
-        return $this->allcaps;
+        $caps = $this->allcaps;
+        $caps = (is_array($caps) ? $caps : array());
+        $unset_list = array('super_admin');
+        foreach ($unset_list as $unset) {
+            if (isset($caps[$unset])) {
+                unset($caps[$unset]);
+            }
+        }
+        
+        return $caps;
     }
 
     function getCapabilityHumanTitle($cap) {

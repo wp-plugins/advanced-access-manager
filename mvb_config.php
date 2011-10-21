@@ -56,6 +56,7 @@ if (!class_exists('mvb_coreTemplate')) {
 }
 
 //load additional classes
+require_once('module/class-module_ajax.php');
 require_once('module/class-module_roles.php');
 require_once('module/class-module_user.php');
 require_once('module/class-module_filtermenu.php');

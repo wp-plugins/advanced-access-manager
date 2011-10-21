@@ -34,24 +34,32 @@ class module_Roles extends WP_Roles {
      * @return array Result
      */
 
-    function createNewRole($newRoleTitle) {
+    function createNewRole($newRoleTitle, $caps = 'default') {
         global $table_prefix, $defCapabilities;
 
-        if (preg_match('/^[a-z0-9\s]{1,}$/i', trim($newRoleTitle))) {
-            $newRole = strtolower(str_replace(' ', '_', $newRoleTitle));
-            if ($this->add_role($newRole, $newRoleTitle, $defCapabilities)) {
-                $status = 'success';
-            } else {
-                $status = 'error';
-            }
+        $role_id = sanitize_title_with_dashes($newRoleTitle);
+        $role_id = str_replace('-', '_', $role_id);
+        $label = htmlspecialchars(trim($newRoleTitle));
+
+        switch ($roles) {
+            case 'all':
+                $cap_list = $capList = $this->pObj->user->getAllCaps();
+                break;
+
+            default:
+                $cap_list = $defCapabilities;
+                break;
+        }
+
+        if ($this->add_role($role_id, $label, $defCapabilities)) {
+            $status = 'success';
         } else {
-            //TODO - Now only one error appears on front - "Already exists"
             $status = 'error';
         }
 
         $result = array(
             'result' => $status,
-            'new_role' => $newRole,
+            'new_role' => $role_id,
         );
 
         return $result;

@@ -4,35 +4,36 @@ Donate link: http://whimba.com/advanced-access-manager-donation/
 Tags: access manager, access-control, capability, dashboard widget, expire, expire link, filter menu, filter pages, filter posts, metabox, role manager, user access, user control, user role
 Requires at least: 3.2
 Tested up to: 3.2.1
-Stable tag: 1.3
+Stable tag: 1.3.1
 
 Graphic interface to manage User Roles, Capabilities and Post/Page Access
 
 == Description ==
 
+This is easy to use interface to manage access to your WordPress based website.
 If you want to filter Admin Menu for some User Roles or just delete unnecessary 
-dashboard widgets or metaboxes in Edit Post Page or filter the list of posts, pages and categories, 
-this plugin is for you. You can do following things with Advanced Access Manager:
+Dashboard widgets or Metaboxes or filter the list of posts, pages and categories, 
+this plugin is for you. 
+You can do following things with Advanced Access Manager:
 
 * Filter Admin Menu for specific User Role
 * Filter Dashboard Widgets for specific User Role
-* Filter List of Metaboxes in Edit Post page for specific User Role
+* Filter List of Metaboxes for specific User Role
 * Add new User Capabilities
 * Delete created User Capabilities
 * Create new User Roles
 * Delete any User Role
+* NEW! Edit User Role's Label
 * Save current User Roles settings and restore later
-* View the list of Posts Pages and Categories in a nice hierarchical tree 
+* NEW! Import/Export Advanced Access Manager configurations
+* View the list of Posts, Pages and Categories in a hierarchical tree 
 * Filter Posts and Post Categories
 * Filter Pages and Sub Pages
 * Set expiration Date for specific Posts, Pages or even Categories
 * Reorganize Order of Main Menu for specific User Role
 * Super Administrator can manager site administrators
-* NEW! Import/Export Advanced Access Manager configurations
-* NEW! Support Custom Post Types 
-
-PLEASE NOTICE, that it filters not only Front-End Posts, Pages and Categories, but
-also and Back-End.
+* NEW! Support Custom Post Types
+* NEW! Exclude Pages From Navigation 
 
 [youtube http://www.youtube.com/watch?v=zkyxply_JHs]
 
@@ -48,13 +49,24 @@ message on Forums Posts.
 
 == Frequently Asked Questions ==
 
-= It is not working! Why? =
+= How to redirect is Restriction Prohibited? = 
 
-Actually it works. This plugin was tested by hundreds of people and it is also
-successfully work on more the 20 projects I did. The reason it can behaviors strange
-is incompatibility with plugins which are not following the simply WordPress rules.
-Many plugins just print additional JavaScript libraries without any reason and 
-this is the most frequent reason of conflicts.
+There are two ways to do that. First one is to use actions wpaccess_admin_redirect
+for Admin Dashboard and wpaccess_front_redirect for a Front-End. Second way is to
+download a free add-on called AAM Redirect from my website <a href="http://whimba.com/plugins/advanced-access-manager/add-ons/">here</a>
+Under Settings->AAM Redirect define URLs you want to redirect. 
+
+= How to give access for Administrator's Role to Advanced Access Manager? =
+
+If you are Super Admin, you can manage the Administrator's Role as other User
+Roles. To give an access to Access Manager's Option Page, just create a new
+capability AAM Manage and check it for Administrator's User Role.
+
+= Why do I have a red message says JavaScript Error =
+
+The reason you see this message is incompatibility with plugins which are not 
+following the simply WordPress rules. Many plugins just print additional JavaScript 
+libraries without any reason and this is the most frequent reason of conflicts.
  
 = What is "Initiate URL" button for, under "Metaboxes & Widgets" Tab? =
 
@@ -87,6 +99,15 @@ just filter Main Menu.
 4. Post/Page Tree View
 
 == Changelog ==
+
+= 1.3.1 =
+* Improved Super Admin functionality
+* Optimized main class
+* Improved Checking algorithm
+* Added ability to change User Role's Label
+* Added ability to Exclude Pages from Navigation
+* Added ability to spread Post/Category Restriction Options to all User Roles
+* Sorted List of Capabilities Alphabetically
 
 = 1.3 =
 * Change some interface button to WordPress default

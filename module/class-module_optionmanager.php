@@ -81,7 +81,7 @@ class module_optionManager extends mvb_corePlugin {
         $this->templObj = new mvb_coreTemplate();
         $templatePath = WPACCESS_TEMPLATE_DIR . 'admin_options.html';
         $this->template = $this->templObj->readTemplate($templatePath);
-        $this->roles = $this->get_roles();
+        $this->roles = $this->pObj->get_roles();
         $this->custom_caps = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'custom_caps', array());
         if (!is_array($this->custom_caps)) {
             $this->custom_caps = array();
@@ -191,21 +191,6 @@ class module_optionManager extends mvb_corePlugin {
         return $result;
     }
 
-    function get_roles() {
-        global $wpdb;
-
-        $roles = $this->pObj->get_blog_option('user_roles', array());
-
-        if (!is_array($roles)) {
-            $roles = array();
-        }
-        if (!$this->pObj->is_super && isset($roles[WPACCESS_ADMIN_ROLE])) {
-            //exclude Administrator from list of allowed roles
-            unset($roles[WPACCESS_ADMIN_ROLE]);
-        }
-
-        return $roles;
-    }
 
     function set_currentRole($role) {
 
@@ -268,8 +253,10 @@ class module_optionManager extends mvb_corePlugin {
             $this->pObj->update_blog_option(WPACCESS_PREFIX . 'options', $this->currentParams);
 
             //Update Role's Capabilities
-            $this->roles[$this->currentRole]['capabilities'] = (isset($params[$this->currentRole]['advance']) ? $params[$this->currentRole]['advance'] : array());
-            $this->pObj->update_blog_option('user_roles', $this->roles);
+            $roles = $this->pObj->get_roles(TRUE);
+            $cap_list = (isset($params[$this->currentRole]['advance']) ? $params[$this->currentRole]['advance'] : array());
+            $roles[$this->currentRole]['capabilities'] = $cap_list;
+            $this->pObj->update_blog_option('user_roles', $roles);
         }
     }
 
@@ -398,6 +385,7 @@ class module_optionManager extends mvb_corePlugin {
          * Third Tab - Advance Settings
          */
         $capList = $this->pObj->user->getAllCaps();
+        ksort($capList);
 
         $listTemplate = $this->templObj->retrieveSub('CAPABILITY_LIST', $template);
         $itemTemplate = $this->templObj->retrieveSub('CAPABILITY_ITEM', $listTemplate);

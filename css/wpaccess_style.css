@@ -344,7 +344,7 @@ div.sexy-bookmarks ul.socials a {
     padding-left: 7px;
 }
 
-.save-postinfo{
+.save-postinfo, .save-postinfo-all{
     float:right;
     margin-bottom: 5px;
     margin-right: 5px;
@@ -457,4 +457,13 @@ div.sexy-bookmarks ul.socials a {
     font-style: italic;
     font-size: 12px;
     margin-top: 10px;
+}
+
+.role-name{
+    font-weight: bold;
+}
+
+.donate{
+    text-align: center;
+    margin-top: 15px;
 }

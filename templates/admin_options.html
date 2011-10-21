@@ -218,6 +218,13 @@
                                                 <td><input type="checkbox" name="restrict_front_access" ###restrict_front_checked### value="1" /></td>
                                                 <td><div class="info" title="Click for Tooltip"><div title="Restrict access to current Post or Page on FrontEnd" class="capability-description"></div></div></td>
                                             </tr>
+                                            <!-- ###EXCLUDE_PAGE### begin-->
+                                            <tr>
+                                                <th>Exclude Page</th>
+                                                <td><input type="checkbox" name="exclude_page" ###exclude_page_checked### value="1" /></td>
+                                                <td><div class="info" title="Click for Tooltip"><div title="Just Exclude page from navitation but do not restrict access" class="capability-description"></div></div></td>
+                                            </tr>
+                                            <!-- ###EXCLUDE_PAGE### end-->
                                             <tr>
                                                 <th>Expire</th>
                                                 <td><input type="text" id="restrict_expire" value="###restrict_expire###" /></td>
@@ -225,7 +232,7 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <a href="#" class="button-primary save-postinfo">Update</a>
+                                    <a href="#" class="button-primary save-postinfo" title="Update info only for current role">Update Current</a>&nbsp;<a href="#" class="button-primary save-postinfo-all" title="Update info for all role">Update All</a>
                                     <!-- ###POST### end-->
                                     <!-- ###CATEGORY### begin-->
                                     <table class="info-table" cellspacing="0" >
@@ -262,7 +269,7 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <a href="#" class="button-primary save-postinfo">Update</a>
+                                    <a href="#" class="button-primary save-postinfo" title="Update info only for current role">Update Current</a>&nbsp;<a href="#" class="button-primary save-postinfo-all" title="Update info for all role">Update All</a>
                                     <!-- ###CATEGORY### end-->
                                     <!-- ###POST_INFORMATION### end-->
                                     <div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;"> 
@@ -335,7 +342,7 @@
                                         <tbody>
                                             <!-- ###DELETE_ROLE_ITEM### begin-->
                                             <tr id="dl-row-###role_id###">
-                                                <td><b>###role_name###</b></td>
+                                                <td><span class="role-name">###role_name###</span></td>
                                                 <td><i>(###count###)</i></td>
                                                 <td>
                                                     <!-- ###DELETE_ROLE_BUTTON### begin-->
@@ -385,6 +392,9 @@
                                 </ul>
                             </div>
                             <br class="clear" />
+                            <div class="donate">
+                                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=KMUXLE3XFWRFC" target="_blank" ><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" /></a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -403,6 +413,10 @@
     <div id="dialog-confirm" class="dialog" title="Restore Default Role Settings?">
         <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>All current settings will be lost. Are you sure?</p>
     </div>
+    <div id="dialog-apply-all" class="dialog" title="Apply Setting for ALL User Roles?">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Do you really want to apply these settings for <b>ALL</b> User Roles?</p>
+        <p><input type="checkbox" id="hide-apply-all" />&nbsp;<label for="hide-apply-all">Do not show me this message again.</label></p>
+    </div>
     <div id="leave-confirm" class="dialog" title="Leave Without Saving?">
         <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Some changed detected. Are you sure that you want to leave without saving</p>
     </div>
@@ -414,6 +428,9 @@
     </div>
     <div id="addon-proposal" class="dialog" title="Upgrade functionality">
         <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 5px 0;"></span><span id="addon-message"></span></p>
+    </div>
+     <div id="dialog-superadmin" class="dialog" title="Are you Super Admin?">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 5px 0;"></span>You are the FIRST Administrator who entering <i>Advanced Access Manager</i>. Do you want to create a <b>Super Admin</b> Role to be able to manage other Administrators?</p>
     </div>
     <div id="import-config" class="dialog" title="Import Configurations">
         <div class="importer-container">

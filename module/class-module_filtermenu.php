@@ -43,7 +43,7 @@ class module_filterMenu extends module_User {
     }
 
     function manage() {
-        global $menu, $submenu;
+        global $menu, $submenu, $restrict_message;
 
         $userRoles = $this->getCurrentUserRole();
         if (is_array($userRoles)) {
@@ -63,7 +63,8 @@ class module_filterMenu extends module_User {
 
             $menu = $this->getRoleMenu($userRoles[0]);
         } else {
-            wp_die('You are not authorized to view this page');
+            do_action(WPACCESS_PREFIX . 'admin_redirect');
+            wp_die($restrict_message);
         }
     }
 
@@ -168,7 +169,7 @@ class module_filterMenu extends module_User {
     function get_parts($requestedMenu) {
 
         //this is for only one case - edit.php
-        if ($requestedMenu == 'edit.php') {
+        if (basename($requestedMenu) == 'edit.php') {
             $requestedMenu .= '?post_type=post';
         }
         //splite requested URI

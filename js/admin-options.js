@@ -124,6 +124,12 @@ function mvbam_object(){
      * @var int
      */
     this.import_status = 0;
+    
+    /*
+     * Show Confirm Apply to All User Role
+     */
+    this.hideApplyAll = wpaccessLocal.hide_apply_all;
+    
 }
 
 /*
@@ -156,7 +162,7 @@ mvbam_object.prototype.addNewRole = function(){
             //jQuery('#new-role-message-error').hide();
             jQuery('.delete-role-table tbody').append(data.html);
             jQuery('#new-role-message-ok').show().delay(2000).hide('slow');
-            
+            _this.initRoleNameRow(jQuery('#dl-row-' + data.new_role));
         }else{
             _this.removeAjaxLoader('#tabs');
             //    jQuery('#new-role-message-ok').hide();
@@ -534,9 +540,13 @@ mvbam_object.prototype.grabInitiatedWM = function(){
     };
     var _this = this;    
     jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
-        jQuery('#metabox-list').replaceWith(data);
-        _this.configureAccordion('#metabox-list');
-    });
+        if (data.status == 'success'){
+            jQuery('#metabox-list').replaceWith(data.html);
+            _this.configureAccordion('#metabox-list');
+        }else{
+            alert('Error');
+        }
+    }, 'json');
 }
 
 mvbam_object.prototype.configureAccordion = function(selector, sortable){
@@ -744,47 +754,82 @@ mvbam_object.prototype.loadInfo = function(event, type, id){
                 }
             });
             jQuery('.save-postinfo', pi).bind('click', function(event){
-                _this.showAjaxLoader('.post-information', 'small');
                 event.preventDefault(); 
                 //save information
-                var params = {
-                    'action' : 'mvbam',
-                    'sub_action' : 'save_info',
-                    '_ajax_nonce': wpaccessLocal.nonce,
-                    'type' : type,
-                    'role' : jQuery('#role').val(),
-                    'restrict' : jQuery('input[name="restrict_access"]', pi).attr('checked'),
-                    'restrict_front' : jQuery('input[name="restrict_front_access"]', pi).attr('checked'),
-                    'restrict_expire' : jQuery('#restrict_expire', pi).val(),
-                    'id' : id
-                }
-                jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
-                    _this.removeAjaxLoader('.post-information', 'small');
-                    if (data.status == 'success'){
-                        jQuery('#expire-success-message', pi).show().delay(5000).hide('slow');
-                    }else{
-                        jQuery('#expire-error-message', pi).show().delay(10000).hide('slow');
-                        if (data.message){
-                            jQuery( "#addon-proposal #addon-message" ).html(data.message);
-                            jQuery( "#addon-proposal" ).dialog({
-                                resizable: false,
-                                height:190,
-                                modal: true,
-                                buttons: {
-                                    OK: function() {
-                                        jQuery( this ).dialog( "close" );
-                                    }
-                                }
-                            });
-                        }
-                    }
-                }, 'json');
+                _this.saveInfo(_this, pi, type, id, 0);
             });
+            jQuery('.save-postinfo-all', pi).bind('click', function(event){
+                event.preventDefault();
+                
+                if (_this.hideApplyAll == '1'){
+                    _this.saveInfo(_this, pi, type, id, 1);
+                }else{
+                    //save information
+                    jQuery( "#dialog-apply-all" ).dialog({
+                        resizable: false,
+                        height:204,
+                        width: 320,
+                        modal: true,
+                        buttons: {
+                            "Apply All": function() {
+                                _this.saveInfo(_this, pi, type, id, 1);
+                                _this.hideApplyAll = (jQuery('#hide-apply-all').attr('checked') ? 1 : 0);
+                                jQuery( this ).dialog( "close" );
+                            },
+                            "Cancel": function() {
+                                jQuery( this ).dialog( "close" );
+                            }
+                        }
+                    }); 
+                }
+            });
+            
         }else{
             //TODO - Implement error
             alert('Error during information grabbing!');
         }
     },'json');
+}
+
+mvbam_object.prototype.saveInfo = function(obj, pi, type, id, apply){
+
+    obj.showAjaxLoader('.post-information', 'small');
+
+    var params = {
+        'action' : 'mvbam',
+        'sub_action' : 'save_info',
+        '_ajax_nonce': wpaccessLocal.nonce,
+        'type' : type,
+        'role' : jQuery('#role').val(),
+        'restrict' : jQuery('input[name="restrict_access"]', pi).attr('checked'),
+        'restrict_front' : jQuery('input[name="restrict_front_access"]', pi).attr('checked'),
+        'exclude_page' : jQuery('input[name="exclude_page"]', pi).attr('checked'),
+        'restrict_expire' : jQuery('#restrict_expire', pi).val(),
+        'id' : id,
+        'apply' : apply,
+        'apply_all_cb' : (jQuery('#hide-apply-all').attr('checked') ? 1 : 0)
+    }
+    jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
+        obj.removeAjaxLoader('.post-information', 'small');
+        if (data.status == 'success'){
+            jQuery('#expire-success-message', pi).show().delay(5000).hide('slow');
+        }else{
+            jQuery('#expire-error-message', pi).show().delay(10000).hide('slow');
+            if (data.message){
+                jQuery( "#addon-proposal #addon-message" ).html(data.message);
+                jQuery( "#addon-proposal" ).dialog({
+                    resizable: false,
+                    height:190,
+                    modal: true,
+                    buttons: {
+                        OK: function() {
+                            jQuery( this ).dialog( "close" );
+                        }
+                    }
+                });
+            }
+        }
+    }, 'json');
 }
 
 mvbam_object.prototype.handleError = function(err){
@@ -913,6 +958,127 @@ mvbam_object.prototype.deleteCapability = function(cap, label){
     });
 }
 
+mvbam_object.prototype.check_first_time = function(){
+    
+    if (wpaccessLocal.first_time == 1){
+        var params = {
+            'action' : 'mvbam',
+            'sub_action' : 'create_super',
+            '_ajax_nonce': wpaccessLocal.nonce,
+            'answer' : 0
+        };
+        jQuery( "#dialog-superadmin" ).dialog({
+            resizable: false,
+            height:210,
+            width: 350,
+            modal: true,
+            buttons: {
+                "Create": function() {
+                    params.answer = 1;
+                    var _this = this;
+                    jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
+                        if (data.result == 'success'){
+                            window.location.reload(true);
+                        }else{
+                            alert('Error');
+                        }
+                        jQuery( _this ).dialog( "close" );
+                    }, 'json');
+                    
+                },
+                "Do not Create": function() {
+                    params.answer = 2;
+                    var _this = this;
+                    jQuery.post(wpaccessLocal.ajaxurl, params, function(data){ 
+                        window.location.reload(true);
+                        jQuery( _this ).dialog( "close" );
+                    }, 'json');
+                },
+                Cancel: function() {
+                    jQuery( this ).dialog( "close" );
+                }
+            }
+        });
+    }
+}
+
+mvbam_object.prototype.updateRoleName = function(role_id, row_id, or_label, obj){
+    
+    var _this = this;
+    var e_label = jQuery(obj).val();
+    if (e_label != or_label){
+        this.showAjaxLoader('.delete-role-table', 'small');
+        var params = {
+            'action' : 'mvbam',
+            'sub_action' : 'update_role_name',
+            '_ajax_nonce': wpaccessLocal.nonce,
+            'role_id' : role_id,
+            'label' : e_label
+        };
+        jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
+            _this.removeAjaxLoader('.delete-role-table', 'small');
+            if (data.status == 'success'){
+                _this.UpdateRoleNameOk(e_label, row_id, role_id);
+            }else{
+                _this.UpdateRoleNameError(or_label, row_id, role_id);
+            }
+        }, 'json');
+    }else{
+        _this.UpdateRoleNameOk(e_label, row_id, role_id);
+    }
+}
+
+mvbam_object.prototype.UpdateRoleNameOk = function(e_label, row_id, role_id){
+    
+    jQuery('#edit-role-name').replaceWith('<span class="role-name">'+e_label+'</span>');
+    this.initRoleNameRow(jQuery('#dl-row-' + role_id));
+    jQuery('#' + row_id).effect('highlight',{
+        color: '#72f864'
+    }, 3000);
+    if (jQuery('#current_role').val() == role_id){
+        jQuery('#current-role-display').html(e_label);
+    }
+    jQuery('#role option[value="'+role_id+'"]').text(e_label);
+}
+
+mvbam_object.prototype.UpdateRoleNameError = function(or_label, row_id, role_id){
+    
+    jQuery('#edit-role-name').replaceWith('<span class="role-name">'+or_label+'</span>');
+    _this.initRoleNameRow(jQuery('#dl-row-' + role_id));
+    jQuery('#' + row_id).effect('highlight',{
+        color: '#f6a499'
+    }, 3000);
+}
+
+mvbam_object.prototype.initRoleNameList = function(){
+    var _this = this;
+    jQuery('.delete-role-table tbody > tr').each(function(){
+        _this.initRoleNameRow(this);
+    });
+}
+
+mvbam_object.prototype.initRoleNameRow = function(obj){
+    
+    var _this = this;
+    var row_id = jQuery(obj).attr('id');
+    var role_id = row_id.match(/\-([0-9a-z_]+)$/i);
+    jQuery('.role-name', obj).bind('click', function(){
+        var label = jQuery(this).text();
+        jQuery(this).replaceWith('<input type="text" value="'+label+'" id="edit-role-name" />');
+        jQuery('#edit-role-name').bind('blur', function(){
+            _this.updateRoleName(role_id[1], row_id, label, this);
+        });
+        jQuery('#edit-role-name').keypress(function(event){
+            if (event.which == 13){
+                event.preventDefault();
+                _this.updateRoleName(role_id[1], row_id, label, this);
+            };
+        });
+        jQuery('#edit-role-name').focus();
+    });
+}
+
+
 //**********************************************
 
 jQuery(document).ready(function(){
@@ -1015,9 +1181,13 @@ jQuery(document).ready(function(){
         
         jQuery('.export-conf').bind('click', function(){
             mObj.exportConf(); 
-        });
-        
+        });  
         jQuery('#wp-access').show();
+        
+        mObj.initRoleNameList();
+        
+        mObj.check_first_time();
+        
     }catch(err){
         mObj.handleError(err);
         jQuery('#wp-access').show();
