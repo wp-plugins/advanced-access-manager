@@ -27,7 +27,7 @@ class module_filterMetabox extends module_User {
     function __construct($pObj) {
 
         $this->pObj = $pObj;
-        parent::__construct();
+        parent::__construct($pObj);
 
         $this->cParams = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'options');
     }
@@ -73,7 +73,7 @@ class module_filterMetabox extends module_User {
                 }
             }
         } else {
-            wp_die('You are not authorized to view this page');
+            wp_die(LABEL_127);
         }
     }
 

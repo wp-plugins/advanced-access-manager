@@ -1,0 +1,1002 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Advanced Access Manager\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-10-30 15:22-0500\n"
+"PO-Revision-Date: 2011-10-30 15:22-0500\n"
+"Last-Translator: Vasyl Martyniuk <whimba@gmail.com>\n"
+"Language-Team: Vasyl Martyniuk <whimba@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: mvb_labels.php:21
+msgid "Advanced Access Manager"
+msgstr ""
+
+#: mvb_labels.php:22
+msgid "Additional features available"
+msgstr ""
+
+#: mvb_labels.php:23
+msgid "Alert"
+msgstr ""
+
+#: mvb_labels.php:24
+msgid "You have a JavaScript Error on a page"
+msgstr ""
+
+#: mvb_labels.php:25
+msgid "For support send an email to address"
+msgstr ""
+
+#: mvb_labels.php:26
+msgid "Options updated successfully"
+msgstr ""
+
+#: mvb_labels.php:27
+msgid "Main Menu"
+msgstr ""
+
+#: mvb_labels.php:28
+msgid "Metaboxes & Widgets"
+msgstr ""
+
+#: mvb_labels.php:29
+msgid "Capabilities"
+msgstr ""
+
+#: mvb_labels.php:30
+msgid "Posts & Pages"
+msgstr ""
+
+#: mvb_labels.php:31
+msgid "To Reorganize menu just Drag and Drop Items on the List and click Save Order"
+msgstr ""
+
+#: mvb_labels.php:32
+#: mvb_labels.php:149
+msgid "Reorganize"
+msgstr ""
+
+#: mvb_labels.php:33
+msgid "Whole Branch"
+msgstr ""
+
+#: mvb_labels.php:34
+msgid "To initiate list of metaboxes manually, copy and paste the URL to admin page on this site into text field and click \"Initiate URL\". List of all new metaboxes will be added automatically."
+msgstr ""
+
+#: mvb_labels.php:35
+msgid "Enter Correct URL"
+msgstr ""
+
+#: mvb_labels.php:36
+msgid "Initiate URL"
+msgstr ""
+
+#: mvb_labels.php:37
+msgid "Refresh List"
+msgstr ""
+
+#: mvb_labels.php:38
+msgid "ID"
+msgstr ""
+
+#: mvb_labels.php:39
+msgid "Priority"
+msgstr ""
+
+#: mvb_labels.php:40
+msgid "Position"
+msgstr ""
+
+#: mvb_labels.php:41
+msgid "Restrict"
+msgstr ""
+
+#: mvb_labels.php:42
+msgid "List of Metaboxes is empty or not initialized."
+msgstr ""
+
+#: mvb_labels.php:43
+msgid "Initiate the List"
+msgstr ""
+
+#: mvb_labels.php:44
+msgid "Delete Capability"
+msgstr ""
+
+#: mvb_labels.php:45
+msgid "Click for Tooltip"
+msgstr ""
+
+#: mvb_labels.php:46
+#: mvb_labels.php:130
+msgid "Add New Capability"
+msgstr ""
+
+#: mvb_labels.php:47
+msgid "Add New Cap"
+msgstr ""
+
+#: mvb_labels.php:48
+msgid "Give Administrator's List of Capabilities"
+msgstr ""
+
+#: mvb_labels.php:49
+msgid "Administrator"
+msgstr ""
+
+#: mvb_labels.php:50
+msgid "Give Editor's List of Capabilities"
+msgstr ""
+
+#: mvb_labels.php:51
+msgid "Editor"
+msgstr ""
+
+#: mvb_labels.php:52
+msgid "Give Author's List of Capabilities"
+msgstr ""
+
+#: mvb_labels.php:53
+msgid "Author"
+msgstr ""
+
+#: mvb_labels.php:54
+msgid "Give Contributor's List of Capabilities"
+msgstr ""
+
+#: mvb_labels.php:55
+msgid "Contributor"
+msgstr ""
+
+#: mvb_labels.php:56
+msgid "Give Subscriber's List of Capabilities"
+msgstr ""
+
+#: mvb_labels.php:57
+msgid "Subscriber"
+msgstr ""
+
+#: mvb_labels.php:58
+msgid "Clear all Capabilities"
+msgstr ""
+
+#: mvb_labels.php:59
+msgid "Clear All"
+msgstr ""
+
+#: mvb_labels.php:60
+msgid "Collapse All"
+msgstr ""
+
+#: mvb_labels.php:61
+msgid "Expand All"
+msgstr ""
+
+#: mvb_labels.php:62
+msgid "Error during saving"
+msgstr ""
+
+#: mvb_labels.php:63
+msgid "Title"
+msgstr ""
+
+#: mvb_labels.php:64
+msgid "This is the title of selected Post or Page"
+msgstr ""
+
+#: mvb_labels.php:65
+msgid "Selected item's type"
+msgstr ""
+
+#: mvb_labels.php:66
+msgid "Type"
+msgstr ""
+
+#: mvb_labels.php:67
+msgid "Status"
+msgstr ""
+
+#: mvb_labels.php:68
+msgid "Current Post or Page Status"
+msgstr ""
+
+#: mvb_labels.php:69
+msgid "Visibility"
+msgstr ""
+
+#: mvb_labels.php:70
+msgid "Visibility of current Post or Page"
+msgstr ""
+
+#: mvb_labels.php:71
+msgid "Restrict Admin"
+msgstr ""
+
+#: mvb_labels.php:72
+msgid "Restrict access to current Post or Page on BackEnd"
+msgstr ""
+
+#: mvb_labels.php:73
+msgid "Restrict Front"
+msgstr ""
+
+#: mvb_labels.php:74
+msgid "Restrict access to current Post or Page on FrontEnd"
+msgstr ""
+
+#: mvb_labels.php:75
+msgid "Exclude Page"
+msgstr ""
+
+#: mvb_labels.php:76
+msgid "Just Exclude page from navitation but do not restrict access"
+msgstr ""
+
+#: mvb_labels.php:77
+msgid "Expire"
+msgstr ""
+
+#: mvb_labels.php:78
+msgid "If Restric is checked then restrict access to current Post or Page until the picked date. If Restrict is unchecked then allow access to Page or Post until the picked date"
+msgstr ""
+
+#: mvb_labels.php:79
+msgid "Update info only for current role"
+msgstr ""
+
+#: mvb_labels.php:80
+msgid "Update Current"
+msgstr ""
+
+#: mvb_labels.php:81
+msgid "Update info for all role"
+msgstr ""
+
+#: mvb_labels.php:82
+msgid "Update All"
+msgstr ""
+
+#: mvb_labels.php:83
+msgid "Category"
+msgstr ""
+
+#: mvb_labels.php:84
+msgid "Category title"
+msgstr ""
+
+#: mvb_labels.php:85
+msgid "This is just a type of post's taxonomy. Always Category"
+msgstr ""
+
+#: mvb_labels.php:86
+msgid "Posts"
+msgstr ""
+
+#: mvb_labels.php:87
+msgid "Number of posts current category has"
+msgstr ""
+
+#: mvb_labels.php:88
+msgid "Restrict access to current category and for all Sub Categories on BackEnd. Also it'll restrict access to all posts under these categories"
+msgstr ""
+
+#: mvb_labels.php:89
+msgid "Restrict access to current category and for all Sub Categories on FrontEnd. Also it'll restrict access to all posts under these categories"
+msgstr ""
+
+#: mvb_labels.php:90
+msgid "If Restric is checked then restrict access to current Category and all Sub Categories, and Posts since the picked date. If Restrict is unchecked then allow access to current Category and all Sub Categories, and Posts since the picked date"
+msgstr ""
+
+#: mvb_labels.php:91
+msgid "Select a proper Page, Post or Category."
+msgstr ""
+
+#: mvb_labels.php:92
+msgid "Click to toggle"
+msgstr ""
+
+#: mvb_labels.php:93
+msgid "General"
+msgstr ""
+
+#: mvb_labels.php:94
+msgid "Current Role"
+msgstr ""
+
+#: mvb_labels.php:95
+msgid "Change"
+msgstr ""
+
+#: mvb_labels.php:96
+msgid "OK"
+msgstr ""
+
+#: mvb_labels.php:97
+msgid "Cancel"
+msgstr ""
+
+#: mvb_labels.php:98
+msgid "Restore Default Setting for Current Role"
+msgstr ""
+
+#: mvb_labels.php:99
+msgid "Export Configurations"
+msgstr ""
+
+#: mvb_labels.php:100
+#: mvb_labels.php:137
+msgid "Import Configurations"
+msgstr ""
+
+#: mvb_labels.php:101
+msgid "Saving..."
+msgstr ""
+
+#: mvb_labels.php:102
+msgid "Save"
+msgstr ""
+
+#: mvb_labels.php:103
+msgid "Role Manager"
+msgstr ""
+
+#: mvb_labels.php:104
+msgid "Role List"
+msgstr ""
+
+#: mvb_labels.php:105
+msgid "Add New"
+msgstr ""
+
+#: mvb_labels.php:106
+msgid "Delete"
+msgstr ""
+
+#: mvb_labels.php:107
+msgid "Enter New Role"
+msgstr ""
+
+#: mvb_labels.php:108
+msgid "Add"
+msgstr ""
+
+#: mvb_labels.php:109
+msgid "New Role Created successfully"
+msgstr ""
+
+#: mvb_labels.php:110
+msgid "Error"
+msgstr ""
+
+#: mvb_labels.php:111
+msgid "Role can't be created"
+msgstr ""
+
+#: mvb_labels.php:112
+msgid "Support"
+msgstr ""
+
+#: mvb_labels.php:113
+msgid "Send an Email"
+msgstr ""
+
+#: mvb_labels.php:114
+msgid "Find on Facebook"
+msgstr ""
+
+#: mvb_labels.php:115
+msgid "Follow on Twitter"
+msgstr ""
+
+#: mvb_labels.php:116
+msgid "LinkedIn"
+msgstr ""
+
+#: mvb_labels.php:117
+msgid "Delete Role?"
+msgstr ""
+
+#: mvb_labels.php:118
+msgid "Please confirm deleting Role"
+msgstr ""
+
+#: mvb_labels.php:119
+msgid "Save Menu Order?"
+msgstr ""
+
+#: mvb_labels.php:120
+msgid "Would you like to save Menu Order <b>ONLY</b> for Role"
+msgstr ""
+
+#: mvb_labels.php:121
+msgid "Delete Capability?"
+msgstr ""
+
+#: mvb_labels.php:122
+msgid "Please confirm deleting Capability"
+msgstr ""
+
+#: mvb_labels.php:123
+msgid "Restore Default Role Settings?"
+msgstr ""
+
+#: mvb_labels.php:124
+msgid "All current settings will be lost. Are you sure?"
+msgstr ""
+
+#: mvb_labels.php:125
+msgid "Apply Setting for ALL User Roles?"
+msgstr ""
+
+#: mvb_labels.php:126
+msgid "Do you really want to apply these settings for <b>ALL</b> User Roles?"
+msgstr ""
+
+#: mvb_labels.php:127
+msgid "Do not show me this message again."
+msgstr ""
+
+#: mvb_labels.php:128
+msgid "Leave Without Saving?"
+msgstr ""
+
+#: mvb_labels.php:129
+msgid "Some changed detected. Are you sure that you want to leave without saving"
+msgstr ""
+
+#: mvb_labels.php:131
+msgid "Additional Features Available"
+msgstr ""
+
+#: mvb_labels.php:132
+msgid "Additional features detected to extend Advanced Access Manager functionality."
+msgstr ""
+
+#: mvb_labels.php:133
+msgid "Read More..."
+msgstr ""
+
+#: mvb_labels.php:134
+msgid "Upgrade functionality"
+msgstr ""
+
+#: mvb_labels.php:135
+msgid "Important Message"
+msgstr ""
+
+#: mvb_labels.php:136
+msgid "Do you want to create a <b>Super Admin</b> Role to get access to ALL features?"
+msgstr ""
+
+#: mvb_labels.php:138
+msgid "WARNING"
+msgstr ""
+
+#: mvb_labels.php:139
+msgid "After importing, ALL current configurations will be lost. If you are sure, please select proper INI file and click on <i>Import</i> button."
+msgstr ""
+
+#: mvb_labels.php:140
+msgid "Uploading..."
+msgstr ""
+
+#: mvb_labels.php:141
+msgid "Please wait. Importer is working..."
+msgstr ""
+
+#: mvb_labels.php:142
+msgid "Advanced Access Manager requires WordPress 3.1 or newer. <a href=\"http://codex.wordpress.org/Upgrading_WordPress\">Update now!</a>"
+msgstr ""
+
+#: mvb_labels.php:143
+msgid "Advanced Access Manager requires PHP 5.0 or newer"
+msgstr ""
+
+#: mvb_labels.php:144
+msgid "Empty Capability"
+msgstr ""
+
+#: mvb_labels.php:145
+msgid "Current Capability can not be deleted"
+msgstr ""
+
+#: mvb_labels.php:146
+msgid "Super Admin"
+msgstr ""
+
+#: mvb_labels.php:147
+msgid "You are not authorized to view this page"
+msgstr ""
+
+#: mvb_labels.php:148
+msgid "Options List"
+msgstr ""
+
+#: mvb_labels.php:150
+msgid "Yes"
+msgstr ""
+
+#: mvb_labels.php:151
+msgid "Apply for All"
+msgstr ""
+
+#: mvb_labels.php:152
+msgid "Add Capability"
+msgstr ""
+
+#: mvb_labels.php:153
+msgid "Error Appears during Metabox initialization!"
+msgstr ""
+
+#: mvb_labels.php:154
+msgid "Delete Role"
+msgstr ""
+
+#: mvb_labels.php:155
+msgid "Restore"
+msgstr ""
+
+#: mvb_labels.php:156
+msgid "Current Role can not be restored!"
+msgstr ""
+
+#: mvb_labels.php:157
+msgid "Apply All"
+msgstr ""
+
+#: mvb_labels.php:158
+msgid "Error during information grabbing!"
+msgstr ""
+
+#: mvb_labels.php:159
+msgid "Import"
+msgstr ""
+
+#: mvb_labels.php:160
+msgid "Error during importing"
+msgstr ""
+
+#: mvb_labels.php:161
+msgid "Create"
+msgstr ""
+
+#: mvb_labels.php:162
+msgid "Do not Create"
+msgstr ""
+
+#: mvb_labels.php:163
+msgid "Change Role"
+msgstr ""
+
+#: mvb_labels.php:164
+msgid "Current Site"
+msgstr ""
+
+#: mvb_labels.php:165
+msgid "cURL library returned empty result. Contact your system administrator to fix this issue."
+msgstr ""
+
+#: mvb_labels.php:166
+msgid "You are not an active user for current blog. Please click <a href=\"#\" id=\"add-user-toblog\">here</a> to add youself to current blog as Administrator"
+msgstr ""
+
+#: mvb_labels.php:167
+msgid ""
+"<p><span style=\"color: #FF0000;\">PLEASE READ THIS!</span> You entered <b>Advanced Access Manager</b> Option Page.</p>\n"
+"        <p>This graphic interface allows you to control access to your WordPress Blog. <b>DO NOT</b> try to change settings if you are not sure what you are doing! If you have problems or questions, or just found something weird in a system's behavior, <b>PLEASE</b> take a look to <a href=\"http://wordpress.org/extend/plugins/advanced-access-manager/faq/\" target=\"_blank\">FAQ</a> section before asking for support.</p>\n"
+"        <p>For your safety, after you press <b>OK</b> button, Super Admin Role will be created specifically for your user.</p>\n"
+"        <p>Users with already defined Super Admin Role will be deprived of it and replaced with Administrator Role</p>\n"
+"        <p>If you have Multi-Site Setup, you will see the same message again for each new Blog you entered or created.</p>\n"
+"        <p>By the way, Advanced Access Manager now has multi-language support. Please read more <a href=\"http://whimba.com/aam-and-multi-language-support/\" target=\"_blank\">here</a></p>"
+msgstr ""
+
+#: mvb_labels.php:173
+msgid "Apply to ALL Blogs"
+msgstr ""
+
+#: mvb_labels.php:174
+msgid "You are going to apply current Blog's Settings to ALL Blogs in a WordPress Multisite setup. Please Notice that it will apply only <i>Main Menu</i>, <i>Metaboxes & Widgets</i> and <i>Capabilities</i> Settings. <i>Pages & Posts</i> Settings will be skip in fact of possible IDs mismatch."
+msgstr ""
+
+#: mvb_labels.php:175
+msgid "Action completed successfully"
+msgstr ""
+
+#: mvb_labels.php:176
+msgid "Action failed"
+msgstr ""
+
+#: mvb_labels.php:177
+msgid "Settings applied successfully to ALL Blogs"
+msgstr ""
+
+#: mvb_labels.php:178
+msgid "empty"
+msgstr ""
+
+#: mvb_labels.php:179
+msgid "Administrator added Successfully"
+msgstr ""
+
+#: mvb_labels.php:180
+msgid "Failed to add new Administrator"
+msgstr ""
+
+#: mvb_labels.php:181
+msgid "You do not have installed <a href=\"http://whimba.com/plugins/advanced-access-manager/add-ons/\" target=\"_blank\">AAM MSAR Extend</a> Add-on. Settings Applies only for first "
+msgstr ""
+
+#: mvb_labels.php:190
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Administration_Panels\" target=\"_blank\" title=\"Administration Panels\">Administration Panel</a> options:<br/>\n"
+"         - Appearance<br/>\n"
+"         - Appearance &gt; Themes"
+msgstr ""
+
+#: mvb_labels.php:194
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        Allows access to Appearance &gt; <a href=\"http://codex.wordpress.org/Appearance_Editor_SubPanel\" target=\"_blank\" title=\"Appearance Editor SubPanel\">Theme Editor</a> to edit theme files."
+msgstr ""
+
+#: mvb_labels.php:196
+msgid ""
+"<b>Since 3.0</b><br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Administration_Panels\" target=\"_blank\" title=\"Administration Panels\">Administration Panel</a> options:<br/>\n"
+"        - Appearance &gt; <a href=\"http://codex.wordpress.org/Appearance_Background_SubPanel\" target=\"_blank\" title=\"Appearance Background SubPanel\" >Background</a><br/>\n"
+"        - Appearance &gt; <a href=\"http://codex.wordpress.org/Appearance_Header_SubPanel\" target=\"_blank\" title=\"Appearance Header SubPanel\" >Header</a><br/>\n"
+"        - Appearance &gt; <a href=\"http://codex.wordpress.org/Appearance_Menus_SubPanel\" target=\"_blank\" title=\"Appearance Menus SubPanel\" >Menus</a><br/>\n"
+"        - Appearance &gt; <a href=\"http://codex.wordpress.org/Appearance_Widgets_SubPanel\" target=\"_blank\" title=\"Appearance Widgets SubPanel\" >Widgets</a><br/>\n"
+"        - Also allows access to Theme Options pages if they are included in the Theme"
+msgstr ""
+
+#: mvb_labels.php:203
+msgid ""
+"<div style=\"font-size:10px;\"><b>Since 2.0</b><br/>\n"
+"        User can edit their published posts. <i>This capability is off by default.</i>\n"
+"        The core checks the capability <b>edit_posts</b>, but on demand this check is changed to <b>edit_published_posts</b>.<br/>\n"
+"        If you don't want a user to be able edit his published posts, remove this capability. <i>(see also <a href=\"http://www.im-web-gefunden.de/wordpress-plugins/role-manager/#comment-5602\" target=\"_blank\" >this comment</a> on the <a href=\"http://www.im-web-gefunden.de/wordpress-plugins/role-manager/\" target=\"_blank\" title=\"http://www.im-web-gefunden.de/wordpress-plugins/role-manager/\">Role Manager Plugin Homepage</a>).</i></div>"
+msgstr ""
+
+#: mvb_labels.php:207
+msgid ""
+"<div style=\"font-size:10px;\"><b>Since 2.0</b><br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Administration_Panels\" target=\"_blank\" title=\"Administration Panels\" >Administration Panel</a> options:<br/>\n"
+"         - Manage &gt; Comments (<i>Lets user delete and edit every comment, see edit_posts above</i>)<br/>\n"
+"         - user can edit other users' posts through function get_others_drafts()<br/>\n"
+"         - user can see other users' images in inline-uploading [no? see <a href=\"http://trac.wordpress.org/file/trunk/wp-admin/inline-uploading.php\" target=\"_blank\" >inline-uploading.php</a>]<br/>\n"
+"        "
+msgstr ""
+
+#: mvb_labels.php:213
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Administration_Panels\" target=\"_blank\" title=\"Administration Panels\">Administration Panel</a> options: \n"
+"        <table class=\"description-table\">\n"
+"            <tbody>\n"
+"                <tr>\n"
+"                    <td>Settings &gt; General</td>\n"
+"                    <td>Settings &gt; Writing</td>\n"
+"                </tr>\n"
+"                <tr>\n"
+"                    <td>Settings &gt; Writing</td>\n"
+"                    <td>Settings &gt; Reading</td>\n"
+"                </tr>\n"
+"                <tr>\n"
+"                    <td>Settings &gt; Discussion</td>\n"
+"                    <td>Settings &gt; Permalinks</td>\n"
+"                </tr>\n"
+"                <tr>\n"
+"                    <td>Settings &gt; Miscellaneous</td>\n"
+"                    <td>&nbsp;</td>\n"
+"                </tr>\n"
+"            </tbody>\n"
+"       </table>"
+msgstr ""
+
+#: mvb_labels.php:235
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Administration_Panels\" target=\"_blank\" title=\"Administration Panels\">Administration Panel</a> options:<br/>\n"
+"        - Appearance &gt; Add New Themes"
+msgstr ""
+
+#: mvb_labels.php:238
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Administration_Panels\" target=\"_blank\" title=\"Administration Panels\" >Administration Panel</a> options:<br/>  \n"
+"        - <a href=\"http://codex.wordpress.org/Administration_Panels#Plugins_-_Add_Functionality_to_your_Blog\" target=\"_blank\" title=\"Administration Panels\">Plugins</a>"
+msgstr ""
+
+#: mvb_labels.php:241
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Administration_Panels\" target=\"_blank\" title=\"Administration Panels\">Administration Panel</a> options:<br/>  \n"
+"        - <a href=\"http://codex.wordpress.org/Administration_Panels#Plugins_-_Add_Functionality_to_your_Blog\" target=\"_blank\" title=\"Administration Panels\">Plugins</a> &gt; <a href=\"http://codex.wordpress.org/Administration_Panels#Plugin_Editor\" target=\"_blank\" title=\"Administration Panels\">Plugin Editor</a>"
+msgstr ""
+
+#: mvb_labels.php:244
+msgid ""
+"<b>Since 2.0</b>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Administration_Panels\" target=\"_blank\" title=\"Administration Panels\">Administration Panel</a> options:<br/>  \n"
+"        - <a href=\"http://codex.wordpress.org/Administration_Panels#Plugins_-_Add_Functionality_to_your_Blog\" target=\"_blank\" title=\"Administration Panels\">Plugins</a> &gt; Add New"
+msgstr ""
+
+#: mvb_labels.php:247
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Administration_Panels\" target=\"_blank\" title=\"Administration Panels\">Administration Panel</a> options:<br/>  \n"
+"        - <a href=\"http://codex.wordpress.org/Administration_Panels#Users_-_Your_Blogging_Family\" target=\"_blank\" title=\"Administration Panels\">Users</a>"
+msgstr ""
+
+#: mvb_labels.php:250
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        <b>Note:</b> No longer used."
+msgstr ""
+
+#: mvb_labels.php:252
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        Allows users to moderate comments from the Comments SubPanel (although a user needs the <b>edit_posts</b> Capability in order to access this)"
+msgstr ""
+
+#: mvb_labels.php:254
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Administration_Panels\" target=\"_blank\" title=\"Administration Panels\">Administration Panel</a> options:<br/>  \n"
+"        - Posts &gt; Categories<br/>\n"
+"        - Links &gt; Categories"
+msgstr ""
+
+#: mvb_labels.php:258
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Administration_Panels\" target=\"_blank\" title=\"Administration Panels\">Administration Panel</a> options:<br/>  \n"
+"        - Links<br/>\n"
+"        - Links &gt; Add New"
+msgstr ""
+
+#: mvb_labels.php:262
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Administration_Panels\" target=\"_blank\" title=\"Administration Panels\">Administration Panel</a> options:<br/>  \n"
+"        - Media<br/>\n"
+"        - Media &gt; Add New"
+msgstr ""
+
+#: mvb_labels.php:266
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Administration_Panels\" target=\"_blank\" title=\"Administration Panels\">Administration Panel</a> options:<br/>  \n"
+"        - Tools &gt; Import<br/>\n"
+"        - Tools &gt; Export"
+msgstr ""
+
+#: mvb_labels.php:270
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        Allows user to post HTML markup or even JavaScript code in pages, posts, and comments.<br/><br/>\n"
+"        <b>Note:</b> Enabling this option for untrusted users may result in their posting malicious or poorly formatted code."
+msgstr ""
+
+#: mvb_labels.php:273
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Administration_Panels\" target=\"_blank\" title=\"Administration Panels\">Administration Panel</a> options:<br/>  \n"
+"        - Posts<br/>\n"
+"        - Posts &gt; Add New<br/>\n"
+"        - Comments<br/>\n"
+"        - Comments &gt; Awaiting Moderation"
+msgstr ""
+
+#: mvb_labels.php:279
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        See and use the \"publish\" button when editing their post <i>(otherwise they can only save drafts)</i><br/>\n"
+"        Can use XML-RPC to publish <i>(otherwise they get a \"Sorry, you can not post on this weblog or category.\")</i>"
+msgstr ""
+
+#: mvb_labels.php:282
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Administration_Panels\" target=\"_blank\" title=\"Administration Panels\">Administration Panel</a> options:<br/>  \n"
+"        - Pages<br/>\n"
+"        - Pages &gt; Add New"
+msgstr ""
+
+#: mvb_labels.php:286
+msgid ""
+"<b>Since 2.0</b><br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Administration_Panels\" target=\"_blank\" title=\"Administration Panels\">Administration Panel</a> options:<br/>\n"
+"        - <a href=\"http://codex.wordpress.org/Dashboard_Dashboard_SubPanel\" target=\"_blank\" title=\"Dashboard Dashboard SubPanel\">Dashboard</a><br/>\n"
+"        - Users &gt; Your Profile<br/>\n"
+"        <i>Used nowhere in the core code except the menu.php</i>"
+msgstr ""
+
+#: mvb_labels.php:291
+#: mvb_labels.php:292
+#: mvb_labels.php:293
+#: mvb_labels.php:294
+#: mvb_labels.php:295
+#: mvb_labels.php:296
+#: mvb_labels.php:297
+#: mvb_labels.php:298
+#: mvb_labels.php:299
+#: mvb_labels.php:300
+#: mvb_labels.php:301
+#: mvb_labels.php:302
+#: mvb_labels.php:303
+#: mvb_labels.php:304
+#: mvb_labels.php:305
+#: mvb_labels.php:306
+#: mvb_labels.php:307
+msgid "<b>Since 2.1</b>"
+msgstr ""
+
+#: mvb_labels.php:308
+msgid "<b>Since 2.3</b>"
+msgstr ""
+
+#: mvb_labels.php:309
+msgid "<b>Since 2.5</b>"
+msgstr ""
+
+#: mvb_labels.php:310
+#: mvb_labels.php:311
+msgid "<b>Since 2.6</b>"
+msgstr ""
+
+#: mvb_labels.php:312
+#: mvb_labels.php:313
+#: mvb_labels.php:314
+#: mvb_labels.php:315
+#: mvb_labels.php:316
+#: mvb_labels.php:317
+#: mvb_labels.php:318
+msgid "<b>Since 3.0</b>"
+msgstr ""
+
+#: mvb_labels.php:319
+msgid "<b>Since 3.1</b>"
+msgstr ""
+
+#: mvb_labels.php:320
+msgid ""
+"<b>Since 3.0</b><br/>\n"
+"        Multi-site only<br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Network_Admin#Sites\" target=\"_blank\" title=\"Network Admin\">Network Sites</a> menu<br/>\n"
+"        Allows user to add, edit, delete, archive, unarchive, activate, deactivate, spam and unspam new site/blog in the network"
+msgstr ""
+
+#: mvb_labels.php:324
+msgid ""
+"<b>Since 3.0</b><br/>\n"
+"        Multi-site only<br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Network_Admin#Users\" target=\"_blank\" title=\"Network Admin\">Network Users</a> menu"
+msgstr ""
+
+#: mvb_labels.php:327
+msgid ""
+"<b>Since 3.0</b><br/>\n"
+"        Multi-site only<br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Network_Admin#Themes\" target=\"_blank\" title=\"Network Admin\">Network Themes</a> menu"
+msgstr ""
+
+#: mvb_labels.php:330
+msgid ""
+"<b>Since 3.0</b><br/>\n"
+"        Multi-site only<br/>\n"
+"        Allows access to <a href=\"http://codex.wordpress.org/Network_Admin#Settings\" target=\"_blank\" title=\"Network Admin\">Network Options</a> menu"
+msgstr ""
+
+#: mvb_labels.php:333
+msgid "User Level 0 converts to <a href=\"javascript:void(0);\" title=\"\">Subscriber</a>"
+msgstr ""
+
+#: mvb_labels.php:334
+msgid "User Level 1 converts to <a href=\"javascript:void(0);\" title=\"\">Contributor</a>"
+msgstr ""
+
+#: mvb_labels.php:335
+msgid "User Level 2 converts to <a href=\"javascript:void(0);\" title=\"\">Author</a>"
+msgstr ""
+
+#: mvb_labels.php:336
+msgid "User Level 3 converts to <a href=\"javascript:void(0);\" title=\"\">Author</a>"
+msgstr ""
+
+#: mvb_labels.php:337
+msgid "User Level 4 converts to <a href=\"javascript:void(0);\" title=\"\">Author</a>"
+msgstr ""
+
+#: mvb_labels.php:338
+msgid "User Level 5 converts to <a href=\"javascript:void(0);\" title=\"\">Editor</a>"
+msgstr ""
+
+#: mvb_labels.php:339
+msgid "User Level 6 converts to <a href=\"javascript:void(0);\" title=\"\">Editor</a>"
+msgstr ""
+
+#: mvb_labels.php:340
+msgid "User Level 7 converts to <a href=\"javascript:void(0);\" title=\"\">Editor</a>"
+msgstr ""
+
+#: mvb_labels.php:341
+msgid "User Level 8 converts to <a href=\"javascript:void(0);\" title=\"\">Administrator</a>"
+msgstr ""
+
+#: mvb_labels.php:342
+msgid "User Level 9 converts to <a href=\"javascript:void(0);\" title=\"\">Administrator</a>"
+msgstr ""
+
+#: mvb_labels.php:343
+msgid "User Level 10 converts to <a href=\"javascript:void(0);\" title=\"\">Administrator</a>"
+msgstr ""
+
+#: mvb_labels.php:344
+#: mvb_labels.php:345
+#: mvb_labels.php:346
+msgid "<b>Description does not exist</b>"
+msgstr ""
+
+#: mvb_labels.php:349
+msgid "Install <a href=\"http://whimba.com/plugins/advanced-access-manager/add-ons/\" target=\"_blank\">Extend Restriction</a> to be able to set more then 5 restrictions for one Role"
+msgstr ""
+
+#: mvb_labels.php:351
+msgid "<p>You do not have sufficient permissions to perform this action</p>"
+msgstr ""
+
+#: mvb_labels.php:353
+msgid ""
+"<p><h3>General Information</h3></p>\n"
+"    <p>If you want to filter Admin Menu for some User Roles or just delete unnecessary dashboard widgets or metaboxes in Edit Post Page, this plugin is for you.\n"
+"       You can do following things with Advanced Access Manager:</p>\n"
+"<ul>\n"
+"<li>Filter Admin Menu for specific User Role</li>\n"
+"<li>Filter Dashboard Widgets for specific User Role</li>\n"
+"<li>Filter List of Metaboxes in Edit Post page for specific User Role</li>\n"
+"<li>Add new User Capabilities</li>\n"
+"<li>Delete created User Capabilities</li>\n"
+"<li>Create new User Roles</li>\n"
+"<li>Delete any User Role</li>\n"
+"<li>Save current User Roles settings and restore later</li>\n"
+"<li>View the list of Posts Pages and Categories in a nice hierarchical tree</li>\n"
+"<li>Filter Posts and Post Categories</li>\n"
+"<li>Filter Pages and Sub Pages</li>\n"
+"<li>Set expiration Date for specific Posts, Pages or even Categories</li>\n"
+"<li>Reorganize Order of Main Menu for specific User Role</li>\n"
+"</ul>\n"
+"    <p><h3>Main Menu</h3></p>\n"
+"    <p>Under Main Menu Tab there is a list of admin menu and submenus. You can Restrict access to certain menus of submenus by checking proper checkbox.\n"
+"    Also you can reorganize the menu order by draggin and dropping menus in order you want.</p>\n"
+"    <p><h3>Metabox & Widgets</h3></p>\n"
+"    <p>This section allows you to filter the list of metaboxes (sections to the Write Post, Write Page, and Write Link editing pages) and dashboard widgets.</p>\n"
+"    <p><h3>Capabilities</h3></p>\n"
+"    <p>This is more advanced Tab which allows to create different combinations of Capabilities for current User Role. If you are not familiar with Capabilities please read <a href=\"http://codex.wordpress.org/Roles_and_Capabilities\" target=\"_blank\">Roles and Capabilities</a>.</p>\n"
+"    <p><h3>Posts & Pages</h3></p>\n"
+"    <p>Tree View of Posts (grouped into categories) and Pages (organized hierarchically according to Parent Page parameter) where you can restrict access to certain page or post or the whole category for current User Role. There is also possibility to set expiration date to posts or pages.</p>\n"
+msgstr ""
+
+#: mvb_wp_access.php:945
+msgid "Access Manager"
+msgstr ""
+
+#: mvb_wp_access.php:1364
+msgid "Password Protected"
+msgstr ""
+
+#: mvb_wp_access.php:1368
+msgid "Public"
+msgstr ""
+

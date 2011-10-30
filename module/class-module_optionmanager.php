@@ -23,10 +23,10 @@ class module_optionManager extends mvb_corePlugin {
      * Template object holder
      * 
      * @var object <mvb_coreTemplate>
-     * @access private
+     * @access public
      */
 
-    private $templObj;
+    public $templObj;
 
     /*
      * HTML templated from file
@@ -131,12 +131,12 @@ class module_optionManager extends mvb_corePlugin {
                     'filename' => $file));
         $writer->write();
     }
-    
-     function get_encode_option($option){
-        
+
+    function get_encode_option($option) {
+
         $data = $this->pObj->get_blog_option($option, array());
         $data = base64_encode(serialize($data));
-        
+
         return $data;
     }
 
@@ -179,18 +179,13 @@ class module_optionManager extends mvb_corePlugin {
                 $this->pObj->update_blog_option('user_roles', $this->roles);
             }
 
-            $redirect = add_query_arg(array(
-                'current_role' => $_POST['role'],
-                'show_message' => 1), admin_url('users.php?page=wp_access'));
             $result = array(
                 'status' => 'success',
-                'redirect' => $redirect
             );
         }
 
         return $result;
     }
-
 
     function set_currentRole($role) {
 
@@ -221,20 +216,39 @@ class module_optionManager extends mvb_corePlugin {
 
     function manage() {
 
-        $mainHolder = $this->postbox('metabox-wpaccess-options', 'Options List', $this->getMainOptionsList());
+        $mainHolder = $this->postbox('metabox-wpaccess-options', LABEL_128, $this->getMainOptionsList());
+        $this->template = $this->renderSiteSelector($this->template);
         $this->template = $this->renderRoleSelector($this->template);
         $this->template = $this->renderDeleteRoleList($this->template);
         $content = $this->templObj->replaceSub('MAIN_OPTIONS_LIST', $mainHolder, $this->template);
-        $blog = $this->pObj->get_current_blog();
+        $blog = $this->pObj->get_current_blog_data();
+
+        if ($this->pObj->is_multi() || isset($_REQUEST['render_mss'])) {
+            $s_link = network_admin_url('users.php?page=wp_access');
+            $s_link = add_query_arg('site', get_current_blog_id(), $s_link);
+        } else {
+            $s_link = admin_url('users.php?page=wp_access');
+        }
+
         $markerArray = array(
             '###current_role###' => $this->roles[$this->currentRole]['name'],
-            '###form_action###' => admin_url('users.php?page=wp_access'),
+            '###form_action###' => $s_link,
             '###current_role_id###' => $this->currentRole,
             '###site_url###' => $blog['url'],
             '###message_class###' => ( (isset($_POST['submited']) || isset($_GET['show_message'])) ? 'message-active' : 'message-passive'),
             '###nonce###' => wp_nonce_field(WPACCESS_PREFIX . 'options'),
         );
+        //Apply all blogs
+        $t = $this->templObj->retrieveSub('APPLY_ALL', $content);
+        if ($this->pObj->is_multi() || isset($_REQUEST['render_mss'])) {
+            $content = $this->templObj->replaceSub('APPLY_ALL', $t, $content);
+        } else {
+            $content = $this->templObj->replaceSub('APPLY_ALL', '', $content);
+        }
+
         $content = $this->templObj->updateMarkers($markerArray, $content);
+        $content = $this->templObj->clearTemplate($content);
+
         //add filter to future add-ons
         $content = apply_filters(WPACCESS_PREFIX . 'option_page', $content);
 
@@ -242,6 +256,7 @@ class module_optionManager extends mvb_corePlugin {
     }
 
     function do_save() {
+
         if (isset($_POST['submited'])) {
             $params = (isset($_POST['wpaccess']) ? $_POST['wpaccess'] : array());
 
@@ -256,6 +271,9 @@ class module_optionManager extends mvb_corePlugin {
             $roles = $this->pObj->get_roles(TRUE);
             $cap_list = (isset($params[$this->currentRole]['advance']) ? $params[$this->currentRole]['advance'] : array());
             $roles[$this->currentRole]['capabilities'] = $cap_list;
+            //and for already grabed capabilities
+            $this->roles[$this->currentRole]['capabilities'] = $cap_list;
+
             $this->pObj->update_blog_option('user_roles', $roles);
         }
     }
@@ -311,6 +329,50 @@ class module_optionManager extends mvb_corePlugin {
         $mainHolder = $this->templObj->retrieveSub('MAIN_OPTIONS_LIST', $this->template);
 
         return $this->renderMainMenuOptions($mainHolder);
+    }
+
+    function renderSiteSelector($template) {
+        global $wpdb;
+
+        $m_tempate = $this->templObj->retrieveSub('MULTISITE_SELECTOR', $template);
+        if ($this->pObj->is_multi() || isset($_REQUEST['render_mss'])) {
+            $listTemplate = $this->templObj->retrieveSub('ROLE_LIST', $m_tempate);
+            $list = '';
+            $query = "SELECT * FROM {$wpdb->blogs}";
+            $sites = $wpdb->get_results($query);
+            $current = (isset($_REQUEST['site']) ? $_REQUEST['site'] : get_current_blog_id());
+            if (is_array($sites)) {
+                foreach ($sites as $site) {
+                    $blog_prefix = $wpdb->get_blog_prefix($site->blog_id);
+                    //get Site Name
+                    $query = "SELECT option_value FROM {$blog_prefix}options ";
+                    $query .= "WHERE option_name = 'blogname'";
+                    $name = $wpdb->get_var($query);
+                    if ($site->blog_id == $current) {
+                        $is_current = 'selected="selected"';
+                        $c_name = $name;
+                    } else {
+                        $is_current = '';
+                    }
+                    $markers = array(
+                        '###value###' => $site->blog_id,
+                        '###title###' => $name . '&nbsp;', //nicer view :)
+                        '###selected###' => $is_current,
+                    );
+                    $list .= $this->templObj->updateMarkers($markers, $listTemplate);
+                }
+            }
+            $m_tempate = $this->templObj->replaceSub('ROLE_LIST', $list, $m_tempate);
+            $m_array = array(
+                '###current_site###' => (strlen($c_name) > 15 ? substr($c_name, 0, 14) . '...' : $c_name),
+                '###title_full###' => $c_name
+            );
+            $m_tempate = $this->templObj->updateMarkers($m_array, $m_tempate);
+        } else {
+            $m_tempate = '';
+        }
+
+        return $this->templObj->replaceSub('MULTISITE_SELECTOR', $m_tempate, $template);
     }
 
     function renderRoleSelector($template) {
@@ -390,7 +452,7 @@ class module_optionManager extends mvb_corePlugin {
         $listTemplate = $this->templObj->retrieveSub('CAPABILITY_LIST', $template);
         $itemTemplate = $this->templObj->retrieveSub('CAPABILITY_ITEM', $listTemplate);
         $list = '';
-        if (is_array($capList)) {
+        if (is_array($capList) && count($capList)) {
             foreach ($capList as $cap => $dump) {
                 $desc = (isset($capabilitiesDesc[$cap]) ? htmlspecialchars($capabilitiesDesc[$cap], ENT_QUOTES) : '');
                 $markers = array(
@@ -408,6 +470,10 @@ class module_optionManager extends mvb_corePlugin {
                 }
                 $list .= $titem;
             }
+            $template = $this->templObj->replaceSub('CAPABILITY_LIST_EMPTY', '', $template);
+        } else {
+            $empty = $this->templObj->retrieveSub('CAPABILITY_LIST_EMPTY', $template);
+            $template = $this->templObj->replaceSub('CAPABILITY_LIST_EMPTY', $empty, $template);
         }
         $listTemplate = $this->templObj->replaceSub('CAPABILITY_ITEM', $list, $listTemplate);
         $template = $this->templObj->replaceSub('CAPABILITY_LIST', $listTemplate, $template);

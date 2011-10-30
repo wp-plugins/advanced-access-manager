@@ -30,19 +30,28 @@ define('WPACCESS_DIRNAME', basename(WPACCESS_BASE_DIR));
  */
 define('WPACCESS_BASE_URL', WP_PLUGIN_URL . '/' . WPACCESS_DIRNAME . '/');
 define('WPACCESS_ADMIN_ROLE', 'administrator');
+define('WPACCESS_SADMIN_ROLE', 'super_admin');
 define('WPACCESS_RESTRICTION_LIMIT', 5);
+define('WPACCESS_APPLY_LIMIT', 5);
+define('WPACCESS_TOP_LEVEL', 10);
 
-define('WPACCESS_TEMPLATE_DIR', WPACCESS_BASE_DIR . 'templates/');
-define('WPACCESS_CSS_URL', WPACCESS_BASE_URL . 'css/');
-define('WPACCESS_JS_URL', WPACCESS_BASE_URL . 'js/');
+define('WPACCESS_TEMPLATE_DIR', WPACCESS_BASE_DIR . 'view/html/');
+define('WPACCESS_CSS_URL', WPACCESS_BASE_URL . 'view/css/');
+define('WPACCESS_JS_URL', WPACCESS_BASE_URL . 'view/js/');
 
 define('WPACCESS_RESTRICT_NO', 0);
 define('WPACCESS_RESTRICT_BACK', 1);
 define('WPACCESS_RESTRICT_FRONT', 2);
 define('WPACCESS_RESTRICT_BOTH', 3);
 
+define('WPACCESS_FTIME_MESSAGE', WPACCESS_PREFIX . 'first_time');
+
 $path = WPACCESS_BASE_DIR . 'module/';
 set_include_path(get_include_path() . PATH_SEPARATOR . $path);
+
+
+load_plugin_textdomain('aam', false, WPACCESS_DIRNAME . '/langs');
+
 //load general files
 require_once('mvb_functions.php');
 require_once('mvb_labels.php');
@@ -53,6 +62,9 @@ if (!class_exists('mvb_corePlugin')) {
 }
 if (!class_exists('mvb_coreTemplate')) {
     require_once('core/class-mvb_coretemplate.php');
+}
+if (!class_exists('phpQuery')) {
+    require_once('view/phpQuery/phpQuery.php');
 }
 
 //load additional classes
@@ -70,5 +82,4 @@ $defCapabilities = array(
     'read' => 1,
     'level_0' => 1
 );
-
 ?>

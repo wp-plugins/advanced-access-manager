@@ -4,7 +4,7 @@ Donate link: http://whimba.com/advanced-access-manager-donation/
 Tags: access manager, access-control, capability, dashboard widget, expire, expire link, filter menu, filter pages, filter posts, metabox, role manager, user access, user control, user role
 Requires at least: 3.2
 Tested up to: 3.2.1
-Stable tag: 1.3.1
+Stable tag: 1.4
 
 Graphic interface to manage User Roles, Capabilities and Post/Page Access
 
@@ -16,6 +16,8 @@ Dashboard widgets or Metaboxes or filter the list of posts, pages and categories
 this plugin is for you. 
 You can do following things with Advanced Access Manager:
 
+* NEW! Apply setting to all Blogs in Multi-Site Setup 
+* NEW! Promote other Users to the same Role of lower
 * Filter Admin Menu for specific User Role
 * Filter Dashboard Widgets for specific User Role
 * Filter List of Metaboxes for specific User Role
@@ -23,17 +25,18 @@ You can do following things with Advanced Access Manager:
 * Delete created User Capabilities
 * Create new User Roles
 * Delete any User Role
-* NEW! Edit User Role's Label
-* Save current User Roles settings and restore later
-* NEW! Import/Export Advanced Access Manager configurations
+* Edit User Role's Label
+* Import/Export Advanced Access Manager configurations
 * View the list of Posts, Pages and Categories in a hierarchical tree 
 * Filter Posts and Post Categories
 * Filter Pages and Sub Pages
 * Set expiration Date for specific Posts, Pages or even Categories
 * Reorganize Order of Main Menu for specific User Role
 * Super Administrator can manager site administrators
-* NEW! Support Custom Post Types
-* NEW! Exclude Pages From Navigation 
+* Support Custom Post Types
+* Exclude Pages From Navigation 
+
+Also Advanced Access Manager supports Multi-Site and Multi-Language
 
 [youtube http://www.youtube.com/watch?v=zkyxply_JHs]
 
@@ -99,6 +102,12 @@ just filter Main Menu.
 4. Post/Page Tree View
 
 == Changelog ==
+
+= 1.4 =
+* Added Multi-Site Support
+* Added Multi-Language Support
+* Improved checking algorithm
+* Improved Super Admin functionality
 
 = 1.3.1 =
 * Improved Super Admin functionality

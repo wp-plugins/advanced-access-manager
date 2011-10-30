@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access for all User Roles to WordPress Backend and Frontend.
-  Version: 1.3.1
+  Version: 1.4
   Author: Vasyl Martyniuk
   Author URI: http://www.whimba.com
  */
@@ -41,22 +41,6 @@
  * via e-mail whimba@gmail.com 
  * =============================================================================
  */
-
-/* Version check */
-global $wp_version;
-
-$exit_msg = 'Advanced Access Manager requires WordPress 3.1 or newer. '
-        . '<a href="http://codex.wordpress.org/Upgrading_WordPress">Update now!</a>';
-
-//error_reporting(E_ALL);
-
-if (version_compare($wp_version, '3.1', '<')) {
-    exit($exit_msg);
-}
-
-if (phpversion() < '5.0') {
-    exit('Advanced Access Manager requires PHP 5.0 or newer');
-}
 
 require_once('mvb_config.php');
 
@@ -145,18 +129,17 @@ class mvb_WPAccess extends mvb_corePlugin {
             }
 
             add_action('admin_menu', array($this, 'admin_menu'), 999);
+
             add_action('admin_action_render_rolelist', array($this, 'render_rolelist'));
             //Add Capabilities WP core forgot to
             add_filter('map_meta_cap', array($this, 'map_meta_cap'), 10, 4);
 
-            //add Access metabox
-            //$this->add_access_metabox();
-            //add_action('save_post', array($this, 'save_meta'), 10, 2);
             //help filter
             add_filter('contextual_help', array($this, 'contextual_help'), 10, 3);
 
             //ajax
             add_action('wp_ajax_mvbam', array($this, 'ajax'));
+
             add_action("do_meta_boxes", array($this, 'metaboxes'), 999, 3);
 
             //roles
@@ -167,8 +150,10 @@ class mvb_WPAccess extends mvb_corePlugin {
             add_filter('get_pages', array($this, 'get_pages'));
         }
 
-        add_filter('get_terms', array($this, 'get_terms'), 10, 3);
-        add_action('pre_get_posts', array($this, 'pre_get_posts'));
+        if (!$this->is_super) {
+            add_filter('get_terms', array($this, 'get_terms'), 10, 3);
+            add_action('pre_get_posts', array($this, 'pre_get_posts'));
+        }
         /*
          * Main Hook, used to check if user is authorized to do an action
          * Executes after WordPress environment loaded and configured
@@ -206,8 +191,8 @@ class mvb_WPAccess extends mvb_corePlugin {
 
         if (!$all) {
             //unset super admin role
-            if (isset($roles['super_admin'])) {
-                unset($roles['super_admin']);
+            if (isset($roles[WPACCESS_SADMIN_ROLE])) {
+                unset($roles[WPACCESS_SADMIN_ROLE]);
             }
 
             if (!$this->is_super && isset($roles[WPACCESS_ADMIN_ROLE])) {
@@ -217,6 +202,17 @@ class mvb_WPAccess extends mvb_corePlugin {
         }
 
         return $roles;
+    }
+
+    /*
+     * Check if multisite is active
+     * 
+     * @return bool
+     */
+
+    public function is_multi() {
+
+        return self::$allow_ms;
     }
 
     /*
@@ -268,11 +264,11 @@ class mvb_WPAccess extends mvb_corePlugin {
             //check if user has a rule Super Admin
             $data = get_userdata(get_current_user_id());
             $cap_val = self::$current_blog['prefix'] . 'capabilities';
-            if (isset($data->{$cap_val}['super_admin'])) {
+            if (isset($data->{$cap_val}[WPACCESS_SADMIN_ROLE])) {
                 $super = TRUE;
             } else {
                 //check if answer is stored
-                $answer = $this->get_blog_option(WPACCESS_PREFIX . 'sa_dialog', 0);
+                $answer = $this->get_blog_option(WPACCESS_FTIME_MESSAGE, 0);
                 if (!$answer) {
                     $super = TRUE;
                 }
@@ -283,86 +279,35 @@ class mvb_WPAccess extends mvb_corePlugin {
     }
 
     /*
-     * Render Access Metabox
-     * 
-     */
-
-    public function render_access_metabox($post) {
-
-        $ans = $this->get_blog_option(WPACCESS_PREFIX . 'sa_dialog', 0);
-        $cap = ( ($this->is_super || $ans != 1) ? 'administrator' : 'aam_manage');
-        if (current_user_can($cap)) {
-            add_meta_box('aam-metabox', 'Page Access', array($this, 'get_access_metabox'), $post->post_type, 'side');
-        }
-    }
-
-    /*
-     * Actually get the HTML
-     * 
-     */
-
-    public function get_access_metabox($post, $meta) {
-        global $wp_post_types;
-
-        $tmpl = new mvb_coreTemplate();
-        $templatePath = WPACCESS_TEMPLATE_DIR . 'admin_access_metabox.html';
-        $template = $tmpl->readTemplate($templatePath);
-
-        $render_exclude = FALSE;
-        if ($wp_post_types[$post->post_type]->capability_type == 'page') {
-            $render_exclude = TRUE;
-        }
-        if ($render_exclude) {
-            $excld_tmlp = $tmpl->retrieveSub('EXCLUDE_PAGE', $template);
-        } else {
-            $excld_tmlp = '';
-        }
-        $template = $tmpl->replaceSub('EXCLUDE_PAGE', $excld_tmlp, $template);
-
-        //prepare marker list
-        $markers = array(
-            '###restrict_front###' => 'checked="checked"',
-            '###restrict###' => 'checked="checked"',
-            '###exclude_page###' => 'checked="checked"'
-        );
-        foreach ($this->restrictions as $role => $r_data) {
-            if (is_array($r_data) && isset($r_data['posts'])) {
-                if (!isset($r_data['posts'][$post->ID])) {
-                    $markers['###restrict_front###'] = '';
-                    $markers['###restrict###'] = '';
-                    $markers['###exclude_page###'] = '';
-                    break;
-                } else {
-                    if (!$r_data['posts'][$post->ID]['restrict_front']) {
-                        $markers['###restrict_front###'] = '';
-                    }
-                    if (!$r_data['posts'][$post->ID]['restrict']) {
-                        $markers['###restrict###'] = '';
-                    }
-                    if (!$r_data['posts'][$post->ID]['exclude_page']) {
-                        $markers['###exclude_page###'] = '';
-                    }
-                }
-            } else {
-                $markers['###restrict_front###'] = '';
-                $markers['###restrict###'] = '';
-                $markers['###exclude_page###'] = '';
-                break;
-            }
-        }
-
-
-        echo $template;
-    }
-
-    /*
      * Filter editible roles
      */
 
     public function editable_roles($roles) {
 
-        if (isset($roles['super_admin'])) {
-            unset($roles['super_admin']);
+        if (isset($roles[WPACCESS_SADMIN_ROLE])) { //super admin is level 11
+            unset($roles[WPACCESS_SADMIN_ROLE]);
+        }
+        //get user's highest Level
+        $c_roles = $this->user->getCurrentUserRole();
+        $role_list = $this->get_roles(TRUE);
+        $highest = 0;
+        foreach ($c_roles as $role) {
+            if (isset($role_list[$role])) {
+                $caps = $role_list[$role]['capabilities'];
+                for ($i = 0; $i <= WPACCESS_TOP_LEVEL; $i++) {
+                    if (isset($caps["level_{$i}"]) && ($highest < $i)) {
+                        $highest = $i;
+                    }
+                }
+            }
+        }
+
+        if ($highest < WPACCESS_TOP_LEVEL && is_array($roles)) { //filter roles
+            foreach ($roles as $role => $data) {
+                if (isset($data['capabilities']['level_' . ($highest + 1)])) {
+                    unset($roles[$role]);
+                }
+            }
         }
 
         return $roles;
@@ -384,7 +329,7 @@ class mvb_WPAccess extends mvb_corePlugin {
         global $post, $page, $wp_query, $wp;
 
         if (!$wp_query->is_home() && $post) {
-            if ($this->checkPostAccess($post)) {
+            if ($this->checkPostAccess($post) && !$this->is_super) {
                 do_action(WPACCESS_PREFIX . 'front_redirect');
                 wp_redirect(home_url());
             }
@@ -432,7 +377,7 @@ class mvb_WPAccess extends mvb_corePlugin {
 
         if (is_array($pages)) { //filter all pages which are not allowed
             foreach ($pages as $i => $page) {
-                if ($this->checkPostAccess($page) || $this->checkPageExcluded($page)) {
+                if (($this->checkPostAccess($page) && !$this->is_super) || $this->checkPageExcluded($page)) {
                     unset($pages[$i]);
                 }
             }
@@ -504,6 +449,7 @@ class mvb_WPAccess extends mvb_corePlugin {
             if (!count($user_roles)) {
                 $user_roles = $this->getAllRoles();
             }
+
             foreach ($terms as $i => $term) {
                 foreach ($user_roles as $role) {
                     if ($this->checkCategoryAccess($role, array($term->term_id))) {
@@ -692,7 +638,7 @@ class mvb_WPAccess extends mvb_corePlugin {
                 }
                 $this->update_blog_option(WPACCESS_PREFIX . 'options', $c_options);
             }
-        } else {
+        } elseif (!$this->is_super) {
             $screen = get_current_screen();
             $m = new module_filterMetabox($this);
             switch ($screen->id) {
@@ -714,11 +660,43 @@ class mvb_WPAccess extends mvb_corePlugin {
      */
 
     public function activate() {
-        global $wpdb;
+        global $wpdb, $wp_version;
+
+        if (version_compare($wp_version, '3.1', '<')) {
+            exit(LABEL_122);
+        }
+
+        if (phpversion() < '5.0') {
+            exit(LABEL_123);
+        }
 
         //BECAUSE STATIC CALLING
         self::$allow_ms = (is_multisite() && is_network_admin());
-        self::$current_blog = self::get_current_blog();
+        $sites = self::get_sites();
+
+        if (is_array($sites) && count($sites)) {
+            foreach ($sites as $site) {
+                //get url to current blog
+                $blog_prefix = $wpdb->get_blog_prefix($site->blog_id);
+                self::$current_blog = array(
+                    'id' => $site->blog_id,
+                    'url' => get_site_url($site->blog_id),
+                    'prefix' => $blog_prefix
+                );
+                self::set_options();
+            }
+        } else {
+            self::$current_blog = self::get_current_blog();
+            self::set_options();
+        }
+    }
+
+    /*
+     * Set necessary options to DB for current BLOG
+     * 
+     */
+
+    public static function set_options() {
 
         $role_list = self::get_blog_option('user_roles');
         //save current setting to DB
@@ -729,13 +707,10 @@ class mvb_WPAccess extends mvb_corePlugin {
         $options = array();
         if (is_array($roles)) {
             foreach ($roles as $role) {
-                if (($role == WPACCESS_ADMIN_ROLE) && !is_super_admin()) {
-                    continue;
-                }
                 $options[$role] = array(
                     'menu' => array(),
                     'metaboxes' => array(),
-                    'capabilities' => $m->roles[$role]['capabilities']
+                        //'capabilities' => $m->roles[$role]['capabilities']
                 );
             }
         }
@@ -750,6 +725,8 @@ class mvb_WPAccess extends mvb_corePlugin {
         self::update_blog_option(WPACCESS_PREFIX . 'custom_caps', $custom_caps);
         $role_list[WPACCESS_ADMIN_ROLE]['capabilities']['edit_comment'] = 1; //add this role for admin automatically
         self::update_blog_option('user_roles', $role_list);
+
+        return;
     }
 
     /*
@@ -760,10 +737,36 @@ class mvb_WPAccess extends mvb_corePlugin {
      */
 
     public function deactivate() {
+        global $wpdb;
 
         //BECAUSE STATIC CALLING
         self::$allow_ms = (is_multisite() && is_network_admin());
-        self::$current_blog = self::get_current_blog();
+
+        $sites = self::get_sites();
+
+        if (is_array($sites) && count($sites)) {
+            foreach ($sites as $site) {
+                //get url to current blog
+                $blog_prefix = $wpdb->get_blog_prefix($site->blog_id);
+                self::$current_blog = array(
+                    'id' => $site->blog_id,
+                    'url' => get_site_url($site->blog_id),
+                    'prefix' => $blog_prefix
+                );
+                self::remove_options();
+            }
+        } else {
+            self::$current_blog = self::get_current_blog();
+            self::remove_options();
+        }
+    }
+
+    /*
+     * Remove options from DB
+     * 
+     */
+
+    public static function remove_options() {
 
         $roles = self::get_blog_option(WPACCESS_PREFIX . 'original_user_roles');
 
@@ -775,46 +778,11 @@ class mvb_WPAccess extends mvb_corePlugin {
         self::delete_blog_option(WPACCESS_PREFIX . 'restrictions');
         self::delete_blog_option(WPACCESS_PREFIX . 'menu_order');
         self::delete_blog_option(WPACCESS_PREFIX . 'key_params');
+        self::delete_blog_option(WPACCESS_PREFIX . 'sa_dialog'); //TODO - delete in version 1.5
+        self::delete_blog_option(WPACCESS_FTIME_MESSAGE);
+
+        return;
     }
-
-    /*
-     * Print general JS files and localization
-     * 
-     */
-    /*
-      public function admin_print_scripts() {
-
-      parent::scripts();
-      wp_enqueue_script('jquery-ui', WPACCESS_JS_URL . 'ui/jquery-ui.min.js');
-      wp_enqueue_script('jquery-treeview', WPACCESS_JS_URL . 'treeview/jquery.treeview.js');
-      wp_enqueue_script('jquery-treeedit', WPACCESS_JS_URL . 'treeview/jquery.treeview.edit.js');
-      wp_enqueue_script('jquery-treeview-ajax', WPACCESS_JS_URL . 'treeview/jquery.treeview.async.js');
-      wp_enqueue_script('jquery-fileupload', WPACCESS_JS_URL . 'fileupload/jquery.fileupload.js');
-      wp_enqueue_script('jquery-fileupload-iframe', WPACCESS_JS_URL . 'fileupload/jquery.iframe-transport.js');
-      wp_enqueue_script('wpaccess-admin', WPACCESS_JS_URL . 'admin-options.js');
-      wp_enqueue_script('jquery-tooltip', WPACCESS_JS_URL . 'jquery.tools.min.js');
-      $locals = array(
-      'nonce' => wp_create_nonce(WPACCESS_PREFIX . 'ajax'),
-      'css' => WPACCESS_CSS_URL,
-      'js' => WPACCESS_JS_URL,
-      );
-      if (self::$allow_ms) {
-      //can't use admin-ajax.php in fact it doesn't load menu and submenu
-      $locals['handlerURL'] = get_admin_url(self::$current_blog['id'], 'index.php');
-      $locals['ajaxurl'] = get_admin_url(self::$current_blog['id'], 'admin-ajax.php');
-      } else {
-      $locals['handlerURL'] = admin_url('index.php');
-      $locals['ajaxurl'] = admin_url('admin-ajax.php');
-      }
-      //
-      $super_admin = $this->get_blog_option(WPACCESS_PREFIX . 'sa_dialog');
-      if (!$super_admin){
-      $locals['first_time'] = 1;
-      }
-
-      wp_localize_script('wpaccess-admin', 'wpaccessLocal', $locals);
-      }
-     */
 
     public function admin_print_scripts() {
 
@@ -831,13 +799,42 @@ class mvb_WPAccess extends mvb_corePlugin {
             'nonce' => wp_create_nonce(WPACCESS_PREFIX . 'ajax'),
             'css' => WPACCESS_CSS_URL,
             'js' => WPACCESS_JS_URL,
-            'hide_apply_all' => $this->get_blog_option(WPACCESS_PREFIX . 'hide_apply_all', 0)
+            'hide_apply_all' => $this->get_blog_option(WPACCESS_PREFIX . 'hide_apply_all', 0),
+            'LABEL_129' => LABEL_129,
+            'LABEL_130' => LABEL_130,
+            'LABEL_131' => LABEL_131,
+            'LABEL_76' => LABEL_76,
+            'LABEL_77' => LABEL_77,
+            'LABEL_132' => LABEL_132,
+            'LABEL_133' => LABEL_133,
+            'LABEL_90' => LABEL_90,
+            'LABEL_134' => LABEL_134,
+            'LABEL_135' => LABEL_135,
+            'LABEL_136' => LABEL_136,
+            'LABEL_137' => LABEL_137,
+            'LABEL_138' => LABEL_138,
+            'LABEL_139' => LABEL_139,
+            'LABEL_140' => LABEL_140,
+            'LABEL_24' => LABEL_24,
+            'LABEL_141' => LABEL_141,
+            'LABEL_142' => LABEL_142,
+            'LABEL_143' => LABEL_143,
         );
-        $locals['handlerURL'] = admin_url('index.php');
-        $locals['ajaxurl'] = admin_url('admin-ajax.php');
+
+        if (self::$allow_ms) {
+            //can't use admin-ajax.php in fact it doesn't load menu and submenu
+            $locals['handlerURL'] = get_admin_url(self::$current_blog['id'], 'index.php');
+            $locals['ajaxurl'] = get_admin_url(self::$current_blog['id'], 'admin-ajax.php');
+            wp_enqueue_script('wpaccess-admin-multisite', WPACCESS_JS_URL . 'admin-multisite.js');
+            wp_enqueue_script('wpaccess-admin-url', WPACCESS_JS_URL . 'jquery.url.js');
+        } else {
+            $locals['handlerURL'] = admin_url('index.php');
+            $locals['ajaxurl'] = admin_url('admin-ajax.php');
+        }
         //
-        $super_admin = $this->get_blog_option(WPACCESS_PREFIX . 'sa_dialog');
-        if (!$super_admin) {
+
+        $answer = $this->get_blog_option(WPACCESS_FTIME_MESSAGE);
+        if (!$answer) {
             $locals['first_time'] = 1;
         }
 
@@ -874,7 +871,7 @@ class mvb_WPAccess extends mvb_corePlugin {
 
         $this->restrictions = $this->getRestrictions();
 
-        if (is_admin()) {
+        if (is_admin() && !$this->is_super) {
             $uri = $_SERVER['REQUEST_URI'];
 
             $access = $this->menu->checkAccess($uri);
@@ -914,7 +911,7 @@ class mvb_WPAccess extends mvb_corePlugin {
                     }
                 }
             }
-        } else {
+        } elseif (!$this->is_super) {
             if (is_category()) {
                 $cat_obj = $wp_query->get_queried_object();
                 $user_roles = $this->user->getCurrentUserRole();
@@ -945,50 +942,65 @@ class mvb_WPAccess extends mvb_corePlugin {
 
         $cap = ( $this->is_super ? 'administrator' : 'aam_manage');
 
-        add_submenu_page('users.php', __('Access Manager'), __('Access Manager'), $cap, 'wp_access', array($this, 'manager_page'));
+        add_submenu_page('users.php', __('Access Manager', 'aam'), __('Access Manager', 'aam'), $cap, 'wp_access', array($this, 'manager_page'));
 
         //init the list of key parameters
         $this->init_key_params();
-        //filter the menu
-        $this->menu->manage();
+        if (!$this->is_super) {
+            //filter the menu
+            $this->menu->manage();
+        }
+    }
+
+    public function manager_page() {
+
+        $c_role = isset($_REQUEST['current_role']) ? $_REQUEST['current_role'] : FALSE;
+        if (self::$allow_ms) {
+            if (is_array(self::$current_blog)) { //TODO -IMPLEMENT ERROR IF SITE NOT FOUND
+                $m = new module_optionManager($this, $c_role);
+                $m->do_save();
+                $params = array(
+                    'page' => 'wp_access',
+                    'current_role' => $c_role,
+                    'render_mss' => 1,
+                    'site' => $_GET['site']
+                );
+                $link = get_admin_url(self::$current_blog['id'], 'users.php');
+                $url = add_query_arg($params, $link);
+                $result = $this->cURL($url, TRUE, TRUE);
+                if (isset($result['content']) && $result['content']) {
+                    $content = phpQuery::newDocument($result['content']);
+                    echo $content['#aam_wrap']->htmlOuter();
+                    unset($content);
+                } else {
+                    wp_die(LABEL_145);
+                }
+            }
+        } else {
+            $m = new module_optionManager($this, $c_role);
+            $m->do_save();
+            $m->manage();
+        }
     }
 
     /*
       public function manager_page() {
 
       $c_role = isset($_REQUEST['current_role']) ? $_REQUEST['current_role'] : FALSE;
-      if (self::$allow_ms) {
-      if (is_array(self::$current_blog)) { //TODO -IMPLEMENT ERROR IF SITE NOT FOUND
-      $m = new module_optionManager($this, $c_role);
-      $m->do_save();
-      $url = add_query_arg(array('page' => 'wp_access', 'current_role' => $c_role), get_admin_url(self::$current_blog['id'], 'users.php'));
-      $result = $this->cURL($url, TRUE, TRUE);
-      $content = phpQuery::newDocument($result['content']);
-      echo apply_filters(WPACCESS_PREFIX . 'option_page', $content['#aam_wrap']->htmlOuter());
-      unset($content);
-      }
-      } else {
       $m = new module_optionManager($this, $c_role);
       $m->do_save();
       $m->manage();
       }
-      }
      */
-
-    public function manager_page() {
-
-        $c_role = isset($_REQUEST['current_role']) ? $_REQUEST['current_role'] : FALSE;
-        $m = new module_optionManager($this, $c_role);
-        $m->do_save();
-        $m->manage();
-    }
 
     public function render_rolelist() {
 
         $m = new module_optionManager($this, $_POST['role']);
         $or_roles = $this->get_blog_option(WPACCESS_PREFIX . 'original_user_roles');
+        $content = $m->getMainOptionsList();
+        $content = $m->templObj->clearTemplate($content);
         $result = array(
-            'html' => $m->getMainOptionsList(),
+            'html' => $content,
             'restorable' => (isset($or_roles[$_POST['role']]) ? TRUE : FALSE)
         );
 
@@ -1349,11 +1361,11 @@ class mvb_WPAccess extends mvb_corePlugin {
         global $wp_post_statuses;
 
         if (!empty($post->post_password)) {
-            $visibility = 'Password Protected';
+            $visibility = __('Password Protected', 'aam');
         } elseif ($post->post_status == 'private') {
             $visibility = $wp_post_statuses['private']->label;
         } else {
-            $visibility = 'Public';
+            $visibility = __('Public', 'aam');
         }
 
         return $visibility;
@@ -1361,8 +1373,8 @@ class mvb_WPAccess extends mvb_corePlugin {
 
     public function short_title($title) {
         //TODO - not the best way
-        if (strlen($title) > 35) {
-            $title = substr($title, 0, 35) . '...';
+        if (strlen($title) > 30) {
+            $title = substr($title, 0, 30) . '...';
         }
 
         return $title;
@@ -1379,9 +1391,7 @@ class mvb_WPAccess extends mvb_corePlugin {
     static public function get_current_blog() {
         global $wpdb;
 
-        $query = "SELECT * FROM {$wpdb->blogs}";
-        $sites = $wpdb->get_results($query);
-        $result = FALSE;
+        $sites = self::get_sites();
 
         if (is_array($sites) && count($sites)) {
             $current = (isset($_GET['site']) ? $_GET['site'] : get_current_blog_id());
@@ -1391,10 +1401,9 @@ class mvb_WPAccess extends mvb_corePlugin {
                     //get url to current blog
                     $blog_prefix = $wpdb->get_blog_prefix($site->blog_id);
                     //get Site Name
-                    $query = "SELECT option_value FROM {$blog_prefix}options WHERE option_name = 'siteurl'";
                     $result = array(
                         'id' => $site->blog_id,
-                        'url' => $wpdb->get_var($query),
+                        'url' => get_site_url($site->blog_id),
                         'prefix' => $blog_prefix
                     );
                 }
@@ -1408,6 +1417,25 @@ class mvb_WPAccess extends mvb_corePlugin {
         }
 
         return $result;
+    }
+
+    /*
+     * Get list of sites if multisite setup
+     * 
+     * @return mixed Array of sites of FALSE if not mulitisite setup
+     */
+
+    public static function get_sites() {
+        global $wpdb;
+
+        if (isset($wpdb->blogs)) {
+            $query = "SELECT * FROM {$wpdb->blogs}";
+            $sites = $wpdb->get_results($query);
+        } else {
+            $sites = FALSE;
+        }
+
+        return $sites;
     }
 
 }

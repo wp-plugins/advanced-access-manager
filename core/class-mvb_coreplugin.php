@@ -47,7 +47,7 @@ class mvb_corePlugin {
     function postbox($id, $title, $content) {
         $content = '
         <div id="' . $id . '" class="postbox">
-            <div class="handlediv" title="Click to toggle"><br /></div>
+            <div class="handlediv" title="' . LABEL_72 . '"><br /></div>
             <h3 class="hndle"><span>' . $title . '</span></h3>
             <div class="inside">
                 ' . $content . '

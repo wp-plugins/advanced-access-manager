@@ -59,12 +59,20 @@ class module_ajax {
     public function process() {
 
         switch ($this->action) {
+            case 'apply_all':
+                $result = $this->apply_all();
+                break;
+
+            case 'add_blog_admin':
+                $result = $this->add_blog_admin();
+                break;
+
             case 'restore_role':
                 $result = $this->restore_role($_POST['role']);
                 break;
 
             case 'create_role':
-                $result = $this->create_role();
+                $result = $this->create_role($_POST['role']);
                 break;
 
             case 'delete_role':
@@ -140,6 +148,70 @@ class module_ajax {
     }
 
     /*
+     * Apply settings to ALL blogs in Multisite Setup
+     * 
+     */
+
+    protected function apply_all() {
+        global $wpdb;
+
+        if (isset($wpdb->blogs)) {
+            $query = "SELECT * FROM {$wpdb->blogs}";
+            $sites = $wpdb->get_results($query);
+        } else {
+            $sites = FALSE;
+        }
+
+        //TODO - implement more complex checking
+        $result = array('status' => 'success', 'message' => LABEL_152);
+
+        if (is_array($sites) && count($sites)) {
+            $current = $this->pObj->get_current_blog_data();
+            $options = get_blog_option($current['id'], $current['prefix'] . WPACCESS_PREFIX . 'options', array());
+            $morders = get_blog_option($current['id'], $current['prefix'] . WPACCESS_PREFIX . 'menu_order', array());
+            $usroles = get_blog_option($current['id'], $current['prefix'] . 'user_roles', array());
+            $kparams = get_blog_option($current['id'], $current['prefix'] . WPACCESS_PREFIX . 'key_params', array());
+            $limit = WPACCESS_APPLY_LIMIT;
+            /*
+             * Check if Restriction class exist.
+             * Note for hacks : Better will be to buy an add-on for $10 because on
+             * next release I'll change the checking class
+             */
+            if (class_exists('aamms_msar_extend')) {
+                $limit = apply_filters(WPACCESS_PREFIX . 'msar_restrict_limit', $limit);
+            }
+            foreach ($sites as $i => $site) {
+                if ($site->blog_id == $current['id']) { //skip current blog
+                    continue;
+                }
+                $blog_prefix = $wpdb->get_blog_prefix($site->blog_id);
+                /*
+                  $options1 = get_blog_option($site->blog_id, $blog_prefix . WPACCESS_PREFIX . 'options', array());
+                  $morders1 = get_blog_option($site->blog_id, $blog_prefix . WPACCESS_PREFIX . 'menu_order', array());
+                  $usroles1 = get_blog_option($site->blog_id, $blog_prefix . 'user_roles', array());
+                  $kparams1 = get_blog_option($site->blog_id, $blog_prefix . WPACCESS_PREFIX . 'key_params', array());
+
+                  $options1 = array_merge_recursive($options, $options1);
+                  $morders1 = array_merge_recursive($morders, $morders1);
+                  $usroles1 = array_merge_recursive($usroles, $usroles1);
+                  $kparams1 = array_merge_recursive($kparams, $kparams1);
+                 * */
+                update_blog_option($site->blog_id, $blog_prefix . WPACCESS_PREFIX . 'options', $options);
+                update_blog_option($site->blog_id, $blog_prefix . WPACCESS_PREFIX . 'menu_order', $morders);
+                update_blog_option($site->blog_id, $blog_prefix . 'user_roles', $usroles);
+                update_blog_option($site->blog_id, $blog_prefix . WPACCESS_PREFIX . 'key_params', $kparams);
+
+                if (($limit != -1) && ($i + 1 > $limit)) {
+                    $result = array('status' => 'error', 'message' => LABEL_156);
+                    break;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /*
      * Update Roles Label
      * 
      */
@@ -148,9 +220,10 @@ class module_ajax {
 
         //TODO - Here you can hack and change Super Admin and Admin Label
         //But this is not a big deal.
-        $role_list = $this->pObj->get_roles(true);
+        $role_list = $this->pObj->get_roles(TRUE);
         $role = $_POST['role_id'];
-        $label = sanitize_title($_POST['label']);
+        //TODO - maybe not the best way
+        $label = urldecode(sanitize_title($_POST['label']));
         if (isset($role_list[$role])) {
             $role_list[$role]['name'] = ucfirst($label);
             $this->pObj->update_blog_option('user_roles', $role_list);
@@ -235,14 +308,15 @@ class module_ajax {
      * 
      */
 
-    protected function create_role($role = '') {
+    protected function create_role($role, $render_html = TRUE) {
 
         $m = new module_Roles();
-        $new_role = ($role ? $role : $_POST['role']);
+        $new_role = ($role ? $role : $_REQUEST['role']);
         $result = $m->createNewRole($new_role);
         if ($result['result'] == 'success') {
             $m = new module_optionManager($this->pObj, $result['new_role']);
-            $result['html'] = $m->renderDeleteRoleItem($result['new_role'], array('name' => $_POST['role']));
+            $content = $m->renderDeleteRoleItem($result['new_role'], array('name' => $_POST['role']));
+            $result['html'] = $m->templObj->clearTemplate($content);
         }
 
         return $result;
@@ -274,9 +348,10 @@ class module_ajax {
     protected function render_metabox_list() {
 
         $m = new module_optionManager($this->pObj, $_POST['role']);
+        $content = $m->renderMetaboxList($m->getTemplate());
         $result = array(
             'status' => 'success',
-            'html' => $m->renderMetaboxList($m->getTemplate())
+            'html' => $m->templObj->clearTemplate($content)
         );
 
         return $result;
@@ -395,8 +470,8 @@ class module_ajax {
 
             if (!isset($capList[$cap])) { //create new capability
                 $roles = $this->pObj->get_roles(TRUE);
-                if (isset($roles['super_admin'])) {
-                    $roles['super_admin']['capabilities'][$cap] = 1;
+                if (isset($roles[WPACCESS_SADMIN_ROLE])) {
+                    $roles[WPACCESS_SADMIN_ROLE]['capabilities'][$cap] = 1;
                 }
                 $roles[WPACCESS_ADMIN_ROLE]['capabilities'][$cap] = 1; //add this role for admin automatically
                 $this->pObj->update_blog_option('user_roles', $roles);
@@ -425,7 +500,7 @@ class module_ajax {
 
                 $result = array(
                     'status' => 'success',
-                    'html' => $titem
+                    'html' => $tmpl->clearTemplate($titem)
                 );
             } else {
                 $result = array(
@@ -436,7 +511,7 @@ class module_ajax {
         } else {
             $result = array(
                 'status' => 'error',
-                'message' => 'Empty Capability'
+                'message' => LABEL_124
             );
         }
 
@@ -469,7 +544,7 @@ class module_ajax {
         } else {
             $result = array(
                 'status' => 'error',
-                'message' => 'Current Capability can not be deleted'
+                'message' => LABEL_125
             );
         }
 
@@ -524,6 +599,15 @@ class module_ajax {
                     $tree = array();
                     break;
             }
+        }
+
+        if (!count($tree)) {
+            $tree[] = (object) array(
+                        'text' => '<i>[' . LABEL_153 . ']</i>',
+                        'hasChildren' => FALSE,
+                        'classes' => 'post-ontree',
+                        'id' => 'empty-' . uniqid()
+            );
         }
 
         return $tree;
@@ -704,10 +788,11 @@ class module_ajax {
                         $excld_tmlp = '';
                     }
                     $template = $tmpl->replaceSub('EXCLUDE_PAGE', $excld_tmlp, $template);
+                    $template = $tmpl->updateMarkers($markerArray, $template);
 
                     $result = array(
                         'status' => 'success',
-                        'html' => $tmpl->updateMarkers($markerArray, $template)
+                        'html' => $tmpl->clearTemplate($template)
                     );
                 }
                 break;
@@ -731,10 +816,11 @@ class module_ajax {
                         '###post_number###' => $term->count,
                         '###ID###' => $term->term_id,
                     );
+                    $template = $tmpl->updateMarkers($markerArray, $template);
 
                     $result = array(
                         'status' => 'success',
-                        'html' => $tmpl->updateMarkers($markerArray, $template)
+                        'html' => $tmpl->clearTemplate($template)
                     );
                 }
                 break;
@@ -895,12 +981,12 @@ class module_ajax {
     protected function save_order() {
 
         $apply_all = $_POST['apply_all'];
-        $menu_order = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'menu_order');
+        $menu_order = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'menu_order', array());
         $roles = $this->pObj->get_roles();
         $role = $_POST['role'];
 
         if ($apply_all) {
-            foreach ($roles as $role) {
+            foreach ($roles as $role => $dummy) {
                 $menu_order[$role] = $_POST['menu'];
             }
         } else {
@@ -981,44 +1067,122 @@ class module_ajax {
     }
 
     /*
+     * Add Current User to Blog and make him a Super Admin
+     * 
+     */
+
+    protected function add_blog_admin() {
+
+        $user_id = get_current_user_id();
+        
+        if ($this->pObj->is_multi()) {
+            $blog_id = get_current_blog_id();
+            $ok = add_user_to_blog($blog_id, $user_id, WPACCESS_ADMIN_ROLE);
+        } else {
+            $ok = TRUE;
+        }
+
+        if ($ok) {
+            $m = new module_User($this->pObj, $user_id);
+            $m->add_role(WPACCESS_ADMIN_ROLE);
+            $m->add_role(WPACCESS_SADMIN_ROLE);
+            $result = array('status' => 'success', 'message' => LABEL_154);
+        } else {
+            $result = array('status' => 'error', 'message' => LABEL_155);
+        }
+
+        return $result;
+    }
+
+    /*
      * Create super admin User Role
      */
 
     protected function create_super() {
+        global $wpdb;
 
         $answer = intval($_POST['answer']);
+        $user_id = get_current_user_id();
 
         if ($answer == 1) {
-            $result = $this->create_role('Super Admin');
+            $role_list = $this->pObj->get_roles(TRUE);
+
+            if (isset($role_list[WPACCESS_SADMIN_ROLE])) {
+                $result = array(
+                    'result' => 'success',
+                    'new_role' => WPACCESS_SADMIN_ROLE
+                );
+            } else {
+                $result = $this->create_role('Super Admin', FALSE);
+            }
 
             if ($result['result'] == 'success') {
-                $url = admin_url('user.php');
-                $url = add_query_arg('page', 'wp_access', $url);
-                $result['redirect'] = $url;
                 //update current user role
-                $user_id = get_current_user_id();
-                $blog = $this->pObj->get_current_blog_data();
-                $caps = get_usermeta($user_id, $blog['prefix'] . 'capabilities');
-                $caps[$result['new_role']] = 1;
-                update_usermeta($user_id, $blog['prefix'] . 'capabilities', $caps);
+                if (!is_blog_user(get_current_blog_id())) {
+                    $this->add_blog_admin();
+                } else {
+                    $this->assign_role(WPACCESS_SADMIN_ROLE, $user_id);
+                }
+                $this->deprive_role($user_id, WPACCESS_SADMIN_ROLE, WPACCESS_ADMIN_ROLE);
                 //get all capability list and assign them to super admin role
                 $roles = $this->pObj->get_roles(TRUE);
-                $roles['super_admin'] = array(
-                    'name' => 'Super Admin',
+                $roles[WPACCESS_SADMIN_ROLE] = array(
+                    'name' => LABEL_126,
                     'capabilities' => $this->pObj->user->getAllCaps()
                 );
                 $this->pObj->update_blog_option('user_roles', $roles);
-                $this->pObj->update_blog_option(WPACCESS_PREFIX . 'sa_dialog', $answer);
+                $this->pObj->update_blog_option(WPACCESS_FTIME_MESSAGE, $answer);
+            } else {
+                $result = array('result' => 'error');
             }
         } else {
-            $result = array('result' => 'success');
-            $roles = $this->pObj->get_roles(TRUE);
-            $roles[WPACCESS_ADMIN_ROLE]['capabilities']['aam_manage'] = 1; //add this role for admin automatically
-            $this->pObj->update_blog_option('user_roles', $roles);
-            $this->pObj->update_blog_option(WPACCESS_PREFIX . 'sa_dialog', $answer);
+            $result = array('result' => 'error');
         }
 
         return $result;
+    }
+
+    /*
+     * Assigne Role to User
+     * 
+     */
+
+    protected function assign_role($role, $user_id) {
+
+        $m = new module_User($this->pObj, $user_id);
+        $m->add_role($role);
+    }
+
+    /*
+     * Delete User Role for other Users
+     * 
+     * @param int Skip User's ID
+     * @param string User Role
+     * @param string Role to Replace with
+     */
+
+    protected function deprive_role($skip_id, $role, $replace_role) {
+        global $wpdb;
+
+        //TODO Should be better way to grab the list of users
+        $blog = $this->pObj->get_current_blog_data();
+        $query = "SELECT user_id FROM {$wpdb->usermeta} WHERE ";
+        $query .= "meta_key = '{$blog['prefix']}capabilities'";
+        $list = $wpdb->get_results($query);
+
+        if (is_array($list) && count($list)) {
+            foreach ($list as $row) {
+                if ($row->user_id == $skip_id) {
+                    continue;
+                }
+                $m = new module_User($this->pObj, $row->user_id);
+
+                if ($m->has_cap($role)) {
+                    $m->remove_role($role);
+                    $m->add_role($replace_role);
+                }
+            }
+        }
     }
 
 }

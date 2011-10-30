@@ -20,9 +20,13 @@
 
 class module_User extends WP_User {
 
-    function __construct() {
+    function __construct($pObj, $user_id = FALSE) {
 
-        parent::__construct(get_current_user_id());
+        $this->pObj = $pObj;
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        parent::__construct($user_id);
     }
 
     function getCurrentUserRole() {
@@ -40,13 +44,14 @@ class module_User extends WP_User {
 
         $caps = $this->allcaps;
         $caps = (is_array($caps) ? $caps : array());
-        $unset_list = array('super_admin');
+
+        $unset_list = array(WPACCESS_SADMIN_ROLE);
         foreach ($unset_list as $unset) {
             if (isset($caps[$unset])) {
                 unset($caps[$unset]);
             }
         }
-        
+
         return $caps;
     }
 

@@ -33,7 +33,7 @@ class module_filterMenu extends module_User {
     function __construct($pObj) {
 
         $this->pObj = $pObj;
-        parent::__construct();
+        parent::__construct($pObj);
 
         $this->cParams = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'options', array());
         $keyParams = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'key_params', array());
@@ -46,6 +46,7 @@ class module_filterMenu extends module_User {
         global $menu, $submenu, $restrict_message;
 
         $userRoles = $this->getCurrentUserRole();
+
         if (is_array($userRoles)) {
             foreach ($userRoles as $role) {
                 if (isset($this->cParams[$role]['menu']) && is_array($this->cParams[$role]['menu'])) {
@@ -120,12 +121,12 @@ class module_filterMenu extends module_User {
                 //get base file
                 $parts = $this->get_parts($requestedMenu);
                 foreach ($userRoles as $role) {
+                    //aam_debug($this->cParams[$role]['menu']);
                     if (isset($this->cParams[$role]['menu']) && is_array($this->cParams[$role]['menu'])) {
                         foreach ($this->cParams[$role]['menu'] as $menu => $sub) {
-                            if ($this->compareMenus($parts, $menu)) {
+                            if ($this->compareMenus($parts, $menu) && isset($sub['whole'])) {
                                 return FALSE;
                             }
-
                             if (isset($sub['sub']) && is_array($sub['sub'])) {
                                 foreach ($sub['sub'] as $subMenu => $dummy) {
                                     if ($this->compareMenus($parts, $subMenu)) {
@@ -138,7 +139,7 @@ class module_filterMenu extends module_User {
                 }
             }
         }
-        
+
         return TRUE;
     }
 
@@ -147,11 +148,11 @@ class module_filterMenu extends module_User {
         $compare = $this->get_parts($menu);
         $c_params = array_intersect($parts, $compare);
         $result = FALSE;
-
-        if (count($c_params) == count($parts)) { //equal menus
+        
+        if (count($c_params) == count($compare)) { //equal menus
             $result = TRUE;
         } elseif (count($c_params)) { //probably similar
-            $diff = array_diff($parts, $compare);
+            $diff = array_diff($parts, $compare) + array_diff($compare, $parts );
             $result = TRUE;
 
             foreach ($diff as $d) {

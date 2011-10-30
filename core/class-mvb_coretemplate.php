@@ -15,7 +15,7 @@
 
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- 
+
  */
 
 /*
@@ -25,8 +25,8 @@
  * 
  * @version 1.0
  */
-class mvb_coreTemplate {
 
+class mvb_coreTemplate {
     /*
      * Read template from file
      *
@@ -45,8 +45,9 @@ class mvb_coreTemplate {
             }
         }
 
-        return ($template? $template :FALSE);
+        return ($template ? $template : FALSE);
     }
+
     /*
      * Get subpart from template
      *
@@ -84,7 +85,7 @@ class mvb_coreTemplate {
 
     public function replaceSub($subTemplate, $content, $template) {
         $result = '';
-        
+
         $regExp = '/<!\-\-[\s]?###' . $subTemplate . '###[\s]?begin\-\->';
         $regExp .= '.*<!\-\-[\s]?###' . $subTemplate . '###[\s]?end\-\->/si';
 
@@ -104,18 +105,27 @@ class mvb_coreTemplate {
 
     public function updateMarkers($markers, $template) {
         if (is_array($markers)) {
-            foreach($markers as $marker => $content){
+            foreach ($markers as $marker => $content) {
                 $template = str_replace($marker, $content, $template);
             }
         }
 
         return $template;
     }
-    
-     public function clearTemplate($template, $pattern = '/(###[a-z0-9_\-]+###)/si'){
+
+    public function clearTemplate($template, $pattern = '/(###[a-z0-9_\-]+###)/si') {
+
+        //try to replace all labels
+        $l_list = array();
+        $i = 1;
+        while (defined('LABEL_' . $i)) {
+            $l_list['###LABEL_' . $i . '###'] = constant('LABEL_' . $i++);
+        }
+        $template = $this->updateMarkers($l_list, $template);
 
         return preg_replace($pattern, '', $template);
     }
 
 }
+
 ?>
