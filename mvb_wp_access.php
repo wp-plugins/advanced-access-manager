@@ -3,9 +3,9 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access for all User Roles to WordPress Backend and Frontend.
-  Version: 1.4
+  Version: 1.4.1
   Author: Vasyl Martyniuk
-  Author URI: http://www.whimba.com
+  Author URI: http://www.whimba.org
  */
 
 /*
@@ -43,6 +43,18 @@
  */
 
 require_once('mvb_config.php');
+
+/*
+ * Main Plugin Class
+ * 
+ * Responsible for initialization and handling user requests to Advanced Access
+ * Manager
+ * 
+ * @package AAM
+ * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
+ * @copyrights Copyright © 2011 Vasyl Martyniuk
+ * @license GNU General Public License {@link http://www.gnu.org/licenses/}
+ */
 
 class mvb_WPAccess extends mvb_corePlugin {
     /*
@@ -109,9 +121,8 @@ class mvb_WPAccess extends mvb_corePlugin {
         global $post;
 
 
-        /*
-         * Configure Plugin Environmnet
-         */
+        
+        // Configure Plugin Environmnet
         self::$allow_ms = $this->init_multisite();
 
         //TODO - Optimize this
@@ -489,9 +500,9 @@ class mvb_WPAccess extends mvb_corePlugin {
         $res = wp_remote_request($url, array(
             'headers' => $header,
             'cookies' => $cookies,
-            'timeout' => 5
-                ));
-
+            'timeout' => 5)
+        );
+        
         if ($res instanceof WP_Error) {
             $result = array(
                 'status' => 'error',

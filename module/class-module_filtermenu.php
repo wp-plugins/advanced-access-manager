@@ -18,6 +18,14 @@
 
  */
 
+/*
+ * Filter Main Menu and control access to resources
+ * 
+ * @package AAM
+ * @subpackage Module
+ * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
+ */
+
 class module_filterMenu extends module_User {
 
     private $cParams;
@@ -148,13 +156,19 @@ class module_filterMenu extends module_User {
         $compare = $this->get_parts($menu);
         $c_params = array_intersect($parts, $compare);
         $result = FALSE;
-        
-        if (count($c_params) == count($compare)) { //equal menus
+/*
+        aam_debug($parts);
+        aam_debug($menu);
+        aam_debug($compare);
+        aam_debug($c_params);
+*/
+        if (count($c_params) == count($parts)) { //equal menus
             $result = TRUE;
-        } elseif (count($c_params)) { //probably similar
-            $diff = array_diff($parts, $compare) + array_diff($compare, $parts );
+        } elseif (count($c_params) && ($parts[0] == $compare[0])) { //probably similar
+            
+            $diff = array_diff($parts, $compare) + array_diff($compare, $parts);
             $result = TRUE;
-
+            
             foreach ($diff as $d) {
                 $td = preg_split('/=/', $d);
                 if (in_array($td[0], $this->keyParams)) {

@@ -1,23 +1,26 @@
 === Advanced Access Manager ===
 Contributors: vasyl_m
-Donate link: http://whimba.com/advanced-access-manager-donation/
+Donate link: http://whimba.org/donation
 Tags: access manager, access-control, capability, dashboard widget, expire, expire link, filter menu, filter pages, filter posts, metabox, role manager, user access, user control, user role
 Requires at least: 3.2
 Tested up to: 3.2.1
-Stable tag: 1.4
+Stable tag: 1.4.1
 
 Graphic interface to manage User Roles, Capabilities and Post/Page Access
 
 == Description ==
 
-This is easy to use interface to manage access to your WordPress based website.
-If you want to filter Admin Menu for some User Roles or just delete unnecessary 
-Dashboard widgets or Metaboxes or filter the list of posts, pages and categories, 
-this plugin is for you. 
+Advanced Access Manager is a new way of controlling access to your single blog or 
+multisite setup.
+This is easy to use interface mostly is very helpful tool for experienced WordPress
+users. Also just beginners will be able to understand how to use it, but they should
+be enough careful to not mess-up access to website.
+Advanced Access manager support multisite setup and multi-language interface (if 
+required translation available) 
 You can do following things with Advanced Access Manager:
 
-* NEW! Apply setting to all Blogs in Multi-Site Setup 
-* NEW! Promote other Users to the same Role of lower
+* Apply setting to all Blogs in Multi-Site Setup 
+* Promote other Users to the same Role of lower
 * Filter Admin Menu for specific User Role
 * Filter Dashboard Widgets for specific User Role
 * Filter List of Metaboxes for specific User Role
@@ -36,8 +39,6 @@ You can do following things with Advanced Access Manager:
 * Support Custom Post Types
 * Exclude Pages From Navigation 
 
-Also Advanced Access Manager supports Multi-Site and Multi-Language
-
 [youtube http://www.youtube.com/watch?v=zkyxply_JHs]
 
 If you have any problems with current plugin, please send me an email or leave a
@@ -54,16 +55,15 @@ message on Forums Posts.
 
 = How to redirect is Restriction Prohibited? = 
 
-There are two ways to do that. First one is to use actions wpaccess_admin_redirect
-for Admin Dashboard and wpaccess_front_redirect for a Front-End. Second way is to
-download a free add-on called AAM Redirect from my website <a href="http://whimba.com/plugins/advanced-access-manager/add-ons/">here</a>
-Under Settings->AAM Redirect define URLs you want to redirect. 
+If you are a programmer and is familiar with PHP you can use actions 
+<b>wpaccess_admin_redirect</b>for Admin Dashboard and 
+<b>wpaccess_front_redirect</b> for a Front-End.
 
 = How to give access for Administrator's Role to Advanced Access Manager? =
 
 If you are Super Admin, you can manage the Administrator's Role as other User
 Roles. To give an access to Access Manager's Option Page, just create a new
-capability AAM Manage and check it for Administrator's User Role.
+capability <b>AAM Manage</b> and check it for Administrator's User Role.
 
 = Why do I have a red message says JavaScript Error =
 
@@ -102,6 +102,10 @@ just filter Main Menu.
 4. Post/Page Tree View
 
 == Changelog ==
+
+= 1.4.1 =
+* Fixed some bugs with checking algorithm
+* Maintained the code
 
 = 1.4 =
 * Added Multi-Site Support

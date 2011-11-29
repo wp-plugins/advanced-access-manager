@@ -22,7 +22,7 @@ define('LABEL_1', __('Advanced Access Manager', 'aam'));
 define('LABEL_2', __('Additional features available', 'aam'));
 define('LABEL_3', __('Alert', 'aam'));
 define('LABEL_4', __('You have a JavaScript Error on a page', 'aam'));
-define('LABEL_5', __('For support send an email to address', 'aam'));
+define('LABEL_5', __('Please read <a href="http://wordpress.org/extend/plugins/advanced-access-manager/faq/" target="_blank">FAQ</a> for more information', 'aam'));
 define('LABEL_6', __('Options updated successfully', 'aam'));
 define('LABEL_7', __('Main Menu', 'aam'));
 define('LABEL_8', __('Metaboxes & Widgets', 'aam'));
@@ -168,8 +168,7 @@ define('LABEL_147', __('<p><span style="color: #FF0000;">PLEASE READ THIS!</span
         <p>This graphic interface allows you to control access to your WordPress Blog. <b>DO NOT</b> try to change settings if you are not sure what you are doing! If you have problems or questions, or just found something weird in a system\'s behavior, <b>PLEASE</b> take a look to <a href="http://wordpress.org/extend/plugins/advanced-access-manager/faq/" target="_blank">FAQ</a> section before asking for support.</p>
         <p>For your safety, after you press <b>OK</b> button, Super Admin Role will be created specifically for your user.</p>
         <p>Users with already defined Super Admin Role will be deprived of it and replaced with Administrator Role</p>
-        <p>If you have Multi-Site Setup, you will see the same message again for each new Blog you entered or created.</p>
-        <p>By the way, Advanced Access Manager now has multi-language support. Please read more <a href="http://whimba.com/aam-and-multi-language-support/" target="_blank">here</a></p>', 'aam'));
+        <p>If you have Multi-Site Setup, you will see the same message again for each new Blog you entered or created.</p>', 'aam'));
 define('LABEL_148', __('Apply to ALL Blogs', 'aam'));
 define('LABEL_149', __('You are going to apply current Blog\'s Settings to ALL Blogs in a WordPress Multisite setup. Please Notice that it will apply only <i>Main Menu</i>, <i>Metaboxes & Widgets</i> and <i>Capabilities</i> Settings. <i>Pages & Posts</i> Settings will be skip in fact of possible IDs mismatch.', 'aam'));
 define('LABEL_150', __('Action completed successfully', 'aam'));
@@ -178,7 +177,7 @@ define('LABEL_152', __('Settings applied successfully to ALL Blogs', 'aam'));
 define('LABEL_153', __('empty', 'aam'));
 define('LABEL_154', __('Administrator added Successfully', 'aam'));
 define('LABEL_155', __('Failed to add new Administrator', 'aam'));
-define('LABEL_156', __('You do not have installed <a href="http://whimba.com/plugins/advanced-access-manager/add-ons/" target="_blank">AAM MSAR Extend</a> Add-on. Settings Applies only for first ' . WPACCESS_APPLY_LIMIT . ' Blogs.', 'aam'));
+define('LABEL_156', __('You do not have installed <a href="http://whimba.org/add-ons" target="_blank">AAM MSAR Extend</a> Add-on. Settings Applies only for first ' . WPACCESS_APPLY_LIMIT . ' Blogs.', 'aam'));
 
 
 /*
@@ -346,7 +345,7 @@ $capabilitiesDesc = array(
     'update_themes' => __('<b>Description does not exist</b>', 'aam')
 );
 
-$upgrade_restriction = __('Install <a href="http://whimba.com/plugins/advanced-access-manager/add-ons/" target="_blank">Extend Restriction</a> to be able to set more then 5 restrictions for one Role', 'aam');
+$upgrade_restriction = __('Install <a href="http://whimba.org/add-ons" target="_blank">Extend Restriction</a> to be able to set more then 5 restrictions for one Role', 'aam');
 
 $restrict_message = __('<p>You do not have sufficient permissions to perform this action</p>', 'aam');
 

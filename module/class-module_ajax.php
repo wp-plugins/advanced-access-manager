@@ -945,7 +945,7 @@ class module_ajax {
     protected function check_addons() {
 
         //grab list of features
-        $url = 'http://whimba.com/features.php';
+        $url = 'http://whimba.org/features.php';
         //second paramter is FALSE, which means that I'm not sending any
         //cookies to my website
         $response = $this->pObj->cURL($url, FALSE, TRUE);

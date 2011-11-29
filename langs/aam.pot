@@ -595,7 +595,6 @@ msgid ""
 "        <p>For your safety, after you press <b>OK</b> button, Super Admin Role will be created specifically for your user.</p>\n"
 "        <p>Users with already defined Super Admin Role will be deprived of it and replaced with Administrator Role</p>\n"
 "        <p>If you have Multi-Site Setup, you will see the same message again for each new Blog you entered or created.</p>\n"
-"        <p>By the way, Advanced Access Manager now has multi-language support. Please read more <a href=\"http://whimba.com/aam-and-multi-language-support/\" target=\"_blank\">here</a></p>"
 msgstr ""
 
 #: mvb_labels.php:173
@@ -631,7 +630,7 @@ msgid "Failed to add new Administrator"
 msgstr ""
 
 #: mvb_labels.php:181
-msgid "You do not have installed <a href=\"http://whimba.com/plugins/advanced-access-manager/add-ons/\" target=\"_blank\">AAM MSAR Extend</a> Add-on. Settings Applies only for first "
+msgid "You do not have installed <a href=\"http://whimba.org/add-ons\" target=\"_blank\">AAM MSAR Extend</a> Add-on. Settings Applies only for first "
 msgstr ""
 
 #: mvb_labels.php:190
@@ -950,7 +949,7 @@ msgid "<b>Description does not exist</b>"
 msgstr ""
 
 #: mvb_labels.php:349
-msgid "Install <a href=\"http://whimba.com/plugins/advanced-access-manager/add-ons/\" target=\"_blank\">Extend Restriction</a> to be able to set more then 5 restrictions for one Role"
+msgid "Install <a href=\"http://whimba.org/add-ons\" target=\"_blank\">Extend Restriction</a> to be able to set more then 5 restrictions for one Role"
 msgstr ""
 
 #: mvb_labels.php:351
