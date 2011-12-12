@@ -184,7 +184,7 @@ class module_filterMenu extends module_User {
     function get_parts($requestedMenu) {
 
         //this is for only one case - edit.php
-        if (basename($requestedMenu) == 'edit.php') {
+        if (in_array(basename($requestedMenu), array('edit.php', 'post-new.php'))) {
             $requestedMenu .= '?post_type=post';
         }
         //splite requested URI

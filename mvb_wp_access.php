@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access for all User Roles to WordPress Backend and Frontend.
-  Version: 1.4.1
+  Version: 1.4.2
   Author: Vasyl Martyniuk
   Author URI: http://www.whimba.org
  */
@@ -44,7 +44,7 @@
 
 require_once('mvb_config.php');
 
-/*
+/**
  * Main Plugin Class
  * 
  * Responsible for initialization and handling user requests to Advanced Access
@@ -57,7 +57,7 @@ require_once('mvb_config.php');
  */
 
 class mvb_WPAccess extends mvb_corePlugin {
-    /*
+    /**
      * Holds the restriction options
      * 
      * @var array
@@ -66,7 +66,7 @@ class mvb_WPAccess extends mvb_corePlugin {
 
     protected $restrictions;
 
-    /*
+    /**
      * Module User
      * 
      * @var object
@@ -74,7 +74,7 @@ class mvb_WPAccess extends mvb_corePlugin {
      */
     public $user;
 
-    /*
+    /**
      * Is Multisite or not
      * 
      * @var bool
@@ -82,7 +82,7 @@ class mvb_WPAccess extends mvb_corePlugin {
      */
     public static $allow_ms = FALSE;
 
-    /*
+    /**
      * Is Super Admin
      * 
      * If Multisite allowed and is super admin then include
@@ -93,7 +93,7 @@ class mvb_WPAccess extends mvb_corePlugin {
      */
     public $is_super = FALSE;
 
-    /*
+    /**
      * Current Blog Info
      * 
      * @var array
@@ -101,7 +101,7 @@ class mvb_WPAccess extends mvb_corePlugin {
      */
     public static $current_blog;
 
-    /*
+    /**
      * Module Roles
      * 
      * @var object
@@ -109,7 +109,7 @@ class mvb_WPAccess extends mvb_corePlugin {
      */
     protected $roles;
 
-    /*
+    /**
      * Skip filter categories during initialization
      * 
      * @var bool
@@ -490,6 +490,10 @@ class mvb_WPAccess extends mvb_corePlugin {
         $cookies = array();
         if (is_array($_COOKIE) && $send_cookies) {
             foreach ($_COOKIE as $key => $value) {
+                //SKIP PHPSESSID - some servers does not like it for security reason
+                if ($key == 'PHPSESSID'){
+                    continue;
+                }
                 $cookies[] = new WP_Http_Cookie(array(
                             'name' => $key,
                             'value' => $value
