@@ -30,11 +30,17 @@ class module_User extends WP_User {
     }
 
     function getCurrentUserRole() {
+        global $wp_version;
 
-        if (is_object($this->data) && is_array($this->data->{$this->cap_key})) {
-            $result = array_keys($this->data->{$this->cap_key});
+        if (version_compare($wp_version, '3.3', '=')) {
+            $result = (is_array($this->roles) ? $this->roles : array());
         } else {
-            $result = array();
+            //deprecated, will be deleted in release 1.5
+            if (is_object($this->data) && isset($this->data->{$this->cap_key})) {
+                $result = $this->data->{$this->cap_key};
+            } else {
+                $result = array();
+            }
         }
 
         return $result;

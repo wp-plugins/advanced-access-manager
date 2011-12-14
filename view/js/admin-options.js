@@ -130,6 +130,14 @@ function mvbam_object(){
      */
     this.hideApplyAll = wpaccessLocal.hide_apply_all;
     
+    /**
+     * Config XML Editor
+     * 
+     * @var object
+     * @access public
+     */
+    this.editor = null;
+    
 }
 
 /*
@@ -228,7 +236,15 @@ mvbam_object.prototype.configureElements = function(){
 }
 
 mvbam_object.prototype.configureMainMenu = function(){
-    jQuery( "#tabs" ).tabs(); 
+    
+    var _this = this;
+    jQuery( "#tabs" ).tabs({
+        show: function(event, ui) { 
+            if (ui.index == 4){
+                mObj.editor.refresh();
+            } 
+        }
+    }); 
     this.configureAccordion("#main-menu-options");
     jQuery('#main-menu-options > div').each(function(){
         jQuery('#whole', this).bind('click',{
@@ -1235,6 +1251,13 @@ jQuery(document).ready(function(){
         mObj.initRoleNameList();
         
         mObj.check_first_time();
+        /*
+        //init codemirror
+        mObj.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+            mode: {name: "xml", htmlMode: true},
+            lineNumbers: true
+        });
+        */
         
     }catch(err){
         mObj.handleError(err);

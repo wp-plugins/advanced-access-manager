@@ -41,16 +41,6 @@ class module_Roles extends WP_Roles {
         $role_id = str_replace('-', '_', $role_id);
         $label = htmlspecialchars(trim($newRoleTitle));
 
-        switch ($roles) {
-            case 'all':
-                $cap_list = $capList = $this->pObj->user->getAllCaps();
-                break;
-
-            default:
-                $cap_list = $defCapabilities;
-                break;
-        }
-
         if ($this->add_role($role_id, $label, $defCapabilities)) {
             $status = 'success';
         } else {

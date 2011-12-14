@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access for all User Roles to WordPress Backend and Frontend.
-  Version: 1.4.2
+  Version: 1.4.3
   Author: Vasyl Martyniuk
   Author URI: http://www.whimba.org
  */
@@ -298,6 +298,7 @@ class mvb_WPAccess extends mvb_corePlugin {
         if (isset($roles[WPACCESS_SADMIN_ROLE])) { //super admin is level 11
             unset($roles[WPACCESS_SADMIN_ROLE]);
         }
+
         //get user's highest Level
         $c_roles = $this->user->getCurrentUserRole();
         $role_list = $this->get_roles(TRUE);
@@ -334,6 +335,7 @@ class mvb_WPAccess extends mvb_corePlugin {
         wp_enqueue_style('jquery-ui', WPACCESS_CSS_URL . 'ui/jquery-ui-1.8.16.custom.css');
         wp_enqueue_style('wpaccess-style', WPACCESS_CSS_URL . 'wpaccess_style.css');
         wp_enqueue_style('wpaccess-treeview', WPACCESS_CSS_URL . 'treeview/jquery.treeview.css');
+        wp_enqueue_style('codemirror', WPACCESS_CSS_URL . 'codemirror/codemirror.css');
     }
 
     public function wp_front($wp) {
@@ -810,6 +812,8 @@ class mvb_WPAccess extends mvb_corePlugin {
         wp_enqueue_script('jquery-fileupload-iframe', WPACCESS_JS_URL . 'fileupload/jquery.iframe-transport.js');
         wp_enqueue_script('wpaccess-admin', WPACCESS_JS_URL . 'admin-options.js');
         wp_enqueue_script('jquery-tooltip', WPACCESS_JS_URL . 'jquery.tools.min.js');
+        wp_enqueue_script('codemirror', WPACCESS_JS_URL . 'codemirror/codemirror.js');
+        wp_enqueue_script('codemirror-xml', WPACCESS_JS_URL . 'codemirror/xml.js');
         $locals = array(
             'nonce' => wp_create_nonce(WPACCESS_PREFIX . 'ajax'),
             'css' => WPACCESS_CSS_URL,
