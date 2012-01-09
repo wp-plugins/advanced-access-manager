@@ -37,7 +37,7 @@ class module_User extends WP_User {
         } else {
             //deprecated, will be deleted in release 1.5
             if (is_object($this->data) && isset($this->data->{$this->cap_key})) {
-                $result = $this->data->{$this->cap_key};
+                $result = array_keys($this->data->{$this->cap_key});
             } else {
                 $result = array();
             }

@@ -303,9 +303,11 @@ class mvb_WPAccess extends mvb_corePlugin {
         $c_roles = $this->user->getCurrentUserRole();
         $role_list = $this->get_roles(TRUE);
         $highest = 0;
+        
         foreach ($c_roles as $role) {
             if (isset($role_list[$role])) {
                 $caps = $role_list[$role]['capabilities'];
+                
                 for ($i = 0; $i <= WPACCESS_TOP_LEVEL; $i++) {
                     if (isset($caps["level_{$i}"]) && ($highest < $i)) {
                         $highest = $i;
