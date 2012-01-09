@@ -19,15 +19,47 @@
  */
 
 function aam_debug($what) {
-    echo '<pre>';
-    print_r($what);
-    echo '</pre>';
+	echo '<pre>';
+	print_r($what);
+	echo '</pre>';
 }
 
 function init_wpaccess() {
-    global $mvb_wpAccess;
-    
-    $mvb_wpAccess = new mvb_WPAccess();
+	global $mvb_wpAccess;
+
+	$mvb_wpAccess = new mvb_WPAccess();
 }
 
+/**
+ * Autoloader for project Advanced Access Manager
+ * 
+ * Try to load a class if prefix is mvb_
+ * 
+ * @param string $class_name 
+ */
+function mvb_autoload($class_name) {
+
+	$parts = preg_split('/_/', $class_name);
+	if ($parts[0] == 'mvb') {
+		//check what type of class do we need to load
+		switch ($parts[1]) {
+			case 'Model':
+				$path = WPACCESS_BASE_DIR . 'models/';
+				break;
+
+			case 'Abstract':
+				$path = WPACCESS_BASE_DIR . 'models/abstract/';
+				break;
+
+			default:
+				$path = '';
+				break;
+		}
+		$file_path = $path . strtolower($class_name) . '.php';
+		
+		require_once($file_path);
+	}
+}
+
+spl_autoload_register('mvb_autoload');
 ?>

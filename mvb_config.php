@@ -21,7 +21,6 @@
 /*
  * Core constants
  */
-define('AUTHOR_PREFIX', 'mvb_');
 define('WPACCESS_PREFIX', 'wpaccess_');
 define('WPACCESS_BASE_DIR', dirname(__FILE__) . '/');
 define('WPACCESS_DIRNAME', basename(WPACCESS_BASE_DIR));
@@ -39,47 +38,20 @@ define('WPACCESS_TEMPLATE_DIR', WPACCESS_BASE_DIR . 'view/html/');
 define('WPACCESS_CSS_URL', WPACCESS_BASE_URL . 'view/css/');
 define('WPACCESS_JS_URL', WPACCESS_BASE_URL . 'view/js/');
 
-define('WPACCESS_RESTRICT_NO', 0);
-define('WPACCESS_RESTRICT_BACK', 1);
-define('WPACCESS_RESTRICT_FRONT', 2);
-define('WPACCESS_RESTRICT_BOTH', 3);
+define('WPACCESS_CACHE_LIFETIME', 864000); //10 days
+define('WPACCESS_CACHE_DIR', WPACCESS_BASE_DIR . 'temp'); //cache dir
 
 define('WPACCESS_FTIME_MESSAGE', WPACCESS_PREFIX . 'first_time');
 
-$path = WPACCESS_BASE_DIR . 'module/';
-set_include_path(get_include_path() . PATH_SEPARATOR . $path);
-
+define('WPACCESS_CACHE_STATUS', 'OFF');
 
 load_plugin_textdomain('aam', false, WPACCESS_DIRNAME . '/langs');
 
+//configure include path for library
+$path = WPACCESS_BASE_DIR . 'library/';
+set_include_path(get_include_path() . PATH_SEPARATOR . $path);
+
 //load general files
 require_once('mvb_functions.php');
-require_once('mvb_labels.php');
-
-//load auther's private core library
-if (!class_exists('mvb_corePlugin')) {
-    require_once('core/class-mvb_coreplugin.php');
-}
-if (!class_exists('mvb_coreTemplate')) {
-    require_once('core/class-mvb_coretemplate.php');
-}
-if (!class_exists('phpQuery')) {
-    require_once('view/phpQuery/phpQuery.php');
-}
-
-//load additional classes
-require_once('module/class-module_ajax.php');
-require_once('module/class-module_roles.php');
-require_once('module/class-module_user.php');
-require_once('module/class-module_filtermenu.php');
-require_once('module/class-module_filtermetabox.php');
-require_once('module/class-module_optionmanager.php');
-
-/*
- * Default capabilities for new Role
- */
-$defCapabilities = array(
-    'read' => 1,
-    'level_0' => 1
-);
+ 
 ?>

@@ -21,6 +21,7 @@
 .CodeMirror {
   line-height: 1em;
   font-family: monospace;
+  border: 1px solid #999999;
 }
 
 .CodeMirror-scroll {
@@ -95,3 +96,9 @@ span.CodeMirror-selected {
 
 .CodeMirror-matchingbracket {color: #0f0 !important;}
 .CodeMirror-nonmatchingbracket {color: #f22 !important;}
+
+.cm-s-default span.cm-comment {color: #aaa; font-style : italic;}
+.cm-s-default span.cm-section {color: #666cd3;}
+.cm-s-default span.cm-array {color: #dba121 ;}
+.cm-s-default span.cm-string {color: #993333;}
+.cm-s-default span.cm-number {color: #660066;}

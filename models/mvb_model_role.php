@@ -18,14 +18,23 @@
 
  */
 
-class module_Roles extends WP_Roles {
+/**
+ * Role Model Class
+ * 
+ * @package AAM
+ * @subpackage Models
+ * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
+ * @copyrights Copyright © 2011 Vasyl Martyniuk
+ * @license GNU General Public License {@link http://www.gnu.org/licenses/}
+ */
+class mvb_Model_Role extends WP_Roles {
 
     function __construct() {
 
         parent::__construct();
     }
 
-    /*
+    /**
      * Create a New User's Role
      * 
      * Use add_role function from WP_Roles to create a new User Role
@@ -33,15 +42,16 @@ class module_Roles extends WP_Roles {
      * @param string User Role title
      * @return array Result
      */
-
     function createNewRole($newRoleTitle, $caps = 'default') {
-        global $table_prefix, $defCapabilities;
 
         $role_id = sanitize_title_with_dashes($newRoleTitle);
         $role_id = str_replace('-', '_', $role_id);
         $label = htmlspecialchars(trim($newRoleTitle));
 
-        if ($this->add_role($role_id, $label, $defCapabilities)) {
+        if ($this->add_role($role_id, $label, array(
+                    'read' => 1,
+                    'level_0' => 1
+                ))) {
             $status = 'success';
         } else {
             $status = 'error';

@@ -6,7 +6,7 @@
     margin-top: 20px;
 }
 
-#current-role-display{
+#current-role-display, #current-user-display{
     font-weight: bold;
 }
 
@@ -84,7 +84,15 @@
     margin: 10px 0 0 10px;
 }
 
-.change-role{
+.misc-user-section{
+    margin: 10px 0 0 10px;
+}
+
+.misc-user-section label{
+    font-size: 11px;
+}
+
+.change-role, .change-user{
     font-size: 10px;
 }
 
@@ -149,28 +157,12 @@
     -ms-filter: Alpha(Opacity=40);
 }
 
-.tooltip {
-    display:none;
-    background:url(images/black_big.png);
-    height:163px;
-    padding:25px 30px 10px 30px;
-    width:310px;
-    font-size:11px;
-    color:#fff;
-    z-index: 1000;
-}
-
 .description-table{
     width: 100%;
 }
 
 .description-table td{
     font-size:11px;
-}
-
-.tooltip a{
-    color: #ff853c;
-    font-weight: bold;
 }
 
 .info{
@@ -228,7 +220,7 @@
 .info{
     float: left;
 }
-.capability-delete{
+.icon-delete{
     width: 10px;
     height: 10px;
     background: url(images/xit.gif) no-repeat;
@@ -239,7 +231,7 @@
 }
 
 
-.capability-delete:hover{
+.icon-delete:hover{
     background: url(images/xit.gif) no-repeat -10px 0;
 }
 
@@ -398,15 +390,6 @@ div.sexy-bookmarks ul.socials a {
     cursor: pointer;
 }
 
-.import-conf{
-    background: url('images/import.png') no-repeat;
-    float: right;
-    margin-right: 5px;
-    width: 22px;
-    height: 22px;
-    cursor: pointer;
-}
-
 .apply-conf{
     background: url('images/apply.png') no-repeat;
     float: right;
@@ -425,12 +408,6 @@ div.sexy-bookmarks ul.socials a {
     cursor: pointer;
 }
 
-.import-form{
-    font-size: 12px;
-    text-align: justify;
-    margin-top: 10px;
-}
-
 .notice-highlight{
     color: #FF0000;
     font-weight: bold;
@@ -443,29 +420,6 @@ div.sexy-bookmarks ul.socials a {
 
 .save-action{
     float: right;
-}
-
-#fileupload{
-    margin-top: 5px;
-    margin-left: 3px;
-}
-
-.facebook-loading{
-    display: none;
-    background: url('images/facebook-loading.gif') no-repeat;
-    width: 16px;
-    height: 11px;
-    margin-left: 3px;
-    padding-left: 20px;
-    font-style: italic;
-    font-size: 11px;
-}
-
-.import-steps{
-    display: none;
-    font-style: italic;
-    font-size: 12px;
-    margin-top: 10px;
 }
 
 .role-name{
@@ -499,4 +453,58 @@ div.sexy-bookmarks ul.socials a {
 
 #site-select #site{
     width: 120px;
+}
+
+.tooltip {
+    color: #000000; outline: none;
+    text-decoration: none;
+    position: relative;
+    width: 10px;
+    height: 10px;
+    margin-top:2px;
+    margin-left: 10px;
+    float:left;
+}
+
+.icon-info{
+   cursor: help;
+   background: url(images/info.png) no-repeat; 
+}
+
+.icon-info:hover {
+    background: url(images/info.png) no-repeat -10px 0;
+}
+.tooltip span {
+    margin-left: -999em;
+    position: absolute;
+}
+.tooltip:hover span {
+    border-radius: 5px 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; 
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1); -webkit-box-shadow: 5px 5px rgba(0, 0, 0, 0.1); -moz-box-shadow: 5px 5px rgba(0, 0, 0, 0.1);
+    font-family: Calibri, Tahoma, Geneva, sans-serif;
+    position: absolute; left: 1em; top: 2em; z-index: 99;
+    margin-left: 0; width: 250px;
+}
+.tooltip:hover img {
+    border: 0; margin: -10px 0 0 -55px;
+    float: left; position: absolute;
+}
+.tooltip:hover em {
+    font-family: Candara, Tahoma, Geneva, sans-serif; font-size: 1.2em; font-weight: bold;
+    display: block; padding: 0.2em 0 0.6em 0;
+}
+.classic { padding: 0.8em 1em; }
+.custom { padding: 0.5em 0.8em 0.8em 2em; }
+* html a:hover { background: transparent; }
+.classic {background: #FFFFAA; border: 1px solid #FFAD33; }
+.critical { background: #FFCCAA; border: 1px solid #FF3334;	}
+.help { background: #9FDAEE; border: 1px solid #2BB0D7;	}
+.info { background: #9FDAEE; border: 1px solid #2BB0D7;	}
+.warning { background: #FFFFAA; border: 1px solid #FFAD33; }
+
+.info-big{
+    background: url('images/Info-big.png') no-repeat;
+    width: 48px;
+    height: 48px;
+    z-index: 100;
 }

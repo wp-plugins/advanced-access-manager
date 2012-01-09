@@ -18,17 +18,21 @@
 
  */
 
-/*
- * Filter Main Menu and control access to resources
+/**
+ * Filter for Dashboard Menu
+ * 
+ * Probably it future releases this will be used also for filtering Front-End
+ * Menu. But still this issue is under consideration
  * 
  * @package AAM
- * @subpackage Module
+ * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
+ * @copyrights Copyright © 2011 Vasyl Martyniuk
+ * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
+class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
 
-class module_filterMenu extends module_User {
-
-    private $cParams;
+    private $user_conf;
 
     /*
      * Main Object
@@ -38,77 +42,76 @@ class module_filterMenu extends module_User {
      */
     protected $pObj;
 
+    /**
+     *
+     * @param type $pObj 
+     */
     function __construct($pObj) {
 
         $this->pObj = $pObj;
-        parent::__construct($pObj);
 
-        $this->cParams = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'options', array());
-        $keyParams = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'key_params', array());
-        $keyParams = (is_array($keyParams) ? $keyParams : array());
+        $this->user_conf = $this->pObj->getUserConfig();
+
+        $keyParams = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'key_params', array());
 
         $this->keyParams = array_keys($keyParams); //TODO - Save in array format
     }
 
-    function manage() {
-        global $menu, $submenu, $restrict_message;
+    /**
+     *
+     * @global type $menu
+     * @global type $submenu
+     * @param type $area 
+     */
+    function manage($area = '') {
+        global $menu, $submenu;
 
-        $userRoles = $this->getCurrentUserRole();
-
-        if (is_array($userRoles)) {
-            foreach ($userRoles as $role) {
-                if (isset($this->cParams[$role]['menu']) && is_array($this->cParams[$role]['menu'])) {
-                    foreach ($this->cParams[$role]['menu'] as $main => $data) {
-                        if (isset($data['whole']) && ($data['whole'] == 1)) {
-                            $this->unsetMainMenuItem($main);
-                        } elseif (isset($data['sub']) && is_array($data['sub'])) {
-                            foreach ($data['sub'] as $sub => $dummy) {
-                                $this->unsetSubMenuItem($main, $sub);
-                            }
-                        }
-                    }
+        foreach ($this->user_conf->getMenu() as $main => $data) {
+            if (isset($data['whole']) && ($data['whole'] == 1)) {
+                $this->unsetMainMenuItem($main);
+            } elseif (isset($data['sub']) && is_array($data['sub'])) {
+                foreach ($data['sub'] as $sub => $dummy) {
+                    $this->unsetSubMenuItem($main, $sub);
                 }
             }
-
-            $menu = $this->getRoleMenu($userRoles[0]);
-        } else {
-            do_action(WPACCESS_PREFIX . 'admin_redirect');
-            wp_die($restrict_message);
         }
+        //reorganize menu
+        $menu = $this->reorganizeMenu();
     }
 
-    //TODO - This is a copy from optionmanager
-
-    protected function getRoleMenu($c_role) {
+    /**
+     *
+     * @global type $menu
+     * @return type 
+     * @todo This is a copy from optionmanager
+     */
+    protected function reorganizeMenu() {
         global $menu;
-
-        $menu_order = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'menu_order', array());
 
         $r_menu = $menu;
         ksort($r_menu);
+        $m_order = $this->user_conf->getMenuOrder();
 
-        if (isset($menu_order[$c_role]) && is_array($menu_order[$c_role])) {//reorganize menu according to role
-            if (is_array($menu)) {
-                $w_menu = array();
-                foreach ($menu_order[$c_role] as $mid) {
-                    foreach ($menu as $data) {
-                        if (isset($data[5]) && ($data[5] == $mid)) {
-                            $w_menu[] = $data;
-                        }
+        if (is_array($menu) && count($m_order)) {
+            $w_menu = array();
+            foreach ($m_order as $mid) {
+                foreach ($menu as $data) {
+                    if (isset($data[5]) && ($data[5] == $mid)) {
+                        $w_menu[] = $data;
                     }
                 }
-
-                $cur_pos = 0;
-                foreach ($r_menu as &$data) {
-                    for ($i = 0; $i < count($w_menu); $i++) {
-                        if (isset($data[5]) && ($w_menu[$i][5] == $data[5])) {
-                            $data = $w_menu[$cur_pos++];
-                            break;
-                        }
-                    }
-                }
-                // debug($r_menu);
             }
+
+            $cur_pos = 0;
+            foreach ($r_menu as &$data) {
+                for ($i = 0; $i < count($w_menu); $i++) {
+                    if (isset($data[5]) && ($w_menu[$i][5] == $data[5])) {
+                        $data = $w_menu[$cur_pos++];
+                        break;
+                    }
+                }
+            }
+            // debug($r_menu);
         }
 
         return $r_menu;
@@ -123,25 +126,18 @@ class module_filterMenu extends module_User {
 
     function checkAccess($requestedMenu) {
 
-        if (!$this->pObj->is_super) {
-            $userRoles = $this->getCurrentUserRole();
-            if (is_array($userRoles)) {
-                //get base file
-                $parts = $this->get_parts($requestedMenu);
-                foreach ($userRoles as $role) {
-                    //aam_debug($this->cParams[$role]['menu']);
-                    if (isset($this->cParams[$role]['menu']) && is_array($this->cParams[$role]['menu'])) {
-                        foreach ($this->cParams[$role]['menu'] as $menu => $sub) {
-                            if ($this->compareMenus($parts, $menu) && isset($sub['whole'])) {
-                                return FALSE;
-                            }
-                            if (isset($sub['sub']) && is_array($sub['sub'])) {
-                                foreach ($sub['sub'] as $subMenu => $dummy) {
-                                    if ($this->compareMenus($parts, $subMenu)) {
-                                        return FALSE;
-                                    }
-                                }
-                            }
+        if (!mvb_Model_API::isSuperAdmin()) {
+            //get base file
+            $parts = $this->get_parts($requestedMenu);
+            //aam_debug($this->cParams[$role]['menu']);
+            foreach ($this->user_conf->getMenu() as $menu => $sub) {
+                if ($this->compareMenus($parts, $menu) && isset($sub['whole'])) {
+                    return FALSE;
+                }
+                if (isset($sub['sub']) && is_array($sub['sub'])) {
+                    foreach ($sub['sub'] as $subMenu => $dummy) {
+                        if ($this->compareMenus($parts, $subMenu)) {
+                            return FALSE;
                         }
                     }
                 }
@@ -156,19 +152,18 @@ class module_filterMenu extends module_User {
         $compare = $this->get_parts($menu);
         $c_params = array_intersect($parts, $compare);
         $result = FALSE;
-/*
-        aam_debug($parts);
-        aam_debug($menu);
-        aam_debug($compare);
-        aam_debug($c_params);
-*/
+        /*
+          aam_debug($parts);
+          aam_debug($menu);
+          aam_debug($compare);
+          aam_debug($c_params);
+         */
         if (count($c_params) == count($parts)) { //equal menus
             $result = TRUE;
         } elseif (count($c_params) && ($parts[0] == $compare[0])) { //probably similar
-            
             $diff = array_diff($parts, $compare) + array_diff($compare, $parts);
             $result = TRUE;
-            
+
             foreach ($diff as $d) {
                 $td = preg_split('/=/', $d);
                 if (in_array($td[0], $this->keyParams)) {

@@ -18,17 +18,26 @@
 
  */
 
-class module_optionManager extends mvb_corePlugin {
-    /*
+/**
+ * Option Manager Model Class
+ * 
+ * @package AAM
+ * @subpackage Models
+ * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
+ * @copyrights Copyright © 2011 Vasyl Martyniuk
+ * @license GNU General Public License {@link http://www.gnu.org/licenses/}
+ */
+class mvb_Model_Manager {
+
+    /**
      * Template object holder
      * 
-     * @var object <mvb_coreTemplate>
+     * @var object
      * @access public
      */
-
     public $templObj;
 
-    /*
+    /**
      * HTML templated from file
      * 
      * @var string Template to work with
@@ -36,7 +45,7 @@ class module_optionManager extends mvb_corePlugin {
      */
     private $template;
 
-    /*
+    /**
      * Array of User Roles
      * 
      * @var array
@@ -44,7 +53,7 @@ class module_optionManager extends mvb_corePlugin {
      */
     private $roles;
 
-    /*
+    /**
      * Current role to work with
      * 
      * @var string
@@ -52,15 +61,15 @@ class module_optionManager extends mvb_corePlugin {
      */
     private $currentRole;
 
-    /*
-     * Current plugin's params from option database table
+    /**
+     * Current user to work with
      * 
-     * @var array
-     * @access private 
+     * @var int
+     * @access private
      */
-    private $currentParams;
+    private $currentUser;
 
-    /*
+    /**
      * Main Object
      * 
      * @var object
@@ -68,126 +77,66 @@ class module_optionManager extends mvb_corePlugin {
      */
     protected $pObj;
 
-    /*
+    /**
+     * Copy of a config array from main object
+     * 
+     * @var array
+     * @access protected
+     */
+    protected $config;
+
+    /**
+     * Cache config
+     * 
+     * @var array
+     * @access protected
+     */
+    protected $cache;
+
+    /**
      * Initiate an object and other parameters
      * 
-     * @param string Current role to work with
+     * @param string $currentRole Current role to work with
+     * @param string $currentUser Current user to work with
      * @param object Main Object
      */
-
-    function __construct($pObj, $curentRole = FALSE) {
+    function __construct($pObj, $currentRole = FALSE, $currentUser = FALSE) {
 
         $this->pObj = $pObj;
-        $this->templObj = new mvb_coreTemplate();
+        $this->templObj = new mvb_Model_Template();
         $templatePath = WPACCESS_TEMPLATE_DIR . 'admin_options.html';
         $this->template = $this->templObj->readTemplate($templatePath);
-        $this->roles = $this->pObj->get_roles();
-        $this->custom_caps = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'custom_caps', array());
-        if (!is_array($this->custom_caps)) {
-            $this->custom_caps = array();
+        $this->roles = mvb_Model_API::getRoleList();
+        $this->custom_caps = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'custom_caps', array());
+
+        $this->setCurrentRole($currentRole);
+        $this->setCurrentUser($currentUser);
+
+        if ($this->currentUser) {
+            $this->config = mvb_Model_API::getUserAccessConfig($this->currentUser);
+        } else {
+            $this->config = mvb_Model_API::getRoleAccessConfig($this->currentRole);
         }
 
-        $this->set_currentRole($curentRole);
+        //get cache. Compatible with version previouse versions
+        $cache = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'cache', array());
+        if (is_array($cache) && count($cache)) { //yeap this is new version
+            $this->cache = $cache;
+        } else { //TODO - will be deprecated
+            $cache = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'options', array());
+            $this->cache = (isset($cache['settings']) ? $cache['settings'] : array());
+            mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'cache', $this->cache);
+        }
 
-        $this->currentParams = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'options', array());
         $this->userSummary = count_users();
     }
 
-    /*
-     * Render Configuration file
-     * 
-     * @param string filepath
-     * @return bool Result of rendering
+    /**
+     *
+     * @param type $role
+     * @return boolean 
      */
-
-    public function render_config($file) {
-
-        require_once(WPACCESS_BASE_DIR . 'module/Zend/Config.php');
-        require_once(WPACCESS_BASE_DIR . 'module/Zend/Config/Writer/Ini.php');
-
-        // Create the config object
-        $config = new Zend_Config(array(), true);
-        $config->header = array();
-        $config->general = array();
-        $config->general->options = $this->get_encode_option(WPACCESS_PREFIX . 'options');
-        $config->general->restrictions = $this->get_encode_option(WPACCESS_PREFIX . 'restrictions');
-        $config->general->menu_order = $this->get_encode_option(WPACCESS_PREFIX . 'menu_order');
-        $config->general->roles = base64_encode(serialize(array_keys($this->roles)));
-
-        $config->header->version = $this->pObj->get_current_version();
-        $config->header->date = date('m/d/Y H:i:s');
-        $config->header->author = get_current_user_id();
-
-        $config->role = array();
-
-        foreach ($this->roles as $role => $data) {
-            $config->{$role} = array();
-            $config->setExtend($role, 'role');
-            $config->{$role}->capabilities = base64_encode(serialize($this->roles[$role]['capabilities']));
-        }
-
-        // Write the config file in one of the following ways:
-        $writer = new Zend_Config_Writer_Ini(array('config' => $config,
-                    'filename' => $file));
-        $writer->write();
-    }
-
-    function get_encode_option($option) {
-
-        $data = $this->pObj->get_blog_option($option, array());
-        $data = base64_encode(serialize($data));
-
-        return $data;
-    }
-
-    public function import_config() {
-
-        $file_name = trim($_POST['file_name']);
-        $file_path = WPACCESS_BASE_DIR . 'backups/' . $file_name;
-        $result = array('status' => 'error');
-
-        if ($file_name && file_exists($file_path)) {
-            require_once(WPACCESS_BASE_DIR . 'module/Zend/Config.php');
-            require_once(WPACCESS_BASE_DIR . 'module/Zend/Config/Ini.php');
-
-            $config = new Zend_Config_Ini($file_path);
-
-            //get general information
-            $options = unserialize(base64_decode($config->general->options));
-            $restric = unserialize(base64_decode($config->general->restrictions));
-            $menu_or = unserialize(base64_decode($config->general->menu_order));
-            if (is_array($options)) {
-                $this->pObj->update_blog_option(WPACCESS_PREFIX . 'options', $options);
-            }
-            if (is_array($restric)) {
-                $this->pObj->update_blog_option(WPACCESS_PREFIX . 'restrictions', $restric);
-            }
-            if (is_array($menu_or)) {
-                $this->pObj->update_blog_option(WPACCESS_PREFIX . 'menu_order', $menu_or);
-            }
-
-            $role_lt = unserialize(base64_decode($config->general->roles));
-
-            if (is_array($role_lt)) {
-                foreach ($role_lt as $role) {
-                    $caps = unserialize(base64_decode($config->{$role}->capabilities));
-                    if (isset($this->roles[$role])) { //do not create a new role, just skip it
-                        $this->roles[$role]['capabilities'] = $caps;
-                    }
-                }
-                //Update Role's Capabilities
-                $this->pObj->update_blog_option('user_roles', $this->roles);
-            }
-
-            $result = array(
-                'status' => 'success',
-            );
-        }
-
-        return $result;
-    }
-
-    function set_currentRole($role) {
+    protected function setCurrentRole($role) {
 
         $result = TRUE;
         if ($this->role_exists($role)) {
@@ -202,6 +151,36 @@ class module_optionManager extends mvb_corePlugin {
         return $result;
     }
 
+    /**
+     *
+     * @param type $user 
+     */
+    protected function setCurrentUser($user) {
+
+        if ($this->user_exists($user)) {
+            $this->currentUser = $user;
+        } else {
+            $this->currentUser = FALSE;
+        }
+    }
+
+    /**
+     *
+     * @param type $user_id
+     * @return type 
+     */
+    public function user_exists($user_id) {
+
+        $result = (get_user_by('id', $user_id) ? TRUE : FALSE);
+
+        return $result;
+    }
+
+    /**
+     *
+     * @param type $role
+     * @return type 
+     */
     function role_exists($role) {
 
         $exists = (isset($this->roles[$role]) ? TRUE : FALSE);
@@ -209,23 +188,33 @@ class module_optionManager extends mvb_corePlugin {
         return $exists;
     }
 
+    /**
+     *
+     * @return type 
+     */
     function getTemplate() {
 
         return $this->template;
     }
 
+    /**
+     * 
+     */
     function manage() {
 
-        $mainHolder = $this->postbox('metabox-wpaccess-options', LABEL_128, $this->getMainOptionsList());
+        $content = $this->getMainOptionsList();
         $this->template = $this->renderSiteSelector($this->template);
         $this->template = $this->renderRoleSelector($this->template);
+        $this->template = $this->renderUserSelector($this->template);
         $this->template = $this->renderDeleteRoleList($this->template);
-        $content = $this->templObj->replaceSub('MAIN_OPTIONS_LIST', $mainHolder, $this->template);
-        $blog = $this->pObj->get_current_blog_data();
+        $content = $this->templObj->replaceSub('MAIN_OPTIONS_LIST', $content, $this->template);
+        $blog = mvb_Model_API::getCurrentBlog();
 
-        if ($this->pObj->is_multi() || isset($_REQUEST['render_mss'])) {
+        //TODO - render_mss do not like it
+        if (mvb_Model_API::isNetworkPanel() || isset($_REQUEST['render_mss'])) {
             $s_link = network_admin_url('users.php?page=wp_access');
-            $s_link = add_query_arg('site', get_current_blog_id(), $s_link);
+            $blog_id = (isset($_GET['site']) ? $_GET['site'] : get_current_blog_id());
+            $s_link = add_query_arg('site', $blog_id, $s_link);
         } else {
             $s_link = admin_url('users.php?page=wp_access');
         }
@@ -234,13 +223,21 @@ class module_optionManager extends mvb_corePlugin {
             '###current_role###' => $this->roles[$this->currentRole]['name'],
             '###form_action###' => $s_link,
             '###current_role_id###' => $this->currentRole,
-            '###site_url###' => $blog['url'],
+            '###site_url###' => $blog->getURL(),
             '###message_class###' => ( (isset($_POST['submited']) || isset($_GET['show_message'])) ? 'message-active' : 'message-passive'),
             '###nonce###' => wp_nonce_field(WPACCESS_PREFIX . 'options'),
         );
+        //get current user data
+        if ($this->currentUser) {
+            $c_user = get_userdata($this->currentUser);
+            $markerArray['###current_user###'] = $c_user->user_login;
+            $markerArray['###current_user_id###'] = $c_user->ID;
+        } else {
+            $markerArray['###current_user###'] = mvb_Model_Label::get('LABEL_120');
+        }
         //Apply all blogs
         $t = $this->templObj->retrieveSub('APPLY_ALL', $content);
-        if ($this->pObj->is_multi() || isset($_REQUEST['render_mss'])) {
+        if (mvb_Model_API::isNetworkPanel() || isset($_REQUEST['render_mss'])) {
             $content = $this->templObj->replaceSub('APPLY_ALL', $t, $content);
         } else {
             $content = $this->templObj->replaceSub('APPLY_ALL', '', $content);
@@ -255,36 +252,69 @@ class module_optionManager extends mvb_corePlugin {
         echo $content;
     }
 
+    /**
+     *
+     * @param type $user_id 
+     */
     function do_save() {
+        global $menu, $submenu, $wp_meta_boxes;
 
         if (isset($_POST['submited'])) {
+
             $params = (isset($_POST['wpaccess']) ? $_POST['wpaccess'] : array());
+            mvb_Model_Helper::clearCache();
+            //overwrite current blog
+            //TODO - maybe there is better way
+            if (isset($_GET['site'])) {
+                mvb_Model_API::setCurrentBlog($_GET['site']);
+            }
+            //TODO - This just a quick solution
+            if ($this->currentUser) {
+                $config = (object) array(
+                            'menu' => (isset($params['menu']) ? $params['menu'] : array()),
+                            'metaboxes' => (isset($params['metabox']) ? $params['metabox'] : array()),
+                            'capabilities' => (isset($params['advance']) ? $params['advance'] : array())
+                );
+                update_user_meta($this->currentUser, WPACCESS_PREFIX . 'options', $config);
 
-            $this->currentParams[$this->currentRole] = array(
-                'menu' => $this->prepareMenu($params),
-                'metaboxes' => (isset($params[$this->currentRole]['metabox']) ? $params[$this->currentRole]['metabox'] : array()),
-            );
+                //TODO - duplication Maybe better will be add saveConfig to mogel_Config
+                $this->config = mvb_Model_API::getUserAccessConfig($this->currentUser);
+            } else {
+                $config = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'options', array());
+                $config[$this->currentRole] = (object) array(
+                            'menu' => (isset($params['menu']) ? $params['menu'] : array()),
+                            'metaboxes' => (isset($params['metabox']) ? $params['metabox'] : array()),
+                );
+                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'options', $config);
 
-            $this->pObj->update_blog_option(WPACCESS_PREFIX . 'options', $this->currentParams);
+                //Update Role's Capabilities
+                $roles = mvb_Model_API::getRoleList(FALSE);
+                $cap_list = (isset($params['advance']) ? $params['advance'] : array());
+                if (isset($roles[$this->currentRole])) {
+                    $roles[$this->currentRole]['capabilities'] = $cap_list;
+                    //and for already grabed capabilities
+                    $this->roles[$this->currentRole]['capabilities'] = $cap_list;
+                    mvb_Model_API::updateBlogOption('user_roles', $roles);
+                }
 
-            //Update Role's Capabilities
-            $roles = $this->pObj->get_roles(TRUE);
-            $cap_list = (isset($params[$this->currentRole]['advance']) ? $params[$this->currentRole]['advance'] : array());
-            $roles[$this->currentRole]['capabilities'] = $cap_list;
-            //and for already grabed capabilities
-            $this->roles[$this->currentRole]['capabilities'] = $cap_list;
+                $this->config = mvb_Model_API::getRoleAccessConfig($this->currentRole);
+            }
 
-            $this->pObj->update_blog_option('user_roles', $roles);
+            //save global access congif
+            mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'access_config', $params['access_config']);
+
+            if (WPACCESS_CACHE_STATUS == 'ON') {
+                $cache = $this->pObj->getCacheObject();
+                $cache->clean(Zend_Cache::CLEANING_MODE_ALL);
+            }
         }
     }
 
-    function prepareMenu($params) {
-
-        $r_menu = (isset($params[$this->currentRole]['menu']) ? $params[$this->currentRole]['menu'] : array());
-
-        return $r_menu;
-    }
-
+    /**
+     *
+     * @param type $template
+     * @return type 
+     */
     function renderDeleteRoleList($template) {
 
         $listTemplate = $this->templObj->retrieveSub('DELETE_ROLE_LIST', $template);
@@ -300,6 +330,13 @@ class module_optionManager extends mvb_corePlugin {
         return $this->templObj->replaceSub('DELETE_ROLE_LIST', $listTemplate, $template);
     }
 
+    /**
+     *
+     * @param type $role
+     * @param type $data
+     * @param type $template
+     * @return type 
+     */
     function renderDeleteRoleItem($role, $data, $template = '') {
         /*
          * This is used for ajax
@@ -324,6 +361,10 @@ class module_optionManager extends mvb_corePlugin {
         return $this->templObj->updateMarkers($markerArray, $template);
     }
 
+    /**
+     *
+     * @return type 
+     */
     function getMainOptionsList() {
 
         $mainHolder = $this->templObj->retrieveSub('MAIN_OPTIONS_LIST', $this->template);
@@ -331,15 +372,21 @@ class module_optionManager extends mvb_corePlugin {
         return $this->renderMainMenuOptions($mainHolder);
     }
 
+    /**
+     *
+     * @global type $wpdb
+     * @param type $template
+     * @return type 
+     */
     function renderSiteSelector($template) {
         global $wpdb;
 
         $m_tempate = $this->templObj->retrieveSub('MULTISITE_SELECTOR', $template);
-        if ($this->pObj->is_multi() || isset($_REQUEST['render_mss'])) {
+        if (mvb_Model_API::isNetworkPanel() || isset($_REQUEST['render_mss'])) {
             $listTemplate = $this->templObj->retrieveSub('ROLE_LIST', $m_tempate);
             $list = '';
-            $query = "SELECT * FROM {$wpdb->blogs}";
-            $sites = $wpdb->get_results($query);
+
+            $sites = mvb_Model_Helper::getSiteList();
             $current = (isset($_REQUEST['site']) ? $_REQUEST['site'] : get_current_blog_id());
             if (is_array($sites)) {
                 foreach ($sites as $site) {
@@ -375,6 +422,11 @@ class module_optionManager extends mvb_corePlugin {
         return $this->templObj->replaceSub('MULTISITE_SELECTOR', $m_tempate, $template);
     }
 
+    /**
+     *
+     * @param type $template
+     * @return type 
+     */
     function renderRoleSelector($template) {
         $listTemplate = $this->templObj->retrieveSub('ROLE_LIST', $template);
         $list = '';
@@ -392,8 +444,39 @@ class module_optionManager extends mvb_corePlugin {
         return $this->templObj->replaceSub('ROLE_LIST', $list, $template);
     }
 
-    function renderMainMenuOptions($template) {
-        global $submenu, $capabilitiesDesc;
+    /**
+     *
+     * @param type $template
+     * @return type 
+     */
+    function renderUserSelector($template) {
+        $listTemplate = $this->templObj->retrieveSub('USER_LIST', $template);
+        //get list of users
+        $users = $this->pObj->getUserList($this->currentRole);
+        $list = '';
+
+        if (is_array($users)) {
+            foreach ($users as $user) {
+                $markers = array(
+                    '###value###' => $user->ID,
+                    '###title###' => stripcslashes($user->user_login) . '&nbsp;', //nicer view :)
+                    '###selected###' => ($this->currentUser == $user->ID ? 'selected' : ''),
+                );
+                $list .= $this->templObj->updateMarkers($markers, $listTemplate);
+            }
+        }
+
+        return $this->templObj->replaceSub('USER_LIST', $list, $template);
+    }
+
+    /**
+     *
+     * @global type $submenu
+     * @param type $template
+     * @return type 
+     */
+    public function renderMainMenuOptions($template) {
+        global $submenu;
 
         $s_menu = $this->getRoleMenu();
         /*
@@ -430,7 +513,6 @@ class module_optionManager extends mvb_corePlugin {
                     '###name###' => $this->removeHTML($menuItem[0]),
                     '###id###' => $menuItem[5],
                     '###menu###' => $menuItem[2],
-                    '###role###' => $this->currentRole,
                     '###whole_checked###' => $this->checkChecked('menu', array($menuItem[2]))
                 );
                 $list .= $this->templObj->updateMarkers($markers, $tTempl);
@@ -454,13 +536,12 @@ class module_optionManager extends mvb_corePlugin {
         $list = '';
         if (is_array($capList) && count($capList)) {
             foreach ($capList as $cap => $dump) {
-                $desc = (isset($capabilitiesDesc[$cap]) ? htmlspecialchars($capabilitiesDesc[$cap], ENT_QUOTES) : '');
+                $desc = str_replace("\n", '<br/>', mvb_Model_Label::get($cap));
                 $markers = array(
-                    '###role###' => $this->currentRole,
                     '###title###' => $cap,
                     '###description###' => $desc,
                     '###checked###' => $this->checkChecked('capability', array($cap)),
-                    '###cap_name###' => $this->pObj->user->getCapabilityHumanTitle($cap)
+                    '###cap_name###' => mvb_Model_Helper::getCapabilityHumanTitle($cap)
                 );
                 $titem = $this->templObj->updateMarkers($markers, $itemTemplate);
                 if (!in_array($cap, $this->custom_caps)) {
@@ -481,34 +562,33 @@ class module_optionManager extends mvb_corePlugin {
         //Posts & Pages
         $template = $this->templObj->replaceSub('POST_INFORMATION', '', $template);
 
+        $template = $this->templObj->updateMarkers(array(
+            '###access_config###' => stripslashes(mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'access_config', ''))), $template);
+
         return $template;
     }
 
     protected function getRoleMenu() {
         global $menu;
 
-        $menu_order = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'menu_order', array());
-
         $r_menu = $menu;
         ksort($r_menu);
 
-        if (isset($menu_order[$this->currentRole]) && is_array($menu_order[$this->currentRole])) {//reorganize menu according to role
-            if (is_array($menu)) {
-                $w_menu = array();
-                foreach ($menu_order[$this->currentRole] as $mid) {
-                    foreach ($menu as $data) {
-                        if (isset($data[5]) && ($data[5] == $mid)) {
-                            $w_menu[] = $data;
-                        }
+        if (is_array($menu)) {
+            $w_menu = array();
+            foreach ($this->config->getMenuOrder() as $mid) {
+                foreach ($menu as $data) {
+                    if (isset($data[5]) && ($data[5] == $mid)) {
+                        $w_menu[] = $data;
                     }
                 }
-                $cur_pos = 0;
-                foreach ($r_menu as &$data) {
-                    for ($i = 0; $i < count($w_menu); $i++) {
-                        if (isset($data[5]) && ($w_menu[$i][5] == $data[5])) {
-                            $data = $w_menu[$cur_pos++];
-                            break;
-                        }
+            }
+            $cur_pos = 0;
+            foreach ($r_menu as &$data) {
+                for ($i = 0; $i < count($w_menu); $i++) {
+                    if (isset($data[5]) && ($w_menu[$i][5] == $data[5])) {
+                        $data = $w_menu[$cur_pos++];
+                        break;
                     }
                 }
             }
@@ -526,11 +606,11 @@ class module_optionManager extends mvb_corePlugin {
         $list = '';
 
 
-        if (isset($this->currentParams['settings']['metaboxes']) && is_array($this->currentParams['settings']['metaboxes'])) {
+        if (isset($this->cache['metaboxes']) && is_array($this->cache['metaboxes'])) {
             $plistTemplate = $this->templObj->retrieveSub('POST_METABOXES_LIST', $itemTemplate);
             $pitemTemplate = $this->templObj->retrieveSub('POST_METABOXES_ITEM', $plistTemplate);
 
-            foreach ($this->currentParams['settings']['metaboxes'] as $post_type => $metaboxes) {
+            foreach ($this->cache['metaboxes'] as $post_type => $metaboxes) {
 
                 if (!isset($wp_post_types[$post_type])) {
                     if ($post_type != 'dashboard') {
@@ -541,7 +621,6 @@ class module_optionManager extends mvb_corePlugin {
                 $mList = '';
                 foreach ($metaboxes as $position => $metaboxes1) {
                     foreach ($metaboxes1 as $priority => $metaboxes2) {
-
                         if (is_array($metaboxes2) && count($metaboxes2)) {
                             foreach ($metaboxes2 as $id => $data) {
 
@@ -556,7 +635,6 @@ class module_optionManager extends mvb_corePlugin {
                                         '###internal_id###' => $post_type . '-' . $id,
                                         '###position###' => $position,
                                         '###checked###' => $this->checkChecked('metabox', array($post_type . '-' . $id)),
-                                        '###role###' => $this->currentRole
                                     );
                                     $mList .= $this->templObj->updateMarkers($markerArray, $pitemTemplate);
                                 }
@@ -598,7 +676,7 @@ class module_optionManager extends mvb_corePlugin {
 
         switch ($type) {
             case 'submenu':
-                $c_menu = &$this->currentParams[$this->currentRole]['menu'];
+                $c_menu = &$this->config->getMenu();
                 if (isset($c_menu[$args[0]])) {
                     if (isset($c_menu[$args[0]]['sub'][$args[1]]) ||
                             (isset($c_menu[$args[0]]['whole']) && $c_menu[$args[0]]['whole'])) {
@@ -608,21 +686,21 @@ class module_optionManager extends mvb_corePlugin {
                 break;
 
             case 'menu':
-                $c_menu = &$this->currentParams[$this->currentRole]['menu'];
+                $c_menu = &$this->config->getMenu();
                 if (isset($c_menu[$args[0]]['whole']) && $c_menu[$args[0]]['whole']) {
                     $checked = 'checked';
                 }
                 break;
 
             case 'capability':
-                $c_cap = &$this->roles[$this->currentRole]['capabilities'];
+                $c_cap = $this->config->getCapabilities();
                 if (isset($c_cap[$args[0]])) {
                     $checked = 'checked';
                 }
                 break;
 
             case 'metabox':
-                $c_meta = &$this->currentParams[$this->currentRole]['metaboxes'];
+                $c_meta = $this->config->getMetaboxes();
                 if (isset($c_meta[$args[0]])) {
                     $checked = 'checked';
                 }

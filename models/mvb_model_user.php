@@ -18,26 +18,47 @@
 
  */
 
-class module_User extends WP_User {
+/**
+ * User Model Class
+ * 
+ * @package AAM
+ * @subpackage Models
+ * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
+ * @copyrights Copyright © 2011 Vasyl Martyniuk
+ * @license GNU General Public License {@link http://www.gnu.org/licenses/}
+ */
+class mvb_Model_User extends WP_User {
 
-    function __construct($pObj, $user_id = FALSE) {
+    /**
+     * Initialize User Object
+     * 
+     * @param int $user_id 
+     */
+    function __construct($user_id = FALSE) {
 
-        $this->pObj = $pObj;
         if (!$user_id) {
             $user_id = get_current_user_id();
         }
         parent::__construct($user_id);
     }
 
-    function getCurrentUserRole() {
+    /**
+     * Get list of current User's Roles
+     * 
+     * This function is compatible with WP releases 3.2.x and 3.3
+     * 
+     * @global string $wp_version
+     * @return array 
+     */
+    function getRoles() {
         global $wp_version;
 
-        if (version_compare($wp_version, '3.3', '=')) {
+        if (version_compare($wp_version, '3.2.1', '>')) {
             $result = (is_array($this->roles) ? $this->roles : array());
         } else {
             //deprecated, will be deleted in release 1.5
             if (is_object($this->data) && isset($this->data->{$this->cap_key})) {
-                $result = $this->data->{$this->cap_key};
+                $result = array_keys($this->data->{$this->cap_key});
             } else {
                 $result = array();
             }
@@ -46,32 +67,20 @@ class module_User extends WP_User {
         return $result;
     }
 
+    /**
+     * Return list of all capabilities registered in the System
+     * 
+     * @return array
+     */
     function getAllCaps() {
 
-        $caps = $this->allcaps;
-        $caps = (is_array($caps) ? $caps : array());
-
-        $unset_list = array(WPACCESS_SADMIN_ROLE);
-        foreach ($unset_list as $unset) {
-            if (isset($caps[$unset])) {
-                unset($caps[$unset]);
-            }
+        $caps = is_array($this->allcaps) ? $this->allcaps : array();
+        
+        if (isset($caps[WPACCESS_SADMIN_ROLE])){
+            unset($caps[WPACCESS_SADMIN_ROLE]);
         }
-
+        
         return $caps;
-    }
-
-    function getCapabilityHumanTitle($cap) {
-
-        $title = array();
-        $parts = preg_split('/_/', $cap);
-        if (is_array($parts)) {
-            foreach ($parts as &$part) {
-                $part = ucfirst($part);
-            }
-        }
-
-        return implode(' ', $parts);
     }
 
 }

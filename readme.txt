@@ -1,10 +1,10 @@
 === Advanced Access Manager ===
 Contributors: vasyl_m
 Donate link: http://whimba.org/donation
-Tags: access manager, access-control, capability, dashboard widget, expire, expire link, filter menu, filter pages, filter posts, metabox, role manager, user access, user control, user role
+Tags: access manager, access control, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role, access config
 Requires at least: 3.2
-Tested up to: 3.2.1
-Stable tag: 1.4.3
+Tested up to: 3.3.1
+Stable tag: 1.5.5
 
 Graphic interface to manage User Roles, Capabilities and Post/Page Access
 
@@ -21,9 +21,9 @@ You can do following things with Advanced Access Manager:
 
 * Apply setting to all Blogs in Multi-Site Setup 
 * Promote other Users to the same Role of lower
-* Filter Admin Menu for specific User Role
-* Filter Dashboard Widgets for specific User Role
-* Filter List of Metaboxes for specific User Role
+* Filter Admin Menu for specific User Role or User
+* Filter Dashboard Widgets for specific User Role or User
+* Filter List of Metaboxes for specific User Role or User
 * Add new User Capabilities
 * Delete created User Capabilities
 * Create new User Roles
@@ -102,6 +102,12 @@ just filter Main Menu.
 4. Post/Page Tree View
 
 == Changelog ==
+
+= 1.5.5 =
+* Performed code refactoring
+* Added Access Config
+* Added User Managing feature
+* Fixed bugs related to WP 3.3.x releases
 
 = 1.4.3 =
 * Emergency bug fixing

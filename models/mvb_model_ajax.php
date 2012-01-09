@@ -18,8 +18,18 @@
 
  */
 
-class module_ajax {
-    /*
+/**
+ * User Model Class
+ * 
+ * @package AAM
+ * @subpackage Models
+ * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
+ * @copyrights Copyright © 2011 Vasyl Martyniuk
+ * @license GNU General Public License {@link http://www.gnu.org/licenses/}
+ */
+class mvb_Model_Ajax {
+
+    /**
      * Parent Object
      * 
      * Holds the main plugin object
@@ -27,10 +37,9 @@ class module_ajax {
      * @var object
      * @access public
      */
-
     public $pObj;
 
-    /*
+    /**
      * Requested action
      * 
      * @var string
@@ -38,25 +47,24 @@ class module_ajax {
      */
     protected $action;
 
-
-    /*
+    /**
      * Main Constructor
      * 
      * @param object
      */
-
     public function __construct($pObj) {
 
         $this->pObj = $pObj;
         $this->action = $this->get_action();
     }
 
-    /*
+    /**
      * Process Ajax request
      * 
      */
-
     public function process() {
+
+        error_reporting(0); //overwrite debug = TRUE;
 
         switch ($this->action) {
             case 'apply_all':
@@ -91,10 +99,6 @@ class module_ajax {
                 $result = $this->initiate_url();
                 break;
 
-            case 'import_config':
-                $result = $this->import_config();
-                break;
-
             case 'add_capability':
                 $result = $this->add_capability();
                 break;
@@ -109,6 +113,10 @@ class module_ajax {
 
             case 'get_info':
                 $result = $this->get_info();
+                break;
+
+            case 'get_userlist':
+                $result = $this->get_userlist();
                 break;
 
             case 'save_info':
@@ -155,22 +163,17 @@ class module_ajax {
     protected function apply_all() {
         global $wpdb;
 
-        if (isset($wpdb->blogs)) {
-            $query = "SELECT * FROM {$wpdb->blogs}";
-            $sites = $wpdb->get_results($query);
-        } else {
-            $sites = FALSE;
-        }
+        $sites = mvb_Model_Helper::getSiteList();
 
         //TODO - implement more complex checking
-        $result = array('status' => 'success', 'message' => LABEL_152);
+        $result = array('status' => 'success', 'message' => mvb_Model_Label::get('LABEL_152'));
 
         if (is_array($sites) && count($sites)) {
-            $current = $this->pObj->get_current_blog_data();
-            $options = get_blog_option($current['id'], $current['prefix'] . WPACCESS_PREFIX . 'options', array());
-            $morders = get_blog_option($current['id'], $current['prefix'] . WPACCESS_PREFIX . 'menu_order', array());
-            $usroles = get_blog_option($current['id'], $current['prefix'] . 'user_roles', array());
-            $kparams = get_blog_option($current['id'], $current['prefix'] . WPACCESS_PREFIX . 'key_params', array());
+            $c_blog = mvb_Model_API::getCurrentBlog();
+            $options = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'options', array());
+            $morders = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'menu_order', array());
+            $usroles = mvb_Model_API::getBlogOption('user_roles', array());
+            $kparams = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'key_params', array());
             $limit = WPACCESS_APPLY_LIMIT;
             /*
              * Check if Restriction class exist.
@@ -181,10 +184,15 @@ class module_ajax {
                 $limit = apply_filters(WPACCESS_PREFIX . 'msar_restrict_limit', $limit);
             }
             foreach ($sites as $i => $site) {
-                if ($site->blog_id == $current['id']) { //skip current blog
+                if ($site->blog_id == $c_blog->getID()) { //skip current blog
                     continue;
                 }
-                $blog_prefix = $wpdb->get_blog_prefix($site->blog_id);
+
+                $blog = new mvb_Model_Blog(array(
+                            'id' => $site->blog_id,
+                            'url' => get_site_url($site->blog_id),
+                            'prefix' => $wpdb->get_blog_prefix($site->blog_id))
+                );
                 /*
                   $options1 = get_blog_option($site->blog_id, $blog_prefix . WPACCESS_PREFIX . 'options', array());
                   $morders1 = get_blog_option($site->blog_id, $blog_prefix . WPACCESS_PREFIX . 'menu_order', array());
@@ -196,13 +204,13 @@ class module_ajax {
                   $usroles1 = array_merge_recursive($usroles, $usroles1);
                   $kparams1 = array_merge_recursive($kparams, $kparams1);
                  * */
-                update_blog_option($site->blog_id, $blog_prefix . WPACCESS_PREFIX . 'options', $options);
-                update_blog_option($site->blog_id, $blog_prefix . WPACCESS_PREFIX . 'menu_order', $morders);
-                update_blog_option($site->blog_id, $blog_prefix . 'user_roles', $usroles);
-                update_blog_option($site->blog_id, $blog_prefix . WPACCESS_PREFIX . 'key_params', $kparams);
+                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'options', $options, $blog);
+                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'menu_order', $morders, $blog);
+                mvb_Model_API::updateBlogOption('user_roles', $usroles, $blog);
+                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'key_params', $kparams, $blog);
 
                 if (($limit != -1) && ($i + 1 > $limit)) {
-                    $result = array('status' => 'error', 'message' => LABEL_156);
+                    $result = array('status' => 'error', 'message' => mvb_Model_Label::get('LABEL_156'));
                     break;
                 }
             }
@@ -220,13 +228,13 @@ class module_ajax {
 
         //TODO - Here you can hack and change Super Admin and Admin Label
         //But this is not a big deal.
-        $role_list = $this->pObj->get_roles(TRUE);
+        $role_list = mvb_Model_API::getRoleList(FALSE);
         $role = $_POST['role_id'];
         //TODO - maybe not the best way
         $label = urldecode(sanitize_title($_POST['label']));
         if (isset($role_list[$role])) {
             $role_list[$role]['name'] = ucfirst($label);
-            $this->pObj->update_blog_option('user_roles', $role_list);
+            mvb_Model_API::updateBlogOption('user_roles', $role_list);
             $result = array('status' => 'success');
         } else {
             $result = array('status' => 'error');
@@ -249,6 +257,26 @@ class module_ajax {
         return $a;
     }
 
+    protected function get_userlist() {
+
+        $role = $_POST['role'];
+        $users = $this->pObj->getUserList($role);
+
+        $options = '<option value="0">' . mvb_Model_Label::get('LABEL_120') . '</option>';
+        if (is_array($users)) {
+            foreach ($users as $user) {
+                $options .= '<option value="' . $user->ID . '">' . $user->user_login . '</option>';
+            }
+        }
+
+        $result = array(
+            'status' => 'success',
+            'html' => $options
+        );
+
+        return $result;
+    }
+
     /*
      * Restore default User Roles
      * 
@@ -260,11 +288,11 @@ class module_ajax {
         global $wpdb;
 
         //get current roles settings
-        $or_roles = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'original_user_roles', array());
-        $roles = $this->pObj->get_roles(TRUE);
+        $or_roles = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'original_user_roles', array());
+        $roles = mvb_Model_API::getRoleList(FALSE);
 
         $allow = TRUE;
-        if (($role == WPACCESS_ADMIN_ROLE) && !$this->pObj->is_super) {
+        if (($role == WPACCESS_ADMIN_ROLE) && !mvb_Model_API::isSuperAdmin()) {
             $allow = FALSE;
         }
 
@@ -272,27 +300,27 @@ class module_ajax {
             $roles[$role] = $or_roles[$role];
 
             //save current setting to DB
-            $this->pObj->update_blog_option('user_roles', $roles);
+            mvb_Model_API::updateBlogOption('user_roles', $roles);
 
             //unset all option with metaboxes and menu
-            $options = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'options');
+            $options = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'options');
             if (isset($options[$role])) {
                 unset($options[$role]);
-                $this->pObj->update_blog_option(WPACCESS_PREFIX . 'options', $options);
+                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'options', $options);
             }
 
             //unset all restrictions
-            $r = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'restrictions', array());
+            $r = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'restrictions', array());
             if (isset($r[$role])) {
                 unset($r[$role]);
-                $this->pObj->update_blog_option(WPACCESS_PREFIX . 'restrictions', $r);
+                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'restrictions', $r);
             }
 
             //unset menu order
-            $menu_order = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'menu_order');
+            $menu_order = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'menu_order');
             if (isset($menu_order[$role])) {
                 unset($menu_order[$role]);
-                $this->pObj->update_blog_option(WPACCESS_PREFIX . 'menu_order', $menu_order);
+                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'menu_order', $menu_order);
             }
 
             $result = array('status' => 'success');
@@ -303,19 +331,20 @@ class module_ajax {
         return $result;
     }
 
-    /*
-     * Create a new Role
-     * 
+    /**
+     *
+     * @param type $role
+     * @param type $render_html
+     * @return type 
      */
-
     protected function create_role($role, $render_html = TRUE) {
 
-        $m = new module_Roles();
+        $m = new mvb_Model_Role();
         $new_role = ($role ? $role : $_REQUEST['role']);
         $result = $m->createNewRole($new_role);
         if ($result['result'] == 'success') {
-            $m = new module_optionManager($this->pObj, $result['new_role']);
-            $content = $m->renderDeleteRoleItem($result['new_role'], array('name' => $_POST['role']));
+            $m = new mvb_Model_Manager($this->pObj, $result['new_role']);
+            $content = $m->renderDeleteRoleItem($result['new_role'], array('name' => $role));
             $result['html'] = $m->templObj->clearTemplate($content);
         }
 
@@ -329,7 +358,8 @@ class module_ajax {
 
     protected function delete_role() {
 
-        $m = new module_Roles();
+        $m = new mvb_Model_Role();
+        //TODO - unsecure
         $m->remove_role($_POST['role']);
         $result = array('status' => 'success');
 
@@ -347,7 +377,9 @@ class module_ajax {
 
     protected function render_metabox_list() {
 
-        $m = new module_optionManager($this->pObj, $_POST['role']);
+        $role = mvb_Model_Helper::getParam('role', 'POST');
+        $user = mvb_Model_Helper::getParam('user', 'POST');
+        $m = new mvb_Model_Manager($this->pObj, $role, $user);
         $content = $m->renderMetaboxList($m->getTemplate());
         $result = array(
             'status' => 'success',
@@ -406,7 +438,7 @@ class module_ajax {
         }
 
         //grab metaboxes
-        $result = $this->pObj->cURL($url);
+        $result = mvb_Model_Helper::cURL($url);
 
         $result['value'] = round((($i + 1) / $typeQuant) * 100); //value for progress bar
         $result['next'] = ($next ? $next : '' ); //if empty, stop initialization
@@ -432,7 +464,7 @@ class module_ajax {
         $url = $_POST['url'];
         if ($url) {
             $url = add_query_arg('grab', 'metaboxes', $url);
-            $result = $this->pObj->cURL($url);
+            $result = mvb_Model_Helper::cURL($url);
         } else {
             $result = array('status' => 'error');
         }
@@ -440,24 +472,12 @@ class module_ajax {
         return $result;
     }
 
-    /*
-     * Import configurations
-     * 
-     */
-
-    protected function import_config() {
-
-        $m = new module_optionManager($this->pObj);
-        $result = $m->import_config();
-
-        return $result;
-    }
-
-    /*
+    /**
      * Add New Capability
      * 
+     * @global type $wpdb
+     * @return type 
      */
-
     protected function add_capability() {
         global $wpdb;
 
@@ -469,21 +489,29 @@ class module_ajax {
             $capList = $this->pObj->user->getAllCaps();
 
             if (!isset($capList[$cap])) { //create new capability
-                $roles = $this->pObj->get_roles(TRUE);
+                $roles = mvb_Model_API::getRoleList(FALSE);
                 if (isset($roles[WPACCESS_SADMIN_ROLE])) {
                     $roles[WPACCESS_SADMIN_ROLE]['capabilities'][$cap] = 1;
                 }
                 $roles[WPACCESS_ADMIN_ROLE]['capabilities'][$cap] = 1; //add this role for admin automatically
-                $this->pObj->update_blog_option('user_roles', $roles);
+                mvb_Model_API::updateBlogOption('user_roles', $roles);
+                //check if this is for specific user
+                //TODO
+                $user = mvb_Model_Helper::getParam('user', 'POST');
+                if ($user) {
+                    $conf = mvb_Model_API::getUserAccessConfig($user);
+                    $conf->addCapability($cap);
+                    update_user_meta($user, WPACCESS_PREFIX . 'options', $conf->compileConfig());
+                }
                 //save this capability as custom created
-                $custom_caps = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'custom_caps');
+                $custom_caps = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'custom_caps');
                 if (!is_array($custom_caps)) {
                     $custom_caps = array();
                 }
                 $custom_caps[] = $cap;
-                $this->pObj->update_blog_option(WPACCESS_PREFIX . 'custom_caps', $custom_caps);
+                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'custom_caps', $custom_caps);
                 //render html
-                $tmpl = new mvb_coreTemplate();
+                $tmpl = new mvb_Model_Template();
                 $templatePath = WPACCESS_TEMPLATE_DIR . 'admin_options.html';
                 $template = $tmpl->readTemplate($templatePath);
                 $listTemplate = $tmpl->retrieveSub('CAPABILITY_LIST', $template);
@@ -493,7 +521,7 @@ class module_ajax {
                     '###title###' => $cap,
                     '###description###' => '',
                     '###checked###' => 'checked',
-                    '###cap_name###' => $this->pObj->user->getCapabilityHumanTitle($cap)
+                    '###cap_name###' => mvb_Model_Helper::getCapabilityHumanTitle($cap)
                 );
                 $titem = $tmpl->updateMarkers($markers, $itemTemplate);
                 $titem = $tmpl->replaceSub('CAPABILITY_DELETE', $tmpl->retrieveSub('CAPABILITY_DELETE', $titem), $titem);
@@ -511,7 +539,7 @@ class module_ajax {
         } else {
             $result = array(
                 'status' => 'error',
-                'message' => LABEL_124
+                'message' => mvb_Model_Label::get('LABEL_124'),
             );
         }
 
@@ -526,10 +554,10 @@ class module_ajax {
         global $wpdb;
 
         $cap = trim($_POST['cap']);
-        $custom_caps = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'custom_caps');
+        $custom_caps = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'custom_caps');
 
         if (in_array($cap, $custom_caps)) {
-            $roles = $this->pObj->get_blog_option('user_roles');
+            $roles = mvb_Model_API::getBlogOption('user_roles');
             if (is_array($roles)) {
                 foreach ($roles as &$role) {
                     if (isset($role['capabilities'][$cap])) {
@@ -537,14 +565,14 @@ class module_ajax {
                     }
                 }
             }
-            $this->pObj->update_blog_option('user_roles', $roles);
+            mvb_Model_API::updateBlogOption('user_roles', $roles);
             $result = array(
                 'status' => 'success'
             );
         } else {
             $result = array(
                 'status' => 'error',
-                'message' => LABEL_125
+                'message' => mvb_Model_Label::get('LABEL_125')
             );
         }
 
@@ -590,7 +618,7 @@ class module_ajax {
                         $post_type = get_post_field('post_type', $parts[1]);
                         $tree = $this->build_branch($post_type, FALSE, $parts[1]);
                     } elseif ($parts[0] == 'cat') {
-                        $taxonomy = $this->pObj->get_taxonomy_by_term($parts[1]);
+                        $taxonomy = mvb_Model_Helper::getTaxonomyByTerm($parts[1]);
                         $tree = $this->build_branch(NULL, $taxonomy, $parts[1]);
                     }
                     break;
@@ -603,7 +631,7 @@ class module_ajax {
 
         if (!count($tree)) {
             $tree[] = (object) array(
-                        'text' => '<i>[' . LABEL_153 . ']</i>',
+                        'text' => '<i>[' . mvb_Model_Label::get('LABEL_153') . ']</i>',
                         'hasChildren' => FALSE,
                         'classes' => 'post-ontree',
                         'id' => 'empty-' . uniqid()
@@ -728,20 +756,30 @@ class module_ajax {
         return ($counter ? TRUE : FALSE);
     }
 
-    /*
+    /**
      * Get Information about current post or page
+     * 
+     * @global type $wp_post_statuses
+     * @global type $wp_post_types
+     * @return type 
      */
-
     protected function get_info() {
         global $wp_post_statuses, $wp_post_types;
 
         $id = intval($_POST['id']);
         $type = trim($_POST['type']);
         $role = $_POST['role'];
-        $options = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'restrictions', array());
+        $user = $_POST['user'];
+
+        if ($user) {
+            $config = mvb_Model_API::getUserAccessConfig($user);
+        } else {
+            $config = mvb_Model_API::getRoleAccessConfig($role);
+        }
+
 
         //render html
-        $tmpl = new mvb_coreTemplate();
+        $tmpl = new mvb_Model_Template();
         $templatePath = WPACCESS_TEMPLATE_DIR . 'admin_options.html';
         $template = $tmpl->readTemplate($templatePath);
         $template = $tmpl->retrieveSub('POST_INFORMATION', $template);
@@ -753,21 +791,23 @@ class module_ajax {
                 $post = get_post($id);
                 if ($post->ID) {
                     $template = $tmpl->retrieveSub('POST', $template);
-                    if (isset($options[$role]['posts'][$id])) {
-                        $checked = ($options[$role]['posts'][$id]['restrict'] ? 'checked' : '');
-                        $checked_front = ($options[$role]['posts'][$id]['restrict_front'] ? 'checked' : '');
-                        $exclude = ($options[$role]['posts'][$id]['exclude_page'] ? 'checked' : '');
-                        $expire = ($options[$role]['posts'][$id]['expire'] ? date('m/d/Y', $options[$role]['posts'][$id]['expire']) : '');
+                    if ($config->hasRestriction('post', $id)) {
+                        $restiction = $config->getRestriction('post', $id);
+                        $checked = ($restiction['restrict'] ? 'checked' : '');
+                        $checked_front = ($restiction['restrict_front'] ? 'checked' : '');
+                        $exclude = ($restiction['exclude_page'] ? 'checked' : '');
+                        $expire = ($restiction['expire'] ? date('m/d/Y', $restiction['expire']) : '');
                     }
                     $markerArray = array(
-                        '###post_title###' => $this->pObj->edit_post_link($post),
+                        '###post_title###' => mvb_Model_Helper::editPostLink($post),
+                        '###disabled_apply_all###' => ($user ? 'disabled="disabled"' : ''),
                         '###restrict_checked###' => (isset($checked) ? $checked : ''),
                         '###restrict_front_checked###' => (isset($checked_front) ? $checked_front : ''),
                         '###restrict_expire###' => (isset($expire) ? $expire : ''),
                         '###exclude_page_checked###' => (isset($exclude) ? $exclude : ''),
                         '###post_type###' => ucfirst($post->post_type),
                         '###post_status###' => $wp_post_statuses[$post->post_status]->label,
-                        '###post_visibility###' => $this->pObj->check_visibility($post),
+                        '###post_visibility###' => mvb_Model_Helper::checkVisibility($post),
                         '###ID###' => $post->ID,
                     );
                     //check what type of post is it and render exclude if page
@@ -799,17 +839,19 @@ class module_ajax {
 
             case 'taxonomy':
                 //get information about category
-                $taxonomy = $this->pObj->get_taxonomy_by_term($id);
+                $taxonomy = mvb_Model_Helper::getTaxonomyByTerm($id);
                 $term = get_term($id, $taxonomy);
                 if ($term->term_id) {
                     $template = $tmpl->retrieveSub('CATEGORY', $template);
-                    if (isset($options[$role]['categories'][$id])) {
-                        $checked = ($options[$role]['categories'][$id]['restrict'] ? 'checked' : '');
-                        $checked_front = ($options[$role]['categories'][$id]['restrict_front'] ? 'checked' : '');
-                        $expire = ($options[$role]['categories'][$id]['expire'] ? date('m/d/Y', $options[$role]['categories'][$id]['expire']) : '');
+                    if ($config->hasRestriction('taxonomy', $id)) {
+                        $tax = $config->getRestriction('taxonomy', $id);
+                        $checked = ($tax['restrict'] ? 'checked' : '');
+                        $checked_front = ($tax['restrict_front'] ? 'checked' : '');
+                        $expire = ($tax['expire'] ? date('m/d/Y', $tax['expire']) : '');
                     }
                     $markerArray = array(
-                        '###name###' => $this->pObj->edit_term_link($term),
+                        '###name###' => mvb_Model_Helper::editTermLink($term),
+                        '###disabled_apply_all###' => ($user ? 'disabled="disabled"' : ''),
                         '###restrict_checked###' => (isset($checked) ? $checked : ''),
                         '###restrict_front_checked###' => (isset($checked_front) ? $checked_front : ''),
                         '###restrict_expire###' => (isset($expire) ? $expire : ''),
@@ -832,35 +874,44 @@ class module_ajax {
         return $result;
     }
 
-    /*
+    /**
      * Save information about page/post/category restriction
      * 
+     * @todo Junk
      */
-
     protected function save_info() {
-        global $upgrade_restriction;
 
-        $options = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'restrictions');
+        $role = $_POST['role'];
+        $user = $_POST['user'];
+        $apply = intval($_POST['apply']);
+
+        if ($user) {
+            $options = get_user_meta($user, WPACCESS_PREFIX . 'restrictions', TRUE);
+            $options[$role] = $options;
+            $role_list = array($role => 1);
+        } else {
+            $options = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'restrictions');
+            if ($apply == 1) {//apply for all roles
+                $role_list = mvb_Model_API::getRoleList();
+            } else {
+                $role_list = array($role => 1);
+            }
+        }
         if (!is_array($options)) {
             $options = array();
         }
         $result = array('status' => 'error');
         $id = intval($_POST['id']);
         $type = $_POST['type'];
-        $role = $_POST['role'];
+
         $restrict = (isset($_POST['restrict']) ? 1 : 0);
         $restrict_front = (isset($_POST['restrict_front']) ? 1 : 0);
-        $expire = $this->pObj->paserDate($_POST['restrict_expire']);
+        $expire = mvb_Model_Helper::paserDate($_POST['restrict_expire']);
         $exclude = (isset($_POST['exclude_page']) ? 1 : 0);
-        $apply = intval($_POST['apply']);
-        $apply_all_cb = intval($_POST['apply_all_cb']);
-        if ($apply == 1) {//apply for all roles
-            $role_list = $this->pObj->get_roles();
-        } else {
-            $role_list = array($role => 1);
-        }
 
-        $this->pObj->update_blog_option(WPACCESS_PREFIX . 'hide_apply_all', $apply_all_cb);
+        $apply_all_cb = intval($_POST['apply_all_cb']);
+
+        mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'hide_apply_all', $apply_all_cb);
         /*
          * Check if Restriction class exist.
          * Note for hacks : Better will be to buy an add-on for $5 because on
@@ -872,7 +923,7 @@ class module_ajax {
         }
 
         foreach ($role_list as $role => $dummy) {
-            if ($role != WPACCESS_ADMIN_ROLE || $this->pObj->is_super) {
+            if ($role != WPACCESS_ADMIN_ROLE || mvb_Model_API::isSuperAdmin()) {
                 switch ($type) {
                     case 'post':
                         $count = 0;
@@ -895,10 +946,15 @@ class module_ajax {
                                 'expire' => $expire,
                                 'exclude_page' => $exclude
                             );
-                            $this->pObj->update_blog_option(WPACCESS_PREFIX . 'restrictions', $options);
+
+                            if ($user) {
+                                update_user_meta($user, WPACCESS_PREFIX . 'restrictions', $options[$role]);
+                            } else {
+                                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'restrictions', $options);
+                            }
                             $result = array('status' => 'success');
                         } else {
-                            $result['message'] = $upgrade_restriction;
+                            $result['message'] = mvb_Model_Label::get('upgrade_restriction');
                         }
                         break;
 
@@ -921,10 +977,15 @@ class module_ajax {
                                 'restrict_front' => $restrict_front,
                                 'expire' => $expire
                             );
-                            $this->pObj->update_blog_option(WPACCESS_PREFIX . 'restrictions', $options);
+                            if ($user) {
+                                update_user_meta($user, WPACCESS_PREFIX . 'restrictions', $options[$role]);
+                            } else {
+                                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'restrictions', $options);
+                            }
+
                             $result = array('status' => 'success');
                         } else {
-                            $result['message'] = $upgrade_restriction;
+                            $result['message'] = mvb_Model_Label::get('upgrade_restriction');
                         }
                         break;
 
@@ -948,7 +1009,7 @@ class module_ajax {
         $url = 'http://whimba.org/features.php';
         //second paramter is FALSE, which means that I'm not sending any
         //cookies to my website
-        $response = $this->pObj->cURL($url, FALSE, TRUE);
+        $response = mvb_Model_Helper::cURL($url, FALSE, TRUE);
 
         if (isset($response['content'])) {
             $data = json_decode($response['content']);
@@ -973,29 +1034,35 @@ class module_ajax {
         return $result;
     }
 
-    /*
+    /**
      * Save menu order
      * 
+     * @return array
      */
-
     protected function save_order() {
 
         $apply_all = $_POST['apply_all'];
-        $menu_order = $this->pObj->get_blog_option(WPACCESS_PREFIX . 'menu_order', array());
-        $roles = $this->pObj->get_roles();
         $role = $_POST['role'];
+        $user = $_POST['user'];
 
-        if ($apply_all) {
-            foreach ($roles as $role => $dummy) {
-                $menu_order[$role] = $_POST['menu'];
-            }
+        if ($user) {
+            update_user_meta($user, WPACCESS_PREFIX . 'menu_order', $_POST['menu']);
         } else {
-            if (isset($roles[$role])) {
-                $menu_order[$role] = $_POST['menu'];
-            }
-        }
+            $menu_order = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'menu_order', array());
+            $roles = mvb_Model_API::getRoleList();
 
-        $this->pObj->update_blog_option(WPACCESS_PREFIX . 'menu_order', $menu_order);
+            if ($apply_all) {
+                foreach ($roles as $role => $dummy) {
+                    $menu_order[$role] = $_POST['menu'];
+                }
+            } else {
+                if (isset($roles[$role])) {
+                    $menu_order[$role] = $_POST['menu'];
+                }
+            }
+
+            mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'menu_order', $menu_order);
+        }
 
         return array('status' => 'success');
     }
@@ -1035,7 +1102,7 @@ class module_ajax {
     private function render_config() {
 
         $file_path = WPACCESS_BASE_DIR . 'backups/' . uniqid(WPACCESS_PREFIX) . '.ini';
-        $m = new module_optionManager($this->pObj);
+        $m = new mvb_Model_Manager($this->pObj);
         $m->render_config($file_path);
 
         return $file_path;
@@ -1074,21 +1141,16 @@ class module_ajax {
     protected function add_blog_admin() {
 
         $user_id = get_current_user_id();
-        
-        if ($this->pObj->is_multi()) {
-            $blog_id = get_current_blog_id();
-            $ok = add_user_to_blog($blog_id, $user_id, WPACCESS_ADMIN_ROLE);
-        } else {
-            $ok = TRUE;
-        }
+
+        $blog_id = get_current_blog_id();
+        $ok = add_user_to_blog($blog_id, $user_id, WPACCESS_ADMIN_ROLE);
 
         if ($ok) {
-            $m = new module_User($this->pObj, $user_id);
-            $m->add_role(WPACCESS_ADMIN_ROLE);
-            $m->add_role(WPACCESS_SADMIN_ROLE);
-            $result = array('status' => 'success', 'message' => LABEL_154);
+            $this->pObj->user->add_role(WPACCESS_ADMIN_ROLE);
+            $this->pObj->user->add_role(WPACCESS_SADMIN_ROLE);
+            $result = array('status' => 'success', 'message' => mvb_Model_Label::get('LABEL_154'));
         } else {
-            $result = array('status' => 'error', 'message' => LABEL_155);
+            $result = array('status' => 'error', 'message' => mvb_Model_Label::get('LABEL_155'));
         }
 
         return $result;
@@ -1105,7 +1167,7 @@ class module_ajax {
         $user_id = get_current_user_id();
 
         if ($answer == 1) {
-            $role_list = $this->pObj->get_roles(TRUE);
+            $role_list = mvb_Model_API::getRoleList(FALSE);
 
             if (isset($role_list[WPACCESS_SADMIN_ROLE])) {
                 $result = array(
@@ -1118,20 +1180,20 @@ class module_ajax {
 
             if ($result['result'] == 'success') {
                 //update current user role
-                if (!is_blog_user(get_current_blog_id())) {
+                if (!is_user_member_of_blog(get_current_blog_id())) {
                     $this->add_blog_admin();
                 } else {
                     $this->assign_role(WPACCESS_SADMIN_ROLE, $user_id);
                 }
                 $this->deprive_role($user_id, WPACCESS_SADMIN_ROLE, WPACCESS_ADMIN_ROLE);
                 //get all capability list and assign them to super admin role
-                $roles = $this->pObj->get_roles(TRUE);
+                $roles = mvb_Model_API::getRoleList(FALSE);
                 $roles[WPACCESS_SADMIN_ROLE] = array(
-                    'name' => LABEL_126,
+                    'name' => mvb_Model_Label::get('LABEL_126'),
                     'capabilities' => $this->pObj->user->getAllCaps()
                 );
-                $this->pObj->update_blog_option('user_roles', $roles);
-                $this->pObj->update_blog_option(WPACCESS_FTIME_MESSAGE, $answer);
+                mvb_Model_API::updateBlogOption('user_roles', $roles);
+                mvb_Model_API::updateBlogOption(WPACCESS_FTIME_MESSAGE, $answer);
             } else {
                 $result = array('result' => 'error');
             }
@@ -1149,7 +1211,7 @@ class module_ajax {
 
     protected function assign_role($role, $user_id) {
 
-        $m = new module_User($this->pObj, $user_id);
+        $m = new mvb_Model_User($user_id);
         $m->add_role($role);
     }
 
@@ -1165,9 +1227,9 @@ class module_ajax {
         global $wpdb;
 
         //TODO Should be better way to grab the list of users
-        $blog = $this->pObj->get_current_blog_data();
+        $blog = mvb_Model_API::getCurrentBlog();
         $query = "SELECT user_id FROM {$wpdb->usermeta} WHERE ";
-        $query .= "meta_key = '{$blog['prefix']}capabilities'";
+        $query .= 'meta_key = "' . $blog->getPrefix() . 'capabilities"';
         $list = $wpdb->get_results($query);
 
         if (is_array($list) && count($list)) {
@@ -1175,7 +1237,7 @@ class module_ajax {
                 if ($row->user_id == $skip_id) {
                     continue;
                 }
-                $m = new module_User($this->pObj, $row->user_id);
+                $m = new mvb_Model_User($row->user_id);
 
                 if ($m->has_cap($role)) {
                     $m->remove_role($role);
