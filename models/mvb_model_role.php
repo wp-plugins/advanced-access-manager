@@ -42,16 +42,13 @@ class mvb_Model_Role extends WP_Roles {
      * @param string User Role title
      * @return array Result
      */
-    function createNewRole($newRoleTitle, $caps = 'default') {
+    function createNewRole($newRoleTitle, $caps = array()) {
 
         $role_id = sanitize_title_with_dashes($newRoleTitle);
         $role_id = str_replace('-', '_', $role_id);
         $label = htmlspecialchars(trim($newRoleTitle));
 
-        if ($this->add_role($role_id, $label, array(
-                    'read' => 1,
-                    'level_0' => 1
-                ))) {
+        if ($this->add_role($role_id, $label, $caps)) {
             $status = 'success';
         } else {
             $status = 'error';

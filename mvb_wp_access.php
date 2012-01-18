@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access to WordPress Backend and Frontend.
-  Version: 1.5.5
+  Version: 1.5.6
   Author: Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
   Author URI: http://www.whimba.org
  */
@@ -66,14 +66,6 @@ class mvb_WPAccess {
     public $user;
 
     /**
-     * Module Roles
-     * 
-     * @var object
-     * @access public
-     */
-    public $roles;
-
-    /**
      * Current Configuration Array
      * 
      * @var array
@@ -91,17 +83,15 @@ class mvb_WPAccess {
     public function __construct() {
         global $post;
 
-        //TODO - Optimize this
-        $this->user = new mvb_Model_User();
-
         //initialize AAM Settings
         $this->initUserAccessConfig();
+
+        //TODO - Optimize this
+        $this->menu = new mvb_Model_FilterMenu($this);
 
         if (is_admin()) {
             //init labels
             mvb_Model_Label::initLabels();
-
-            $this->menu = new mvb_Model_FilterMenu($this);
 
             if (isset($_GET['page']) && ($_GET['page'] == 'wp_access')) {
                 add_action('admin_print_scripts', array($this, 'admin_print_scripts'));
@@ -114,8 +104,8 @@ class mvb_WPAccess {
                 add_action('admin_menu', array($this, 'admin_menu'), 999);
             }
 
-            add_action('admin_action_render_rolelist', array($this, 'render_rolelist'));
-            add_action('admin_action_render_userlist', array($this, 'render_userlist'));
+            add_action('admin_action_render_optionlist', array($this, 'render_optionlist'));
+
             //Add Capabilities WP core forgot to
             add_filter('map_meta_cap', array($this, 'map_meta_cap'), 10, 4);
 
@@ -160,7 +150,7 @@ class mvb_WPAccess {
             'orderby' => 'user_nicename',
             'order' => 'ASC'
         );
-        
+
         // Query the user IDs for this page
         $wp_user_search = new WP_User_Query($args);
 
@@ -184,8 +174,12 @@ class mvb_WPAccess {
             unset($roles[WPACCESS_SADMIN_ROLE]);
         }
 
+        if (isset($roles['_visitor'])) {
+            unset($roles['_visitor']);
+        }
+
         //get user's highest Level
-        $highest = mvb_Model_Helper::getHighestUserLevel($this->user_config->getCapabilities());
+        $highest = mvb_Model_Helper::getHighestUserLevel($this->user_config->getUser()->getAllCaps());
 
         if ($highest < WPACCESS_TOP_LEVEL && is_array($roles)) { //filter roles
             foreach ($roles as $role => $data) {
@@ -238,7 +232,7 @@ class mvb_WPAccess {
 
         if (!$wp_query->is_home() && $post) {
             if ($this->checkPostAccess($post) && !mvb_Model_API::isSuperAdmin()) {
-                $this->user_config->doRedirect('frontend');
+                $this->user_config->getConfigPress()->doRedirect();
             }
         }
     }
@@ -322,7 +316,6 @@ class mvb_WPAccess {
 
         $query->query_vars['tax_query'] = $r_cats;
         $query->query_vars['post__not_in'] = $r_posts;
-        //   debug($query->query_vars);
     }
 
     /**
@@ -334,7 +327,6 @@ class mvb_WPAccess {
      */
     public function get_terms($terms, $taxonomies, $args) {
 
-        //TODO - skip_term_filter cause dependence between two classes
         if (is_array($terms)) {
             foreach ($terms as $i => $term) {
                 if ($this->checkCategoryAccess(array($term->term_id))) {
@@ -454,7 +446,7 @@ class mvb_WPAccess {
     public function activate() {
         global $wpdb, $wp_version;
 
-        if (version_compare($wp_version, '3.1', '<')) {
+        if (version_compare($wp_version, '3.2', '<')) {
             exit(mvb_Model_Label::get('LABEL_122'));
         }
 
@@ -495,8 +487,8 @@ class mvb_WPAccess {
         if (is_array($roles)) {
             foreach ($roles as $role) {
                 $options[$role] = (object) array(
-                    'menu' => array(),
-                    'metaboxes' => array(),
+                            'menu' => array(),
+                            'metaboxes' => array(),
                         //'capabilities' => $m->roles[$role]['capabilities']
                 );
             }
@@ -560,9 +552,9 @@ class mvb_WPAccess {
         mvb_Model_API::deleteBlogOption(WPACCESS_FTIME_MESSAGE, $blog);
     }
 
-	/**
-	 * 
-	 */
+    /**
+     * 
+     */
     public function admin_print_scripts() {
 
         //core scripts
@@ -640,12 +632,8 @@ class mvb_WPAccess {
         if (is_admin() && !mvb_Model_API::isSuperAdmin()) {
             $uri = $_SERVER['REQUEST_URI'];
 
-            $access = $this->menu->checkAccess($uri);
-            //filter
-            $access = apply_filters(WPACCESS_PREFIX . 'check_access', $access, $uri);
-
-            if (!$access) {
-                $this->user_config->doRedirect('backend');
+            if (!$this->menu->checkAccess($uri)) {
+                $this->user_config->getConfigPress()->doRedirect();
             }
 
             //check if user try to access a post
@@ -660,18 +648,18 @@ class mvb_WPAccess {
             if ($post_id) { //check if current user has access to current post
                 $post = get_post($post_id);
                 if ($this->checkPostAccess($post)) {
-                    $this->user_config->doRedirect('backend');
+                    $this->user_config->getConfigPress()->doRedirect();
                 }
             } elseif (isset($_GET['taxonomy']) && isset($_GET['tag_ID'])) { // TODO - Find better way
                 if ($this->checkCategoryAccess(array($_GET['tag_ID']))) {
-                   $this->user_config->doRedirect('backend');
+                    $this->user_config->getConfigPress()->doRedirect();
                 }
             }
         } elseif (!mvb_Model_API::isSuperAdmin()) {
             if (is_category()) {
                 $cat_obj = $wp_query->get_queried_object();
                 if (!$this->checkCategoryAccess(array($cat_obj->term_id))) {
-                    $this->user_config->doRedirect('frontend');
+                    $this->user_config->getConfigPress()->doRedirect();
                 }
             } else {
                 //leave rest for "wp" action
@@ -701,9 +689,9 @@ class mvb_WPAccess {
         }
     }
 
-	/**
-	 * 
-	 */
+    /**
+     * 
+     */
     public function manager_page() {
 
         $c_role = isset($_REQUEST['role']) ? $_REQUEST['role'] : FALSE;
@@ -746,7 +734,7 @@ class mvb_WPAccess {
     /**
      * 
      */
-    public function render_rolelist() {
+    public function render_optionlist() {
 
         $role = mvb_Model_Helper::getParam('role', 'POST');
         $user = mvb_Model_Helper::getParam('user', 'POST');
@@ -757,26 +745,6 @@ class mvb_WPAccess {
         $result = array(
             'html' => apply_filters(WPACCESS_PREFIX . 'option_page', $content),
             'restorable' => (isset($or_roles[$role]) ? TRUE : FALSE)
-        );
-
-        die(json_encode($result));
-    }
-
-    /**
-     * 
-     */
-    public function render_userlist() {
-
-        $role = mvb_Model_Helper::getParam('role', 'POST');
-        $user = mvb_Model_Helper::getParam('user', 'POST');
-
-        $m = new mvb_Model_Manager($this, $role, $user);
-        $or_roles = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'original_user_roles');
-        $content = $m->getMainOptionsList();
-        $content = $m->templObj->clearTemplate($content);
-        $result = array(
-            'html' => $content,
-            'restorable' => FALSE
         );
 
         die(json_encode($result));
@@ -817,24 +785,19 @@ class mvb_WPAccess {
      * @return bool TRUE if restricted
      */
 
-    protected function checkCategoryAccess($t_list) {
+    protected function checkCategoryAccess($category_list) {
 
         $restrict = FALSE;
 
-        $r_info = $this->user_config->getRestrictions();
-
-        if (isset($r_info['categories']) && is_array($r_info['categories'])) {//check if no restriction on categoris
-            $c_list = array();
-            foreach ($r_info['categories'] as $id => $data) {
-                if (is_admin() && $data['restrict']) {
-                    $c_list[] = $id;
-                } elseif (!is_admin() && $data['restrict_front']) {
-                    $c_list[] = $id;
+        if (is_array($category_list)) {
+            foreach ($category_list as $id) {
+                if ($data = $this->user_config->getRestriction('taxonomy', $id)) {
+                    if (is_admin() && $data['restrict']) {
+                        $restrict = TRUE;
+                    } elseif (!is_admin() && $data['restrict_front']) {
+                        $restrict = TRUE;
+                    }
                 }
-            }
-
-            if (count(array_intersect($t_list, $c_list))) {
-                $restrict = TRUE;
             }
         }
 
@@ -858,16 +821,12 @@ class mvb_WPAccess {
         if ($this->checkCategoryAccess($cat_list)) {
             $restrict = TRUE;
         }
-        $r_info = $this->user_config->getRestrictions();
 
-        if (isset($r_info['posts']) && is_array($r_info['posts'])) {
-            //check if post exists in restriction list
-            if (isset($r_info['posts'][$post->ID])) {
-                if (is_admin() && $r_info['posts'][$post->ID]['restrict']) {
-                    $restrict = TRUE;
-                } elseif (!is_admin() && $r_info['posts'][$post->ID]['restrict_front']) {
-                    $restrict = TRUE;
-                }
+        if ($data = $this->user_config->getRestriction('post', $post->ID)) {
+            if (is_admin() && $data['restrict']) {
+                $restrict = TRUE;
+            } elseif (!is_admin() && $data['restrict_front']) {
+                $restrict = TRUE;
             }
         }
 
@@ -879,21 +838,11 @@ class mvb_WPAccess {
      * 
      * @param type $page
      * @return boolean 
+     * @todo Delete This is not necessary
      */
     protected function checkPageExcluded($page) {
 
-        $exclude = FALSE;
-
-        $r_info = $this->user_config->getRestrictions();
-
-        if (isset($r_info['posts']) && is_array($r_info['posts'])) {
-            //check if page exists in restriction list
-            if (isset($r_info[$page->ID]) && $r_info[$page->ID]['exclude_page']) {
-                $exclude = TRUE;
-             }
-        }
-
-        return $exclude;
+        return ($this->user_config->hasExclude($page->ID) ? TRUE : FALSE);
     }
 
     /*
@@ -913,7 +862,7 @@ class mvb_WPAccess {
     private function init_key_params() {
         global $menu, $submenu;
 
-        $roles = $this->user->getRoles();
+        $roles = mvb_Model_API::getCurrentUser()->getRoles();
         $keys = array('post_type' => 1, 'page' => 1); //add core params
         if (in_array(WPACCESS_ADMIN_ROLE, $roles)) { //do this only for admin role
             if (is_array($menu)) { //main menu
@@ -977,27 +926,6 @@ class mvb_WPAccess {
     }
 
     /**
-     *
-     * @return type 
-     */
-    public function getCacheObject() {
-
-        require_once('Zend/Cache.php');
-
-        $f_opts = array(
-            'lifetime' => WPACCESS_CACHE_LIFETIME,
-            'automatic_serialization' => true
-        );
-        $b_opts = array(
-            'cache_dir' => WPACCESS_CACHE_DIR
-        );
-
-
-        // getting a Zend_Cache_Core object
-        return Zend_Cache::factory('Core', 'File', $f_opts, $b_opts);
-    }
-
-    /**
      * Initialize configs by mergin settings from graphic interface and
      * Access Config Tab.
      * 
@@ -1010,20 +938,15 @@ class mvb_WPAccess {
 
         $user_id = get_current_user_id();
 
-        if (WPACCESS_CACHE_STATUS == 'ON') {
-            $cache = $this->getCacheObject();
-            $conf = $cache->load('wpaccess_conf_' . $user_id);
-            if ($conf === FALSE) {
-                $conf = mvb_Model_API::getUserAccessConfig($user_id);
-                $cache->save($conf, 'wpaccess_conf_' . $user_id);
-            }
-        } else {
-            $conf = mvb_Model_API::getUserAccessConfig($user_id);
+        if (!($config = mvb_Model_Cache::getCacheData('user', $user_id))) {
+            $config = mvb_Model_API::getUserAccessConfig($user_id);
+            mvb_Model_Cache::saveCacheData('user', $user_id, $config);
         }
 
-        $this->user_config = $conf;
-       //aam_debug($conf);
-       // die();
+        //initialize Restriction Tree
+        $config->initRestrictionTree();
+
+        $this->user_config = $config;
     }
 
 }
@@ -1032,4 +955,5 @@ register_activation_hook(__FILE__, array('mvb_WPAccess', 'activate'));
 //TODO - think about it
 //register_deactivation_hook(__FILE__, array('mvb_WPAccess', 'deactivate'));
 add_action('init', 'init_wpaccess');
+add_action('set_current_user', 'aam_set_current_user');
 ?>

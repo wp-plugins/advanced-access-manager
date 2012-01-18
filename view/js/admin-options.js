@@ -140,6 +140,7 @@ mvbam_object.prototype.addNewRole = function(){
             jQuery('.delete-role-table tbody').append(data.html);
             jQuery('#new-role-message-ok').show().delay(2000).hide('slow');
             _this.initRoleNameRow(jQuery('#dl-row-' + data.new_role));
+            _this.toggleUserSelector();
         }else{
             _this.removeAjaxLoader('#tabs');
             //    jQuery('#new-role-message-ok').hide();
@@ -169,7 +170,7 @@ mvbam_object.prototype.getRoleOptionList = function(currentRoleID){
     this.showAjaxLoader('#tabs');
         
     var params = {
-        'action' : 'render_rolelist',
+        'action' : 'render_optionlist',
         '_ajax_nonce': wpaccessLocal.nonce,
         'role' : currentRoleID
     };
@@ -208,7 +209,7 @@ mvbam_object.prototype.getUserOptionList = function(currentRoleID, currentUserID
     this.showAjaxLoader('#tabs');
         
     var params = {
-        'action' : 'render_userlist',
+        'action' : 'render_optionlist',
         '_ajax_nonce': wpaccessLocal.nonce,
         'role' : currentRoleID,
         'user' : currentUserID
@@ -237,7 +238,7 @@ mvbam_object.prototype.configureElements = function(){
     this.postPage();
     //execute hooks
     for(var i in this.hooks['tabs-loaded']){
-        i();
+        this.hooks['tabs-loaded'][i].call();
     }
 }
 
@@ -251,6 +252,7 @@ mvbam_object.prototype.configureConfigTab = function(){
         lineNumbers: true
     });
 }
+
 mvbam_object.prototype.configureMainMenu = function(){
     
     var _this = this;
@@ -436,16 +438,16 @@ mvbam_object.prototype.configureCapabilities = function(){
     //add user to blog
     jQuery('#add-user-toblog').bind('click', function(){
         var params = {
-                'action' : 'mvbam',
-                'sub_action' : 'add_blog_admin',
-                '_ajax_nonce': wpaccessLocal.nonce,
-            };
-            jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
-                if (data.status != 'success'){
-                    //TODO -Implement error
-                    alert(data.message);
-                }
-            }, 'json');
+            'action' : 'mvbam',
+            'sub_action' : 'add_blog_admin',
+            '_ajax_nonce': wpaccessLocal.nonce,
+        };
+        jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
+            if (data.status != 'success'){
+                //TODO -Implement error
+                alert(data.message);
+            }
+        }, 'json');
     });
     
 }
@@ -648,6 +650,7 @@ mvbam_object.prototype.deleteRole = function(role){
                 _this.getRoleOptionList(jQuery('#role option:first').val());
             }
             jQuery('#role option[value="'+role+'"]').remove();
+            _this.toggleUserSelector();
         });
         jQuery( this ).dialog( "close" );
     }
@@ -690,6 +693,18 @@ mvbam_object.prototype.changeRole = function(){
     var currentRoleID = jQuery('#role').val();
     this.getRoleOptionList(currentRoleID); 
     this.formChanged = 0;
+    
+    this.toggleUserSelector();
+}
+
+mvbam_object.prototype.toggleUserSelector = function(){
+    
+    var currentRoleID = jQuery('#role').val();
+    if (currentRoleID == '_visitor'){
+        jQuery('.misc-user-section').hide();
+    }else{
+        jQuery('.misc-user-section').show();
+    }
 }
 
 mvbam_object.prototype.changeUser = function(){
@@ -831,14 +846,16 @@ mvbam_object.prototype.saveInfo = function(obj, pi, type, id, apply){
         'action' : 'mvbam',
         'sub_action' : 'save_info',
         '_ajax_nonce': wpaccessLocal.nonce,
-        'type' : type,
         'role' : jQuery('#current_role').val(),
         'user' : jQuery('#current_user').val(),
-        'restrict' : jQuery('input[name="restrict_access"]', pi).attr('checked'),
-        'restrict_front' : jQuery('input[name="restrict_front_access"]', pi).attr('checked'),
-        'exclude_page' : jQuery('input[name="exclude_page"]', pi).attr('checked'),
-        'restrict_expire' : jQuery('#restrict_expire', pi).val(),
-        'id' : id,
+        'info' : {
+            'id' : id,
+            'type' : type,
+            'restrict' : jQuery('input[name="restrict_access"]', pi).attr('checked'),
+            'restrict_front' : jQuery('input[name="restrict_front_access"]', pi).attr('checked'),
+            'exclude_page' : jQuery('input[name="exclude_page"]', pi).attr('checked'),
+            'restrict_expire' : jQuery('#restrict_expire', pi).val()
+        },
         'apply' : apply,
         'apply_all_cb' : (jQuery('#hide-apply-all').attr('checked') ? 1 : 0)
     }
@@ -1084,11 +1101,14 @@ mvbam_object.prototype.initRoleNameRow = function(obj){
 
 //**********************************************
 
+
+
 jQuery(document).ready(function(){
     
     try{
+        
         mObj = new mvbam_object();
-    
+
         jQuery('.change-role').bind('click', function(e){
             e.preventDefault();
             jQuery('div #role-select').show();

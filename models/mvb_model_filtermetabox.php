@@ -69,7 +69,7 @@ class mvb_Model_FilterMetabox extends mvb_Abstract_Filter {
                     foreach ($wp_meta_boxes['dashboard'] as $position => $metaboxes) {
                         foreach ($metaboxes as $priority => $metaboxes1) {
                             foreach ($metaboxes1 as $metabox => $data) {
-                                if ($this->user_conf->issetMetabox('dashboard-' . $metabox)) {
+                                if ($this->user_conf->hasMetabox('dashboard-' . $metabox)) {
                                     unset($wp_meta_boxes['dashboard'][$position][$priority][$metabox]);
                                 }
                             }

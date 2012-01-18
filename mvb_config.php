@@ -43,7 +43,7 @@ define('WPACCESS_CACHE_DIR', WPACCESS_BASE_DIR . 'temp'); //cache dir
 
 define('WPACCESS_FTIME_MESSAGE', WPACCESS_PREFIX . 'first_time');
 
-define('WPACCESS_CACHE_STATUS', 'OFF');
+define('WPACCESS_CACHE_STATUS', 'ON');
 
 load_plugin_textdomain('aam', false, WPACCESS_DIRNAME . '/langs');
 

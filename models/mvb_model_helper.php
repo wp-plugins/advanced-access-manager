@@ -125,18 +125,6 @@ class mvb_Model_Helper {
 	}
 
 	/**
-	 * Clear cache
-	 * 
-	 * Is used during do_save
-	 * 
-	 * @see mvb_Model_Manager->do_save
-	 */
-	public static function clearCache() {
-
-		self::$config_cache = array();
-	}
-
-	/**
 	 * Initiate HTTP request
 	 * 
 	 * @param string $url Requested URL
@@ -203,24 +191,6 @@ class mvb_Model_Helper {
 	}
 
 	/**
-	 * Parse given date
-	 * 
-	 * @param string $date
-	 * @return string 
-	 */
-	public static function paserDate($date) {
-
-		if (trim($date)) {
-			$date = strtotime($date);
-		}
-		if ($date <= time()) {
-			$date = '';
-		}
-
-		return $date;
-	}
-
-	/**
 	 * Get Highest User Level according to set of capabilities
 	 * 
 	 * @param array $cap_list 
@@ -237,6 +207,20 @@ class mvb_Model_Helper {
 
 		return $highest;
 	}
+        
+        /**
+         *
+         * @param type $f_config
+         * @param type $s_config
+         * @return type 
+         */
+        public static function isLowerLevel($f_config, $s_config){
+            
+            $f = self::getHighestUserLevel($f_config->getCapabilities());
+            $s = self::getHighestUserLevel($s_config->getCapabilities());
+            
+            return ($f <= $s ? TRUE : FALSE);
+        }
 
 	/**
 	 *

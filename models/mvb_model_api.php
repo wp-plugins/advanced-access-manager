@@ -28,26 +28,6 @@
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
 final class mvb_Model_API {
-    /**
-     * No Restrictions
-     */
-    const RESTRICT_NO = 0;
-
-    /**
-     * Restrict Backend
-     */
-    const RESTRICT_BACK = 1;
-
-    /**
-     * Restrict Frontend
-     */
-    const RESTRICT_FRONT = 2;
-
-    /**
-     * Rescrict Both Sides
-     */
-    const RESTRICT_BOTH = 3;
-
 
     /**
      * Cache current blog object
@@ -64,6 +44,14 @@ final class mvb_Model_API {
      * @var array
      */
     protected static $role_cache;
+
+    /**
+     * Current User's Object
+     * 
+     * @access protected
+     * @var object
+     */
+    protected static $current_user;
 
     /**
      * Check if is multisite network panel is used now
@@ -162,19 +150,19 @@ final class mvb_Model_API {
 
         return self::$current_blog;
     }
-    
+
     /**
      * Set current blog
      * 
      * @param int $blog_id
      * @return bool
      */
-    public static function setCurrentBlog($blog_id){
-        
-        if ($blog = self::getBlog($blog_id)){
+    public static function setCurrentBlog($blog_id) {
+
+        if ($blog = self::getBlog($blog_id)) {
             self::$current_blog = $blog;
         }
-        
+
         return ($blog ? TRUE : FALSE);
     }
 
@@ -209,45 +197,29 @@ final class mvb_Model_API {
      * 
      * @param int $user_id
      * @param array $force_roles
-     * @return object Return object mvb_Model_Config
-     * @todo $user->ID should be change to something like $user->isError()
+     * @return object
      */
     public static function getUserAccessConfig($user_id, $force_roles = FALSE) {
 
-        $user = new mvb_Model_User($user_id);
+        $config = new mvb_Model_UserConfig($user_id);
 
-        if (isset($user->ID)) {
-            $user_roles = (is_array($force_roles) ? $force_roles : $user->getRoles());
-            $conf = new mvb_Model_Config();
-
-            foreach ($user_roles as $role) {
-                $conf->mergeConfigs(self::getRoleAccessConfig($role));
-            }
-
-            //TODO - crap
-            $u_conf = get_user_meta($user_id, WPACCESS_PREFIX . 'options', TRUE);
-
-            if (!$u_conf){
-                $u_conf = mvb_Model_Config::getDefaultConfig();
-                $u_conf->menu = $conf->getMenu();
-                $u_conf->metaboxes = $conf->getMetaboxes();
-                $u_conf->capabilities = $conf->getCapabilities();
-            }elseif(!is_object($u_conf)){
-                $u_conf = (object) $u_conf;
-            }
-            
-            $u_conf->restrictions = self::getRestrictions($user_id);
-            $u_conf->menu_order = get_user_meta($user_id, WPACCESS_PREFIX . 'menu_order', TRUE);
-            $conf->mergeConfigs(new mvb_Model_Config($u_conf), TRUE);
-            
-            //generate access config
-            $conf->loadAccessConfig();
-            
+        if (!$config->getID()) { //user is logged in
+            $config = new mvb_Model_RoleConfig('_visitor');
         } else {
-            Throw new Exception('User with ID ' . $user_id . ' does not exist');
+            if (is_array($force_roles)) {
+                $role_list = $force_roles;
+            } else {
+                $role_list = $config->getUser()->getRoles();
+            }
+            $m_config = mvb_Model_API::getRoleAccessConfig(array_shift($role_list));
+            foreach($role_list as $role){
+                mvb_merge_configs($m_config, mvb_Model_API::getRoleAccessConfig($role));
+            }
+
+            mvb_merge_configs($config, $m_config);
         }
 
-        return $conf;
+        return $config;
     }
 
     /**
@@ -258,112 +230,7 @@ final class mvb_Model_API {
      */
     public static function getRoleAccessConfig($role) {
 
-        if (!self::$role_cache) {
-            $temp = self::getBlogOption(WPACCESS_PREFIX . 'options', array());
-            $roles = self::getRoleList(TRUE);
-            $menu_order = self::getBlogOption(WPACCESS_PREFIX . 'menu_order', array());
-
-            foreach ($roles as $role_name => $data) {
-                if (!isset($temp[$role_name])) {
-                    $temp[$role_name] = mvb_Model_Config::getDefaultConfig();
-                } elseif (!is_object($temp[$role_name])) {//TODO - Remove from commercial version
-                    $temp[$role_name] = (object) $temp[$role_name];
-                }
-                $temp[$role_name]->capabilities = $data['capabilities'];
-                $temp[$role_name]->restrictions = self::getRestrictions($role_name, 'role');
-                $temp[$role_name]->menu_order = (isset($menu_order[$role_name]) ? $menu_order[$role_name] : array());
-            }
-
-            self::$role_cache = $temp;
-        }
-
-        //check if required role present
-        if (!isset(self::$role_cache[$role])) {
-            self::$role_cache[$role] = mvb_Model_Config::getDefaultConfig();
-        }
-
-        return new mvb_Model_Config(self::$role_cache[$role]);
-    }
-
-    /**
-     * Get Restriction array
-     * 
-     * @param int $id 
-     * @param string $type
-     * @return array 
-     */
-    protected function getRestrictions($id, $type = 'user') {
-
-        switch ($type) {
-            case 'user':
-                $rlist = get_user_meta($id, WPACCESS_PREFIX . 'restrictions', TRUE);
-                $rlist = (is_array($rlist) ? $rlist : array());
-                break;
-
-            case 'role':
-                if (isset(self::$role_cache[$id])) {
-                    $rlist = self::$role_cache[$id]->restrictions;
-                } else {
-                    $rlist = self::getBlogOption(WPACCESS_PREFIX . 'restrictions');
-                    $rlist = (isset($rlist[$id]) ? $rlist[$id] : array());
-                }
-                break;
-
-            default:
-                $rlist = array();
-                break;
-        }
-
-        /*
-         * Prepare list of all categories and subcategories
-         * Why is this dynamically?
-         * This part initiates each time because you can reogranize the
-         * category tree after appling restiction to category
-         */
-        if (isset($rlist['categories']) && is_array($rlist['categories'])) {
-            foreach ($rlist['categories'] as $cat_id => $restrict) {
-                //now check combination of options
-                $r = self::checkExpiration($restrict);
-                if ($r) {
-                    $rlist['categories'][$cat_id]['restrict'] = ($r & self::RESTRICT_BACK ? 1 : 0);
-                    $rlist['categories'][$cat_id]['restrict_front'] = ($r & self::RESTRICT_FRONT ? 1 : 0);
-                    //get list of all subcategories
-                    $taxonomy = mvb_Model_Helper::getTaxonomyByTerm($cat_id);
-                    $rlist['categories'][$cat_id]['taxonomy'] = $taxonomy;
-                    $cat_list = get_term_children($cat_id, $taxonomy);
-                    if (is_array($cat_list)) {
-                        foreach ($cat_list as $cid) {
-                            $rlist['categories'][$cid] = $rlist['categories'][$cat_id];
-                        }
-                    }
-                } else {
-                    $rlist['categories'][$cat_id]['restrict'] = 0;
-                    $rlist['categories'][$cat_id]['restrict_front'] = 0;
-                }
-            }
-        }
-        //prepare list of posts and pages
-        if (isset($rlist['posts']) && is_array($rlist['posts'])) {
-            foreach ($rlist['posts'] as $post_id => $restrict) {
-                //now check combination of options
-                $r = self::checkExpiration($restrict);
-                if ($r) {
-                    $rlist['posts'][$post_id]['restrict'] = ($r & self::RESTRICT_BACK ? 1 : 0);
-                    $rlist['posts'][$post_id]['restrict_front'] = ($r & self::RESTRICT_FRONT ? 1 : 0);
-                } else {
-                    if ($rlist['posts'][$post_id]['exclude_page']) {
-                        $rlist['posts'][$post_id] = array(
-                            'exclude_page' => 1
-                        );
-                    } else {
-                        $rlist['posts'][$post_id]['restrict'] = 0;
-                        $rlist['posts'][$post_id]['restrict_front'] = 0;
-                    }
-                }
-            }
-        }
-
-        return $rlist;
+        return new mvb_Model_RoleConfig($role);
     }
 
     /**
@@ -394,31 +261,25 @@ final class mvb_Model_API {
 
         return $roles;
     }
-
+    
     /**
-     * Check if access is expired according to date
+     * Get list of all capabilities in the system
      * 
-     * @param array $data
-     * @return int 
+     * @return type 
      */
-    public static function checkExpiration($data) {
-
-        $result = self::RESTRICT_NO;
-        if (($data['restrict'] || $data['restrict_front']) && !trim($data['expire'])) {
-            $result = ($data['restrict'] ? $result | self::RESTRICT_BACK : $result);
-            $result = ($data['restrict_front'] ? $result | self::RESTRICT_FRONT : $result);
-        } elseif (($data['restrict'] || $data['restrict_front']) && trim($data['expire'])) {
-            if ($data['expire'] >= time()) {
-                $result = ($data['restrict'] ? $result | self::RESTRICT_BACK : $result);
-                $result = ($data['restrict_front'] ? $result | self::RESTRICT_FRONT : $result);
-            }
-        } elseif (trim($data['expire'])) {
-            if (time() <= $data['expire']) {
-                $result = self::RESTRICT_BOTH; //TODO - Think about it
-            }
+    public static function getAllCapabilities(){
+        
+        $cap_list = array();
+        
+        foreach(self::getBlogOption('user_roles', array()) as $role => $data){
+            $cap_list = array_merge($cap_list, $data['capabilities']);
         }
-
-        return $result;
+        
+        if (isset($cap_list[WPACCESS_SADMIN_ROLE])) {
+            unset($cap_list[WPACCESS_SADMIN_ROLE]);
+        }
+        
+        return $cap_list;
     }
 
     /**
@@ -468,6 +329,53 @@ final class mvb_Model_API {
         }
 
         return $result;
+    }
+
+    /**
+     * Get current User Role
+     * 
+     * This function is for web developers how are developing own component for
+     * Advaced Access Manager. It'll return current User Role
+     * 
+     * @return string
+     */
+    public static function getCurrentEditableUserRole() {
+
+        if (isset($_REQUEST['role'])) {
+            $c_role = $_REQUEST['role'];
+        } else {
+            //TODO - Don't like $role_cache
+            $roles = (self::$role_cache ? self::$role_cache : self::getRoleList());
+            $t_list = array_keys($roles);
+            $c_role = $t_list[0];
+        }
+
+        return $c_role;
+    }
+
+    /**
+     * Return User Role List
+     * 
+     * @param int $user_id
+     * @return array
+     */
+    public static function getUserRoleList($user_id = FALSE) {
+
+        return self::getCurrentUser()->getRoles();
+    }
+
+    /**
+     * Get Current User
+     * 
+     * @return mvb_Model_User
+     */
+    public static function getCurrentUser() {
+
+        if (!self::$current_user) {
+            self::$current_user = new mvb_Model_User(get_current_user_id());
+        }
+
+        return self::$current_user;
     }
 
 }

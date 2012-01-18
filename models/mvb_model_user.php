@@ -67,6 +67,23 @@ class mvb_Model_User extends WP_User {
         return $result;
     }
 
+    function setRoles($roles) {
+        global $wp_version;
+
+        if (version_compare($wp_version, '3.2.1', '>')) {
+            $this->roles = $roles;
+        } else {
+            //TODO deprecated, will be deleted in release 1.5
+            if (is_object($this->data) && isset($this->data->{$this->cap_key})) {
+                $t = array();
+                foreach($roles as $role){
+                    $t[$role] = 1;
+                }
+                $this->data->{$this->cap_key} = $t;
+            } 
+        }
+    }
+
     /**
      * Return list of all capabilities registered in the System
      * 
@@ -74,12 +91,12 @@ class mvb_Model_User extends WP_User {
      */
     function getAllCaps() {
 
-        $caps = is_array($this->allcaps) ? $this->allcaps : array();
-        
-        if (isset($caps[WPACCESS_SADMIN_ROLE])){
+        $caps = (is_array($this->allcaps) ? $this->allcaps : array());
+
+        if (isset($caps[WPACCESS_SADMIN_ROLE])) {
             unset($caps[WPACCESS_SADMIN_ROLE]);
         }
-        
+
         return $caps;
     }
 

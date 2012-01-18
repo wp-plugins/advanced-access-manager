@@ -111,7 +111,6 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
                     }
                 }
             }
-            // debug($r_menu);
         }
 
         return $r_menu;
@@ -152,12 +151,7 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
         $compare = $this->get_parts($menu);
         $c_params = array_intersect($parts, $compare);
         $result = FALSE;
-        /*
-          aam_debug($parts);
-          aam_debug($menu);
-          aam_debug($compare);
-          aam_debug($c_params);
-         */
+
         if (count($c_params) == count($parts)) { //equal menus
             $result = TRUE;
         } elseif (count($c_params) && ($parts[0] == $compare[0])) { //probably similar

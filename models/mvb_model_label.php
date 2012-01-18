@@ -160,7 +160,7 @@ class mvb_Model_Label {
         self::$labels['LABEL_116'] = __('Do you want to create a <b>Super Admin</b> Role to get access to ALL features?', 'aam');
         self::$labels['LABEL_117'] = __('Import Configurations', 'aam');
         self::$labels['LABEL_118'] = __('WARNING', 'aam');
-        self::$labels['LABEL_122'] = __('Advanced Access Manager requires WordPress 3.1 or newer. <a href="http://codex.wordpress.org/Upgrading_WordPress">Update now!</a>', 'aam');
+        self::$labels['LABEL_122'] = __('Advanced Access Manager requires WordPress 3.2 or newer. <a href="http://codex.wordpress.org/Upgrading_WordPress">Update now!</a>', 'aam');
         self::$labels['LABEL_123'] = __('Advanced Access Manager requires PHP 5.1.2 or newer', 'aam');
         self::$labels['LABEL_124'] = __('Empty Capability', 'aam');
         self::$labels['LABEL_125'] = __('Current Capability can not be deleted', 'aam');

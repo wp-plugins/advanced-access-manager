@@ -341,7 +341,10 @@ class mvb_Model_Ajax {
 
         $m = new mvb_Model_Role();
         $new_role = ($role ? $role : $_REQUEST['role']);
-        $result = $m->createNewRole($new_role);
+        $result = $m->createNewRole($new_role, array(
+            'read' => 1,
+            'level_0' => 1)
+        );
         if ($result['result'] == 'success') {
             $m = new mvb_Model_Manager($this->pObj, $result['new_role']);
             $content = $m->renderDeleteRoleItem($result['new_role'], array('name' => $role));
@@ -486,7 +489,7 @@ class mvb_Model_Ajax {
         if ($cap) {
             $cap = sanitize_title_with_dashes($cap);
             $cap = str_replace('-', '_', $cap);
-            $capList = $this->pObj->user->getAllCaps();
+            $capList = mvb_Model_API::getCurrentUser()->getAllCaps();
 
             if (!isset($capList[$cap])) { //create new capability
                 $roles = mvb_Model_API::getRoleList(FALSE);
@@ -536,6 +539,7 @@ class mvb_Model_Ajax {
                     'message' => 'Capability ' . $_POST['cap'] . ' already exists'
                 );
             }
+            mvb_Model_Cache::clearCache();
         } else {
             $result = array(
                 'status' => 'error',
@@ -569,6 +573,7 @@ class mvb_Model_Ajax {
             $result = array(
                 'status' => 'success'
             );
+            mvb_Model_Cache::clearCache();
         } else {
             $result = array(
                 'status' => 'error',
@@ -795,7 +800,7 @@ class mvb_Model_Ajax {
                         $restiction = $config->getRestriction('post', $id);
                         $checked = ($restiction['restrict'] ? 'checked' : '');
                         $checked_front = ($restiction['restrict_front'] ? 'checked' : '');
-                        $exclude = ($restiction['exclude_page'] ? 'checked' : '');
+                        $exclude = ($config->hasExclude($id) ? 'checked' : '');
                         $expire = ($restiction['expire'] ? date('m/d/Y', $restiction['expire']) : '');
                     }
                     $markerArray = array(
@@ -875,6 +880,74 @@ class mvb_Model_Ajax {
     }
 
     /**
+     *
+     * @param type $config
+     * @param type $info
+     * @return string 
+     */
+    protected function updateRestrictions($config, $info) {
+
+        $admin = (isset($info['restrict']) ? 1 : 0);
+        $front = (isset($info['restrict_front']) ? 1 : 0);
+        $exclude = (isset($info['exclude_page']) ? 1 : 0);
+        $expire = trim($info['restrict_expire']);
+        $result = array();
+
+        //Check if Restriction class exist.
+        //Note for hacks : Better will be to buy an add-on for $5 because on
+        //next release I'll change the checking class
+        $limit = WPACCESS_RESTRICTION_LIMIT;
+        if (class_exists('aamer_aam_extend_restriction')) {
+            $limit = apply_filters(WPACCESS_PREFIX . 'restrict_limit', $limit);
+        }
+
+        $rests = $config->getRestrictions();
+        switch ($info['type']) {
+            case 'post':
+                $count = (isset($rests['posts']) ? count($rests['posts']) : 0);
+                if ($exclude) {
+                    $config->addExclude($info['id']);
+                } else {
+                    $config->deleteExclude($info['id']);
+                }
+                break;
+
+            case 'taxonomy':
+                $count = (isset($rests['categories']) ? count($rests['categories']) : 0);
+                break;
+
+            default:
+                break;
+        }
+        if (!$config->hasRestriction($info['type'], $info['id'])) {
+            $count++;
+        }
+
+        if ($limit == -1 || $count <= $limit) {
+
+            if ($admin || $front || $expire) {
+                $config->updateRestriction($info['type'], $info['id'], array(
+                    'restrict' => $admin,
+                    'restrict_front' => $front,
+                    'expire' => $expire)
+                );
+            } else {
+                $config->deleteRestriction($info['type'], $info['id']);
+            }
+            $result['status'] = 'success';
+        } else {
+            $result['status'] = 'error';
+            $result['message'] = mvb_Model_Label::get('upgrade_restriction');
+        }
+
+        if ($result['status'] == 'success') {
+            $config->saveConfig();
+        }
+
+        return $result;
+    }
+
+    /**
      * Save information about page/post/category restriction
      * 
      * @todo Junk
@@ -883,115 +956,26 @@ class mvb_Model_Ajax {
 
         $role = $_POST['role'];
         $user = $_POST['user'];
-        $apply = intval($_POST['apply']);
+        $apply_all = intval($_POST['apply']);
+        $exclude = (isset($_POST['exclude_page']) ? 1 : 0);
+        $apply_all_cb = intval($_POST['apply_all_cb']);
+        mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'hide_apply_all', $apply_all_cb);
 
         if ($user) {
-            $options = get_user_meta($user, WPACCESS_PREFIX . 'restrictions', TRUE);
-            $options[$role] = $options;
-            $role_list = array($role => 1);
+            $config = mvb_Model_API::getUserAccessConfig($user);
+            $result = $this->updateRestrictions($config, $_POST['info']);
         } else {
-            $options = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'restrictions');
-            if ($apply == 1) {//apply for all roles
-                $role_list = mvb_Model_API::getRoleList();
-            } else {
-                $role_list = array($role => 1);
-            }
-        }
-        if (!is_array($options)) {
-            $options = array();
-        }
-        $result = array('status' => 'error');
-        $id = intval($_POST['id']);
-        $type = $_POST['type'];
-
-        $restrict = (isset($_POST['restrict']) ? 1 : 0);
-        $restrict_front = (isset($_POST['restrict_front']) ? 1 : 0);
-        $expire = mvb_Model_Helper::paserDate($_POST['restrict_expire']);
-        $exclude = (isset($_POST['exclude_page']) ? 1 : 0);
-
-        $apply_all_cb = intval($_POST['apply_all_cb']);
-
-        mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'hide_apply_all', $apply_all_cb);
-        /*
-         * Check if Restriction class exist.
-         * Note for hacks : Better will be to buy an add-on for $5 because on
-         * next release I'll change the checking class
-         */
-        $limit = WPACCESS_RESTRICTION_LIMIT;
-        if (class_exists('aamer_aam_extend_restriction')) {
-            $limit = apply_filters(WPACCESS_PREFIX . 'restrict_limit', $limit);
-        }
-
-        foreach ($role_list as $role => $dummy) {
-            if ($role != WPACCESS_ADMIN_ROLE || mvb_Model_API::isSuperAdmin()) {
-                switch ($type) {
-                    case 'post':
-                        $count = 0;
-                        if (!isset($options[$role]['posts'])) {
-                            $options[$role]['posts'] = array();
-                        } else {//calculate how many restrictions
-                            foreach ($options[$role]['posts'] as $t) {
-                                if ($t['restrict'] || $t['restrict_front'] || $t['expire']) {
-                                    $count++;
-                                }
-                            }
-                        }
-                        $c_restrict = ($restrict + $restrict_front >= 1 ? 1 : 0);
-
-                        $no_limits = ( ($limit == -1) || ($count + $c_restrict <= $limit) ? TRUE : FALSE);
-                        if ($no_limits) {
-                            $options[$role]['posts'][$id] = array(
-                                'restrict' => $restrict,
-                                'restrict_front' => $restrict_front,
-                                'expire' => $expire,
-                                'exclude_page' => $exclude
-                            );
-
-                            if ($user) {
-                                update_user_meta($user, WPACCESS_PREFIX . 'restrictions', $options[$role]);
-                            } else {
-                                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'restrictions', $options);
-                            }
-                            $result = array('status' => 'success');
-                        } else {
-                            $result['message'] = mvb_Model_Label::get('upgrade_restriction');
-                        }
+            if ($apply_all) {
+                foreach (mvb_Model_API::getRoleList() as $role) {
+                    $config = mvb_Model_API::getRoleAccessConfig($role);
+                    $result = $this->updateRestrictions($config, $_POST['info']);
+                    if ($result['status'] == 'error') {
                         break;
-
-                    case 'taxonomy':
-                        $count = 0;
-                        if (!isset($options[$role]['categories'])) {
-                            $options[$role]['categories'] = array();
-                        } else {//calculate how many restrictions
-                            foreach ($options[$role]['categories'] as $t) {
-                                if ($t['restrict'] || $t['restrict_front'] || $t['expire']) {
-                                    $count++;
-                                }
-                            }
-                        }
-                        $c_restrict = ($restrict + $restrict_front >= 1 ? 1 : 0);
-                        $no_limits = ( ($limit == -1) || $count + $c_restrict <= $limit ? TRUE : FALSE);
-                        if ($no_limits) {
-                            $options[$role]['categories'][$id] = array(
-                                'restrict' => $restrict,
-                                'restrict_front' => $restrict_front,
-                                'expire' => $expire
-                            );
-                            if ($user) {
-                                update_user_meta($user, WPACCESS_PREFIX . 'restrictions', $options[$role]);
-                            } else {
-                                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'restrictions', $options);
-                            }
-
-                            $result = array('status' => 'success');
-                        } else {
-                            $result['message'] = mvb_Model_Label::get('upgrade_restriction');
-                        }
-                        break;
-
-                    default:
-                        break;
+                    }
                 }
+            } else {
+                $config = mvb_Model_API::getRoleAccessConfig($role);
+                $result = $this->updateRestrictions($config, $_POST['info']);
             }
         }
 
@@ -1045,24 +1029,26 @@ class mvb_Model_Ajax {
         $role = $_POST['role'];
         $user = $_POST['user'];
 
-        if ($user) {
-            update_user_meta($user, WPACCESS_PREFIX . 'menu_order', $_POST['menu']);
-        } else {
-            $menu_order = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'menu_order', array());
-            $roles = mvb_Model_API::getRoleList();
 
+        if ($user) {
+            $config = mvb_Model_API::getUserAccessConfig($user);
+            $config->setMenuOrder($_POST['menu']);
+            $config->saveConfig();
+        } else {
             if ($apply_all) {
-                foreach ($roles as $role => $dummy) {
-                    $menu_order[$role] = $_POST['menu'];
+                foreach (mvb_Model_API::getRoleList() as $role) {
+                    $config = mvb_Model_API::getRoleAccessConfig($role);
+                    $config->setMenuOrder($_POST['menu']);
+                    $config->saveConfig();
                 }
             } else {
-                if (isset($roles[$role])) {
-                    $menu_order[$role] = $_POST['menu'];
-                }
+                $config = mvb_Model_API::getRoleAccessConfig($role);
+                $config->setMenuOrder($_POST['menu']);
+                $config->saveConfig();
             }
-
-            mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'menu_order', $menu_order);
         }
+
+        mvb_Model_Cache::clearCache();
 
         return array('status' => 'success');
     }
@@ -1146,8 +1132,8 @@ class mvb_Model_Ajax {
         $ok = add_user_to_blog($blog_id, $user_id, WPACCESS_ADMIN_ROLE);
 
         if ($ok) {
-            $this->pObj->user->add_role(WPACCESS_ADMIN_ROLE);
-            $this->pObj->user->add_role(WPACCESS_SADMIN_ROLE);
+            mvb_Model_API::getCurrentUser()->add_role(WPACCESS_ADMIN_ROLE);
+            mvb_Model_API::getCurrentUser()->add_role(WPACCESS_SADMIN_ROLE);
             $result = array('status' => 'success', 'message' => mvb_Model_Label::get('LABEL_154'));
         } else {
             $result = array('status' => 'error', 'message' => mvb_Model_Label::get('LABEL_155'));
@@ -1175,7 +1161,7 @@ class mvb_Model_Ajax {
                     'new_role' => WPACCESS_SADMIN_ROLE
                 );
             } else {
-                $result = $this->create_role('Super Admin', FALSE);
+                $result = $this->create_role('Super Admin', mvb_Model_API::getAllCapabilities());
             }
 
             if ($result['result'] == 'success') {
@@ -1186,13 +1172,6 @@ class mvb_Model_Ajax {
                     $this->assign_role(WPACCESS_SADMIN_ROLE, $user_id);
                 }
                 $this->deprive_role($user_id, WPACCESS_SADMIN_ROLE, WPACCESS_ADMIN_ROLE);
-                //get all capability list and assign them to super admin role
-                $roles = mvb_Model_API::getRoleList(FALSE);
-                $roles[WPACCESS_SADMIN_ROLE] = array(
-                    'name' => mvb_Model_Label::get('LABEL_126'),
-                    'capabilities' => $this->pObj->user->getAllCaps()
-                );
-                mvb_Model_API::updateBlogOption('user_roles', $roles);
                 mvb_Model_API::updateBlogOption(WPACCESS_FTIME_MESSAGE, $answer);
             } else {
                 $result = array('result' => 'error');

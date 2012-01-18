@@ -117,10 +117,10 @@ class mvb_Model_Manager {
         } else {
             $this->config = mvb_Model_API::getRoleAccessConfig($this->currentRole);
         }
-
+        
         //get cache. Compatible with version previouse versions
-        $cache = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'cache', array());
-        if (is_array($cache) && count($cache)) { //yeap this is new version
+        $cache = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'cache', NULL);
+        if (is_array($cache)) { //yeap this is new version
             $this->cache = $cache;
         } else { //TODO - will be deprecated
             $cache = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'options', array());
@@ -130,25 +130,21 @@ class mvb_Model_Manager {
 
         $this->userSummary = count_users();
     }
-
+    
     /**
      *
      * @param type $role
-     * @return boolean 
+     * @return bool
      */
     protected function setCurrentRole($role) {
 
-        $result = TRUE;
         if ($this->role_exists($role)) {
             $this->currentRole = $role;
-        } elseif (count($this->roles)) {
-            $t_list = array_keys($this->roles);
-            $this->currentRole = $t_list[0];
         } else {
-            $result = FALSE;
+            $this->currentRole = mvb_Model_API::getCurrentEditableUserRole();
         }
 
-        return $result;
+        return TRUE;
     }
 
     /**
@@ -253,60 +249,30 @@ class mvb_Model_Manager {
     }
 
     /**
-     *
-     * @param type $user_id 
+     * Save parameters to database
+     * 
      */
     function do_save() {
-        global $menu, $submenu, $wp_meta_boxes;
 
         if (isset($_POST['submited'])) {
-
             $params = (isset($_POST['wpaccess']) ? $_POST['wpaccess'] : array());
-            mvb_Model_Helper::clearCache();
             //overwrite current blog
             //TODO - maybe there is better way
             if (isset($_GET['site'])) {
                 mvb_Model_API::setCurrentBlog($_GET['site']);
             }
-            //TODO - This just a quick solution
-            if ($this->currentUser) {
-                $config = (object) array(
-                            'menu' => (isset($params['menu']) ? $params['menu'] : array()),
-                            'metaboxes' => (isset($params['metabox']) ? $params['metabox'] : array()),
-                            'capabilities' => (isset($params['advance']) ? $params['advance'] : array())
-                );
-                update_user_meta($this->currentUser, WPACCESS_PREFIX . 'options', $config);
 
-                //TODO - duplication Maybe better will be add saveConfig to mogel_Config
-                $this->config = mvb_Model_API::getUserAccessConfig($this->currentUser);
-            } else {
-                $config = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'options', array());
-                $config[$this->currentRole] = (object) array(
-                            'menu' => (isset($params['menu']) ? $params['menu'] : array()),
-                            'metaboxes' => (isset($params['metabox']) ? $params['metabox'] : array()),
-                );
-                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'options', $config);
+            $dump = isset($params['menu']) ? $params['menu'] : array();
+            $this->config->setMenu($dump);
+            $dump = isset($params['metabox']) ? $params['metabox'] : array();
+            $this->config->setMetaboxes($dump);
+            $dump = isset($params['advance']) ? $params['advance'] : array();
+            $this->config->setCapabilities($dump);
 
-                //Update Role's Capabilities
-                $roles = mvb_Model_API::getRoleList(FALSE);
-                $cap_list = (isset($params['advance']) ? $params['advance'] : array());
-                if (isset($roles[$this->currentRole])) {
-                    $roles[$this->currentRole]['capabilities'] = $cap_list;
-                    //and for already grabed capabilities
-                    $this->roles[$this->currentRole]['capabilities'] = $cap_list;
-                    mvb_Model_API::updateBlogOption('user_roles', $roles);
-                }
-
-                $this->config = mvb_Model_API::getRoleAccessConfig($this->currentRole);
-            }
+            $this->config->saveConfig();
 
             //save global access congif
             mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'access_config', $params['access_config']);
-
-            if (WPACCESS_CACHE_STATUS == 'ON') {
-                $cache = $this->pObj->getCacheObject();
-                $cache->clean(Zend_Cache::CLEANING_MODE_ALL);
-            }
         }
     }
 
@@ -528,7 +494,7 @@ class mvb_Model_Manager {
         /*
          * Third Tab - Advance Settings
          */
-        $capList = $this->pObj->user->getAllCaps();
+        $capList = mvb_Model_API::getCurrentUser()->getAllCaps(); //TODO ?
         ksort($capList);
 
         $listTemplate = $this->templObj->retrieveSub('CAPABILITY_LIST', $template);
