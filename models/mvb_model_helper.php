@@ -306,7 +306,7 @@ class mvb_Model_Helper {
 	 * @param string $cap
 	 * @return string
 	 */
-	function getCapabilityHumanTitle($cap) {
+	public static function getCapabilityHumanTitle($cap) {
 
 		$title = array();
 		$parts = preg_split('/_/', $cap);

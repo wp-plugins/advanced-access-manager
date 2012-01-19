@@ -75,7 +75,7 @@ class mvb_Model_UserConfig extends mvb_Abstract_Config {
     protected function getConfig() {
 
         $config = get_user_meta($this->getID(), WPACCESS_PREFIX . 'config', TRUE);
-        
+
         if (!$config) { //TODO - Should be deleted in next release is deprecated
             $options = (object) $this->getOldData(WPACCESS_PREFIX . 'options');
             $restric = $this->getOldData(WPACCESS_PREFIX . 'restrictions');

@@ -432,14 +432,14 @@ abstract class mvb_Abstract_Config {
         $rests = $this->getRestrictions();
         switch ($type) {
             case 'post':
-                if (!is_array($rests['posts'])) {
+                if (!isset($rests['posts'])) {
                     $rests['posts'] = array();
                 }
                 $rests['posts'][$id] = $data;
                 break;
 
             case 'taxonomy':
-                if (!is_array($rests['categories'])) {
+                if (!isset($rests['categories'])) {
                     $rests['categories'] = array();
                 }
                 $rests['categories'][$id] = $data;

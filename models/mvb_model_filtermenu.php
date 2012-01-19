@@ -32,25 +32,7 @@
  */
 class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
 
-    private $user_conf;
-
-    /*
-     * Main Object
-     * 
-     * @var object
-     * @access protected
-     */
-    protected $pObj;
-
-    /**
-     *
-     * @param type $pObj 
-     */
-    function __construct($pObj) {
-
-        $this->pObj = $pObj;
-
-        $this->user_conf = $this->pObj->getUserConfig();
+    function __construct() {
 
         $keyParams = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'key_params', array());
 
@@ -66,7 +48,7 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
     function manage($area = '') {
         global $menu, $submenu;
 
-        foreach ($this->user_conf->getMenu() as $main => $data) {
+        foreach (mvb_Model_AccessControl::getUserConf()->getMenu() as $main => $data) {
             if (isset($data['whole']) && ($data['whole'] == 1)) {
                 $this->unsetMainMenuItem($main);
             } elseif (isset($data['sub']) && is_array($data['sub'])) {
@@ -90,7 +72,7 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
 
         $r_menu = $menu;
         ksort($r_menu);
-        $m_order = $this->user_conf->getMenuOrder();
+        $m_order = mvb_Model_AccessControl::getUserConf()->getMenuOrder();
 
         if (is_array($menu) && count($m_order)) {
             $w_menu = array();
@@ -129,7 +111,7 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
             //get base file
             $parts = $this->get_parts($requestedMenu);
             //aam_debug($this->cParams[$role]['menu']);
-            foreach ($this->user_conf->getMenu() as $menu => $sub) {
+            foreach (mvb_Model_AccessControl::getUserConf()->getMenu() as $menu => $sub) {
                 if ($this->compareMenus($parts, $menu) && isset($sub['whole'])) {
                     return FALSE;
                 }
@@ -146,6 +128,12 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
         return TRUE;
     }
 
+	/**
+	 *
+	 * @param type $parts
+	 * @param type $menu
+	 * @return boolean 
+	 */
     function compareMenus($parts, $menu) {
 
         $compare = $this->get_parts($menu);
@@ -170,6 +158,11 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
         return $result;
     }
 
+	/**
+	 *
+	 * @param string $requestedMenu
+	 * @return type 
+	 */
     function get_parts($requestedMenu) {
 
         //this is for only one case - edit.php
@@ -188,6 +181,12 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
         return $result;
     }
 
+	/**
+	 *
+	 * @global type $menu
+	 * @global type $submenu
+	 * @param type $menuItem 
+	 */
     function unsetMainMenuItem($menuItem) {
         global $menu, $submenu;
 
@@ -201,6 +200,13 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
         }
     }
 
+	/**
+	 *
+	 * @global type $submenu
+	 * @param type $dummy
+	 * @param type $submenuItem
+	 * @return boolean 
+	 */
     function unsetSubMenuItem($dummy, $submenuItem) {
         global $submenu;
 

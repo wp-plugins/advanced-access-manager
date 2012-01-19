@@ -56,7 +56,7 @@ class mvb_Model_ConfigPress {
         }
 
         mvb_Model_Label::initLabels();
-        Throw new Exception(mvb_Model_Label::get('LABEL_127'));
+        wp_die(mvb_Model_Label::get('LABEL_127'));
     }
 
     /**
@@ -68,15 +68,18 @@ class mvb_Model_ConfigPress {
     protected function parseRedirect($redirect) {
 
         if (filter_var($redirect, FILTER_VALIDATE_URL)) {
-            wp_safe_redirect($redirect);
+            wp_redirect($redirect);
+            exit;
         } elseif (is_int($redirect)) {
-            wp_safe_redirect(get_post_permalink($redirect));
+            wp_redirect(get_post_permalink($redirect));
+            exit;
         } elseif (is_object($redirect) && isset($redirect->userFunc)) {
             $func = trim($redirect->userFunc);
-            if (is_string($func) && is_callable($func)) {
+             if (is_string($func) && is_callable($func)) {
                 call_user_func($func);
             }
         }
+        
     }
 
 }

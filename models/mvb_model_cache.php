@@ -40,7 +40,7 @@ class mvb_Model_Cache {
     public static function getCacheData($type, $id) {
 
         $data = FALSE;
-        if (WPACCESS_CACHE_STATUS == 'ON') {
+        if (self::canBeCached()) {
             $cache = self::getCacheObject();
             $data = $cache->load($type . '_' . $id);
         }
@@ -49,14 +49,29 @@ class mvb_Model_Cache {
     }
 
     /**
+     * Check if object can be cached
+     * 
+     * @return boolean 
+     */
+    public static function canBeCached() {
+
+        $result = FALSE;
+        if (WPACCESS_CACHE_STATUS == 'ON' && is_writable(WPACCESS_CACHE_DIR)) {
+            $result = TRUE;
+        }
+
+        return $result;
+    }
+
+    /**
      *
      * @param type $type
      * @param type $id
      * @param type $data 
      */
-    public function saveCacheData($type, $id, $data) {
+    public static function saveCacheData($type, $id, $data) {
 
-        if (WPACCESS_CACHE_STATUS == 'ON') {
+        if (self::canBeCached()) {
             $cache = self::getCacheObject();
             $cache->save($data, $type . '_' . $id);
         }
@@ -87,9 +102,9 @@ class mvb_Model_Cache {
     /**
      * Clear Cache
      */
-    public function clearCache() {
+    public static function clearCache() {
 
-        if (WPACCESS_CACHE_STATUS == 'ON') {
+        if (self::canBeCached()) {
             $cache = self::getCacheObject();
             $cache->clean(Zend_Cache::CLEANING_MODE_ALL);
         }

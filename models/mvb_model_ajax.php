@@ -64,8 +64,6 @@ class mvb_Model_Ajax {
      */
     public function process() {
 
-        error_reporting(0); //overwrite debug = TRUE;
-
         switch ($this->action) {
             case 'apply_all':
                 $result = $this->apply_all();
@@ -504,7 +502,7 @@ class mvb_Model_Ajax {
                 if ($user) {
                     $conf = mvb_Model_API::getUserAccessConfig($user);
                     $conf->addCapability($cap);
-                    update_user_meta($user, WPACCESS_PREFIX . 'options', $conf->compileConfig());
+                    $conf->saveConfig();
                 }
                 //save this capability as custom created
                 $custom_caps = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'custom_caps');
@@ -966,7 +964,7 @@ class mvb_Model_Ajax {
             $result = $this->updateRestrictions($config, $_POST['info']);
         } else {
             if ($apply_all) {
-                foreach (mvb_Model_API::getRoleList() as $role) {
+                foreach (mvb_Model_API::getRoleList() as $role => $dummy) {
                     $config = mvb_Model_API::getRoleAccessConfig($role);
                     $result = $this->updateRestrictions($config, $_POST['info']);
                     if ($result['status'] == 'error') {
@@ -1036,7 +1034,7 @@ class mvb_Model_Ajax {
             $config->saveConfig();
         } else {
             if ($apply_all) {
-                foreach (mvb_Model_API::getRoleList() as $role) {
+                foreach (mvb_Model_API::getRoleList() as $role => $dummy) {
                     $config = mvb_Model_API::getRoleAccessConfig($role);
                     $config->setMenuOrder($_POST['menu']);
                     $config->saveConfig();

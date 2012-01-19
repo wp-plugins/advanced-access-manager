@@ -34,28 +34,6 @@ class mvb_Model_FilterMetabox extends mvb_Abstract_Filter {
 
     /**
      *
-     * @var type 
-     */
-    private $user_conf;
-    
-    /**
-     *
-     * @var type 
-     */
-    protected $pObj;
-
-    /**
-     *
-     * @param type $pObj 
-     */
-    public function __construct($pObj) {
-
-        $this->pObj = $pObj;
-        $this->user_conf = $this->pObj->getUserConfig();
-    }
-
-    /**
-     *
      * @global type $wp_meta_boxes
      * @global type $post
      * @param type $area 
@@ -69,7 +47,7 @@ class mvb_Model_FilterMetabox extends mvb_Abstract_Filter {
                     foreach ($wp_meta_boxes['dashboard'] as $position => $metaboxes) {
                         foreach ($metaboxes as $priority => $metaboxes1) {
                             foreach ($metaboxes1 as $metabox => $data) {
-                                if ($this->user_conf->hasMetabox('dashboard-' . $metabox)) {
+                                if (mvb_Model_AccessControl::getUserConf()->hasMetabox('dashboard-' . $metabox)) {
                                     unset($wp_meta_boxes['dashboard'][$position][$priority][$metabox]);
                                 }
                             }
@@ -83,7 +61,7 @@ class mvb_Model_FilterMetabox extends mvb_Abstract_Filter {
                     foreach ($wp_meta_boxes[$post->post_type] as $position => $metaboxes) {
                         foreach ($metaboxes as $priority => $metaboxes1) {
                             foreach ($metaboxes1 as $metabox => $data) {
-                                if ($this->user_conf->issetMetabox($post->post_type . '-' . $metabox)) {
+                                if (mvb_Model_AccessControl::getUserConf()->hasMetabox($post->post_type . '-' . $metabox)) {
                                     unset($wp_meta_boxes[$post->post_type][$position][$priority][$metabox]);
                                 }
                             }

@@ -124,16 +124,6 @@ class mvb_Model_RoleConfig extends mvb_Abstract_Config {
         return $exclude;
     }
 
-    /**
-     * Return current User Object
-     * 
-     * @return mvb_Model_User
-     */
-    public function getUser() {
-
-        return $this->user;
-    }
-
 }
 
 ?>

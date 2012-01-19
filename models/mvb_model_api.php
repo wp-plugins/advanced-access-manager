@@ -215,10 +215,10 @@ final class mvb_Model_API {
             foreach($role_list as $role){
                 mvb_merge_configs($m_config, mvb_Model_API::getRoleAccessConfig($role));
             }
-
+            
             mvb_merge_configs($config, $m_config);
         }
-
+        
         return $config;
     }
 

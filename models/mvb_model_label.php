@@ -199,7 +199,7 @@ class mvb_Model_Label {
         self::$labels['LABEL_154'] = __('Administrator added Successfully', 'aam');
         self::$labels['LABEL_155'] = __('Failed to add new Administrator', 'aam');
         self::$labels['LABEL_156'] = __('You do not have installed <a href="http://whimba.org/add-ons" target="_blank">AAM MSAR Extend</a> Add-on. Settings Applies only for first ' . WPACCESS_APPLY_LIMIT . ' Blogs.', 'aam');
-        self::$labels['LABEL_80'] = __('Access Config', 'aam');
+        self::$labels['LABEL_80'] = __('Config Press', 'aam');
         self::$labels['LABEL_119'] = __('Current User', 'aam');
         self::$labels['LABEL_120'] = __('All Users', 'aam');
         self::$labels['LABEL_121'] = __('Delete current capability', 'aam');

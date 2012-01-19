@@ -642,7 +642,7 @@ class mvb_Model_Manager {
 
         switch ($type) {
             case 'submenu':
-                $c_menu = &$this->config->getMenu();
+                $c_menu = $this->config->getMenu();
                 if (isset($c_menu[$args[0]])) {
                     if (isset($c_menu[$args[0]]['sub'][$args[1]]) ||
                             (isset($c_menu[$args[0]]['whole']) && $c_menu[$args[0]]['whole'])) {
@@ -652,7 +652,7 @@ class mvb_Model_Manager {
                 break;
 
             case 'menu':
-                $c_menu = &$this->config->getMenu();
+                $c_menu = $this->config->getMenu();
                 if (isset($c_menu[$args[0]]['whole']) && $c_menu[$args[0]]['whole']) {
                     $checked = 'checked';
                 }

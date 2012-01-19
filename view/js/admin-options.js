@@ -804,7 +804,7 @@ mvbam_object.prototype.loadInfo = function(event, type, id){
                 
             jQuery('.save-postinfo-all', pi).bind('click', function(event){
                 event.preventDefault();
-                if (!jQuery('#current_user').val()){
+                if (jQuery('#current_user').val() == 0){
                     if (_this.hideApplyAll == '1'){
                         _this.saveInfo(_this, pi, type, id, 1);
                     }else{

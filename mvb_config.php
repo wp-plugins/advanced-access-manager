@@ -18,12 +18,19 @@
 
  */
 
+error_reporting(E_ALL | E_STRICT);
+//ini_set('display_errors', FALSE);
+
+//load general files
+require_once('mvb_functions.php');
+
 /*
  * Core constants
  */
 define('WPACCESS_PREFIX', 'wpaccess_');
 define('WPACCESS_BASE_DIR', dirname(__FILE__) . '/');
 define('WPACCESS_DIRNAME', basename(WPACCESS_BASE_DIR));
+
 /*
  * Plugin constants
  */
@@ -50,8 +57,5 @@ load_plugin_textdomain('aam', false, WPACCESS_DIRNAME . '/langs');
 //configure include path for library
 $path = WPACCESS_BASE_DIR . 'library/';
 set_include_path(get_include_path() . PATH_SEPARATOR . $path);
-
-//load general files
-require_once('mvb_functions.php');
  
 ?>
