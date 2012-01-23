@@ -170,7 +170,6 @@ class mvb_Model_Ajax {
             $c_blog = mvb_Model_API::getCurrentBlog();
             $options = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'options', array());
             $morders = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'menu_order', array());
-            $usroles = mvb_Model_API::getBlogOption('user_roles', array());
             $kparams = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'key_params', array());
             $limit = WPACCESS_APPLY_LIMIT;
             /*
@@ -191,20 +190,9 @@ class mvb_Model_Ajax {
                             'url' => get_site_url($site->blog_id),
                             'prefix' => $wpdb->get_blog_prefix($site->blog_id))
                 );
-                /*
-                  $options1 = get_blog_option($site->blog_id, $blog_prefix . WPACCESS_PREFIX . 'options', array());
-                  $morders1 = get_blog_option($site->blog_id, $blog_prefix . WPACCESS_PREFIX . 'menu_order', array());
-                  $usroles1 = get_blog_option($site->blog_id, $blog_prefix . 'user_roles', array());
-                  $kparams1 = get_blog_option($site->blog_id, $blog_prefix . WPACCESS_PREFIX . 'key_params', array());
 
-                  $options1 = array_merge_recursive($options, $options1);
-                  $morders1 = array_merge_recursive($morders, $morders1);
-                  $usroles1 = array_merge_recursive($usroles, $usroles1);
-                  $kparams1 = array_merge_recursive($kparams, $kparams1);
-                 * */
                 mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'options', $options, $blog);
                 mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'menu_order', $morders, $blog);
-                mvb_Model_API::updateBlogOption('user_roles', $usroles, $blog);
                 mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'key_params', $kparams, $blog);
 
                 if (($limit != -1) && ($i + 1 > $limit)) {
@@ -504,13 +492,7 @@ class mvb_Model_Ajax {
                     $conf->addCapability($cap);
                     $conf->saveConfig();
                 }
-                //save this capability as custom created
-                $custom_caps = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'custom_caps');
-                if (!is_array($custom_caps)) {
-                    $custom_caps = array();
-                }
-                $custom_caps[] = $cap;
-                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'custom_caps', $custom_caps);
+
                 //render html
                 $tmpl = new mvb_Model_Template();
                 $templatePath = WPACCESS_TEMPLATE_DIR . 'admin_options.html';
@@ -525,8 +507,12 @@ class mvb_Model_Ajax {
                     '###cap_name###' => mvb_Model_Helper::getCapabilityHumanTitle($cap)
                 );
                 $titem = $tmpl->updateMarkers($markers, $itemTemplate);
-                $titem = $tmpl->replaceSub('CAPABILITY_DELETE', $tmpl->retrieveSub('CAPABILITY_DELETE', $titem), $titem);
 
+                if (mvb_Model_AccessControl::getUserConf()->getConfigPress()->getDeleteCapsParam() == 'true') {
+                    $titem = $tmpl->replaceSub('CAPABILITY_DELETE', $tmpl->retrieveSub('CAPABILITY_DELETE', $titem), $titem);
+                } else {
+                    $titem = $tmpl->replaceSub('CAPABILITY_DELETE', '', $titem);
+                }
                 $result = array(
                     'status' => 'success',
                     'html' => $tmpl->clearTemplate($titem)
@@ -556,15 +542,11 @@ class mvb_Model_Ajax {
         global $wpdb;
 
         $cap = trim($_POST['cap']);
-        $custom_caps = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'custom_caps');
-
-        if (in_array($cap, $custom_caps)) {
-            $roles = mvb_Model_API::getBlogOption('user_roles');
-            if (is_array($roles)) {
-                foreach ($roles as &$role) {
-                    if (isset($role['capabilities'][$cap])) {
-                        unset($role['capabilities'][$cap]);
-                    }
+        if (mvb_Model_AccessControl::getUserConf()->getConfigPress()->getDeleteCapsParam() == 'true') {
+            $roles = mvb_Model_API::getRoleList(FALSE);
+            foreach ($roles as $role => $data) {
+                if (isset($data['capabilities'][$cap])) {
+                    unset($roles[$role]['capabilities'][$cap]);
                 }
             }
             mvb_Model_API::updateBlogOption('user_roles', $roles);
@@ -699,7 +681,7 @@ class mvb_Model_Ajax {
             $taxonomies = get_object_taxonomies($post_type);
             foreach ($taxonomies as $taxonomy) {
                 if (is_taxonomy_hierarchical($taxonomy)) {
-                    $term_list = get_terms($taxonomy);
+                    $term_list = get_terms($taxonomy, array('parent' => $parent));
                     if (is_array($term_list)) {
                         foreach ($term_list as $term) {
                             $tree[] = $this->build_category($term);
@@ -1165,12 +1147,14 @@ class mvb_Model_Ajax {
             if ($result['result'] == 'success') {
                 //update current user role
                 if (!is_user_member_of_blog(get_current_blog_id())) {
-                    $this->add_blog_admin();
+                    $result = $this->add_blog_admin();
                 } else {
                     $this->assign_role(WPACCESS_SADMIN_ROLE, $user_id);
                 }
-                $this->deprive_role($user_id, WPACCESS_SADMIN_ROLE, WPACCESS_ADMIN_ROLE);
-                mvb_Model_API::updateBlogOption(WPACCESS_FTIME_MESSAGE, $answer);
+                if ($result['result'] == 'success') {
+                    $this->deprive_role($user_id, WPACCESS_SADMIN_ROLE, WPACCESS_ADMIN_ROLE);
+                    mvb_Model_API::updateBlogOption(WPACCESS_FTIME_MESSAGE, $answer);
+                }
             } else {
                 $result = array('result' => 'error');
             }
@@ -1192,14 +1176,13 @@ class mvb_Model_Ajax {
         $m->add_role($role);
     }
 
-    /*
+    /**
      * Delete User Role for other Users
      * 
      * @param int Skip User's ID
      * @param string User Role
      * @param string Role to Replace with
      */
-
     protected function deprive_role($skip_id, $role, $replace_role) {
         global $wpdb;
 

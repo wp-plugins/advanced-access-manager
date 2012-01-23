@@ -193,13 +193,13 @@ mvbam_object.prototype.getRoleOptionList = function(currentRoleID){
             '_ajax_nonce': wpaccessLocal.nonce,
             'role' : currentRoleID
         };
+        jQuery('#current_user').val(0);
         jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
             if (data.status == 'success'){
                 jQuery('#user').html(data.html);
                 jQuery('div #user-select').hide();
                 jQuery('.change-user').show();
                 jQuery('#current-user-display').html(jQuery('#user option:eq(0)').text());
-                jQuery('#current_user').val(0);
             }
         }, 'json');
     }, 'json');

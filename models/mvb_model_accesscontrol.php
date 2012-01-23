@@ -40,6 +40,15 @@ class mvb_Model_AccessControl {
      * @var type 
      */
     protected static $admin_menu = NULL;
+    
+    /**
+     * Clear cache
+     */
+    public static function clearCache(){
+        
+        self::$user_config = NULL;
+        self::$admin_menu = NULL;
+    }
 
     /**
      * Main function for checking if user has access to a page
@@ -80,7 +89,7 @@ class mvb_Model_AccessControl {
         } elseif (!mvb_Model_API::isSuperAdmin()) {
             if (is_category()) {
                 $cat_obj = $wp_query->get_queried_object();
-                if (!self::checkCategoryAccess($cat_obj->term_id)) {
+                if (self::checkCategoryAccess($cat_obj->term_id)) {
                     self::getUserConf()->getConfigPress()->doRedirect();
                 }
             } else {

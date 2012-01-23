@@ -57,6 +57,14 @@ abstract class mvb_Abstract_Config {
      * @access protected 
      */
     protected $id;
+    
+    /**
+     * Object type, weather it is User or Role
+     * 
+     * @var string
+     * @access protected
+     */
+    protected $type = '';
 
     /**
      * Admin Menu config
@@ -127,6 +135,34 @@ abstract class mvb_Abstract_Config {
         //init access Configurations
         $this->initAccessConfig();
     }
+    
+    /**
+     * For custom set and get methods
+     * 
+     * @param string $name
+     * @param array $arguments 
+     */
+    public function __call($name, $arguments) {
+        
+        $result = NULL;
+        if (preg_match('/^(set|get)([\w\d]+)$/i', $name, $match)){
+            $var = strtolower(preg_replace('/\B([A-Z])/', '_$1', $match[2]));
+            switch($match[1]){
+                case 'set':
+                    $this->{$var} = $arguments[0];
+                    break;
+                
+                case 'get':
+                    $result = (isset($this->{$var}) ? $this->{$var} : NULL);
+                    break;
+                
+                default:
+                    break;
+            }
+        }
+        
+        return $result;
+    }
 
     /**
      * Save Configuration to database
@@ -150,6 +186,16 @@ abstract class mvb_Abstract_Config {
     public function getID() {
 
         return $this->ID;
+    }
+    
+    /**
+     * Return Object Type
+     * 
+     * @return string
+     */
+    public function getType(){
+        
+        return $this->type;
     }
 
     /**
@@ -211,15 +257,15 @@ abstract class mvb_Abstract_Config {
 
         return $this->metaboxes;
     }
-    
+
     /**
      * Check if metabox is set
      * 
      * @param string $id
      * @return bool
      */
-    public function hasMetabox($id){
-        
+    public function hasMetabox($id) {
+
         return (isset($this->metaboxes[$id]) ? TRUE : FALSE);
     }
 
@@ -468,7 +514,7 @@ abstract class mvb_Abstract_Config {
                     break;
 
                 case 'taxonomy':
-                    unset($rests['categoris'][$id]);
+                    unset($rests['categories'][$id]);
                     break;
 
                 default:

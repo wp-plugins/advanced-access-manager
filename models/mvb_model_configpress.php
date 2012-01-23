@@ -81,6 +81,21 @@ class mvb_Model_ConfigPress {
         }
         
     }
+    
+    /**
+     * @todo Rewrite
+     */
+    public function getDeleteCapsParam(){
+        
+        if (isset($this->config->aam->delete_capabilities)){
+            $result = $this->config->aam->delete_capabilities;
+        }else{
+            $result = FALSE;
+        }
+        
+        return $result;
+        
+    }
 
 }
 

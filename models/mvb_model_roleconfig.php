@@ -30,6 +30,11 @@
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
 class mvb_Model_RoleConfig extends mvb_Abstract_Config {
+    
+     /**
+     * {@inheritdoc}
+     */
+    protected $type = 'role';
 
     /**
      * {@inheritdoc }

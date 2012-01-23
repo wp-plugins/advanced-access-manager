@@ -38,6 +38,11 @@ class mvb_Model_UserConfig extends mvb_Abstract_Config {
      * @access protected
      */
     protected $user;
+    
+    /**
+     * {@inheritdoc}
+     */
+    protected $type = 'user';
 
     /**
      * {@inheritdoc }

@@ -208,11 +208,11 @@ class mvb_Model_Manager {
 
         //TODO - render_mss do not like it
         if (mvb_Model_API::isNetworkPanel() || isset($_REQUEST['render_mss'])) {
-            $s_link = network_admin_url('users.php?page=wp_access');
+            $s_link = network_admin_url('admin.php?page=wp_access');
             $blog_id = (isset($_GET['site']) ? $_GET['site'] : get_current_blog_id());
             $s_link = add_query_arg('site', $blog_id, $s_link);
         } else {
-            $s_link = admin_url('users.php?page=wp_access');
+            $s_link = admin_url('admin.php?page=wp_access');
         }
 
         $markerArray = array(
@@ -268,11 +268,11 @@ class mvb_Model_Manager {
             $this->config->setMetaboxes($dump);
             $dump = isset($params['advance']) ? $params['advance'] : array();
             $this->config->setCapabilities($dump);
+            //save global access congif
+            mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'access_config', $params['access_config']);
 
             $this->config->saveConfig();
 
-            //save global access congif
-            mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'access_config', $params['access_config']);
         }
     }
 
@@ -494,7 +494,7 @@ class mvb_Model_Manager {
         /*
          * Third Tab - Advance Settings
          */
-        $capList = mvb_Model_API::getCurrentUser()->getAllCaps(); //TODO ?
+        $capList = mvb_Model_API::getAllCapabilities();
         ksort($capList);
 
         $listTemplate = $this->templObj->retrieveSub('CAPABILITY_LIST', $template);
@@ -510,10 +510,10 @@ class mvb_Model_Manager {
                     '###cap_name###' => mvb_Model_Helper::getCapabilityHumanTitle($cap)
                 );
                 $titem = $this->templObj->updateMarkers($markers, $itemTemplate);
-                if (!in_array($cap, $this->custom_caps)) {
-                    $titem = $this->templObj->replaceSub('CAPABILITY_DELETE', '', $titem);
-                } else {
+                if (mvb_Model_AccessControl::getUserConf()->getConfigPress()->getDeleteCapsParam() == 'true') {
                     $titem = $this->templObj->replaceSub('CAPABILITY_DELETE', $this->templObj->retrieveSub('CAPABILITY_DELETE', $titem), $titem);
+                } else {
+                    $titem = $this->templObj->replaceSub('CAPABILITY_DELETE', '', $titem);
                 }
                 $list .= $titem;
             }

@@ -108,6 +108,22 @@ class mvb_Model_Cache {
             $cache = self::getCacheObject();
             $cache->clean(Zend_Cache::CLEANING_MODE_ALL);
         }
+        
+        //TODO - there is some mess with cache. Should be fixed
+        mvb_Model_AccessControl::clearCache();
+        mvb_Model_API::clearCache();
+    }
+    
+    /**
+     *
+     * @param type $user_id 
+     */
+    public static function removeUserCache($user_id){
+        
+        if (self::canBeCached()) {
+            $cache = self::getCacheObject();
+            $cache->remove('user_' . $user_id);
+        }
     }
 
 }
