@@ -1,0 +1,53 @@
+.plugin-logo{
+    background: url('images/ahm_manager.png') no-repeat;
+    float:left;
+    margin-left:30px;
+    width:80px;
+    height:80px;
+}
+.plugin-title{ 
+    float:left;
+    margin:0px 0 0 15px;
+}
+.clear{
+    clear : both;
+}
+
+.message-active{
+    display:block;
+    float:left;
+    width:70%;
+    margin: 5px 0;    
+}
+.message-passive{
+    display:none;
+}
+
+.error, .warning, .notice{
+    position: absolute;
+    font-family: sans-serif;
+    font-size: 9px;
+    line-height: 16px;
+    font-weight: bold;
+    margin-left: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    border: 1px solid #000;
+    color: #000;
+    min-width: 16px;
+    text-align: center;
+}
+
+.error{
+    background-color: #fb2828;
+}
+
+.warning{
+    background-color: #f88203;
+    margin-left: 40px;
+}
+
+.notice{
+    background-color: #b2a3a3;
+    margin-left: 68px;
+}

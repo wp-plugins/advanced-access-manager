@@ -1,0 +1,94 @@
+<div class="wrap" id="ahm_wrap">
+    <form action="###form_action###" method="post" id="wp-access">
+        <div class="plugin-logo"></div>
+        <div class="plugin-title"><h2>###LABEL_1###</h2></div>
+        <br class="clear" />
+        <div class="message-passive" id="error-message">
+            <div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"> 
+                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span> 
+                    <strong>###LABEL_3###:</strong> ###LABEL_4###: "<span id="error-text"></span>". ###LABEL_5###</p>
+            </div>
+        </div>
+        <div class="message-updated">
+            <div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;"> 
+                <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+                    <span style="color:#006505;">###LABEL_6###!</span></p>
+            </div>
+        </div>
+        <br class="clear" />
+        <input type="hidden" id="nonce" />
+        <input type="hidden" name="submitted" value="1" />
+        <div class="postbox-container" style="width:70%;">
+            <div class="metabox-holder">	
+                <div class="meta-box-sortables">
+                    <div id="metabox-wpaccess-options" class="postbox">
+                        <div class="handlediv" title="###LABEL_7###"><br /></div>
+                        <h3 class="hndle"><span>###LABEL_2###</span></h3>
+                        <div class="inside">
+                            <div id="tabs">
+                                <ul>
+                                    <li><a href="#tab-1">###LABEL_8###</a></li>
+                                    <li><a href="#tab-2">###LABEL_9###</a></li>
+                                </ul>
+                                <div id="tab-1">
+                                    <div class="plugin-list">
+                                        <div class="plugin-row">
+                                            <h4><a href="#" class="row-title"></a></h4>
+                                            <div class="row-content"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="tab-2">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="postbox-container" style="width:20%; margin-left: 10px;">
+            <div class="metabox-holder">	
+                <div class="meta-box-sortables">
+                    <div id="submitdiv" class="postbox">
+                        <div class="handlediv" title="###LABEL_7###"><br /></div>
+                        <h3 class="hndle"><span>###LABEL_11###</span></h3>
+                        <div class="inside">
+                            <br class="clear" />
+                            <div class="submitbox" id="submitpost">
+                                <div id="major-publishing-actions">
+                                    <div class="additional-actions">
+                                        <!-- ###APPLY_ALL### begin-->
+                                        <div class="apply-conf" title="###LABEL_148###"></div>
+                                        <!-- ###APPLY_ALL### end-->
+                                    </div>
+                                    <div class="save-action">
+                                        <img src="###site_url###/wp-admin/images/wpspin_light.gif" style="display:none;" id="ajax-loading" alt="###LABEL_81###">
+                                        <input name="save" id="save" class="button-primary" value="###LABEL_82###" tabindex="5" onclick="return mObj.submitForm();" type="submit" />
+                                    </div>
+                                    <br class="clear" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="metabox-support" class="postbox">
+                        <div class="handlediv" title="###LABEL_72###"><br /></div>
+                        <h3 class="hndle"><span>###LABEL_92###</span></h3>
+                        <div class="inside">
+                            <div class="sexy-bookmarks">
+                                <ul class="socials">
+                                    <li class="sexy-mail"><a href="mailto:whimba@gmail.com" title="###LABEL_93###">whimba@gmail.com</a></li>
+                                    <li class="sexy-facebook"><a href="http://www.facebook.com/pages/whimba" target="_blank" title="###LABEL_94###">Whimba.com</a></li>
+                                    <li class="sexy-twitter"><a href="http://www.twitter.com/whimba" target="_blank" title="###LABEL_95###">Whimba</a></li>
+                                </ul>
+                            </div>
+                            <br class="clear" />
+                            <div class="donate">
+                                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=KMUXLE3XFWRFC" target="_blank" ><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" /></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
