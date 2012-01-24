@@ -222,7 +222,7 @@ final class mvb_Model_API {
      */
     public static function getUserAccessConfig($user_id, $force_roles = FALSE) {
 
-        if (!isset(self::$userconfig_cache[$user_id])) {
+        if (!isset(self::$userconfig_cache[$user_id]) || $force_roles) {
             $config = new mvb_Model_UserConfig($user_id);
 
             if (!$config->getID()) { //user is logged in
@@ -241,6 +241,10 @@ final class mvb_Model_API {
                 mvb_merge_configs($config, $m_config);
             }
             
+            //TODO - this is not a proper way
+            if ($force_roles){
+                return $config;
+            }
             self::$userconfig_cache[$user_id] = $config;
         }
 

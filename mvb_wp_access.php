@@ -84,6 +84,9 @@ class mvb_WPAccess {
             //Add Capabilities WP core forgot to
             add_filter('map_meta_cap', array($this, 'map_meta_cap'), 10, 4);
 
+            add_action('before_delete_post', array($this, 'before_delete_post'));
+            add_action('trash_post', array($this, 'before_delete_post'));
+
             //ajax
             add_action('wp_ajax_mvbam', array($this, 'ajax'));
             add_action("do_meta_boxes", array($this, 'metaboxes'), 999, 3);
@@ -111,6 +114,14 @@ class mvb_WPAccess {
     // ===============================================================
     // ********************* PUBLIC METHODS **************************
     // ===============================================================
+
+    public function before_delete_post($post_id) {
+
+        $post = get_post($post_id);
+        if (mvb_Model_AccessControl::checkPostAccess($post)) {
+            mvb_Model_AccessControl::getUserConf()->getConfigPress()->doRedirect();
+        }
+    }
 
     /**
      *
@@ -185,15 +196,31 @@ class mvb_WPAccess {
      */
     public function admin_print_styles() {
 
-        //core styles
-        wp_enqueue_style('dashboard');
-        wp_enqueue_style('global');
-        wp_enqueue_style('wp-admin');
-        //additional styles
-        wp_enqueue_style('jquery-ui', WPACCESS_CSS_URL . 'ui/jquery-ui-1.8.16.custom.css');
-        wp_enqueue_style('wpaccess-style', WPACCESS_CSS_URL . 'wpaccess_style.css');
-        wp_enqueue_style('wpaccess-treeview', WPACCESS_CSS_URL . 'treeview/jquery.treeview.css');
-        wp_enqueue_style('codemirror', WPACCESS_CSS_URL . 'codemirror/codemirror.css');
+        $print_common = TRUE;
+        switch (mvb_Model_Helper::getParam('page')) {
+            case 'wp_access':
+                wp_enqueue_style('wpaccess-style', WPACCESS_CSS_URL . 'wpaccess_style.css');
+                wp_enqueue_style('wpaccess-treeview', WPACCESS_CSS_URL . 'treeview/jquery.treeview.css');
+                wp_enqueue_style('codemirror', WPACCESS_CSS_URL . 'codemirror/codemirror.css');
+                break;
+
+            case 'wp_health':
+                wp_enqueue_style('wphealth-style', WPACCESS_CSS_URL . 'wphealth_style.css');
+                break;
+
+            default:
+                $print_common = FALSE;
+                break;
+        }
+
+        if ($print_common) {
+            //core styles
+            wp_enqueue_style('dashboard');
+            wp_enqueue_style('global');
+            wp_enqueue_style('wp-admin');
+            //additional styles
+            wp_enqueue_style('jquery-ui', WPACCESS_CSS_URL . 'ui/jquery-ui-1.8.16.custom.css');
+        }
     }
 
     /**
@@ -584,6 +611,10 @@ class mvb_WPAccess {
                 wp_localize_script('wpaccess-admin', 'wpaccessLocal', $locals);
                 break;
 
+            case 'wp_health':
+                wp_enqueue_script('wphealth-admin', WPACCESS_JS_URL . 'wphealth/admin-options.js');
+                break;
+
             default:
                 $print_common = FALSE;
                 break;
@@ -651,13 +682,14 @@ class mvb_WPAccess {
      */
     public function accessManagerPage() {
 
-        $c_role = mvb_Model_Helper::getParam('role', 'REQUEST');
-        $c_user = mvb_Model_Helper::getParam('user', 'REQUEST');
+        $c_role = mvb_Model_Helper::getParam('current_role', 'REQUEST');
+        $c_user = mvb_Model_Helper::getParam('current_user', 'REQUEST');
 
         if (mvb_Model_API::isNetworkPanel()) {
             //require phpQuery
-            require_once(WPACCESS_BASE_DIR . 'library/phpQuery/phpQuery.php');
-
+            if (!class_exists('phpQuery')) {
+                require_once(WPACCESS_BASE_DIR . 'library/phpQuery/phpQuery.php');
+            }
             //TODO - I don't like site
             $blog_id = (isset($_GET['site']) ? $_GET['site'] : get_current_blog_id());
             $c_blog = mvb_Model_API::getBlog($blog_id);
@@ -686,12 +718,6 @@ class mvb_WPAccess {
             $m->do_save();
             $m->manage();
         }
-    }
-
-    public function healthManagerPage() {
-
-        $m = new mvb_Model_HealthManager();
-        $m->manage();
     }
 
     /**

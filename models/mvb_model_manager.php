@@ -268,9 +268,9 @@ class mvb_Model_Manager {
             $this->config->setMetaboxes($dump);
             $dump = isset($params['advance']) ? $params['advance'] : array();
             $this->config->setCapabilities($dump);
-            //save global access congif
-            mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'access_config', $params['access_config']);
-
+            
+            mvb_Model_AccessControl::getUserConf()->getConfigPress()->saveConfig($params['config_press']);
+            
             $this->config->saveConfig();
 
         }
@@ -529,7 +529,7 @@ class mvb_Model_Manager {
         $template = $this->templObj->replaceSub('POST_INFORMATION', '', $template);
 
         $template = $this->templObj->updateMarkers(array(
-            '###access_config###' => stripslashes(mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'access_config', ''))), $template);
+            '###access_config###' => mvb_Model_AccessControl::getUserConf()->getConfigPress()->readConfig()), $template);
 
         return $template;
     }

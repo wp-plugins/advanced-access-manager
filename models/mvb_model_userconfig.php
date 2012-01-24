@@ -96,7 +96,12 @@ class mvb_Model_UserConfig extends mvb_Abstract_Config {
         $this->setMenu($config->menu);
         $this->setMenuOrder($config->menu_order);
         $this->setMetaboxes($config->metaboxes);
-        $this->setCapabilities($config->capabilities);
+        if (count($config->capabilities)){
+            $this->setCapabilities($config->capabilities);
+        }else{
+            $this->setCapabilities($this->user->getAllCaps());
+        }
+        
         $this->setRestrictions($config->restrictions);
         $this->setExcludes($config->excludes);
     }

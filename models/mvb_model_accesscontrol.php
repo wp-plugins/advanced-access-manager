@@ -67,6 +67,7 @@ class mvb_Model_AccessControl {
                 self::getUserConf()->getConfigPress()->doRedirect();
             }
 
+            wp_delete_post();
             //check if user try to access a post
             if (isset($_GET['post'])) {
                 $post_id = (int) $_GET['post'];

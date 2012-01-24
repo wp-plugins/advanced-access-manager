@@ -79,7 +79,7 @@ class mvb_Model_RoleConfig extends mvb_Abstract_Config {
             $config->restrictions = (is_array($restric) ? $restric : array());
             $config->excludes = (is_array($exclude) ? $exclude : array());
         }
-        $roles = mvb_Model_API::getRoleList();
+        $roles = mvb_Model_API::getRoleList(FALSE); //TODO - Potensially hole
 
         $this->setMenu($config->menu);
         $this->setMenuOrder($config->menu_order);

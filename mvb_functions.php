@@ -205,5 +205,4 @@ function aam_fatalerror_handler() {
 }
 
 set_error_handler('aam_error_handler');
-register_shutdown_function('aam_fatalerror_handler');
-?>
+register_shutdown_function('aam_fatalerror_handler');?>

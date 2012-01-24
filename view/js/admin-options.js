@@ -489,8 +489,8 @@ mvbam_object.prototype.addNewCapability = function(){
                 'sub_action' : 'add_capability',
                 '_ajax_nonce': wpaccessLocal.nonce,
                 'cap' : cap,
-                'role' : jQuery('#role').val(),
-                'user' : jQuery('#user').val()
+                'role' : jQuery('#current_role').val(),
+                'user' : jQuery('#current_user').val()
             };
             jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
                 if (data.status == 'success'){
@@ -699,7 +699,7 @@ mvbam_object.prototype.changeRole = function(){
 
 mvbam_object.prototype.toggleUserSelector = function(){
     
-    var currentRoleID = jQuery('#role').val();
+    var currentRoleID = jQuery('#current_role').val();
     if (currentRoleID == '_visitor'){
         jQuery('.misc-user-section').hide();
     }else{

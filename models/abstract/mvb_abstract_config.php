@@ -582,13 +582,7 @@ abstract class mvb_Abstract_Config {
 
     protected function initAccessConfig() {
 
-        $a_conf = stripslashes(mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'access_config'));
-        require_once('Zend/Config.php');
-        require_once('Zend/Config/Ini_Str.php');
-        if (trim($a_conf)) {
-            $a_conf = new Zend_Config_Ini_Str($a_conf);
-        }
-        $this->access_config = new mvb_Model_ConfigPress($a_conf);
+        $this->access_config = new mvb_Model_ConfigPress();
     }
 
     public function getConfigPress() {

@@ -31,9 +31,21 @@
  */
 class mvb_Model_ConfigPress {
 
-    public function __construct($config) {
+    public function __construct() {
 
-        $this->config = $config;
+        require_once('Zend/Config.php');
+        require_once('Zend/Config/Ini.php');
+        $this->config = new Zend_Config_Ini(WPACCESS_BASE_DIR . 'config.ini');
+    }
+
+    public function saveConfig($config) {
+
+        file_put_contents(WPACCESS_BASE_DIR . 'config.ini', $config);
+    }
+    
+    public function readConfig(){
+        
+        return file_get_contents(WPACCESS_BASE_DIR . 'config.ini');
     }
 
     /**
@@ -75,26 +87,24 @@ class mvb_Model_ConfigPress {
             exit;
         } elseif (is_object($redirect) && isset($redirect->userFunc)) {
             $func = trim($redirect->userFunc);
-             if (is_string($func) && is_callable($func)) {
+            if (is_string($func) && is_callable($func)) {
                 call_user_func($func);
             }
         }
-        
     }
-    
+
     /**
      * @todo Rewrite
      */
-    public function getDeleteCapsParam(){
-        
-        if (isset($this->config->aam->delete_capabilities)){
+    public function getDeleteCapsParam() {
+
+        if (isset($this->config->aam->delete_capabilities)) {
             $result = $this->config->aam->delete_capabilities;
-        }else{
+        } else {
             $result = FALSE;
         }
-        
+
         return $result;
-        
     }
 
 }

@@ -104,7 +104,7 @@ class mvb_Model_Template {
 	 * @return string HTML template with replaced markers
 	 */
 
-	public function updateMarkers($markers, $template) {
+	public static function updateMarkers($markers, $template) {
 		if (is_array($markers)) {
 			foreach ($markers as $marker => $content) {
 				$template = str_replace($marker, $content, $template);
@@ -114,7 +114,7 @@ class mvb_Model_Template {
 		return $template;
 	}
 
-	public function clearTemplate($template, $pattern = '/(###[a-z0-9_\-]+###)/si') {
+	public static function clearTemplate($template, $pattern = '/(###[a-z0-9_\-]+###)/si') {
 
 		//try to replace all labels
 		$l_list = array();
@@ -122,7 +122,7 @@ class mvb_Model_Template {
 		while (($label = mvb_Model_Label::get('LABEL_' . $i)) !== FALSE) {
 			$l_list['###LABEL_' . $i++ . '###'] = $label;
 		}
-		$template = $this->updateMarkers($l_list, $template);
+		$template = self::updateMarkers($l_list, $template);
 
 		return preg_replace($pattern, '', $template);
 	}
