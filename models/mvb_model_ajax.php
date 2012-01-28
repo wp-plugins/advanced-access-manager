@@ -323,15 +323,13 @@ class mvb_Model_Ajax {
      * @param type $render_html
      * @return type 
      */
-    protected function create_role($role, $render_html = TRUE) {
+    protected function create_role($role, $capabilities = FALSE, $render_html = TRUE) {
 
         $m = new mvb_Model_Role();
         $new_role = ($role ? $role : $_REQUEST['role']);
-        $result = $m->createNewRole($new_role, array(
-            'read' => 1,
-            'level_0' => 1)
-        );
-        if ($result['result'] == 'success') {
+        $caps = ($capabilities ? $capabilities : array('read' => 1, 'level_0' => 1));
+        $result = $m->createNewRole($new_role, $caps);
+        if ( ($result['result'] == 'success') && $render_html) {
             $m = new mvb_Model_Manager($this->pObj, $result['new_role']);
             $content = $m->renderDeleteRoleItem($result['new_role'], array('name' => $role));
             $result['html'] = $m->templObj->clearTemplate($content);
@@ -1141,12 +1139,12 @@ class mvb_Model_Ajax {
                     'new_role' => WPACCESS_SADMIN_ROLE
                 );
             } else {
-                $result = $this->create_role('Super Admin', mvb_Model_API::getAllCapabilities());
+                $result = $this->create_role('Super Admin', mvb_Model_API::getAllCapabilities(), FALSE);
             }
 
             if ($result['result'] == 'success') {
                 //update current user role
-                if (!is_user_member_of_blog(get_current_blog_id())) {
+                if (!is_user_member_of_blog($user_id, get_current_blog_id())) {
                     $result = $this->add_blog_admin();
                 } else {
                     $this->assign_role(WPACCESS_SADMIN_ROLE, $user_id);

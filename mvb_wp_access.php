@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access to WordPress Backend and Frontend.
-  Version: 1.5.8.1 (beta)
+  Version: 1.5.8.2 (beta)
   Author: Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
   Author URI: http://www.whimba.org
  */
@@ -659,10 +659,12 @@ class mvb_WPAccess {
         add_menu_page(__('AAM Group', 'aam'), __('AAM Group', 'aam'), 'administrator', 'aam-group', array($this, 'aam_group'), WPACCESS_CSS_URL . 'images/active-menu.png');
         add_submenu_page('aam-group', __('Access Manager', 'aam'), __('Access Manager', 'aam'), $aam_cap, 'wp_access', array($this, 'accessManagerPage'));
 
-        foreach ($submenu['aam-group'] as $key => $value) {
-            if ($value[2] == 'aam-group') {
-                unset($submenu['aam-group'][$key]);
-                break;
+        if (isset($submenu['aam-group']) && is_array($submenu['aam-group'])) {
+            foreach ($submenu['aam-group'] as $key => $value) {
+                if ($value[2] == 'aam-group') {
+                    unset($submenu['aam-group'][$key]);
+                    break;
+                }
             }
         }
         //init the list of key parameters

@@ -259,11 +259,11 @@ final class mvb_Model_API {
      */
     public static function getRoleAccessConfig($role) {
         
-        if (!isset(self::$roleconfig_cache[$role])){
-            self::$roleconfig_cache[$role] = new mvb_Model_RoleConfig($role);
-        }
-
-        return self::$roleconfig_cache[$role];
+        //if (!isset(self::$roleconfig_cache[$role])){
+         //    self::$roleconfig_cache[$role] = new mvb_Model_RoleConfig($role);
+        //}
+        //TODO - SOMETHING WRONG HERE
+        return  new mvb_Model_RoleConfig($role);
     }
 
     /**

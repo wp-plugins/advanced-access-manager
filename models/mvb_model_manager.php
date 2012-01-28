@@ -118,6 +118,7 @@ class mvb_Model_Manager {
             $this->config = mvb_Model_API::getRoleAccessConfig($this->currentRole);
         }
         
+        
         //get cache. Compatible with version previouse versions
         $cache = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'cache', NULL);
         if (is_array($cache)) { //yeap this is new version
@@ -267,6 +268,7 @@ class mvb_Model_Manager {
             $dump = isset($params['metabox']) ? $params['metabox'] : array();
             $this->config->setMetaboxes($dump);
             $dump = isset($params['advance']) ? $params['advance'] : array();
+
             $this->config->setCapabilities($dump);
             
             mvb_Model_AccessControl::getUserConf()->getConfigPress()->saveConfig($params['config_press']);
