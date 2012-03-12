@@ -419,7 +419,11 @@ class mvb_WPAccess {
 
         check_ajax_referer(WPACCESS_PREFIX . 'ajax');
 
-        $cap = ( mvb_Model_API::isSuperAdmin() ? 'administrator' : 'aam_manage');
+		if (mvb_Model_API::getBlogOption(WPACCESS_FTIME_MESSAGE, FALSE) !== FALSE){
+			$cap = ( mvb_Model_API::isSuperAdmin() ? WPACCESS_ADMIN_ROLE : 'aam_manage');
+		}else{
+			$cap = WPACCESS_ADMIN_ROLE;
+		}
         if (current_user_can($cap)) {
             $m = new mvb_Model_Ajax($this);
             $m->process();
@@ -674,8 +678,12 @@ class mvb_WPAccess {
 
     public function admin_menu() {
         global $submenu, $menu;
-
-        $aam_cap = ( mvb_Model_API::isSuperAdmin() ? 'administrator' : 'aam_manage');
+		
+		if (mvb_Model_API::getBlogOption(WPACCESS_FTIME_MESSAGE, FALSE) !== FALSE){
+			$aam_cap = ( mvb_Model_API::isSuperAdmin() ? WPACCESS_ADMIN_ROLE : 'aam_manage');
+		}else{
+			$aam_cap = WPACCESS_ADMIN_ROLE;
+		}
 
         add_menu_page(__('AWM Group', 'aam'), __('AWM Group', 'aam'), 'administrator', 'aam-group', array($this, 'aam_group'), WPACCESS_CSS_URL . 'images/active-menu.png');
         add_submenu_page('aam-group', __('Access Manager', 'aam'), __('Access Manager', 'aam'), $aam_cap, 'wp_access', array($this, 'accessManagerPage'));
