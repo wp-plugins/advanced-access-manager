@@ -110,7 +110,6 @@ class mvb_Model_Cache {
         }
         
         //TODO - there is some mess with cache. Should be fixed
-        mvb_Model_AccessControl::clearCache();
         mvb_Model_API::clearCache();
     }
     

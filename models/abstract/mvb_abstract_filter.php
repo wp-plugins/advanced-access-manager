@@ -31,6 +31,36 @@
  */
 
 abstract class mvb_Abstract_Filter{
+	
+	/**
+	 * Class that called current
+	 * 
+	 * @access protected
+	 * @var object
+	 */
+	protected $caller;
+	
+	/**
+	 * Initiate Class
+	 * 
+	 * @access public
+	 * @param object $caller 
+	 */
+	public function __construct($caller) {
+		
+		$this->caller = $caller;
+	}
+	
+	/**
+	 * Get Caller
+	 * 
+	 * @access public
+	 * @return object
+	 */
+	public function getCaller(){
+		
+		return $this->caller;
+	}
 
 	/**
 	 * Manage the filtering

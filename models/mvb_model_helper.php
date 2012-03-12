@@ -207,20 +207,20 @@ class mvb_Model_Helper {
 
 		return $highest;
 	}
-        
-        /**
-         *
-         * @param type $f_config
-         * @param type $s_config
-         * @return type 
-         */
-        public static function isLowerLevel($f_config, $s_config){
-            
-            $f = self::getHighestUserLevel($f_config->getCapabilities());
-            $s = self::getHighestUserLevel($s_config->getCapabilities());
-            
-            return ($f <= $s ? TRUE : FALSE);
-        }
+
+	/**
+	 *
+	 * @param type $f_config
+	 * @param type $s_config
+	 * @return type 
+	 */
+	public static function isLowerLevel($f_config, $s_config) {
+
+		$f = self::getHighestUserLevel($f_config->getCapabilities());
+		$s = self::getHighestUserLevel($s_config->getCapabilities());
+
+		return ($f < $s ? TRUE : FALSE);
+	}
 
 	/**
 	 *
@@ -333,6 +333,26 @@ class mvb_Model_Helper {
 
 		return $wpdb->get_var($query);
 	}
+
+	/**
+	 * Get Current Post ID from REQUEST
+	 * 
+	 * @access public
+	 * @return int
+	 */
+	public static function getCurrentPostID() {
+		
+		if (isset($_GET['post'])) {
+			$post_id = (int) $_GET['post'];
+		} elseif (isset($_POST['post_ID'])) {
+			$post_id = (int) $_POST['post_ID'];
+		} else {
+			$post_id = 0;
+		}
+		
+		return $post_id;
+	}
+
 }
 
 ?>

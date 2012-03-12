@@ -118,7 +118,6 @@ class mvb_Model_Manager {
             $this->config = mvb_Model_API::getRoleAccessConfig($this->currentRole);
         }
         
-        
         //get cache. Compatible with version previouse versions
         $cache = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'cache', NULL);
         if (is_array($cache)) { //yeap this is new version
@@ -268,10 +267,9 @@ class mvb_Model_Manager {
             $dump = isset($params['metabox']) ? $params['metabox'] : array();
             $this->config->setMetaboxes($dump);
             $dump = isset($params['advance']) ? $params['advance'] : array();
-
             $this->config->setCapabilities($dump);
             
-            mvb_Model_AccessControl::getUserConf()->getConfigPress()->saveConfig($params['config_press']);
+            mvb_Model_ConfigPress::saveConfig(stripslashes($params['config_press']));
             
             $this->config->saveConfig();
 
@@ -512,7 +510,7 @@ class mvb_Model_Manager {
                     '###cap_name###' => mvb_Model_Helper::getCapabilityHumanTitle($cap)
                 );
                 $titem = $this->templObj->updateMarkers($markers, $itemTemplate);
-                if (mvb_Model_AccessControl::getUserConf()->getConfigPress()->getDeleteCapsParam() == 'true') {
+                if (mvb_Model_ConfigPress::getOption('aam', 'delete_capabilities') == 'true') {
                     $titem = $this->templObj->replaceSub('CAPABILITY_DELETE', $this->templObj->retrieveSub('CAPABILITY_DELETE', $titem), $titem);
                 } else {
                     $titem = $this->templObj->replaceSub('CAPABILITY_DELETE', '', $titem);
@@ -531,7 +529,10 @@ class mvb_Model_Manager {
         $template = $this->templObj->replaceSub('POST_INFORMATION', '', $template);
 
         $template = $this->templObj->updateMarkers(array(
-            '###access_config###' => mvb_Model_AccessControl::getUserConf()->getConfigPress()->readConfig()), $template);
+            '###access_config###' => mvb_Model_ConfigPress::readConfig(),
+            '###info_image###' => WPACCESS_CSS_URL . 'images/Info-tooltip.png',
+            '###critical_image###' => WPACCESS_CSS_URL . 'images/Critical-tooltip.png'), 
+            $template);
 
         return $template;
     }

@@ -2,7 +2,6 @@
     <form action="###form_action###" method="post" id="wp-access">
         <div class="plugin-logo"></div>
         <div class="plugin-title"><h2>###LABEL_1###</h2></div>
-        <div class="addons-info dialog">###LABEL_2###</div>
         <br class="clear" />
         <div class="message-passive" id="error-message">
             <div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"> 
@@ -145,9 +144,9 @@
                                             <input type="checkbox" id="cap-###title###" name="wpaccess[advance][###title###]" value="1" ###checked### />
                                                    &nbsp;&nbsp;<label for="cap-###title###">###cap_name###</label>
                                         </div>
-                                        <div class="tooltip icon-info"><span class="custom info"><em>Information</em>###description###</span></div>
+                                        <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###description###</span></div>
                                         <!-- ###CAPABILITY_DELETE### begin-->
-                                        <div class="icon-delete tooltip" onclick="mObj.deleteCapability('###title###', '###cap_name###');"><span class="custom critical"><em>###LABEL_118###</em>###LABEL_121###</span></div>
+                                        <div class="icon-delete tooltip" onclick="mObj.deleteCapability('###title###', '###cap_name###');"><span class="custom critical"><img src="###critical_image###" alt="Critical" height="48" width="48" /><em>###LABEL_118###</em>###LABEL_121###</span></div>
                                         <!-- ###CAPABILITY_DELETE### end-->
                                     </div>
                                     <!-- ###CAPABILITY_ITEM### end-->
@@ -204,42 +203,42 @@
                                                         <th>###LABEL_43###</th>
                                                         <td>###post_title###</td>
                                                         <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><em>Information</em>###LABEL_44###</span></div>
+                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_44###</span></div>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <th>###LABEL_46###</th>
                                                         <td>###post_type###</td>
                                                         <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><em>Information</em>###LABEL_45###</span></div>
+                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_45###</span></div>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <th>###LABEL_47###</th>
                                                         <td>###post_status###</td>
                                                         <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><em>Information</em>###LABEL_48###</span></div>
+                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_48###</span></div>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <th>###LABEL_49###</th>
                                                         <td>###post_visibility###</td>
                                                         <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><em>Information</em>###LABEL_50###</span></div>
+                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_50###</span></div>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <th>###LABEL_51###</th>
                                                         <td><input type="checkbox" name="restrict_access" ###restrict_checked### value="1" /></td>
                                                         <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><em>Information</em>###LABEL_52###</span></div>
+                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_52###</span></div>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <th>###LABEL_53###</th>
                                                         <td><input type="checkbox" name="restrict_front_access" ###restrict_front_checked### value="1" /></td>
                                                         <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><em>Information</em>###LABEL_54###</span></div>
+                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_54###</span></div>
                                                         </td>
                                                     </tr>
                                                     <!-- ###EXCLUDE_PAGE### begin-->
@@ -247,7 +246,7 @@
                                                         <th>###LABEL_55###</th>
                                                         <td><input type="checkbox" name="exclude_page" ###exclude_page_checked### value="1" /></td>
                                                         <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><em>Information</em>###LABEL_56###</span></div>
+                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_56###</span></div>
                                                         </td>
                                                     </tr>
                                                     <!-- ###EXCLUDE_PAGE### end-->
@@ -255,7 +254,7 @@
                                                         <th>###LABEL_57###</th>
                                                         <td><input type="text" id="restrict_expire" value="###restrict_expire###" /></td>
                                                         <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><em>Information</em>###LABEL_58###</span></div>
+                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_58###</span></div>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -269,42 +268,42 @@
                                                         <th>###LABEL_43###</th>
                                                         <td>###name###</td>
                                                         <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><em>Information</em>###LABEL_64###</span></div>
+                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_64###</span></div>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <th>###LABEL_46###</th>
                                                         <td>###LABEL_63###</td>
                                                         <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><em>Information</em>###LABEL_65###</span></div>
+                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_65###</span></div>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <th>###LABEL_66###</th>
                                                         <td>###post_number###</td>
                                                         <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><em>Information</em>###LABEL_67###</span></div>
+                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_67###</span></div>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <th>###LABEL_51###</th>
                                                         <td><input type="checkbox" name="restrict_access" ###restrict_checked### value="1" /></td>
                                                         <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><em>Information</em>###LABEL_68###</span></div>
+                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_68###</span></div>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <th>###LABEL_53###</th>
                                                         <td><input type="checkbox" name="restrict_front_access" ###restrict_front_checked### value="1" /></td>
                                                         <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><em>Information</em>###LABEL_69###</span></div>
+                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_69###</span></div>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <th>###LABEL_57###</th>
                                                         <td><input type="text" id="restrict_expire" value="###restrict_expire###" /></td>
                                                         <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><em>Information</em>###LABEL_70###</span></div>
+                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_70###</span></div>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -391,9 +390,7 @@
                                 </div>
                                 <div id="major-publishing-actions">
                                     <div class="additional-actions">
-                                        <!-- ###APPLY_ALL### begin-->
-                                        <div class="apply-conf" title="###LABEL_148###"></div>
-                                        <!-- ###APPLY_ALL### end-->
+                                        <div class="restore-conf" title="###LABEL_78###"></div>
                                     </div>
                                     <div class="save-action">
                                         <img src="###site_url###/wp-admin/images/wpspin_light.gif" style="display:none;" id="ajax-loading" alt="###LABEL_81###">
@@ -460,17 +457,27 @@
                         <div class="handlediv" title="###LABEL_72###"><br /></div>
                         <h3 class="hndle"><span>###LABEL_92###</span></h3>
                         <div class="inside">
-                            <div class="sexy-bookmarks">
-                                <ul class="socials">
-                                    <li class="sexy-mail"><a href="mailto:whimba@gmail.com" title="###LABEL_93###">whimba@gmail.com</a></li>
-                                    <li class="sexy-facebook"><a href="http://www.facebook.com/pages/whimba" target="_blank" title="###LABEL_94###">Whimba.com</a></li>
-                                    <li class="sexy-twitter"><a href="http://www.twitter.com/whimba" target="_blank" title="###LABEL_95###">Whimba</a></li>
-                                </ul>
-                            </div>
+                            <ul class="socials">
+                                <li class="support" title="###LABEL_93###"><a href="http://whimba.org/support" target="_blank">whimba.org</a></li>
+                                <li class="facebook" title="###LABEL_94###"><a href="http://www.facebook.com/whimba" target="_blank">Whimba.org</a></li>
+                                <li class="twitter" title="###LABEL_95###"><a href="http://www.twitter.com/whimba" target="_blank">Whimba</a></li>
+                            </ul>
                             <br class="clear" />
-                            <div class="donate">
-                                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=KMUXLE3XFWRFC" target="_blank" ><img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" /></a>
+                        </div>
+                    </div>
+                    <div id="metabox-support" class="postbox">
+                        <div class="handlediv" title="###LABEL_72###"><br /></div>
+                        <h3 class="hndle"><span>###LABEL_159###</span></h3>
+                        <div class="inside">
+                            <div class="feedback">
+                                Your feedback if very important.<br/>Please send email, vote for AAM or Donate.
                             </div>
+                            <ul class="socials">
+                                <li class="email" title="###LABEL_160###"><a href="mailto:whimba@gmail.com">Send Email</a></li>
+                                <li class="wordpress" title="###LABEL_2###"><a href="http://wordpress.org/extend/plugins/advanced-access-manager/" target="_blank">Advanced Access Manager</a></li>
+                                <li class="donate" title="###LABEL_158###"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=KMUXLE3XFWRFC" target="_blank">PayPal Donation</a></li>
+                            </ul>
+                            <br class="clear" />
                         </div>
                     </div>
                 </div>
@@ -515,18 +522,9 @@
             </p>
         </div>
     </div>
-    <div id="addons-notice" class="dialog" title="###LABEL_111###">
-        <p>###LABEL_112### <a href="http://whimba.org/add-ons" target="_blank">###LABEL_113###</a></p>
-    </div>
     <div id="addon-proposal" class="dialog" title="###LABEL_114###">
         <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 5px 0;"></span><span id="addon-message"></span></p>
     </div>
-    <div id="dialog-superadmin" class="dialog" title="###LABEL_115###">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 5px 0;"></span>###LABEL_116###</p>
-    </div>
     <div id="dialog-firsttime" class="dialog" title="###LABEL_115###">###LABEL_147###</div>
-    <div id="apply-config" class="dialog" title="###LABEL_148###">
-        <p>###LABEL_149###</p>
-    </div>
     <iframe id="exportIFrame" src="" style="display:none;" ></iframe>
 </div>

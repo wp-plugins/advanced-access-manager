@@ -165,10 +165,6 @@
     font-size:11px;
 }
 
-.info{
-    font-weight: bold;
-}
-
 #progressbar{
     height: 22px;
     width:98%;
@@ -249,68 +245,6 @@
     background: url(images/info.png) no-repeat -10px 0;
 }
 
-/* SEXY BOOKMARKS */
-div.sexy-bookmarks {
-    margin:10px 0 0 0;
-    clear: both;
-}
-
-div.sexy-bookmarks ul.socials {
-    background:transparent none;
-    border:0 none;
-    outline:0 none;
-}
-
-div.sexy-bookmarks ul.socials li {
-    display:inline;
-    float:left;
-    list-style-type:none;
-    margin:0;
-    height:29px;
-    width:55px;
-    cursor:pointer;
-    padding:0;
-    background-color:transparent;
-    border:0 none;
-    outline:0 none;
-}
-
-div.sexy-bookmarks ul.socials a {
-    display:block !important;
-    width:50px !important;
-    height:29px !important;
-    text-indent: -9999px !important;
-    background-color:transparent !important;
-}
-
-.sexy-mail {
-    background: url('images/share_friend.png') no-repeat bottom;
-}
-.sexy-mail:hover {
-    background: url('images/share_friend.png') no-repeat top;
-}
-
-.sexy-facebook {
-    background: url('images/share_facebook.png') no-repeat bottom;
-}
-.sexy-facebook:hover {
-    background: url('images/share_facebook.png') no-repeat top;
-}
-
-.sexy-twitter {
-    background: url('images/twitter.png') no-repeat bottom;
-}
-.sexy-twitter:hover {
-    background: url('images/twitter.png') no-repeat top;
-}
-
-.sexy-linkedin {
-    background: url('images/linkedin.png') no-repeat bottom;
-}
-.sexy-linkedin:hover {
-    background: url('images/linkedin.png') no-repeat top;
-}
-
 #emergency-curl{
     display : none;
 }
@@ -358,18 +292,6 @@ div.sexy-bookmarks ul.socials a {
     font-size: 11px;
 }
 
-.addons-info{
-    float:right;
-    margin: 10px 30px 0 0;
-    cursor: pointer;
-    width:auto;
-    padding: 5px 0 0 33px;
-    color: #0861a5;
-    font-size: 11px;
-    height:32px;
-    background: url('images/inform.png') no-repeat;
-}
-
 .metabox-id{
     color: #06c;
 }
@@ -380,23 +302,6 @@ div.sexy-bookmarks ul.socials a {
 
 .metabox-position{
     color: #333333;
-}
-
-.export-conf{
-    background: url('images/export.png') no-repeat;
-    float: right;
-    width: 22px;
-    height: 22px;
-    cursor: pointer;
-}
-
-.apply-conf{
-    background: url('images/apply.png') no-repeat;
-    float: right;
-    margin-right: 5px;
-    width: 22px;
-    height: 22px;
-    cursor: pointer;
 }
 
 .restore-conf{
@@ -426,9 +331,112 @@ div.sexy-bookmarks ul.socials a {
     font-weight: bold;
 }
 
-.donate{
+.feedback{
+    width: 100%;
+    font-style: italic;
     text-align: center;
-    margin-top: 15px;
+    font-size: 14px;
+    font-family: verdana,arial,helvetica,sans-serif;
+    padding-bottom: 3px;
+}
+
+.socials{
+    margin: 2px auto;
+    clear: both;
+}
+
+.socials li{
+    display:inline;
+    float:left;
+    list-style-type:none;
+    margin: 0 0 0 10px;
+    height:64px;
+    width:64px;
+    cursor:pointer;
+    padding:0;
+    background-color:transparent;
+    border:0 none;
+    outline:0 none;
+}
+
+.socials li a{
+    display:block !important;
+    width:64px !important;
+    height:64px !important;
+    text-indent: -9999px !important;
+    background-color:transparent !important;
+}
+
+.socials .support{
+    background: url('images/support.png') no-repeat;
+    filter:alpha(opacity=50);
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50);
+    opacity:0.5;
+}
+.socials .support:hover{
+    filter:alpha(opacity=100);
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100);
+    opacity:1.0;
+}
+
+.socials .facebook{
+    background: url('images/facebook.png') no-repeat;
+    filter:alpha(opacity=50);
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50);
+    opacity:0.5;
+}
+.socials .facebook:hover{
+    filter:alpha(opacity=100);
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100);
+    opacity:1.0;
+}
+
+.socials .twitter{
+    background: url('images/twitter.png') no-repeat;
+    filter:alpha(opacity=50);
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50);
+    opacity:0.5;
+}
+.socials .twitter:hover{
+    filter:alpha(opacity=100);
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100);
+    opacity:1.0;
+}
+
+.socials .email{
+    background: url('images/email.png') no-repeat;
+    filter:alpha(opacity=50);
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50);
+    opacity:0.5;
+}
+.socials .email:hover{
+    filter:alpha(opacity=100);
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100);
+    opacity:1.0;
+}
+
+.socials .wordpress{
+    background: url('images/wordpress.png') no-repeat;
+    filter:alpha(opacity=50);
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50);
+    opacity:0.5;
+}
+.socials .wordpress:hover{
+    filter:alpha(opacity=100);
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100);
+    opacity:1.0;
+}
+
+.socials .donate{
+    background: url('images/donate.png') no-repeat;
+    filter:alpha(opacity=50);
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50);
+    opacity:0.5;
+}
+.socials .donate:hover{
+    filter:alpha(opacity=100);
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100);
+    opacity:1.0;
 }
 
 .misc-site-section{
@@ -467,8 +475,8 @@ div.sexy-bookmarks ul.socials a {
 }
 
 .icon-info{
-   cursor: help;
-   background: url(images/info.png) no-repeat; 
+    cursor: help;
+    background: url(images/info.png) no-repeat; 
 }
 
 .icon-info:hover {

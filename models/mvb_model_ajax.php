@@ -48,6 +48,14 @@ class mvb_Model_Ajax {
     protected $action;
 
     /**
+     * Default Capability Set
+     * 
+     * @access protected
+     * @var array
+     */
+    protected $default_caps = array('read' => 1, 'level_0' => 1);
+
+    /**
      * Main Constructor
      * 
      * @param object
@@ -65,16 +73,16 @@ class mvb_Model_Ajax {
     public function process() {
 
         switch ($this->action) {
-            case 'apply_all':
-                $result = $this->apply_all();
-                break;
-
             case 'add_blog_admin':
                 $result = $this->add_blog_admin();
                 break;
 
             case 'restore_role':
                 $result = $this->restore_role($_POST['role']);
+                break;
+
+            case 'restore_user':
+                $result = $this->restore_user($_POST['user']);
                 break;
 
             case 'create_role':
@@ -121,10 +129,6 @@ class mvb_Model_Ajax {
                 $result = $this->save_info();
                 break;
 
-            case 'check_addons':
-                $result = $this->check_addons();
-                break;
-
             case 'save_order':
                 $result = $this->save_order();
                 break;
@@ -151,58 +155,6 @@ class mvb_Model_Ajax {
         }
 
         die(json_encode($result));
-    }
-
-    /*
-     * Apply settings to ALL blogs in Multisite Setup
-     * 
-     */
-
-    protected function apply_all() {
-        global $wpdb;
-
-        $sites = mvb_Model_Helper::getSiteList();
-
-        //TODO - implement more complex checking
-        $result = array('status' => 'success', 'message' => mvb_Model_Label::get('LABEL_152'));
-
-        if (is_array($sites) && count($sites)) {
-            $c_blog = mvb_Model_API::getCurrentBlog();
-            $options = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'options', array());
-            $morders = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'menu_order', array());
-            $kparams = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'key_params', array());
-            $limit = WPACCESS_APPLY_LIMIT;
-            /*
-             * Check if Restriction class exist.
-             * Note for hacks : Better will be to buy an add-on for $10 because on
-             * next release I'll change the checking class
-             */
-            if (class_exists('aamms_msar_extend')) {
-                $limit = apply_filters(WPACCESS_PREFIX . 'msar_restrict_limit', $limit);
-            }
-            foreach ($sites as $i => $site) {
-                if ($site->blog_id == $c_blog->getID()) { //skip current blog
-                    continue;
-                }
-
-                $blog = new mvb_Model_Blog(array(
-                            'id' => $site->blog_id,
-                            'url' => get_site_url($site->blog_id),
-                            'prefix' => $wpdb->get_blog_prefix($site->blog_id))
-                );
-
-                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'options', $options, $blog);
-                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'menu_order', $morders, $blog);
-                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'key_params', $kparams, $blog);
-
-                if (($limit != -1) && ($i + 1 > $limit)) {
-                    $result = array('status' => 'error', 'message' => mvb_Model_Label::get('LABEL_156'));
-                    break;
-                }
-            }
-        }
-
-        return $result;
     }
 
     /*
@@ -271,50 +223,53 @@ class mvb_Model_Ajax {
      */
 
     protected function restore_role($role) {
-        global $wpdb;
 
-        //get current roles settings
-        $or_roles = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'original_user_roles', array());
+        $or_roles = mvb_Model_API::getBlogOption(
+                        WPACCESS_PREFIX . 'original_user_roles', array()
+        );
         $roles = mvb_Model_API::getRoleList(FALSE);
+        
+        if (($role != WPACCESS_ADMIN_ROLE)
+                || ( ($role == WPACCESS_ADMIN_ROLE) && mvb_Model_API::isSuperAdmin())) {
 
-        $allow = TRUE;
-        if (($role == WPACCESS_ADMIN_ROLE) && !mvb_Model_API::isSuperAdmin()) {
-            $allow = FALSE;
-        }
+            if (isset($or_roles[$role])) {
+                $roles[$role]['capabilities'] = $or_roles[$role]['capabilities'];
+            } else {
+                $roles[$role]['capabilities'] = $this->default_caps;
+            }
 
-        if (isset($or_roles[$role]) && isset($roles[$role]) && $allow) {
-            $roles[$role] = $or_roles[$role];
-
-            //save current setting to DB
             mvb_Model_API::updateBlogOption('user_roles', $roles);
-
-            //unset all option with metaboxes and menu
-            $options = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'options');
-            if (isset($options[$role])) {
-                unset($options[$role]);
-                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'options', $options);
-            }
-
-            //unset all restrictions
-            $r = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'restrictions', array());
-            if (isset($r[$role])) {
-                unset($r[$role]);
-                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'restrictions', $r);
-            }
-
-            //unset menu order
-            $menu_order = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'menu_order');
-            if (isset($menu_order[$role])) {
-                unset($menu_order[$role]);
-                mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'menu_order', $menu_order);
-            }
-
+            mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'config_' . $role);
+            
+            mvb_Model_Cache::clearCache();
             $result = array('status' => 'success');
         } else {
             $result = array('status' => 'error');
         }
 
+
         return $result;
+    }
+
+    /*
+     * Restore default User Settings
+     * 
+     * @param string User ID
+     * @return bool True if success
+     */
+
+    protected function restore_user($user_id) {
+
+        delete_user_meta($user_id, WPACCESS_PREFIX . 'config');
+        //TODO - Delete in future releases
+        delete_user_meta($user_id, WPACCESS_PREFIX . 'options');
+        delete_user_meta($user_id, WPACCESS_PREFIX . 'restrictions');
+        delete_user_meta($user_id, WPACCESS_PREFIX . 'menu_order');
+        delete_user_meta($user_id, WPACCESS_PREFIX . 'capabilities');
+        
+        mvb_Model_Cache::clearCache();
+
+        return array('status' => 'success');
     }
 
     /**
@@ -327,9 +282,9 @@ class mvb_Model_Ajax {
 
         $m = new mvb_Model_Role();
         $new_role = ($role ? $role : $_REQUEST['role']);
-        $caps = ($capabilities ? $capabilities : array('read' => 1, 'level_0' => 1));
+        $caps = ($capabilities ? $capabilities : $this->default_caps);
         $result = $m->createNewRole($new_role, $caps);
-        if ( ($result['result'] == 'success') && $render_html) {
+        if (($result['result'] == 'success') && $render_html) {
             $m = new mvb_Model_Manager($this->pObj, $result['new_role']);
             $content = $m->renderDeleteRoleItem($result['new_role'], array('name' => $role));
             $result['html'] = $m->templObj->clearTemplate($content);
@@ -502,11 +457,13 @@ class mvb_Model_Ajax {
                     '###title###' => $cap,
                     '###description###' => '',
                     '###checked###' => 'checked',
+                    '###info_image###' => WPACCESS_CSS_URL . 'images/Info-tooltip.png',
+                    '###critical_image###' => WPACCESS_CSS_URL . 'images/Critical-tooltip.png',
                     '###cap_name###' => mvb_Model_Helper::getCapabilityHumanTitle($cap)
                 );
                 $titem = $tmpl->updateMarkers($markers, $itemTemplate);
 
-                if (mvb_Model_AccessControl::getUserConf()->getConfigPress()->getDeleteCapsParam() == 'true') {
+                if (mvb_Model_ConfigPress::getOption('aam', 'delete_capabilities') == 'true') {
                     $titem = $tmpl->replaceSub('CAPABILITY_DELETE', $tmpl->retrieveSub('CAPABILITY_DELETE', $titem), $titem);
                 } else {
                     $titem = $tmpl->replaceSub('CAPABILITY_DELETE', '', $titem);
@@ -515,13 +472,13 @@ class mvb_Model_Ajax {
                     'status' => 'success',
                     'html' => $tmpl->clearTemplate($titem)
                 );
+                mvb_Model_Cache::clearCache();
             } else {
                 $result = array(
                     'status' => 'error',
                     'message' => 'Capability ' . $_POST['cap'] . ' already exists'
                 );
             }
-            mvb_Model_Cache::clearCache();
         } else {
             $result = array(
                 'status' => 'error',
@@ -540,7 +497,7 @@ class mvb_Model_Ajax {
         global $wpdb;
 
         $cap = trim($_POST['cap']);
-        if (mvb_Model_AccessControl::getUserConf()->getConfigPress()->getDeleteCapsParam() == 'true') {
+        if (mvb_Model_ConfigPress::getOption('aam', 'delete_capabilities') == 'true') {
             $roles = mvb_Model_API::getRoleList(FALSE);
             foreach ($roles as $role => $data) {
                 if (isset($data['capabilities'][$cap])) {
@@ -792,6 +749,7 @@ class mvb_Model_Ajax {
                         '###post_status###' => $wp_post_statuses[$post->post_status]->label,
                         '###post_visibility###' => mvb_Model_Helper::checkVisibility($post),
                         '###ID###' => $post->ID,
+                        '###info_image###' => WPACCESS_CSS_URL . 'images/Info-tooltip.png',
                     );
                     //check what type of post is it and render exclude if page
                     $render_exclude = FALSE;
@@ -840,6 +798,7 @@ class mvb_Model_Ajax {
                         '###restrict_expire###' => (isset($expire) ? $expire : ''),
                         '###post_number###' => $term->count,
                         '###ID###' => $term->term_id,
+                        '###info_image###' => WPACCESS_CSS_URL . 'images/Info-tooltip.png',
                     );
                     $template = $tmpl->updateMarkers($markerArray, $template);
 
@@ -960,42 +919,6 @@ class mvb_Model_Ajax {
         return $result;
     }
 
-    /*
-     * Check if new addons available
-     * 
-     */
-
-    protected function check_addons() {
-
-        //grab list of features
-        $url = 'http://whimba.org/features.php';
-        //second paramter is FALSE, which means that I'm not sending any
-        //cookies to my website
-        $response = mvb_Model_Helper::cURL($url, FALSE, TRUE);
-
-        if (isset($response['content'])) {
-            $data = json_decode($response['content']);
-        }
-        $available = FALSE;
-        if (is_array($data->features) && count($data->features)) {
-            $plugins = get_plugins();
-            foreach ($data->features as $feature) {
-                if (!isset($plugins[$feature])) {
-                    $available = TRUE;
-                    break;
-                }
-            }
-        }
-
-        $result = array(
-            'status' => 'success',
-            'available' => $available
-        );
-
-
-        return $result;
-    }
-
     /**
      * Save menu order
      * 
@@ -1105,7 +1028,6 @@ class mvb_Model_Ajax {
     protected function add_blog_admin() {
 
         $user_id = get_current_user_id();
-
         $blog_id = get_current_blog_id();
         $ok = add_user_to_blog($blog_id, $user_id, WPACCESS_ADMIN_ROLE);
 

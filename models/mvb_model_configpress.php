@@ -31,20 +31,26 @@
  */
 class mvb_Model_ConfigPress {
 
-    public function __construct() {
+    protected static $config = NULL;
 
-        require_once('Zend/Config.php');
-        require_once('Zend/Config/Ini.php');
-        $this->config = new Zend_Config_Ini(WPACCESS_BASE_DIR . 'config.ini');
+    protected static function getConfig() {
+
+        if (self::$config == NULL) {
+            require_once('Zend/Config.php');
+            require_once('Zend/Config/Ini.php');
+            self::$config = new Zend_Config_Ini(WPACCESS_BASE_DIR . 'config.ini');
+        }
+
+        return self::$config;
     }
 
-    public function saveConfig($config) {
+    public static function saveConfig($config) {
 
         file_put_contents(WPACCESS_BASE_DIR . 'config.ini', $config);
     }
-    
-    public function readConfig(){
-        
+
+    public static function readConfig() {
+
         return file_get_contents(WPACCESS_BASE_DIR . 'config.ini');
     }
 
@@ -53,22 +59,27 @@ class mvb_Model_ConfigPress {
      * 
      * @param string $area
      */
-    public function doRedirect() {
+    public static function doRedirect() {
 
         if (is_admin()) {
-            if (isset($this->config->backend->access->deny->redirect)) {
-                $redirect = $this->config->backend->access->deny->redirect;
-                $this->parseRedirect($redirect);
+            $redirect = self::getOption('backend', 'access');
+            if (isset($redirect->deny->redirect)) {
+                self::parseRedirect($redirect->deny->redirect);
             }
         } else {
-            if (isset($this->config->frontend->access->deny->redirect)) {
-                $redirect = $this->config->frontend->access->deny->redirect;
-                $this->parseRedirect($redirect);
+            $redirect = self::getOption('frontend', 'access');
+            if (isset($redirect->deny->redirect)) {
+                self::parseRedirect($redirect->deny->redirect);
             }
         }
 
-        mvb_Model_Label::initLabels();
-        wp_die(mvb_Model_Label::get('LABEL_127'));
+        if (isset($redirect->deny->message)) {
+            $message = self::parseParam($redirect->deny->message);
+        } else {
+            mvb_Model_Label::initLabels();
+            $message = mvb_Model_Label::get('LABEL_127');
+        }
+        wp_die($message);
     }
 
     /**
@@ -77,7 +88,7 @@ class mvb_Model_ConfigPress {
      * @todo Delete in next release
      * @param mixed
      */
-    protected function parseRedirect($redirect) {
+    protected static function parseRedirect($redirect) {
 
         if (filter_var($redirect, FILTER_VALIDATE_URL)) {
             wp_redirect($redirect);
@@ -85,23 +96,34 @@ class mvb_Model_ConfigPress {
         } elseif (is_int($redirect)) {
             wp_redirect(get_post_permalink($redirect));
             exit;
-        } elseif (is_object($redirect) && isset($redirect->userFunc)) {
-            $func = trim($redirect->userFunc);
-            if (is_string($func) && is_callable($func)) {
-                call_user_func($func);
-            }
+        } else{
+            self::parseParam($param);
         }
     }
 
-    /**
-     * @todo Rewrite
-     */
-    public function getDeleteCapsParam() {
+    protected static function parseParam($param) {
+        
+        $result = FALSE;
+        if (is_object($param) && isset($param->userFunc)) {
+            $func = trim($param->userFunc);
+            if (is_string($func) && is_callable($func)) {
+                $result = call_user_func($func);
+            }
+        }else{
+            $result = $param;
+        }
+        
+        return $result;
+    }
 
-        if (isset($this->config->aam->delete_capabilities)) {
-            $result = $this->config->aam->delete_capabilities;
+    public static function getOption($section, $option, $default = NULL) {
+
+        $config = self::getConfig();
+
+        if (isset($config->{$section}->{$option})) {
+            $result = $config->{$section}->{$option};
         } else {
-            $result = FALSE;
+            $result = $default;
         }
 
         return $result;

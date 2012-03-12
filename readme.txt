@@ -4,40 +4,30 @@ Donate link: http://whimba.org/donation
 Tags: access manager, access control, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role, access config
 Requires at least: 3.2
 Tested up to: 3.3.1
-Stable tag: 1.5.8.2 (beta)
+Stable tag: 1.6
 
 Graphic interface to manage User Roles, Capabilities and Post/Page Access
 
 == Description ==
 
-Advanced Access Manager is a new way of controlling access to your single blog or 
-multisite setup.
-This is easy to use interface mostly is very helpful tool for experienced WordPress
-users. Also just beginners will be able to understand how to use it, but they should
-be enough careful to not mess-up access to website.
-Advanced Access manager support multisite setup and multi-language interface (if 
-required translation available) 
-You can do following things with Advanced Access Manager:
+Advanced Access Manager is very powerful and flexible Access Control tool for 
+your WordPress website. It supports Single WordPress installation and Multisite 
+setup.
+This is the basic list of features you can perform this AAM:
 
-* Apply setting to all Blogs in Multi-Site Setup 
-* Promote other Users to the same Role of lower
-* Filter Admin Menu for specific User Role or User
-* Filter Dashboard Widgets for specific User Role or User
-* Filter List of Metaboxes for specific User Role or User
-* Add new User Capabilities
-* Delete created User Capabilities
-* Create new User Roles
-* Delete any User Role
-* Edit User Role's Label
-* Import/Export Advanced Access Manager configurations
-* View the list of Posts, Pages and Categories in a hierarchical tree 
-* Filter Posts and Post Categories
-* Filter Pages and Sub Pages
-* Set expiration Date for specific Posts, Pages or even Categories
-* Reorganize Order of Main Menu for specific User Role
-* Super Administrator can manager site administrators
-* Support Custom Post Types
-* Exclude Pages From Navigation 
+* Filter Admin Menu
+* Filter Admin Panel
+* Filter Dashboard Widgets
+* Filter Metaboxes
+* Manage Capabilities (Create, Delete)
+* Manage User Roles (Create, Edit, Delete)
+* Manage Access to your Posts, Pages or even Custom Post Types
+* Give possibility to promote Users
+* Manage Admin Menu Order
+* Manage other Administrators
+* Exclude Front-end Pages from Navigation
+
+And many-many other features.
 
 [youtube http://www.youtube.com/watch?v=zkyxply_JHs]
 
@@ -49,15 +39,9 @@ message on Forums Posts.
 
 1. Upload `advanced-access-manager` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Find Access Manager under Users Admin Menu
+3. Find Access Manager under AWM Group Menu
 
 == Frequently Asked Questions ==
-
-= How to redirect is Restriction Prohibited? = 
-
-If you are a programmer and is familiar with PHP you can use actions 
-<b>wpaccess_admin_redirect</b>for Admin Dashboard and 
-<b>wpaccess_front_redirect</b> for a Front-End.
 
 = How to give access for Administrator's Role to Advanced Access Manager? =
 
@@ -103,11 +87,13 @@ just filter Main Menu.
 
 == Changelog ==
 
-= 1.5.8.2 =
-* Bug fixing
-
-= 1.5.8.1 =
-* Bug fixing
+= 1.6 =
+* Fixed bug for post__not_in
+* Fixed bug with Admin Panel filtering
+* Added Restore Default button
+* Added Social and Support links
+* Modified Error Handling feature
+* Modified Config Press Handling
 
 = 1.5.8 =
 * Fixed bug with categories

@@ -115,14 +115,6 @@ abstract class mvb_Abstract_Config {
     protected $excludes = array();
 
     /**
-     * Access Configurations
-     * 
-     * @var object
-     * @access protected
-     */
-    protected $access_config;
-
-    /**
      * Initialize object
      * 
      * @param int|string $id 
@@ -132,8 +124,6 @@ abstract class mvb_Abstract_Config {
         $this->ID = $id;
         //get configuration from db
         $this->getConfig();
-        //init access Configurations
-        $this->initAccessConfig();
     }
     
     /**
@@ -360,7 +350,7 @@ abstract class mvb_Abstract_Config {
                     $rests['posts'][$id]['restrict'] = ($r & self::RESTRICT_BACK ? 1 : 0);
                     $rests['posts'][$id]['restrict_front'] = ($r & self::RESTRICT_FRONT ? 1 : 0);
                 } else {
-                    if ($rests['posts'][$id]['exclude_page']) {
+                    if (isset($rests['posts'][$id]['exclude_page'])) {
                         $rests['posts'][$id] = array(
                             'exclude_page' => 1
                         );
@@ -579,17 +569,6 @@ abstract class mvb_Abstract_Config {
             unset($this->excludes[$id]);
         }
     }
-
-    protected function initAccessConfig() {
-
-        $this->access_config = new mvb_Model_ConfigPress();
-    }
-
-    public function getConfigPress() {
-
-        return $this->access_config;
-    }
-
 }
 
 ?>

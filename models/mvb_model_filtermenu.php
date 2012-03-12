@@ -31,24 +31,37 @@
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
 class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
-
-    function __construct() {
-
-        $keyParams = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'key_params', array());
-
-        $this->keyParams = array_keys($keyParams); //TODO - Save in array format
+	
+	/**
+	 * Is used for custom link which are not following WordPress standards
+	 * 
+	 * @access protected
+	 * @var array  
+	 */
+	protected $key_params;
+	
+	
+	/**
+	 *
+	 * @param type $caller 
+	 */
+    public function __construct($caller) {
+		
+		parent::__construct($caller);
+		
+        $key_params = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'key_params', array());
+        $this->key_params = array_keys($key_params); //TODO - Save in array format
     }
-
+	
     /**
      *
      * @global type $menu
-     * @global type $submenu
      * @param type $area 
      */
-    function manage($area = '') {
-        global $menu, $submenu;
+    public function manage($area = '') {
+        global $menu;
 
-        foreach (mvb_Model_AccessControl::getUserConf()->getMenu() as $main => $data) {
+        foreach ($this->getCaller()->getUserConfig()->getMenu() as $main => $data) {
             if (isset($data['whole']) && ($data['whole'] == 1)) {
                 $this->unsetMainMenuItem($main);
             } elseif (isset($data['sub']) && is_array($data['sub'])) {
@@ -72,7 +85,7 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
 
         $r_menu = $menu;
         ksort($r_menu);
-        $m_order = mvb_Model_AccessControl::getUserConf()->getMenuOrder();
+        $m_order = $this->getCaller()->getUserConfig()->getMenuOrder();
 
         if (is_array($menu) && count($m_order)) {
             $w_menu = array();
@@ -111,7 +124,7 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
             //get base file
             $parts = $this->get_parts($requestedMenu);
             //aam_debug($this->cParams[$role]['menu']);
-            foreach (mvb_Model_AccessControl::getUserConf()->getMenu() as $menu => $sub) {
+            foreach ($this->getCaller()->getUserConfig()->getMenu() as $menu => $sub) {
                 if ($this->compareMenus($parts, $menu) && isset($sub['whole'])) {
                     return FALSE;
                 }
@@ -148,7 +161,7 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
 
             foreach ($diff as $d) {
                 $td = preg_split('/=/', $d);
-                if (in_array($td[0], $this->keyParams)) {
+                if (in_array($td[0], $this->key_params)) {
                     $result = FALSE;
                     break;
                 }
@@ -168,7 +181,10 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
         //this is for only one case - edit.php
         if (in_array(basename($requestedMenu), array('edit.php', 'post-new.php'))) {
             $requestedMenu .= '?post_type=post';
+        }elseif(basename($requestedMenu) == 'edit-tags.php'){
+            $requestedMenu .= '?taxonomy=' . $_REQUEST['taxonomy'];
         }
+        
         //splite requested URI
         $parts = preg_split('/\?/', $requestedMenu);
         $result = array(basename($parts[0]));

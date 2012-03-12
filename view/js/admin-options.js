@@ -101,9 +101,7 @@ function mvbam_object(){
     
 }
 
-/**
- * Register hooks
- */
+
 mvbam_object.prototype.addHook = function(zone, callback){
     
     this.hooks[zone].push(callback);
@@ -313,31 +311,6 @@ mvbam_object.prototype.configureMainMenu = function(){
         }
         _this.sorting = !_this.sorting;
     });
-    
-    //check Add-ons
-    var params = {
-        action: "mvbam",
-        sub_action : 'check_addons',
-        '_ajax_nonce': wpaccessLocal.nonce
-    }
-    jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
-        if (data.status == 'success' && data.available){
-            jQuery('.addons-info').removeClass('dialog');
-            jQuery('.addons-info').bind('click', function(event){
-                event.preventDefault();
-                var pa = {
-                    resizable: false,
-                    height:190,
-                    modal: true,
-                    buttons : {}
-                }
-                pa.buttons[wpaccessLocal.LABEL_76] = function() {
-                    jQuery( this ).dialog( "close" );
-                }
-                jQuery( "#addons-notice" ).dialog(pa);
-            });
-        } 
-    }, 'json');   
 }
 
 mvbam_object.prototype.saveMenuOrder = function(apply_all){
@@ -738,16 +711,23 @@ mvbam_object.prototype.restoreDefault = function(){
     }
     pa.buttons[wpaccessLocal.LABEL_135] = function() {
         var role = jQuery('#current_role').val();
+        var user = parseInt(jQuery('#current_user').val());
+
         var params = {
             'action' : 'mvbam',
-            'sub_action' : 'restore_role',
+            'sub_action' : ( user ? 'restore_user' : 'restore_role'),
             '_ajax_nonce': wpaccessLocal.nonce,
-            'role' : role
+            'role' : role,
+            'user' : user
         };
         var _dialog = this;
         jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
             if (data.status == 'success'){
-                _this.getRoleOptionList(role);
+                if (user){
+                    _this.getUserOptionList(role, user);
+                }else{
+                    _this.getRoleOptionList(role);
+                }
             }else{
                 //TODO - Implement error
                 alert(wpaccessLocal.LABEL_136);
@@ -891,36 +871,6 @@ mvbam_object.prototype.handleError = function(err){
 mvbam_object.prototype.exportConf = function(){
     var url = wpaccessLocal.ajaxurl + '?action=mvbam&sub_action=export&_ajax_nonce=' + wpaccessLocal.nonce;
     jQuery("#exportIFrame").attr("src", url);
-}
-
-mvbam_object.prototype.applyConf = function(){
-    var _this = this;
-    var pa = {
-        resizable: false,
-        height:270,
-        modal: true,
-        buttons: {}
-    }
-    pa.buttons[wpaccessLocal.LABEL_76] = function() {
-        var params = {
-            'action' : 'mvbam',
-            'sub_action' : 'apply_all',
-            '_ajax_nonce': wpaccessLocal.nonce
-        };
-        
-        jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
-            if (data.status == 'success'){
-                _this.success_message(data.message);
-            }else{
-                _this.failed_message(data.message);
-            }
-        }, 'json');
-        jQuery( this ).dialog( "close" );
-    }
-    pa.buttons[wpaccessLocal.LABEL_77] = function() {
-        jQuery( this ).dialog( "close" );
-    }
-    jQuery( "#apply-config" ).dialog(pa);
 }
 
 mvbam_object.prototype.deleteCapability = function(cap, label){
@@ -1232,10 +1182,6 @@ jQuery(document).ready(function(){
         jQuery('.export-conf').bind('click', function(){
             mObj.exportConf(); 
         });
-        
-        jQuery('.apply-conf').bind('click', function(){
-            mObj.applyConf(); 
-        });  
         
         jQuery('#wp-access').show();
         

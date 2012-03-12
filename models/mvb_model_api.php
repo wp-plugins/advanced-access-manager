@@ -54,14 +54,6 @@ final class mvb_Model_API {
     protected static $current_user;
 
     /**
-     * User Config Cache
-     * 
-     * @access protected
-     * @var array
-     */
-    protected static $userconfig_cache = array();
-
-    /**
      * Role Config Cache
      * 
      * @access protected
@@ -72,12 +64,12 @@ final class mvb_Model_API {
     /**
      * Clear cache
      */
-    public static function clearCache(){
-        
+    public static function clearCache() {
+
         self::$current_user = NULL;
-        self::$userconfig_cache = array();
         self::$roleconfig_cache = array();
     }
+
     /**
      * Check if is multisite network panel is used now
      * 
@@ -99,23 +91,14 @@ final class mvb_Model_API {
      */
     public static function isSuperAdmin($user_id = FALSE) {
 
-        $super = FALSE;
         $user_id = ($user_id ? $user_id : get_current_user_id());
 
-        if (mvb_Model_API::isNetworkPanel() && is_super_admin($user_id)) {
-            $super = TRUE;
-        } elseif (!mvb_Model_API::isNetworkPanel()) {
-            if (self::getCurrentUser()->has_cap(WPACCESS_SADMIN_ROLE)) {
-                $super = TRUE;
-            } else {
-                //check if answer is stored
-                $answer = self::getBlogOption(WPACCESS_FTIME_MESSAGE, 0);
-                if (!$answer) {
-                    $super = TRUE;
-                }
-            }
+        if (mvb_Model_API::isNetworkPanel()){
+            $super = (is_super_admin($user_id) ? TRUE : FALSE);
+        }else{
+            $super = (self::getCurrentUser()->has_cap(WPACCESS_SADMIN_ROLE) ? TRUE : FALSE);
         }
-
+       
         return $super;
     }
 
@@ -222,9 +205,10 @@ final class mvb_Model_API {
      */
     public static function getUserAccessConfig($user_id, $force_roles = FALSE) {
 
-        if (!isset(self::$userconfig_cache[$user_id]) || $force_roles) {
-            $config = new mvb_Model_UserConfig($user_id);
+        if ($force_roles || !($config = mvb_Model_Cache::getCacheData('user', $user_id))) {
 
+            $config = new mvb_Model_UserConfig($user_id);
+            
             if (!$config->getID()) { //user is logged in
                 $config = new mvb_Model_RoleConfig('_visitor');
             } else {
@@ -237,18 +221,16 @@ final class mvb_Model_API {
                 foreach ($role_list as $role) {
                     mvb_merge_configs($m_config, mvb_Model_API::getRoleAccessConfig($role));
                 }
-
+                
                 mvb_merge_configs($config, $m_config);
+
+                if (!$force_roles) {
+                    mvb_Model_Cache::saveCacheData('user', $user_id, $config);
+                }
             }
-            
-            //TODO - this is not a proper way
-            if ($force_roles){
-                return $config;
-            }
-            self::$userconfig_cache[$user_id] = $config;
         }
 
-        return self::$userconfig_cache[$user_id];
+        return $config;
     }
 
     /**
@@ -258,12 +240,12 @@ final class mvb_Model_API {
      * @param string $role 
      */
     public static function getRoleAccessConfig($role) {
-        
-        //if (!isset(self::$roleconfig_cache[$role])){
-         //    self::$roleconfig_cache[$role] = new mvb_Model_RoleConfig($role);
-        //}
-        //TODO - SOMETHING WRONG HERE
-        return  new mvb_Model_RoleConfig($role);
+
+        if (!isset(self::$roleconfig_cache[$role])) {
+            self::$roleconfig_cache[$role] = new mvb_Model_RoleConfig($role);
+        }
+
+        return self::$roleconfig_cache[$role];
     }
 
     /**

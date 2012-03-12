@@ -29,176 +29,186 @@
  */
 class mvb_Model_AccessControl {
 
-    /**
-     *
-     * @var type 
-     */
-    protected static $user_config = NULL;
+	/**
+	 * User Config
+	 * 
+	 * @access protected
+	 * @var mvb_Model_UserConfig 
+	 */
+	protected $user_config;
 
-    /**
-     *
-     * @var type 
-     */
-    protected static $admin_menu = NULL;
-    
-    /**
-     * Clear cache
-     */
-    public static function clearCache(){
-        
-        self::$user_config = NULL;
-        self::$admin_menu = NULL;
-    }
+	/**
+	 * Menu Filter
+	 * 
+	 * @access protected
+	 * @var mvb_Model_FilterMenu 
+	 */
+	protected $menu_filter = NULL;
+	
+	/**
+	 * Class that called current
+	 * 
+	 * @access protected
+	 * @var object
+	 */
+	protected $caller;
 
-    /**
-     * Main function for checking if user has access to a page
-     * 
-     * Check if current user has access to requested page. If no, print an
-     * notification
-     * @global object $wp_query
-     */
-    public static function checkAccess() {
-        global $wp_query, $post;
+	/**
+	 * Init Object
+	 * 
+	 * @param int $user_id 
+	 */
+	public function __construct($caller, $user_id = FALSE) {
 
-        if (is_admin() && !mvb_Model_API::isSuperAdmin()) {
+		$this->caller = $caller;
+		$user_id = ($user_id ? $user_id : get_current_user_id());
 
-            $uri = $_SERVER['REQUEST_URI'];
-            if (!self::getMenuConf()->checkAccess($uri)) {
-                self::getUserConf()->getConfigPress()->doRedirect();
-            }
+		$this->user_config = mvb_Model_API::getUserAccessConfig($user_id);
+		$this->user_config->initRestrictionTree();
 
-            wp_delete_post();
-            //check if user try to access a post
-            if (isset($_GET['post'])) {
-                $post_id = (int) $_GET['post'];
-            } elseif (isset($_POST['post_ID'])) {
-                $post_id = (int) $_POST['post_ID'];
-            } else {
-                $post_id = 0;
-            }
+		$this->menu_filter = new mvb_Model_FilterMenu($this);
+	}
 
-            if ($post_id) { //check if current user has access to current post
-                $post = get_post($post_id);
-                if (self::checkPostAccess($post)) {
-                    self::getUserConf()->getConfigPress()->doRedirect();
-                }
-            } elseif (isset($_GET['taxonomy']) && isset($_GET['tag_ID'])) { // TODO - Find better way
-                if (self::checkCategoryAccess($_GET['tag_ID'])) {
-                    self::getUserConf()->getConfigPress()->doRedirect();
-                }
-            }
-        } elseif (!mvb_Model_API::isSuperAdmin()) {
-            if (is_category()) {
-                $cat_obj = $wp_query->get_queried_object();
-                if (self::checkCategoryAccess($cat_obj->term_id)) {
-                    self::getUserConf()->getConfigPress()->doRedirect();
-                }
-            } else {
-                if (!$wp_query->is_home() && $post) {
-                    if (self::checkPostAccess($post) && !mvb_Model_API::isSuperAdmin()) {
-                        self::getUserConf()->getConfigPress()->doRedirect();
-                    }
-                }
-            }
-        }
-    }
+	/**
+	 * Main function for checking if user has access to a page
+	 * 
+	 * Check if current user has access to requested page. If no, print an
+	 * notification
+	 * 
+	 * @access public
+	 * @global object $wp_query
+	 * @global object $post
+	 * @return bool
+	 */
+	public function checkAccess() {
+		global $wp_query, $post;
 
-    /**
-     *
-     * @return type 
-     */
-    public static function getUserConf() {
+		//skip Super Admin Role
+		if (mvb_Model_API::isSuperAdmin()) {
+			return TRUE;
+		}
 
-        if (self::$user_config === NULL) {
-            $user_id = get_current_user_id();
-            if (!(self::$user_config = mvb_Model_Cache::getCacheData('user', $user_id))) {
-                self::$user_config = mvb_Model_API::getUserAccessConfig($user_id);
-                mvb_Model_Cache::saveCacheData('user', $user_id, self::$user_config);
-            }
-            //initialize Restriction Tree
-            self::$user_config->initRestrictionTree();
-        }
+		if (is_admin()) {
+			//check if user has access to requested Menu
+			$uri = $_SERVER['REQUEST_URI'];
+			if (!$this->getMenuFilter()->checkAccess($uri)) {
+				mvb_Model_ConfigPress::doRedirect();
+			}
 
-        return self::$user_config;
-    }
+			//check if current user has access to requested Post
+			$post_id = mvb_Model_Helper::getCurrentPostID();
+			if ($post_id) {
+				$post = get_post($post_id);
+				if (!$this->checkPostAccess($post)) {
+					mvb_Model_ConfigPress::doRedirect();
+				}
+			} elseif (isset($_GET['taxonomy']) && isset($_GET['tag_ID'])) { // TODO - Find better way
+				if (!$this->checkCategoryAccess($_GET['tag_ID'])) {
+					mvb_Model_ConfigPress::doRedirect();
+				}
+			}
+		} else {
+			if (is_category()) {
+				$cat_obj = $wp_query->get_queried_object();
+				if (!$this->checkCategoryAccess($cat_obj->term_id)) {
+					mvb_Model_ConfigPress::doRedirect();
+				}
+			} else {
+				if (!$wp_query->is_home() && $post) {
+					if (!$this->checkPostAccess($post)) {
+						mvb_Model_ConfigPress::doRedirect();
+					}
+				}
+			}
+		}
+	}
 
-    /**
-     * 
-     */
-    public static function getMenuConf() {
-        //init admin menu 
-        if (self::$admin_menu === NULL) {
-            self::$admin_menu = new mvb_Model_FilterMenu();
-        }
+	/**
+	 * Get User Config
+	 * 
+	 * @access public
+	 * @return mvb_Model_UserConfig 
+	 */
+	public function getUserConfig() {
 
-        return self::$admin_menu;
-    }
+		return $this->user_config;
+	}
 
-    /**
-     * Check Category Restriction
-     * 
-     * @param int $id
-     * @return boolean TRUE if restricted
-     */
-    public static function checkCategoryAccess($id) {
+	/**
+	 * Get Menu Filter
+	 * 
+	 * @access public
+	 * @return mvb_Model_FilterMenu
+	 */
+	public function getMenuFilter() {
 
-        $restrict = FALSE;
-        if ($data = self::getUserConf()->getRestriction('taxonomy', $id)) {
-            if (is_admin() && $data['restrict']) {
-                $restrict = TRUE;
-            } elseif (!is_admin() && $data['restrict_front']) {
-                $restrict = TRUE;
-            }
-        }
+		return $this->menu_filter;
+	}
 
-        return $restrict;
-    }
+	/**
+	 * Check Category Restriction
+	 * 
+	 * @param int $id
+	 * @return boolean TRUE if restricted
+	 */
+	public function checkCategoryAccess($id) {
 
-    /**
-     * Check if user has access to current post
-     * 
-     * @param object $post
-     * @return boolean
-     */
-    public static function checkPostAccess($post) {
+		$access = TRUE;
+		if ($data = $this->getUserConfig()->getRestriction('taxonomy', $id)) {
+			if (is_admin() && $data['restrict']) {
+				$access = FALSE;
+			} elseif (!is_admin() && $data['restrict_front']) {
+				$access = FALSE;
+			}
+		}
 
-        $restrict = FALSE;
-        //get post's categories
-        $taxonomies = get_object_taxonomies($post);
+		return $access;
+	}
 
-        $cat_list = wp_get_object_terms($post->ID, $taxonomies, array('fields' => 'ids'));
+	/**
+	 * Check if user has access to current post
+	 * 
+	 * @param object $post
+	 * @return boolean
+	 */
+	public function checkPostAccess($post) {
 
-        if (is_array($cat_list)) {
-            foreach ($cat_list as $cat_id) {
-                if (self::checkCategoryAccess($cat_id)) {
-                    $restrict = TRUE;
-                    break;
-                }
-            }
-        }
+		$access = TRUE;
+		//get post's categories
+		$taxonomies = get_object_taxonomies($post);
+		$cat_list = wp_get_object_terms($post->ID, $taxonomies, array('fields' => 'ids'));
 
-        if ($data = self::getUserConf()->getRestriction('post', $post->ID)) {
-            if (is_admin() && $data['restrict']) {
-                $restrict = TRUE;
-            } elseif (!is_admin() && $data['restrict_front']) {
-                $restrict = TRUE;
-            }
-        }
+		if (is_array($cat_list)) {
+			foreach ($cat_list as $cat_id) {
+				if (!$this->checkCategoryAccess($cat_id)) {
+					$access = FALSE;
+					break;
+				}
+			}
+		}
 
-        return $restrict;
-    }
+		if ($data = $this->getUserConfig()->getRestriction('post', $post->ID)) {
+			if (is_admin() && $data['restrict']) {
+				$access = FALSE;
+			} elseif (!is_admin() && $data['restrict_front']) {
+				$access = FALSE;
+			}
+		}
 
-    /**
-     * Check if page is excluded from the menu
-     * 
-     * @param type $page
-     * @return boolean 
-     * @todo Delete This is not necessary
-     */
-    public static function checkPageExcluded($page) {
+		return $access;
+	}
 
-        return (self::getUserConf()->hasExclude($page->ID) ? TRUE : FALSE);
-    }
+	/**
+	 * Check if page is excluded from the menu
+	 * 
+	 * @param type $page
+	 * @return boolean 
+	 * @todo Delete This is not necessary
+	 */
+	public function checkPageExcluded($page) {
+
+		return ($this->getUserConfig()->hasExclude($page->ID) ? TRUE : FALSE);
+	}
 
 }
 

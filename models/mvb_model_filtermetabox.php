@@ -32,45 +32,37 @@
  */
 class mvb_Model_FilterMetabox extends mvb_Abstract_Filter {
 
-    /**
-     *
-     * @global type $wp_meta_boxes
-     * @global type $post
-     * @param type $area 
-     */
-    function manage($area = 'post') {
-        global $wp_meta_boxes, $post;
+	/**
+	 *
+	 * @global type $wp_meta_boxes
+	 * @global type $post
+	 * @param type $area 
+	 */
+	function manage($area = 'post') {
+		global $wp_meta_boxes, $post;
 
-        switch ($area) {
-            case 'dashboard':
-                if (is_array($wp_meta_boxes['dashboard'])) {
-                    foreach ($wp_meta_boxes['dashboard'] as $position => $metaboxes) {
-                        foreach ($metaboxes as $priority => $metaboxes1) {
-                            foreach ($metaboxes1 as $metabox => $data) {
-                                if (mvb_Model_AccessControl::getUserConf()->hasMetabox('dashboard-' . $metabox)) {
-                                    unset($wp_meta_boxes['dashboard'][$position][$priority][$metabox]);
-                                }
-                            }
-                        }
-                    }
-                }
-                break;
+		switch ($area) {
+			case 'dashboard':
+				$type = 'dashboard';
+				break;
 
-            default:
-                if ($wp_meta_boxes[$post->post_type]) {
-                    foreach ($wp_meta_boxes[$post->post_type] as $position => $metaboxes) {
-                        foreach ($metaboxes as $priority => $metaboxes1) {
-                            foreach ($metaboxes1 as $metabox => $data) {
-                                if (mvb_Model_AccessControl::getUserConf()->hasMetabox($post->post_type . '-' . $metabox)) {
-                                    unset($wp_meta_boxes[$post->post_type][$position][$priority][$metabox]);
-                                }
-                            }
-                        }
-                    }
-                }
-                break;
-        }
-    }
+			default:
+				$type = $post->post_type;
+				break;
+		}
+
+		if (is_array($wp_meta_boxes[$type])) {
+			foreach ($wp_meta_boxes[$type] as $position => $metaboxes) {
+				foreach ($metaboxes as $priority => $metaboxes1) {
+					foreach ($metaboxes1 as $metabox => $data) {
+						if ($this->getCaller()->getAccessControl()->getUserConfig()->hasMetabox($type . '-' . $metabox)) {
+							unset($wp_meta_boxes[$type][$position][$priority][$metabox]);
+						}
+					}
+				}
+			}
+		}
+	}
 
 }
 

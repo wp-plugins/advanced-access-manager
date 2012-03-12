@@ -71,14 +71,20 @@ spl_autoload_register('mvb_autoload');
  */
 function mvb_merge_configs($config, $m_config) {
 
-    //check which config has highest user level and overwrite lower
-    if (mvb_Model_Helper::isLowerLevel($config, $m_config)) {
+    if (!count($config->getMenu())) {
         $config->setMenu($m_config->getMenu());
-        $config->setMetaboxes($m_config->getMetaboxes());
-        if (count($m_config->getMenuOrder())) {
-            $config->setMenuOrder($m_config->getMenuOrder());
-        }
     }
+
+    if (!count($config->getMetaboxes())) {
+        $config->setMetaboxes($m_config->getMetaboxes());
+    }
+
+    if (!count($config->getMenuOrder())) {
+        $config->setMenuOrder($m_config->getMenuOrder());
+    }
+
+//    if (mvb_Model_Helper::isLowerLevel($config, $m_config)) {
+//    }
 
     $caps = array_merge($config->getCapabilities(), $m_config->getCapabilities());
     $config->setCapabilities($caps);
@@ -109,100 +115,16 @@ function aam_set_current_user() {
     }
 }
 
-function aam_error_handler($errNo, $errStr, $errFile, $errLine) {
-    global $wpdb;
-
-    if (!(error_reporting() & $errNo)) {
-        return;
-    }
-
-    if (!strpos($errFile, 'advanced-access-manager')) {
-        return;
-    }
-
-    $f = fopen(WPACCESS_CACHE_DIR . '/error.log', 'a');
-
-    $haldPro = FALSE;
-
-    switch ($errNo) {
-        case E_USER_ERROR:
-            $str = 'E_USER_ERROR : ' . $errStr . "\n" .
-                    '   Fatal error in file ' . $errFile . '(' . $errLine . ')' . "\n";
-            $haldPro = TRUE;
-            break;
-        case E_USER_WARNING:
-            $str = 'E_USER_WARNING : ' . $errStr . "\n" .
-                    '   Warning in file ' . $errFile . '(' . $errLine . ')' . "\n";
-            break;
-        case E_USER_NOTICE:
-            $str = 'E_USER_NOTICE  : ' . $errStr . "\n" .
-                    '   Notice in file ' . $errFile . '(' . $errLine . ')' . "\n";
-            break;
-        case E_ERROR:
-            $str = 'E_ERROR : ' . $errStr . "\n" .
-                    '   FATAL ERROR in file ' . $errFile . '(' . $errLine . ')' . "\n";
-            $haldPro = TRUE;
-            break;
-        case E_WARNING:
-            $str = 'E_WARNING : ' . $errStr . "\n" .
-                    '   WARNING in file ' . $errFile . '(' . $errLine . ')' . "\n";
-            break;
-        case E_NOTICE:
-            $str = 'E_NOTICE  : ' . $errStr . "\n" .
-                    '   NOTICE in file ' . $errFile . '(' . $errLine . ')' . "\n";
-            break;
-        case E_STRICT:
-            $str = 'E_STRICT  : ' . $errStr . "\n" .
-                    '   E_STRICT in file ' . $errFile . '(' . $errLine . ')' . "\n";
-            break;
-        case E_RECOVERABLE_ERROR :
-            $str = 'E_RECOVERABLE_ERROR  : ' . $errStr . "\n" .
-                    '   RECOVERABLE ERROR in file ' . $errFile . '(' . $errLine . ')' . "\n";
-            $haldPro = TRUE;
-            break;
-        default:
-            $str = 'Unknown message (' . $errNo . ')  : ' . $errStr . "\n" .
-                    '   Message in file ' . $errFile . '(' . $errLine . ')' . "\n";
-    }
-
-    if ($f !== FALSE) {
-        fwrite($f, $str);
-        //gether additional info
-        //fwrite($f, "SESSION data: \n" . print_r($_SESSION, true));
-        //fwrite($f, "SERVER data: \n" . print_r($_SERVER, true));
-        fwrite($f, "REQUEST data: \n" . print_r($_REQUEST, true));
-        fclose($f);
-    }
-
-    if ($haldPro) {
-        die('Advanced Access Manager catched an error. Please contact whimba@gmail.com for support');
-    }
+function mvb_warning() {
+    echo "<div id='mvb-warning' class='updated fade'>
+        <p><strong>" . __('Advaned Access Manager will not work properly in fact other Error Handler detected.') . "</strong></p></div>";
 }
 
-function aam_fatalerror_handler() {
+//autoloading is not working during error handling
+require_once('models/mvb_model_errorhandler.php');
 
-    $error = error_get_last();
-
-    if (!strpos($error['file'], 'advanced-access-manager')) {
-        return;
-    }
-
-    if ($error !== NULL) {
-
-        $f = fopen(WPACCESS_CACHE_DIR . '/error.log', 'a');
-        $str = 'SHUTDOWN ' . $error['type'] . ': ' . $error['message'] . "\n" .
-                'FATAL ERROR in file ' . $error['file'] . '(' . $error['line'] . ')' . "\n";
-
-        if ($f !== FALSE) {
-            fwrite($f, $str);
-            //gether additional info
-            //fwrite($f, "SESSION data: \n" . print_r($_SESSION, true));
-            //fwrite($f, "SERVER data: \n" . print_r($_SERVER, true));
-            fwrite($f, "REQUEST data: \n" . print_r($_REQUEST, true));
-            fclose($f);
-        }
-    }
+if (set_error_handler('mvb_Model_errorHandler::handle')) {
+    add_action('admin_notices', 'mvb_warning');
 }
-
-set_error_handler('aam_error_handler');
-register_shutdown_function('aam_fatalerror_handler');?>
+register_shutdown_function('mvb_Model_errorHandler::fatalHandler');
+?>

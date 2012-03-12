@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access to WordPress Backend and Frontend.
-  Version: 1.5.8.2 (beta)
+  Version: 1.6
   Author: Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
   Author URI: http://www.whimba.org
  */
@@ -58,13 +58,29 @@ require_once('mvb_config.php');
 class mvb_WPAccess {
 
     /**
+     * Main Access Controller
+     * 
+     * @access public
+     * @var mvb_Model_AccessControl 
+     */
+    protected $access_control;
+
+    /**
+     * Config Press
+     * 
+     * @access protected
+     * @var mvb_Model_ConfigPress
+     */
+    protected $config_press;
+
+    /**
      * Initialize all necessary vars and hooks
      * 
-     * @global object $GLOBALS['post']
      * @return void 
      */
     public function __construct() {
-        global $post;
+
+        $this->access_control = new mvb_Model_AccessControl($this);
 
         if (is_admin()) {
             //init labels
@@ -99,27 +115,37 @@ class mvb_WPAccess {
             add_action('wp_before_admin_bar_render', array($this, 'wp_before_admin_bar_render'));
             add_action('wp', array($this, 'wp_front'));
             add_filter('get_pages', array($this, 'get_pages'));
+            add_filter('wp_get_nav_menu_items', array($this, 'wp_get_nav_menu_items'));
         }
 
         if (!mvb_Model_API::isSuperAdmin()) {
             add_filter('get_terms', array($this, 'get_terms'), 10, 3);
             add_action('pre_get_posts', array($this, 'pre_get_posts'));
         }
-
+        
         //Main Hook, used to check if user is authorized to do an action
         //Executes after WordPress environment loaded and configured
         add_action('wp_loaded', array($this, 'check'), 999);
     }
 
-    // ===============================================================
-    // ********************* PUBLIC METHODS **************************
-    // ===============================================================
+    /**
+     *
+     * @return type 
+     */
+    public function getAccessControl() {
 
+        return $this->access_control;
+    }
+
+    /**
+     *
+     * @param type $post_id 
+     */
     public function before_delete_post($post_id) {
 
         $post = get_post($post_id);
-        if (mvb_Model_AccessControl::checkPostAccess($post)) {
-            mvb_Model_AccessControl::getUserConf()->getConfigPress()->doRedirect();
+        if (!$this->getAccessControl()->checkPostAccess($post)) {
+            $this->getAccessControl()->getConfigPress()->doRedirect();
         }
     }
 
@@ -175,7 +201,7 @@ class mvb_WPAccess {
         }
 
         //get user's highest Level
-        $caps = mvb_Model_AccessControl::getUserConf()->getUser()->getAllCaps();
+        $caps = $this->getAccessControl()->getUserConfig()->getUser()->getAllCaps();
         $highest = mvb_Model_Helper::getHighestUserLevel($caps);
 
         if ($highest < WPACCESS_TOP_LEVEL && is_array($roles)) { //filter roles
@@ -204,10 +230,6 @@ class mvb_WPAccess {
                 wp_enqueue_style('codemirror', WPACCESS_CSS_URL . 'codemirror/codemirror.css');
                 break;
 
-            case 'wp_health':
-                wp_enqueue_style('wphealth-style', WPACCESS_CSS_URL . 'wphealth_style.css');
-                break;
-
             default:
                 $print_common = FALSE;
                 break;
@@ -219,7 +241,7 @@ class mvb_WPAccess {
             wp_enqueue_style('global');
             wp_enqueue_style('wp-admin');
             //additional styles
-            wp_enqueue_style('jquery-ui', WPACCESS_CSS_URL . 'ui/jquery-ui-1.8.16.custom.css');
+            wp_enqueue_style('jquery-ui', WPACCESS_CSS_URL . 'ui/jquery-ui.css');
         }
     }
 
@@ -232,7 +254,7 @@ class mvb_WPAccess {
      */
     public function wp_front($wp) {
 
-        mvb_Model_AccessControl::checkAccess();
+        $this->getAccessControl()->checkAccess();
     }
 
     /*
@@ -243,9 +265,29 @@ class mvb_WPAccess {
     public function wp_before_admin_bar_render() {
         global $wp_admin_bar;
 
-        if (is_object($wp_admin_bar) && isset($wp_admin_bar->menu)) {
-            $this->filter_top_bar($wp_admin_bar->menu);
+        if ($wp_admin_bar instanceof WP_Admin_Bar) {
+            
+            foreach($wp_admin_bar->get_nodes() as $node){
+                if (!$this->getAccessControl()->getMenuFilter()->checkAccess($node->href)){
+                    $wp_admin_bar->remove_node($node->id);
+                }
+            }
         }
+    }
+    
+    public function wp_get_nav_menu_items($pages) {
+
+        if (is_array($pages)) { //filter all pages which are not allowed
+             foreach ($pages as $i => $page) {
+                $post = get_post($page->object_id);
+                if (!$this->getAccessControl()->checkPostAccess($post)
+                        || $this->getAccessControl()->checkPageExcluded($post)) {
+                    unset($pages[$i]);
+                }
+            }
+        }
+
+        return $pages;
     }
 
     /*
@@ -256,9 +298,9 @@ class mvb_WPAccess {
     public function get_pages($pages) {
 
         if (is_array($pages)) { //filter all pages which are not allowed
-            foreach ($pages as $i => $page) {
-                if (mvb_Model_AccessControl::checkPostAccess($page)
-                        || mvb_Model_AccessControl::checkPageExcluded($page)) {
+             foreach ($pages as $i => $page) {
+                if (!$this->getAccessControl()->checkPostAccess($page)
+                        || $this->getAccessControl()->checkPageExcluded($page)) {
                     unset($pages[$i]);
                 }
             }
@@ -275,7 +317,7 @@ class mvb_WPAccess {
 
         $r_posts = array();
         $r_cats = array();
-        $rests = mvb_Model_AccessControl::getUserConf()->getRestrictions();
+        $rests = $this->getAccessControl()->getUserConfig()->getRestrictions();
         $t_posts = array();
 
         if (isset($rests['categories']) && is_array($rests['categories'])) {
@@ -313,8 +355,16 @@ class mvb_WPAccess {
             $r_posts = array_merge($r_posts, $t_posts);
         }
 
-        $query->query_vars['tax_query'] = $r_cats;
-        $query->query_vars['post__not_in'] = $r_posts;
+        if (isset($query->query_vars['tax_query'])){
+            $query->query_vars['tax_query'] = array_merge($query->query_vars['tax_query'], $r_cats);
+        }else{
+            $query->query_vars['tax_query'] = $r_cats;
+        }
+        if (isset($query->query_vars['post__not_in'])){
+            $query->query_vars['post__not_in'] = array_merge($query->query_vars['post__not_in'], $r_posts);
+        }else{
+            $query->query_vars['post__not_in'] = $r_posts;
+        }
     }
 
     /**
@@ -329,7 +379,7 @@ class mvb_WPAccess {
         if (is_array($terms)) {
             foreach ($terms as $i => $term) {
                 if (is_object($term)) {
-                    if (mvb_Model_AccessControl::checkCategoryAccess($term->term_id)) {
+                    if (!$this->getAccessControl()->checkCategoryAccess($term->term_id)) {
                         unset($terms[$i]);
                     }
                 }
@@ -339,6 +389,14 @@ class mvb_WPAccess {
         return $terms;
     }
 
+    /**
+     *
+     * @param string $caps
+     * @param type $cap
+     * @param type $user_id
+     * @param type $args
+     * @return string 
+     */
     public function map_meta_cap($caps, $cap, $user_id, $args) {
 
         switch ($cap) {
@@ -425,7 +483,7 @@ class mvb_WPAccess {
             }
         } elseif (!mvb_Model_API::isSuperAdmin()) {
             $screen = get_current_screen();
-            $m = new mvb_Model_FilterMetabox();
+            $m = new mvb_Model_FilterMetabox($this);
             switch ($screen->id) {
                 case 'dashboard':
                     $m->manage('dashboard');
@@ -454,21 +512,9 @@ class mvb_WPAccess {
         if (phpversion() < '5.1.2') {
             exit(mvb_Model_Label::get('LABEL_123'));
         }
-
-        $sites = mvb_Model_Helper::getSiteList();
-
-        if (is_array($sites) && count($sites)) {
-            foreach ($sites as $site) {
-                $c_blog = new mvb_Model_Blog(array(
-                            'id' => $site->blog_id,
-                            'url' => get_site_url($site->blog_id),
-                            'prefix' => $wpdb->get_blog_prefix($site->blog_id)
-                        ));
-                self::setOptions($c_blog);
-            }
-        } else {
-            self::setOptions();
-        }
+		//Do not go thourgh the list of sites in multisite support
+		//It can cause delays for large amount of blogs
+        self::setOptions();
     }
 
     /**
@@ -480,24 +526,11 @@ class mvb_WPAccess {
 
         $role_list = mvb_Model_API::getBlogOption('user_roles', array(), $blog);
         //save current setting to DB
-        mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'original_user_roles', $role_list, $blog);
-        //add options
-        $m = new mvb_Model_Role();
-        $roles = (is_array($m->roles) ? array_keys($m->roles) : array());
-        $options = array();
-        if (is_array($roles)) {
-            foreach ($roles as $role) {
-                $options[$role] = (object) array(
-                            'menu' => array(),
-                            'metaboxes' => array(),
-                        //'capabilities' => $m->roles[$role]['capabilities']
-                );
-            }
-        }
-        mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'options', $options, $blog);
-
-        $role_list[WPACCESS_ADMIN_ROLE]['capabilities']['edit_comment'] = 1; //add this role for admin automatically
-        mvb_Model_API::updateBlogOption('user_roles', $role_list, $blog);
+        mvb_Model_API::updateBlogOption(
+                WPACCESS_PREFIX . 'original_user_roles', 
+                $role_list, 
+                $blog
+        );
     }
 
     /*
@@ -507,7 +540,7 @@ class mvb_WPAccess {
      * Restore original user roles
      */
 
-    public function deactivate() {
+    public function uninstall() {
         global $wpdb;
 
         $sites = mvb_Model_Helper::getSiteList();
@@ -520,6 +553,7 @@ class mvb_WPAccess {
                             'prefix' => $wpdb->get_blog_prefix($site->blog_id)
                         ));
                 self::remove_options($c_blog);
+				unset($c_blog);
             }
         } else {
             self::remove_options();
@@ -533,19 +567,12 @@ class mvb_WPAccess {
 
     public static function remove_options($blog = FALSE) {
 
-        $roles = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'original_user_roles', array(), $blog);
-
-        if (count($roles)) {
-            mvb_Model_API::updateBlogOption('user_roles', $roles, $blog);
-        }
-        //TODO - also remove cashe and user meta
         mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'original_user_roles', $blog);
         mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'options', $blog);
         mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'cache', $blog);
         mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'restrictions', $blog);
         mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'menu_order', $blog);
         mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'key_params', $blog);
-        mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'sa_dialog', $blog); //TODO - delete in version 1.5
         mvb_Model_API::deleteBlogOption(WPACCESS_FTIME_MESSAGE, $blog);
     }
 
@@ -581,8 +608,6 @@ class mvb_WPAccess {
                     'LABEL_136' => mvb_Model_Label::get('LABEL_136'),
                     'LABEL_137' => mvb_Model_Label::get('LABEL_137'),
                     'LABEL_138' => mvb_Model_Label::get('LABEL_138'),
-                    'LABEL_139' => mvb_Model_Label::get('LABEL_139'),
-                    'LABEL_140' => mvb_Model_Label::get('LABEL_140'),
                     'LABEL_24' => mvb_Model_Label::get('LABEL_24'),
                     'LABEL_141' => mvb_Model_Label::get('LABEL_141'),
                     'LABEL_142' => mvb_Model_Label::get('LABEL_142'),
@@ -611,10 +636,6 @@ class mvb_WPAccess {
                 wp_localize_script('wpaccess-admin', 'wpaccessLocal', $locals);
                 break;
 
-            case 'wp_health':
-                wp_enqueue_script('wphealth-admin', WPACCESS_JS_URL . 'wphealth/admin-options.js');
-                break;
-
             default:
                 $print_common = FALSE;
                 break;
@@ -627,7 +648,7 @@ class mvb_WPAccess {
             wp_enqueue_script('thickbox');
             wp_enqueue_script('media-upload');
             //additional scripts
-            wp_enqueue_script('jquery-ui', WPACCESS_JS_URL . 'ui/jquery-ui.min.js', array('jquery'));
+            wp_enqueue_script('jquery-ui', WPACCESS_JS_URL . 'ui/jquery-ui.js', array('jquery'));
         }
     }
 
@@ -640,7 +661,7 @@ class mvb_WPAccess {
      */
     public function check() {
 
-        mvb_Model_AccessControl::checkAccess();
+        $this->getAccessControl()->checkAccess();
     }
 
     /*
@@ -652,17 +673,24 @@ class mvb_WPAccess {
      */
 
     public function admin_menu() {
-        global $submenu;
+        global $submenu, $menu;
 
         $aam_cap = ( mvb_Model_API::isSuperAdmin() ? 'administrator' : 'aam_manage');
 
-        add_menu_page(__('AAM Group', 'aam'), __('AAM Group', 'aam'), 'administrator', 'aam-group', array($this, 'aam_group'), WPACCESS_CSS_URL . 'images/active-menu.png');
+        add_menu_page(__('AWM Group', 'aam'), __('AWM Group', 'aam'), 'administrator', 'aam-group', array($this, 'aam_group'), WPACCESS_CSS_URL . 'images/active-menu.png');
         add_submenu_page('aam-group', __('Access Manager', 'aam'), __('Access Manager', 'aam'), $aam_cap, 'wp_access', array($this, 'accessManagerPage'));
 
-        if (isset($submenu['aam-group']) && is_array($submenu['aam-group'])) {
+        if (isset($submenu['aam-group']) && is_array($submenu['aam-group'])){
             foreach ($submenu['aam-group'] as $key => $value) {
                 if ($value[2] == 'aam-group') {
                     unset($submenu['aam-group'][$key]);
+                    break;
+                }
+            }
+        }else{
+            foreach($menu as $id => $data){
+                if ($data[2] == 'aam-group'){
+                    unset($menu[$id]);
                     break;
                 }
             }
@@ -671,7 +699,7 @@ class mvb_WPAccess {
         $this->init_key_params();
         if (!mvb_Model_API::isSuperAdmin()) {
             //filter the menu
-            mvb_Model_AccessControl::getMenuConf()->manage();
+            $this->getAccessControl()->getMenuFilter()->manage();
         }
     }
 
@@ -722,11 +750,16 @@ class mvb_WPAccess {
         }
     }
 
+    public function healthManagerPage() {
+
+        $m = new mvb_Model_HealthManager();
+        $m->manage();
+    }
+
     /**
      * 
      */
     public function render_optionlist() {
-
         $role = mvb_Model_Helper::getParam('role', 'POST');
         $user = mvb_Model_Helper::getParam('user', 'POST');
         $m = new mvb_Model_Manager($this, $role, $user);
@@ -740,12 +773,6 @@ class mvb_WPAccess {
 
         die(json_encode($result));
     }
-
-    /*
-     * ===============================================================
-     *   ******************* PRIVATE METHODS ************************
-     * ===============================================================
-     */
 
     /*
      * Initialize the list of all key parameters in the list of all
@@ -782,37 +809,6 @@ class mvb_WPAccess {
     /**
      *
      * @param type $menu
-     * @param type $level
-     * @return type 
-     */
-    private function filter_top_bar(&$menu, $level = 0) {
-
-        if ($level > 999) {
-            return; //save step
-        }
-
-        if (is_object($menu)) {
-            foreach ($menu as $item => &$data) {
-                if (isset($data['href']) && !isset($data['children']) && mvb_Model_AccessControl::getMenuConf()->checkAccess($data['href'])) {
-                    unset($menu->{$item});
-                } elseif (isset($data['children'])) {
-                    $this->filter_top_bar($data['children'], $level + 1);
-                    if (count($data['children'])) {
-                        foreach ($data['children'] as $key => $value) {
-                            $data['href'] = $value['href'];
-                            break;
-                        }
-                    } else {
-                        unset($menu[$item]);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     *
-     * @param type $menu
      * @return int 
      */
     private function get_parts($menu) {
@@ -835,8 +831,8 @@ class mvb_WPAccess {
 }
 
 register_activation_hook(__FILE__, array('mvb_WPAccess', 'activate'));
-//TODO - think about it
-//register_deactivation_hook(__FILE__, array('mvb_WPAccess', 'deactivate'));
+register_uninstall_hook(__FILE__, array('mvb_WPAccess', 'uninstall'));
+
 add_action('init', 'init_wpaccess');
 add_action('set_current_user', 'aam_set_current_user');
 ?>

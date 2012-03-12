@@ -19,31 +19,28 @@
  */
 
 error_reporting(E_ALL | E_STRICT);
-//ini_set('display_errors', FALSE);
+ini_set('display_errors', FALSE);
 
-/*
- * Core constants
- */
+ //Core constants
 define('WPACCESS_PREFIX', 'wpaccess_');
 define('WPACCESS_BASE_DIR', dirname(__FILE__) . '/');
 define('WPACCESS_DIRNAME', basename(WPACCESS_BASE_DIR));
 
-/*
- * Plugin constants
- */
+//Plugin constants
 define('WPACCESS_BASE_URL', WP_PLUGIN_URL . '/' . WPACCESS_DIRNAME . '/');
+define('WPACCESS_TEMPLATE_DIR', WPACCESS_BASE_DIR . 'view/html/');
+define('WPACCESS_CSS_URL', WPACCESS_BASE_URL . 'view/css/');
+define('WPACCESS_JS_URL', WPACCESS_BASE_URL . 'view/js/');
+
 define('WPACCESS_ADMIN_ROLE', 'administrator');
 define('WPACCESS_SADMIN_ROLE', 'super_admin');
 define('WPACCESS_RESTRICTION_LIMIT', 5);
 define('WPACCESS_APPLY_LIMIT', 5);
 define('WPACCESS_TOP_LEVEL', 10);
 
-define('WPACCESS_TEMPLATE_DIR', WPACCESS_BASE_DIR . 'view/html/');
-define('WPACCESS_CSS_URL', WPACCESS_BASE_URL . 'view/css/');
-define('WPACCESS_JS_URL', WPACCESS_BASE_URL . 'view/js/');
-
 define('WPACCESS_CACHE_LIFETIME', 864000); //10 days
-define('WPACCESS_CACHE_DIR', WPACCESS_BASE_DIR . 'temp'); //cache dir
+define('WPACCESS_CACHE_DIR', WPACCESS_BASE_DIR . 'cache'); //cache dir
+define('WPACCESS_LOG_DIR', WPACCESS_BASE_DIR . 'logs'); //logs dir
 
 define('WPACCESS_FTIME_MESSAGE', WPACCESS_PREFIX . 'first_time');
 

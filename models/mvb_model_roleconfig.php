@@ -84,7 +84,6 @@ class mvb_Model_RoleConfig extends mvb_Abstract_Config {
         $this->setMenu($config->menu);
         $this->setMenuOrder($config->menu_order);
         $this->setMetaboxes($config->metaboxes);
-
         if (isset($roles[$this->getID()]['capabilities'])) {
             $this->setCapabilities($roles[$this->getID()]['capabilities']);
         }
