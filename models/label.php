@@ -46,7 +46,7 @@ class mvb_Model_Label {
         self::$labels['LABEL_1'] = __('Advanced Access Manager', 'aam');
         self::$labels['LABEL_2'] = __('WordPress Plugin Repository', 'aam');
         self::$labels['LABEL_3'] = __('Alert', 'aam');
-        self::$labels['LABEL_4'] = __('You have a JavaScript Error on a page', 'aam');
+        self::$labels['LABEL_4'] = __('JavaScript Error on a page', 'aam');
         self::$labels['LABEL_5'] = __('Please read <a href="http://wordpress.org/extend/plugins/advanced-access-manager/faq/" target="_blank">FAQ</a> for more information', 'aam');
         self::$labels['LABEL_6'] = __('Options updated successfully', 'aam');
         self::$labels['LABEL_7'] = __('Main Menu', 'aam');
@@ -56,7 +56,7 @@ class mvb_Model_Label {
         self::$labels['LABEL_11'] = __('To Reorganize menu just Drag and Drop Items on the List and click Save Order', 'aam');
         self::$labels['LABEL_12'] = __('Reorganize', 'aam');
         self::$labels['LABEL_13'] = __('Whole Branch', 'aam');
-        self::$labels['LABEL_14'] = __('To initialize list of metaboxes manually, copy and paste the URL to edit screen page into text field and click "Initiate URL". List of all new metaboxes will be added automatically.', 'aam');
+        self::$labels['LABEL_14'] = __('To initialize list of metaboxes manually, copy and paste the URL to edit screen page (e.g. http://localhost/basic/wp-admin/post.php?post=1&action=edit) into text field and click "Initiate URL". List of all new metaboxes will be added automatically.', 'aam');
         self::$labels['LABEL_15'] = __('Enter Correct URL', 'aam');
         self::$labels['LABEL_16'] = __('Initiate URL', 'aam');
         self::$labels['LABEL_17'] = __('Refresh List', 'aam');
@@ -67,7 +67,7 @@ class mvb_Model_Label {
         self::$labels['LABEL_22'] = __('List of Metaboxes is empty or not initialized.', 'aam');
         self::$labels['LABEL_23'] = __('Initiate the List', 'aam');
         self::$labels['LABEL_24'] = __('Delete Capability', 'aam');
-        self::$labels['LABEL_25'] = __('', 'aam');
+        self::$labels['LABEL_25'] = __('Error', 'aam');
         self::$labels['LABEL_26'] = __('Add New Capability', 'aam');
         self::$labels['LABEL_27'] = __('Add New Cap', 'aam');
         self::$labels['LABEL_28'] = __('Give Administrator\'s List of Capabilities', 'aam');
@@ -121,7 +121,7 @@ class mvb_Model_Label {
         self::$labels['LABEL_76'] = __('OK', 'aam');
         self::$labels['LABEL_77'] = __('Cancel', 'aam');
         self::$labels['LABEL_78'] = __('Restore Default Setting', 'aam');
-        self::$labels['LABEL_79'] = __('', 'aam');
+        self::$labels['LABEL_79'] = __('Frontend Widgets', 'aam');
         self::$labels['LABEL_81'] = __('Saving...', 'aam');
         self::$labels['LABEL_82'] = __('Save', 'aam');
         self::$labels['LABEL_83'] = __('Role Manager', 'aam');
@@ -153,12 +153,12 @@ class mvb_Model_Label {
         self::$labels['LABEL_109'] = __('Some changed detected. Are you sure that you want to leave without saving?', 'aam');
         self::$labels['LABEL_110'] = __('Add New Capability', 'aam');
         self::$labels['LABEL_111'] = __('Additional Features Available', 'aam');
-        self::$labels['LABEL_112'] = __('', 'aam');
-        self::$labels['LABEL_113'] = __('', 'aam');
+        self::$labels['LABEL_112'] = __('Classname', 'aam');
+        self::$labels['LABEL_113'] = __('Description', 'aam');
         self::$labels['LABEL_114'] = __('Upgrade functionality', 'aam');
         self::$labels['LABEL_115'] = __('Important Message', 'aam');
-        self::$labels['LABEL_116'] = __('', 'aam');
-        self::$labels['LABEL_117'] = __('', 'aam');
+        self::$labels['LABEL_116'] = __('Dashboard Widgets', 'aam');
+        self::$labels['LABEL_117'] = __('No Description found', 'aam');
         self::$labels['LABEL_118'] = __('WARNING', 'aam');
         self::$labels['LABEL_122'] = __('Advanced Access Manager requires WordPress 3.2 or newer. <a href="http://codex.wordpress.org/Upgrading_WordPress">Update now!</a>', 'aam');
         self::$labels['LABEL_123'] = __('Advanced Access Manager requires PHP 5.1.2 or newer', 'aam');
@@ -177,7 +177,7 @@ class mvb_Model_Label {
         self::$labels['LABEL_136'] = __('Current Role can not be restored!', 'aam');
         self::$labels['LABEL_137'] = __('Apply All', 'aam');
         self::$labels['LABEL_138'] = __('Error during information grabbing!', 'aam');
-        self::$labels['LABEL_139'] = __('', 'aam');
+        self::$labels['LABEL_139'] = __('Advaned Access Manager will not work properly in fact other Error Handler detected.', 'aam');
         self::$labels['LABEL_140'] = __('', 'aam');
         self::$labels['LABEL_141'] = __('Create', 'aam');
         self::$labels['LABEL_142'] = __('Do not Create', 'aam');
@@ -190,7 +190,7 @@ class mvb_Model_Label {
         <p>For your safety, after you press <b>OK</b> button, Super Admin Role will be created specifically for your user.</p>
         <p>Users with already defined Super Admin Role will be deprived of it and replaced with Administrator Role</p>
         <p>If you have Multi-Site Setup, you will see the same message again for each new Blog you entered or created.</p>', 'aam');
-        self::$labels['LABEL_148'] = __('', 'aam');
+        self::$labels['LABEL_148'] = __('You have a basic version of AAM. Settings applied only for first '.WPACCESS_APPLY_LIMIT.' blogs. Please upgrade AAM by following the <a href="http://whimba.org/add-ons" target="_blank">link</a>', 'aam');
         self::$labels['LABEL_149'] = __('', 'aam');
         self::$labels['LABEL_150'] = __('Action completed successfully', 'aam');
         self::$labels['LABEL_151'] = __('Action failed', 'aam');
@@ -203,7 +203,7 @@ class mvb_Model_Label {
         self::$labels['LABEL_119'] = __('Current User', 'aam');
         self::$labels['LABEL_120'] = __('All Users', 'aam');
         self::$labels['LABEL_121'] = __('Delete current capability', 'aam');
-        self::$labels['LABEL_157'] = __('Access Config is global configuration for ALL Roles and Users in current blog. For more information please follow the <a href="http://whimba.org/support" target="_blank">support link</a>.', 'aam');
+        self::$labels['LABEL_157'] = __('Config Press is a flexible way to configure your Access Manager. For more information please follow the <a href="http://whimba.org/support#viewforum.php?f=4" target="_blank">support link</a>.', 'aam');
         self::$labels['upgrade_restriction'] = __('Install <a href="http://whimba.org/add-ons" target="_blank">Extend Restriction</a> to be able to set more then 5 restrictions for one Role', 'aam');
         self::$labels['restrict_message'] = __('<p>You do not have sufficient permissions to perform this action</p>', 'aam');
         self::$labels['LABEL_158'] = __('Donate', 'aam');

@@ -18,12 +18,9 @@
 
  */
 
-error_reporting(E_ALL | E_STRICT);
-ini_set('display_errors', FALSE);
-
  //Core constants
 define('WPACCESS_PREFIX', 'wpaccess_');
-define('WPACCESS_BASE_DIR', dirname(__FILE__) . '/');
+define('WPACCESS_BASE_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 define('WPACCESS_DIRNAME', basename(WPACCESS_BASE_DIR));
 
 //Plugin constants
@@ -35,7 +32,7 @@ define('WPACCESS_JS_URL', WPACCESS_BASE_URL . 'view/js/');
 define('WPACCESS_ADMIN_ROLE', 'administrator');
 define('WPACCESS_SADMIN_ROLE', 'super_admin');
 define('WPACCESS_RESTRICTION_LIMIT', 5);
-define('WPACCESS_APPLY_LIMIT', 5);
+define('WPACCESS_APPLY_LIMIT', 4);
 define('WPACCESS_TOP_LEVEL', 10);
 
 define('WPACCESS_CACHE_LIFETIME', 864000); //10 days
@@ -45,6 +42,8 @@ define('WPACCESS_LOG_DIR', WPACCESS_BASE_DIR . 'logs'); //logs dir
 define('WPACCESS_FTIME_MESSAGE', WPACCESS_PREFIX . 'first_time');
 
 define('WPACCESS_CACHE_STATUS', 'ON');
+
+define('WPACCESS_ERROR_REPORTING', 'ON');
 
 //configure include path for library
 $path = WPACCESS_BASE_DIR . 'library/';

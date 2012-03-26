@@ -30,7 +30,7 @@
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
 
-abstract class mvb_Abstract_Filter{
+abstract class mvb_Model_Abstract_Filter{
 	
 	/**
 	 * Class that called current

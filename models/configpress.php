@@ -46,7 +46,10 @@ class mvb_Model_ConfigPress {
 
     public static function saveConfig($config) {
 
-        file_put_contents(WPACCESS_BASE_DIR . 'config.ini', $config);
+        $file = WPACCESS_BASE_DIR . 'config.ini';
+        if (is_writable($file) || chmode($file, 0755)) {
+            file_put_contents($file, $config);
+        }
     }
 
     public static function readConfig() {
@@ -62,12 +65,12 @@ class mvb_Model_ConfigPress {
     public static function doRedirect() {
 
         if (is_admin()) {
-            $redirect = self::getOption('backend', 'access');
+            $redirect = self::getOption('backend.access');
             if (isset($redirect->deny->redirect)) {
                 self::parseRedirect($redirect->deny->redirect);
             }
         } else {
-            $redirect = self::getOption('frontend', 'access');
+            $redirect = self::getOption('frontend.access');
             if (isset($redirect->deny->redirect)) {
                 self::parseRedirect($redirect->deny->redirect);
             }
@@ -96,34 +99,55 @@ class mvb_Model_ConfigPress {
         } elseif (is_int($redirect)) {
             wp_redirect(get_post_permalink($redirect));
             exit;
-        } else{
+        } else {
             self::parseParam($param);
         }
     }
 
     protected static function parseParam($param) {
-        
+
         $result = FALSE;
         if (is_object($param) && isset($param->userFunc)) {
             $func = trim($param->userFunc);
             if (is_string($func) && is_callable($func)) {
                 $result = call_user_func($func);
             }
-        }else{
+        } else {
             $result = $param;
         }
-        
+
         return $result;
     }
 
-    public static function getOption($section, $option, $default = NULL) {
+    public static function getOption($option, $default = NULL) {
 
-        $config = self::getConfig();
+        $tree = self::getConfig();
+        foreach (explode('.', $option) as $param) {
+            if (isset($tree->{$param})) {
+                $tree = $tree->{$param};
+            } else {
+                $tree = $default;
+                break;
+            }
+        }
 
-        if (isset($config->{$section}->{$option})) {
-            $result = $config->{$section}->{$option};
-        } else {
-            $result = $default;
+        return $tree;
+    }
+
+    protected static function traceOption($level, $param = NULL) {
+        static $levels;
+
+        aam_debug($level);
+        if (empty($levels)) {
+            $levels = explode('.', $param);
+        }
+
+        $param = array_shift($levels);
+        $result = NULL;
+
+
+        if (isset($level->{$param})) {
+            $result = (count($levels) ? self::traceOption($level->{$param}) : $level->{$param});
         }
 
         return $result;

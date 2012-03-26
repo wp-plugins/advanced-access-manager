@@ -30,29 +30,28 @@
  * @copyrights Copyright © 2011 Vasyl Martyniuk
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
-class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
-	
-	/**
-	 * Is used for custom link which are not following WordPress standards
-	 * 
-	 * @access protected
-	 * @var array  
-	 */
-	protected $key_params;
-	
-	
-	/**
-	 *
-	 * @param type $caller 
-	 */
+class mvb_Model_FilterMenu extends mvb_Model_Abstract_Filter {
+
+    /**
+     * Is used for custom link which are not following WordPress standards
+     * 
+     * @access protected
+     * @var array  
+     */
+    protected $key_params;
+
+    /**
+     *
+     * @param type $caller 
+     */
     public function __construct($caller) {
-		
-		parent::__construct($caller);
-		
+
+        parent::__construct($caller);
+
         $key_params = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'key_params', array());
         $this->key_params = array_keys($key_params); //TODO - Save in array format
     }
-	
+
     /**
      *
      * @global type $menu
@@ -141,12 +140,12 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
         return TRUE;
     }
 
-	/**
-	 *
-	 * @param type $parts
-	 * @param type $menu
-	 * @return boolean 
-	 */
+    /**
+     *
+     * @param type $parts
+     * @param type $menu
+     * @return boolean 
+     */
     function compareMenus($parts, $menu) {
 
         $compare = $this->get_parts($menu);
@@ -171,20 +170,20 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
         return $result;
     }
 
-	/**
-	 *
-	 * @param string $requestedMenu
-	 * @return type 
-	 */
+    /**
+     *
+     * @param string $requestedMenu
+     * @return type 
+     */
     function get_parts($requestedMenu) {
 
         //this is for only one case - edit.php
         if (in_array(basename($requestedMenu), array('edit.php', 'post-new.php'))) {
             $requestedMenu .= '?post_type=post';
-        }elseif(basename($requestedMenu) == 'edit-tags.php'){
+        } elseif (basename($requestedMenu) == 'edit-tags.php') {
             $requestedMenu .= '?taxonomy=' . $_REQUEST['taxonomy'];
         }
-        
+
         //splite requested URI
         $parts = preg_split('/\?/', $requestedMenu);
         $result = array(basename($parts[0]));
@@ -197,12 +196,12 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
         return $result;
     }
 
-	/**
-	 *
-	 * @global type $menu
-	 * @global type $submenu
-	 * @param type $menuItem 
-	 */
+    /**
+     *
+     * @global type $menu
+     * @global type $submenu
+     * @param type $menuItem 
+     */
     function unsetMainMenuItem($menuItem) {
         global $menu, $submenu;
 
@@ -216,13 +215,13 @@ class mvb_Model_FilterMenu extends mvb_Abstract_Filter {
         }
     }
 
-	/**
-	 *
-	 * @global type $submenu
-	 * @param type $dummy
-	 * @param type $submenuItem
-	 * @return boolean 
-	 */
+    /**
+     *
+     * @global type $submenu
+     * @param type $dummy
+     * @param type $submenuItem
+     * @return boolean 
+     */
     function unsetSubMenuItem($dummy, $submenuItem) {
         global $submenu;
 

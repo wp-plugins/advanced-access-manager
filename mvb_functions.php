@@ -39,25 +39,13 @@ function init_wpaccess() {
  */
 function mvb_autoload($class_name) {
 
-    $parts = preg_split('/_/', $class_name);
-    if ($parts[0] == 'mvb') {
-        //check what type of class do we need to load
-        switch ($parts[1]) {
-            case 'Model':
-                $path = WPACCESS_BASE_DIR . 'models/';
-                break;
-
-            case 'Abstract':
-                $path = WPACCESS_BASE_DIR . 'models/abstract/';
-                break;
-
-            default:
-                $path = '';
-                break;
+    $parts = explode('_', $class_name);
+    
+    if (array_shift($parts)  == 'mvb') {
+        $path = WPACCESS_BASE_DIR . strtolower(implode(DIRECTORY_SEPARATOR, $parts) . '.php');
+        if (file_exists($path)) {
+            require($path);
         }
-        $file_path = $path . strtolower($class_name) . '.php';
-
-        require_once($file_path);
     }
 }
 
@@ -117,14 +105,19 @@ function aam_set_current_user() {
 
 function mvb_warning() {
     echo "<div id='mvb-warning' class='updated fade'>
-        <p><strong>" . __('Advaned Access Manager will not work properly in fact other Error Handler detected.') . "</strong></p></div>";
+        <p><strong>" . mvb_Model_Label::get('LABEL_139') . "</strong></p></div>";
 }
 
-//autoloading is not working during error handling
-require_once('models/mvb_model_errorhandler.php');
+if (WPACCESS_ERROR_REPORTING == 'ON') {
+    error_reporting(E_ALL | E_STRICT);
+    ini_set('display_errors', FALSE);
 
-if (set_error_handler('mvb_Model_errorHandler::handle')) {
-    add_action('admin_notices', 'mvb_warning');
+    //autoloading is not working during error handling
+    require_once('model/errorhandler.php');
+
+    if (set_error_handler('mvb_Model_errorHandler::handle')) {
+        add_action('admin_notices', 'mvb_warning');
+    }
+    register_shutdown_function('mvb_Model_errorHandler::fatalHandler');
 }
-register_shutdown_function('mvb_Model_errorHandler::fatalHandler');
 ?>

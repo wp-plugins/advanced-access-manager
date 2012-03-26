@@ -29,7 +29,7 @@
  * @copyrights Copyright © 2011 Vasyl Martyniuk
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
-abstract class mvb_Abstract_Config {
+abstract class mvb_Model_Abstract_Config {
     /**
      * No Restrictions
      */
@@ -207,6 +207,24 @@ abstract class mvb_Abstract_Config {
 
         return $this->menu;
     }
+    
+    public function hasMenu($menu){
+        
+        return (isset($this->menu[$menu]) ? TRUE : FALSE);
+    }
+    
+    public function hasSubMenu($menu, $submenu){
+        
+        $result = FALSE;
+        if($this->hasMenu($menu)){
+            $menu = $this->menu[$menu];
+            if (isset($menu['submenu']) || isset($menu['whole'])){
+                $result = TRUE;
+            }
+        }
+        
+        return $result;
+    }
 
     /**
      * Set Menu Order
@@ -377,12 +395,12 @@ abstract class mvb_Abstract_Config {
             $result = ($data['restrict'] ? $result | self::RESTRICT_BACK : $result);
             $result = ($data['restrict_front'] ? $result | self::RESTRICT_FRONT : $result);
         } elseif (($data['restrict'] || $data['restrict_front']) && trim($data['expire'])) {
-            if ($data['expire'] >= time()) {
+            if (strtotime($data['expire']) >= time()) {
                 $result = ($data['restrict'] ? $result | self::RESTRICT_BACK : $result);
                 $result = ($data['restrict_front'] ? $result | self::RESTRICT_FRONT : $result);
             }
         } elseif (trim($data['expire'])) {
-            if (time() <= $data['expire']) {
+            if (time() <= strtotime($data['expire'])) {
                 $result = self::RESTRICT_BOTH; //TODO - Think about it
             }
         }

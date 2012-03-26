@@ -198,21 +198,10 @@ class mvb_Model_Ajax {
     protected function get_userlist() {
 
         $role = $_POST['role'];
-        $users = $this->pObj->getUserList($role);
-
-        $options = '<option value="0">' . mvb_Model_Label::get('LABEL_120') . '</option>';
-        if (is_array($users)) {
-            foreach ($users as $user) {
-                $options .= '<option value="' . $user->ID . '">' . $user->user_login . '</option>';
-            }
-        }
-
-        $result = array(
-            'status' => 'success',
-            'html' => $options
-        );
-
-        return $result;
+        $m = new mvb_Model_ManagerAjax($this->pObj, $role, FALSE);
+        $response = $m->manage_ajax('user_list');
+        
+        return $response;
     }
 
     /*
@@ -228,7 +217,7 @@ class mvb_Model_Ajax {
                         WPACCESS_PREFIX . 'original_user_roles', array()
         );
         $roles = mvb_Model_API::getRoleList(FALSE);
-        
+
         if (($role != WPACCESS_ADMIN_ROLE)
                 || ( ($role == WPACCESS_ADMIN_ROLE) && mvb_Model_API::isSuperAdmin())) {
 
@@ -240,7 +229,7 @@ class mvb_Model_Ajax {
 
             mvb_Model_API::updateBlogOption('user_roles', $roles);
             mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'config_' . $role);
-            
+
             mvb_Model_Cache::clearCache();
             $result = array('status' => 'success');
         } else {
@@ -266,7 +255,7 @@ class mvb_Model_Ajax {
         delete_user_meta($user_id, WPACCESS_PREFIX . 'restrictions');
         delete_user_meta($user_id, WPACCESS_PREFIX . 'menu_order');
         delete_user_meta($user_id, WPACCESS_PREFIX . 'capabilities');
-        
+
         mvb_Model_Cache::clearCache();
 
         return array('status' => 'success');
@@ -285,9 +274,12 @@ class mvb_Model_Ajax {
         $caps = ($capabilities ? $capabilities : $this->default_caps);
         $result = $m->createNewRole($new_role, $caps);
         if (($result['result'] == 'success') && $render_html) {
-            $m = new mvb_Model_Manager($this->pObj, $result['new_role']);
-            $content = $m->renderDeleteRoleItem($result['new_role'], array('name' => $role));
-            $result['html'] = $m->templObj->clearTemplate($content);
+            $m = new mvb_Model_ManagerAjax($this->pObj, $result['new_role']);
+            $m->init(array(
+                'role' => $result['new_role'],
+                'role_label' => $new_role
+            ));
+            $result['html'] = $m->manage_ajax('add_role');
         }
 
         return $result;
@@ -321,14 +313,10 @@ class mvb_Model_Ajax {
 
         $role = mvb_Model_Helper::getParam('role', 'POST');
         $user = mvb_Model_Helper::getParam('user', 'POST');
-        $m = new mvb_Model_Manager($this->pObj, $role, $user);
-        $content = $m->renderMetaboxList($m->getTemplate());
-        $result = array(
-            'status' => 'success',
-            'html' => $m->templObj->clearTemplate($content)
-        );
+        $m = new mvb_Model_ManagerAjax($this->pObj, $role, $user);
+        $response = $m->manage_ajax('metabox_list');
 
-        return $result;
+        return $response;
     }
 
     /*
@@ -344,8 +332,6 @@ class mvb_Model_Ajax {
     protected function initiate_wm() {
         global $wp_post_types;
 
-        check_ajax_referer(WPACCESS_PREFIX . 'ajax');
-
         /*
          * Go through the list of registered post types and try to grab
          * rendered metaboxes
@@ -355,6 +341,8 @@ class mvb_Model_Ajax {
          */
         $next = trim($_POST['next']);
         $typeList = array_keys($wp_post_types);
+        array_unshift($typeList, 'widgets');
+        array_unshift($typeList, 'dashboard');
         //add dashboard
         // array_unshift($typeList, 'dashboard');
         $typeQuant = count($typeList) + 1;
@@ -370,13 +358,21 @@ class mvb_Model_Ajax {
                 $next = FALSE;
             }
         } else { //this is the beggining
-            $current = 'dashboard';
-            $next = isset($typeList[0]) ? $typeList[0] : '';
+            $current = array_shift($typeList);
+            $next = array_shift($typeList);
         }
-        if ($current == 'dashboard') {
-            $url = add_query_arg('grab', 'metaboxes', admin_url('index.php'));
-        } else {
-            $url = add_query_arg('grab', 'metaboxes', admin_url('post-new.php?post_type=' . $current));
+        switch ($current) {
+            case 'dashboard':
+                $url = add_query_arg('grab', 'metaboxes', admin_url('index.php'));
+                break;
+
+            case 'widgets':
+                $url = add_query_arg(array('grab' => 'metaboxes', 'widget' => 1), admin_url('index.php'));
+                break;
+
+            default:
+                $url = add_query_arg('grab', 'metaboxes', admin_url('post-new.php?post_type=' . $current));
+                break;
         }
 
         //grab metaboxes
@@ -400,8 +396,6 @@ class mvb_Model_Ajax {
      */
 
     protected function initiate_url() {
-
-        check_ajax_referer(WPACCESS_PREFIX . 'ajax');
 
         $url = $_POST['url'];
         if ($url) {
@@ -446,32 +440,10 @@ class mvb_Model_Ajax {
                     $conf->saveConfig();
                 }
 
-                //render html
-                $tmpl = new mvb_Model_Template();
-                $templatePath = WPACCESS_TEMPLATE_DIR . 'admin_options.html';
-                $template = $tmpl->readTemplate($templatePath);
-                $listTemplate = $tmpl->retrieveSub('CAPABILITY_LIST', $template);
-                $itemTemplate = $tmpl->retrieveSub('CAPABILITY_ITEM', $listTemplate);
-                $markers = array(
-                    '###role###' => $_POST['role'],
-                    '###title###' => $cap,
-                    '###description###' => '',
-                    '###checked###' => 'checked',
-                    '###info_image###' => WPACCESS_CSS_URL . 'images/Info-tooltip.png',
-                    '###critical_image###' => WPACCESS_CSS_URL . 'images/Critical-tooltip.png',
-                    '###cap_name###' => mvb_Model_Helper::getCapabilityHumanTitle($cap)
-                );
-                $titem = $tmpl->updateMarkers($markers, $itemTemplate);
-
-                if (mvb_Model_ConfigPress::getOption('aam', 'delete_capabilities') == 'true') {
-                    $titem = $tmpl->replaceSub('CAPABILITY_DELETE', $tmpl->retrieveSub('CAPABILITY_DELETE', $titem), $titem);
-                } else {
-                    $titem = $tmpl->replaceSub('CAPABILITY_DELETE', '', $titem);
-                }
-                $result = array(
-                    'status' => 'success',
-                    'html' => $tmpl->clearTemplate($titem)
-                );
+                //render response
+                $m = new mvb_Model_ManagerAjax($this->pObj, FALSE, FALSE);
+                $m->init(array('cap' => $cap));
+                $result = $m->manage_ajax('add_capability');
                 mvb_Model_Cache::clearCache();
             } else {
                 $result = array(
@@ -497,7 +469,7 @@ class mvb_Model_Ajax {
         global $wpdb;
 
         $cap = trim($_POST['cap']);
-        if (mvb_Model_ConfigPress::getOption('aam', 'delete_capabilities') == 'true') {
+        if (mvb_Model_ConfigPress::getOption('aam.delete_capabilities') == 'true') {
             $roles = mvb_Model_API::getRoleList(FALSE);
             foreach ($roles as $role => $data) {
                 if (isset($data['capabilities'][$cap])) {
@@ -706,114 +678,12 @@ class mvb_Model_Ajax {
     protected function get_info() {
         global $wp_post_statuses, $wp_post_types;
 
-        $id = intval($_POST['id']);
-        $type = trim($_POST['type']);
-        $role = $_POST['role'];
-        $user = $_POST['user'];
+        $role = mvb_Model_Helper::getParam('role', 'POST');
+        $user = mvb_Model_Helper::getParam('user', 'POST', FALSE);
 
-        if ($user) {
-            $config = mvb_Model_API::getUserAccessConfig($user);
-        } else {
-            $config = mvb_Model_API::getRoleAccessConfig($role);
-        }
+        $m = new mvb_Model_ManagerAjax($this->pObj, $role, $user);
 
-
-        //render html
-        $tmpl = new mvb_Model_Template();
-        $templatePath = WPACCESS_TEMPLATE_DIR . 'admin_options.html';
-        $template = $tmpl->readTemplate($templatePath);
-        $template = $tmpl->retrieveSub('POST_INFORMATION', $template);
-        $result = array('status' => 'error');
-
-        switch ($type) {
-            case 'post':
-                //get information about page or post
-                $post = get_post($id);
-                if ($post->ID) {
-                    $template = $tmpl->retrieveSub('POST', $template);
-                    if ($config->hasRestriction('post', $id)) {
-                        $restiction = $config->getRestriction('post', $id);
-                        $checked = ($restiction['restrict'] ? 'checked' : '');
-                        $checked_front = ($restiction['restrict_front'] ? 'checked' : '');
-                        $exclude = ($config->hasExclude($id) ? 'checked' : '');
-                        $expire = ($restiction['expire'] ? date('m/d/Y', $restiction['expire']) : '');
-                    }
-                    $markerArray = array(
-                        '###post_title###' => mvb_Model_Helper::editPostLink($post),
-                        '###disabled_apply_all###' => ($user ? 'disabled="disabled"' : ''),
-                        '###restrict_checked###' => (isset($checked) ? $checked : ''),
-                        '###restrict_front_checked###' => (isset($checked_front) ? $checked_front : ''),
-                        '###restrict_expire###' => (isset($expire) ? $expire : ''),
-                        '###exclude_page_checked###' => (isset($exclude) ? $exclude : ''),
-                        '###post_type###' => ucfirst($post->post_type),
-                        '###post_status###' => $wp_post_statuses[$post->post_status]->label,
-                        '###post_visibility###' => mvb_Model_Helper::checkVisibility($post),
-                        '###ID###' => $post->ID,
-                        '###info_image###' => WPACCESS_CSS_URL . 'images/Info-tooltip.png',
-                    );
-                    //check what type of post is it and render exclude if page
-                    $render_exclude = FALSE;
-                    if (isset($wp_post_types[$post->post_type])) {
-                        switch ($wp_post_types[$post->post_type]->capability_type) {
-                            case 'page':
-                                $render_exclude = TRUE;
-                                break;
-
-                            default:
-                                break;
-                        }
-                    }
-                    if ($render_exclude) {
-                        $excld_tmlp = $tmpl->retrieveSub('EXCLUDE_PAGE', $template);
-                    } else {
-                        $excld_tmlp = '';
-                    }
-                    $template = $tmpl->replaceSub('EXCLUDE_PAGE', $excld_tmlp, $template);
-                    $template = $tmpl->updateMarkers($markerArray, $template);
-
-                    $result = array(
-                        'status' => 'success',
-                        'html' => $tmpl->clearTemplate($template)
-                    );
-                }
-                break;
-
-            case 'taxonomy':
-                //get information about category
-                $taxonomy = mvb_Model_Helper::getTaxonomyByTerm($id);
-                $term = get_term($id, $taxonomy);
-                if ($term->term_id) {
-                    $template = $tmpl->retrieveSub('CATEGORY', $template);
-                    if ($config->hasRestriction('taxonomy', $id)) {
-                        $tax = $config->getRestriction('taxonomy', $id);
-                        $checked = ($tax['restrict'] ? 'checked' : '');
-                        $checked_front = ($tax['restrict_front'] ? 'checked' : '');
-                        $expire = ($tax['expire'] ? date('m/d/Y', $tax['expire']) : '');
-                    }
-                    $markerArray = array(
-                        '###name###' => mvb_Model_Helper::editTermLink($term),
-                        '###disabled_apply_all###' => ($user ? 'disabled="disabled"' : ''),
-                        '###restrict_checked###' => (isset($checked) ? $checked : ''),
-                        '###restrict_front_checked###' => (isset($checked_front) ? $checked_front : ''),
-                        '###restrict_expire###' => (isset($expire) ? $expire : ''),
-                        '###post_number###' => $term->count,
-                        '###ID###' => $term->term_id,
-                        '###info_image###' => WPACCESS_CSS_URL . 'images/Info-tooltip.png',
-                    );
-                    $template = $tmpl->updateMarkers($markerArray, $template);
-
-                    $result = array(
-                        'status' => 'success',
-                        'html' => $tmpl->clearTemplate($template)
-                    );
-                }
-                break;
-
-            default:
-                break;
-        }
-
-        return $result;
+        return $m->manage_ajax('get_info');
     }
 
     /**

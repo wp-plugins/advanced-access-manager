@@ -4,9 +4,9 @@ Donate link: http://whimba.org/donation
 Tags: access manager, access control, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role, access config
 Requires at least: 3.2
 Tested up to: 3.3.1
-Stable tag: 1.6
+Stable tag: 1.6.1
 
-Graphic interface to manage User Roles, Capabilities and Post/Page Access
+Graphic interface to manage User Access to your Front-end and Back-end
 
 == Description ==
 
@@ -43,37 +43,42 @@ message on Forums Posts.
 
 == Frequently Asked Questions ==
 
-= How to give access for Administrator's Role to Advanced Access Manager? =
+= How can I give access for other Administrators to Advanced Access Manager? =
 
 If you are Super Admin, you can manage the Administrator's Role as other User
 Roles. To give an access to Access Manager's Option Page, just create a new
 capability <b>AAM Manage</b> and check it for Administrator's User Role.
 
-= Why do I have a red message says JavaScript Error =
+= Why do I have a red message "JavaScript Error" =
 
-The reason you see this message is incompatibility with plugins which are not 
-following the simply WordPress rules. Many plugins just print additional JavaScript 
-libraries without any reason and this is the most frequent reason of conflicts.
+The reason you see this message is because of incompatibility with some plugin
+or theme which is not following the simply WordPress Coding Standards. Many 
+plugins print additional JavaScript libraries without any reason and this is the 
+most common reason for conflicts.
  
-= What is "Initiate URL" button for, under "Metaboxes & Widgets" Tab? =
+= What is "Initiate URL" button, under "Metaboxes & Widgets" Tab? =
 
 Sometimes list of additional metaboxes is conditional on edit post page. Like e.g.
 display custom metabox "Photos" only if Post Status is Published. Access Manager 
-initiates the list of metaboxes for each post in status auto-draft. So that is why
-you have to put manually the URL to the edit post page where list of additional 
-metaboxes can be picked by the plugin.
+initiates the list of metaboxes for each post in default status ("auto-draft"). 
+That is why you have to manually initialize the URL to the edit post page where 
+the list of additional metaboxes can be picked by AAM.
 
 = I can't edit comments. What should I do? =
 
 To be able to edit comments, just go to "Capabilities" Tab and add new Capability - 
-"Edit Comment". For administrator it'll automatically be added and this will let
-to configure comment editing for other roles.
+"Edit Comment".
+
+= How can I delete created Capability? =
+
+You have to configure Advanced Access Manager behavior with ConfigPress. For more
+information please follow the <a href="http://whimba.org/forum/viewtopic.php?f=4&t=2#p2">link</a>
 
 = I unchecked some Menus on "Main Menu" Tab but they are still not shown. Why? =
 
 The reason is that "Main Menu" Tab is not directly related to list of Capabilities. 
 It means, if you selected/deselected some Menu or Submenu it will not add or delete
-correct capabilities to current User Role. In such way if you want to give somebody 
+correct capabilities for current User Role. In such way if you want to give somebody 
 access to backend I recommend to use predefined set of options "Editor" and then
 just filter Main Menu.
 
@@ -86,6 +91,13 @@ just filter Main Menu.
 4. Post/Page Tree View
 
 == Changelog ==
+
+= 1.6.1 =
+* Silenced few warnings in Access Control Class
+* Extended description to Manually Metabox Init feature
+* Added possibility to filter Frontend Widgets
+* Refactored the Option Page manager
+* Added About page
 
 = 1.6 =
 * Fixed bug for post__not_in
