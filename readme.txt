@@ -4,7 +4,7 @@ Donate link: http://whimba.org/donation
 Tags: access manager, access control, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role, access config
 Requires at least: 3.2
 Tested up to: 3.3.1
-Stable tag: 1.6.1
+Stable tag: 1.6.1.1
 
 Graphic interface to manage User Access to your Front-end and Back-end
 
@@ -91,6 +91,9 @@ just filter Main Menu.
 4. Post/Page Tree View
 
 == Changelog ==
+
+= 1.6.1.1 =
+* Fixed 2 bugs reported by jimaek
 
 = 1.6.1 =
 * Silenced few warnings in Access Control Class
