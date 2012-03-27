@@ -57,7 +57,7 @@ class mvb_Model_errorHandler {
             $error_line  = '[' . date('Y-m-d H:i:s') . '] ' . $level . ': ';
             $error_line .= $message . " in {$file} ({$line})\n";
             $file = WPACCESS_LOG_DIR . '/error.log';
-            if (is_writable($file) || chmode($file, 0755)){
+            if (is_writable($file) || chmod($file, 0755)){
                 file_put_contents($file, $error_line, FILE_APPEND);
             }
             do_action('aam_error_handle', $level, $message, $file, $line);

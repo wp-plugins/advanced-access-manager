@@ -47,7 +47,7 @@ class mvb_Model_ConfigPress {
     public static function saveConfig($config) {
 
         $file = WPACCESS_BASE_DIR . 'config.ini';
-        if (is_writable($file) || chmode($file, 0755)) {
+        if (is_writable($file) || chmod($file, 0755)) {
             file_put_contents($file, $config);
         }
     }
