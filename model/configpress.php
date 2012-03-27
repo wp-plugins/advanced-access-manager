@@ -50,11 +50,28 @@ class mvb_Model_ConfigPress {
         if (is_writable($file) || chmod($file, 0755)) {
             file_put_contents($file, $config);
         }
+        //also save to db as backup
+        $default_blog = mvb_Model_API::getBlog(1);
+        mvb_Model_API::updateBlogOption(
+                WPACCESS_PREFIX . 'config_press', 
+                $config, 
+                $default_blog
+        );
     }
 
     public static function readConfig() {
+        
+        $file = WPACCESS_BASE_DIR . 'config.ini';
+        
+        if (is_readable($file)){
+            $config = file_get_contents(WPACCESS_BASE_DIR . 'config.ini');
+        }else{
+            $config = FALSE;
+        }
+        
+        
 
-        return file_get_contents(WPACCESS_BASE_DIR . 'config.ini');
+        return $config;
     }
 
     /**

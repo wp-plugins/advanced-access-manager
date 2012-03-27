@@ -45,7 +45,11 @@ class mvb_Model_FilterMetabox extends mvb_Model_Abstract_Filter {
             case 'widgets':
                 if (is_array($wp_registered_widgets)) {
                     foreach ($wp_registered_widgets as $id => $data) {
-                        $classname = get_class($data['callback'][0]);
+                        if (is_object($data['callback'][0])){
+                            $classname = get_class($data['callback'][0]);
+                        }elseif(is_string($data['callback'][0])){
+                            $classname = $data['callback'][0];
+                        }
                         if ($this->getCaller()->getAccessControl()->getUserConfig()->hasMetabox($classname)) {
                             unset($wp_registered_widgets[$id]);
                             unregister_widget($classname);

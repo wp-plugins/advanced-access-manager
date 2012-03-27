@@ -25,9 +25,9 @@ function aam_debug($what) {
 }
 
 function init_wpaccess() {
-    global $mvb_wpAccess;
+    static $main;
 
-    $mvb_wpAccess = new mvb_WPAccess();
+    $main = new mvb_WPAccess();
 }
 
 /**

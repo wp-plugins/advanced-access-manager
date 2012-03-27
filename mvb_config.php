@@ -23,6 +23,8 @@ define('WPACCESS_PREFIX', 'wpaccess_');
 define('WPACCESS_BASE_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 define('WPACCESS_DIRNAME', basename(WPACCESS_BASE_DIR));
 
+define('WPACCESS_UPGRADED_FILE', WPACCESS_BASE_DIR . '.__upgraded');
+
 //Plugin constants
 define('WPACCESS_BASE_URL', WP_PLUGIN_URL . '/' . WPACCESS_DIRNAME . '/');
 define('WPACCESS_TEMPLATE_DIR', WPACCESS_BASE_DIR . 'view/html/');

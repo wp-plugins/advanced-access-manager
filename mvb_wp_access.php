@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access to WordPress Backend and Frontend.
-  Version: 1.6.1.1
+  Version: 1.6.1.2
   Author: Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
   Author URI: http://www.whimba.org
  */
@@ -79,6 +79,8 @@ class mvb_WPAccess {
      * @return void 
      */
     public function __construct() {
+        
+        $this->wp_upgrade();
 
         $this->access_control = new mvb_Model_AccessControl($this);
 
@@ -96,7 +98,7 @@ class mvb_WPAccess {
             }
 
             add_action('admin_action_render_optionlist', array($this, 'render_optionlist'));
-
+            
             //Add Capabilities WP core forgot to
             add_filter('map_meta_cap', array($this, 'map_meta_cap'), 10, 4);
 
@@ -130,7 +132,28 @@ class mvb_WPAccess {
         //Executes after WordPress environment loaded and configured
         add_action('wp_loaded', array($this, 'check'), 999);
     }
-
+    
+    /**
+     * Upgrade plugin if necessary
+     * 
+     * @access public
+     */
+    public static function wp_upgrade(){
+        
+        if (!file_exists(WPACCESS_UPGRADED_FILE)){
+            $blog = mvb_Model_API::getBlog(1);
+            $config = mvb_Model_API::getBlogOption(
+                    WPACCESS_PREFIX . 'config_press', 
+                    '', 
+                    $blog
+            );
+            mvb_Model_ConfigPress::saveConfig($config);
+            
+            //create dummy file that is updated
+            file_put_contents(WPACCESS_UPGRADED_FILE, 'OK');
+        }
+    }
+    
     public function sidebars_widgets($widgets) {
         global $wp_registered_widgets;
 
@@ -622,6 +645,8 @@ class mvb_WPAccess {
         //Do not go thourgh the list of sites in multisite support
         //It can cause delays for large amount of blogs
         self::setOptions();
+        
+        self::wp_upgrade();
     }
 
     /**
