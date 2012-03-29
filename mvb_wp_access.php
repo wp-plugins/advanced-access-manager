@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access to WordPress Backend and Frontend.
-  Version: 1.6.1.2
+  Version: 1.6.1.3
   Author: Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
   Author URI: http://www.whimba.org
  */

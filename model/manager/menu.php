@@ -76,12 +76,12 @@ class mvb_Model_Manager_Menu {
                     'MAIN_MENU_SUBLIST', $sub_list, $item_tmpl
             );
             
+			$whole = $parent->getConfig()->getMenu($menu[2]);
             $markers = array(
                 '###name###' => mvb_Model_Helper::removeHTML($menu[0]),
                 '###id###' => $menu[5],
                 '###menu###' => $menu[2],
-                '###whole_checked###' => ($parent->getConfig()
-                    ->hasMenu($menu[2]) ? 'checked' : '')
+                '###whole_checked###' => (isset($whole['whole']) ? 'checked' : '')
             );
             $list .= mvb_Model_Template::updateMarkers($markers, $temp);
         }

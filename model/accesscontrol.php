@@ -172,6 +172,10 @@ class mvb_Model_AccessControl {
      * @return boolean
      */
     public function checkPostAccess($post) {
+	
+		if (!is_object($post)){ //TODO - find the root cause of this issue
+            return TRUE; //silence errors if get_posts didn't return
+        }
 
         $access = TRUE;
         //get post's categories

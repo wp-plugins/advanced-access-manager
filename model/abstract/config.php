@@ -201,11 +201,18 @@ abstract class mvb_Model_Abstract_Config {
     /**
      * Get Menu Config array
      * 
+	 * @param boolean $branch
      * @return array
      */
-    public function getMenu() {
+    public function getMenu($branch = FALSE) {
+		
+		if ($branch){
+			$result = ($this->hasMenu($branch) ? $this->menu[$branch] : FALSE);
+		}else{
+			$result = $this->menu;
+		}
 
-        return $this->menu;
+        return $result;
     }
     
     public function hasMenu($menu){
@@ -218,7 +225,7 @@ abstract class mvb_Model_Abstract_Config {
         $result = FALSE;
         if($this->hasMenu($menu)){
             $menu = $this->menu[$menu];
-            if (isset($menu['submenu']) || isset($menu['whole'])){
+            if (isset($menu['sub'][$submenu]) || isset($menu['whole'])){
                 $result = TRUE;
             }
         }
