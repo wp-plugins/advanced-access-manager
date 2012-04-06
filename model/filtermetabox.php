@@ -20,10 +20,10 @@
 
 /**
  * Filter for Metaboxes and Widgets
- * 
+ *
  * Probably it future releases this will be used also for filtering Front-End
  * Widgets. But still this issue is under consideration
- * 
+ *
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
@@ -36,7 +36,7 @@ class mvb_Model_FilterMetabox extends mvb_Model_Abstract_Filter {
      *
      * @global type $wp_meta_boxes
      * @global type $post
-     * @param type $area 
+     * @param type $area
      */
     function manage($area = 'post', $additional = NULL) {
         global $wp_meta_boxes, $post, $wp_registered_widgets;
@@ -72,11 +72,11 @@ class mvb_Model_FilterMetabox extends mvb_Model_Abstract_Filter {
                 break;
 
             default:
-                $type = $post->post_type;
+                $type = isset($post->post_type) ? $post->post_type : '';
                 break;
         }
 
-        if (is_array($wp_meta_boxes[$type])) {
+        if (isset($wp_meta_boxes[$type]) && is_array($wp_meta_boxes[$type])) {
             foreach ($wp_meta_boxes[$type] as $position => $metaboxes) {
                 foreach ($metaboxes as $priority => $metaboxes1) {
                     foreach ($metaboxes1 as $metabox => $data) {

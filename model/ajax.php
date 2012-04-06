@@ -20,7 +20,7 @@
 
 /**
  * User Model Class
- * 
+ *
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
@@ -31,9 +31,9 @@ class mvb_Model_Ajax {
 
     /**
      * Parent Object
-     * 
+     *
      * Holds the main plugin object
-     * 
+     *
      * @var object
      * @access public
      */
@@ -41,7 +41,7 @@ class mvb_Model_Ajax {
 
     /**
      * Requested action
-     * 
+     *
      * @var string
      * @access protected
      */
@@ -49,7 +49,7 @@ class mvb_Model_Ajax {
 
     /**
      * Default Capability Set
-     * 
+     *
      * @access protected
      * @var array
      */
@@ -57,7 +57,7 @@ class mvb_Model_Ajax {
 
     /**
      * Main Constructor
-     * 
+     *
      * @param object
      */
     public function __construct($pObj) {
@@ -68,7 +68,7 @@ class mvb_Model_Ajax {
 
     /**
      * Process Ajax request
-     * 
+     *
      */
     public function process() {
 
@@ -159,7 +159,7 @@ class mvb_Model_Ajax {
 
     /*
      * Update Roles Label
-     * 
+     *
      */
 
     protected function update_role_name() {
@@ -184,7 +184,7 @@ class mvb_Model_Ajax {
 
     /*
      * Get current action
-     * 
+     *
      * @return bool Return true if ok
      */
 
@@ -200,13 +200,13 @@ class mvb_Model_Ajax {
         $role = $_POST['role'];
         $m = new mvb_Model_ManagerAjax($this->pObj, $role, FALSE);
         $response = $m->manage_ajax('user_list');
-        
+
         return $response;
     }
 
     /*
      * Restore default User Roles
-     * 
+     *
      * @param string User Role
      * @return bool True if success
      */
@@ -242,7 +242,7 @@ class mvb_Model_Ajax {
 
     /*
      * Restore default User Settings
-     * 
+     *
      * @param string User ID
      * @return bool True if success
      */
@@ -265,7 +265,7 @@ class mvb_Model_Ajax {
      *
      * @param type $role
      * @param type $render_html
-     * @return type 
+     * @return type
      */
     protected function create_role($role, $capabilities = FALSE, $render_html = TRUE) {
 
@@ -287,7 +287,7 @@ class mvb_Model_Ajax {
 
     /*
      * Delete Role
-     * 
+     *
      */
 
     protected function delete_role() {
@@ -302,10 +302,10 @@ class mvb_Model_Ajax {
 
     /*
      * Render metabox list after initialization
-     * 
+     *
      * Part of AJAX interface. Is used for rendering the list of initialized
      * metaboxes.
-     * 
+     *
      * @return string HTML string with result
      */
 
@@ -321,11 +321,11 @@ class mvb_Model_Ajax {
 
     /*
      * Initialize Widgets and Metaboxes
-     * 
+     *
      * Part of AJAX interface. Using for metabox and widget initialization.
      * Go through the list of all registered post types and with http request
      * try to access the edit page and grab the list of rendered metaboxes.
-     * 
+     *
      * @return string JSON encoded string with result
      */
 
@@ -386,12 +386,12 @@ class mvb_Model_Ajax {
 
     /*
      * Initialize single URL
-     * 
+     *
      * Sometimes not all metaboxes are rendered if there are conditions. For example
      * render Shipping Address Metabox if status of custom post type is Approved.
      * So this metabox will be not visible during general initalization in function
      * initiateWM(). That is why this function do that manually
-     * 
+     *
      * @return string JSON encoded string with result
      */
 
@@ -410,9 +410,9 @@ class mvb_Model_Ajax {
 
     /**
      * Add New Capability
-     * 
+     *
      * @global type $wpdb
-     * @return type 
+     * @return type
      */
     protected function add_capability() {
         global $wpdb;
@@ -493,7 +493,7 @@ class mvb_Model_Ajax {
 
     /*
      * Get Post tree
-     * 
+     *
      */
 
     protected function get_treeview() {
@@ -582,7 +582,7 @@ class mvb_Model_Ajax {
                 $tree[] = (object) array(
                             'text' => "<a href='#' onclick='{$onClick}'>{$post->post_title}</a>",
                             'hasChildren' => $this->has_post_childs($post),
-                            'classes' => 'post-ontree',
+                            'classes' => 'file',
                             'id' => 'post-' . $post->ID
                 );
             }
@@ -627,7 +627,7 @@ class mvb_Model_Ajax {
         $branch = (object) array(
                     'text' => "<a href='#' onclick='{$onClick}'>{$category->name}</a>",
                     'expanded' => FALSE,
-                    'classes' => 'important',
+                    'classes' => 'important folder',
         );
         if ($this->has_category_childs($category)) {
             $branch->hasChildren = TRUE;
@@ -639,7 +639,7 @@ class mvb_Model_Ajax {
 
     /*
      * Check if category has children
-     * 
+     *
      * @param int category ID
      * @return bool TRUE if has
      */
@@ -653,7 +653,7 @@ class mvb_Model_Ajax {
 
     /*
      * Check if category has children
-     * 
+     *
      * @param int category ID
      * @return bool TRUE if has
      */
@@ -670,10 +670,10 @@ class mvb_Model_Ajax {
 
     /**
      * Get Information about current post or page
-     * 
+     *
      * @global type $wp_post_statuses
      * @global type $wp_post_types
-     * @return type 
+     * @return type
      */
     protected function get_info() {
         global $wp_post_statuses, $wp_post_types;
@@ -690,7 +690,7 @@ class mvb_Model_Ajax {
      *
      * @param type $config
      * @param type $info
-     * @return string 
+     * @return string
      */
     protected function updateRestrictions($config, $info) {
 
@@ -700,14 +700,7 @@ class mvb_Model_Ajax {
         $expire = trim($info['restrict_expire']);
         $result = array();
 
-        //Check if Restriction class exist.
-        //Note for hacks : Better will be to buy an add-on for $5 because on
-        //next release I'll change the checking class
-        $limit = WPACCESS_RESTRICTION_LIMIT;
-        if (class_exists('aamer_aam_extend_restriction')) {
-            $limit = apply_filters(WPACCESS_PREFIX . 'restrict_limit', $limit);
-        }
-
+        $limit = apply_filters(WPACCESS_PREFIX . 'restrict_limit', WPACCESS_RESTRICTION_LIMIT);
         $rests = $config->getRestrictions();
         switch ($info['type']) {
             case 'post':
@@ -756,7 +749,7 @@ class mvb_Model_Ajax {
 
     /**
      * Save information about page/post/category restriction
-     * 
+     *
      * @todo Junk
      */
     protected function save_info() {
@@ -791,7 +784,7 @@ class mvb_Model_Ajax {
 
     /**
      * Save menu order
-     * 
+     *
      * @return array
      */
     protected function save_order() {
@@ -826,7 +819,7 @@ class mvb_Model_Ajax {
 
     /*
      * Export configurations
-     * 
+     *
      */
 
     protected function export() {
@@ -853,7 +846,7 @@ class mvb_Model_Ajax {
 
     /*
      * Render Config File
-     * 
+     *
      */
 
     private function render_config() {
@@ -867,7 +860,7 @@ class mvb_Model_Ajax {
 
     /*
      * Uploading file
-     * 
+     *
      */
 
     protected function upload_config() {
@@ -892,7 +885,7 @@ class mvb_Model_Ajax {
 
     /*
      * Add Current User to Blog and make him a Super Admin
-     * 
+     *
      */
 
     protected function add_blog_admin() {
@@ -957,7 +950,7 @@ class mvb_Model_Ajax {
 
     /*
      * Assigne Role to User
-     * 
+     *
      */
 
     protected function assign_role($role, $user_id) {
@@ -968,7 +961,7 @@ class mvb_Model_Ajax {
 
     /**
      * Delete User Role for other Users
-     * 
+     *
      * @param int Skip User's ID
      * @param string User Role
      * @param string Role to Replace with

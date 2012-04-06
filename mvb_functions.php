@@ -32,15 +32,15 @@ function init_wpaccess() {
 
 /**
  * Autoloader for project Advanced Access Manager
- * 
+ *
  * Try to load a class if prefix is mvb_
- * 
- * @param string $class_name 
+ *
+ * @param string $class_name
  */
 function mvb_autoload($class_name) {
 
     $parts = explode('_', $class_name);
-    
+
     if (array_shift($parts)  == 'mvb') {
         $path = WPACCESS_BASE_DIR . strtolower(implode(DIRECTORY_SEPARATOR, $parts) . '.php');
         if (file_exists($path)) {
@@ -53,9 +53,9 @@ spl_autoload_register('mvb_autoload');
 
 /**
  * Merget to configs
- * 
+ *
  * @param object $config
- * @param object $m_config 
+ * @param object $m_config
  */
 function mvb_merge_configs($config, $m_config) {
 
@@ -108,7 +108,7 @@ function mvb_warning() {
         <p><strong>" . mvb_Model_Label::get('LABEL_139') . "</strong></p></div>";
 }
 
-if (WPACCESS_ERROR_REPORTING == 'ON') {
+if (mvb_Model_ConfigPress::getOption('aam.error_reporting', 'true') == 'true') {
     error_reporting(E_ALL | E_STRICT);
     ini_set('display_errors', FALSE);
 

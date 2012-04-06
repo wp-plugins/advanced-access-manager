@@ -1,5 +1,3 @@
-<?php
-
 /*
   Copyright (C) <2011>  Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
 
@@ -17,29 +15,21 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * ConfigPress Manager
- * 
- * @package AAM
- * @subpackage Model
- */
-class mvb_Model_Manager_ConfigPress {
+jQuery(document).ready(function(){
 
-    /**
-     *
-     * @global array $submenu
-     * @param string $tmpl
-     * @param mvb_Model_Manager $parent
-     * @return string 
-     */
-    public static function render($tmpl, $parent) {
-        
-        $markers = array(
-            '###access_config###' => mvb_Model_ConfigPress::readConfig()
-        );
-        
-        return mvb_Model_Template::updateMarkers($markers, $tmpl);
-    }
-}
+    jQuery("#tree").treeview({
+        collapsed: true,
+        animated: "medium",
+        control:"#sidetreecontrol",
+        persist: "location"
+    });
 
-?>
+    jQuery('a').each(function(){
+       if (jQuery(this).attr('href') == '#'){
+           jQuery(this).bind('click', function(){
+               var link = jQuery(this).attr('link');
+               jQuery('#content').empty().html(jQuery('.' + link).clone());
+           })
+       }
+    });
+});

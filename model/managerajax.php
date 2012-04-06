@@ -19,7 +19,7 @@
 
 /**
  * Ajax Option Manager Model Class
- * 
+ *
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
@@ -43,7 +43,7 @@ class mvb_Model_ManagerAjax extends mvb_Model_Manager {
                 break;
 
             case 'metabox_list':
-                $response = $this->renderMenuList();
+                $response = $this->renderMetaboxList();
                 break;
 
             case 'add_capability':
@@ -80,7 +80,7 @@ class mvb_Model_ManagerAjax extends mvb_Model_Manager {
         $result = mvb_Model_Manager_Restriction::renderInfo(
                         $id, $type, $this, $tmpl
         );
-        
+
         return $result;
     }
 
@@ -143,13 +143,14 @@ class mvb_Model_ManagerAjax extends mvb_Model_Manager {
         return $result;
     }
 
-    public function renderMenuList() {
+    public function renderMetaboxList() {
 
         $template = mvb_Model_Template::retrieveSub(
                         'METABOX_TAB', $this->template
         );
 
         $content = mvb_Model_Manager_Metabox::render($template, $this);
+        $content = $this->updateMarkers($content);
         $result = array(
             'status' => 'success',
             'html' => mvb_Model_Template::clearTemplate($content)

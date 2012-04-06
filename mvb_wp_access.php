@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access to WordPress Backend and Frontend.
-  Version: 1.6.1.3
+  Version: 1.6.2
   Author: Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
   Author URI: http://www.whimba.org
  */
@@ -38,7 +38,7 @@
  * There are some filters already implemented in this plugin so I'll leave them
  * in latest version for compatibility reasons.
  * If you have any questions of want to participate in this project, contact me
- * via e-mail whimba@gmail.com 
+ * via e-mail whimba@gmail.com
  * =============================================================================
  */
 
@@ -46,10 +46,10 @@ require_once('mvb_config.php');
 
 /**
  * Main Plugin Class
- * 
+ *
  * Responsible for initialization and handling user requests to Advanced Access
  * Manager
- * 
+ *
  * @package AAM
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
  * @copyrights Copyright © 2011 Vasyl Martyniuk
@@ -59,15 +59,15 @@ class mvb_WPAccess {
 
     /**
      * Main Access Controller
-     * 
+     *
      * @access public
-     * @var mvb_Model_AccessControl 
+     * @var mvb_Model_AccessControl
      */
     protected $access_control;
 
     /**
      * Config Press
-     * 
+     *
      * @access protected
      * @var mvb_Model_ConfigPress
      */
@@ -75,13 +75,13 @@ class mvb_WPAccess {
 
     /**
      * Initialize all necessary vars and hooks
-     * 
-     * @return void 
+     *
+     * @return void
      */
     public function __construct() {
-        
-        $this->wp_upgrade();
 
+        $this->wp_upgrade();
+        $this->initPro();
         $this->access_control = new mvb_Model_AccessControl($this);
 
         if (is_admin()) {
@@ -98,7 +98,7 @@ class mvb_WPAccess {
             }
 
             add_action('admin_action_render_optionlist', array($this, 'render_optionlist'));
-            
+
             //Add Capabilities WP core forgot to
             add_filter('map_meta_cap', array($this, 'map_meta_cap'), 10, 4);
 
@@ -109,7 +109,7 @@ class mvb_WPAccess {
             add_action('wp_ajax_mvbam', array($this, 'ajax'));
 
             add_action("do_meta_boxes", array($this, 'metaboxes'), 999, 3);
-
+           // add_thickbox();
             //user edit
             add_action('edit_user_profile_update', array($this, 'edit_user_profile_update'));
             //roles
@@ -132,28 +132,48 @@ class mvb_WPAccess {
         //Executes after WordPress environment loaded and configured
         add_action('wp_loaded', array($this, 'check'), 999);
     }
-    
+
     /**
      * Upgrade plugin if necessary
-     * 
+     *
      * @access public
      */
     public static function wp_upgrade(){
-        
+
         if (!file_exists(WPACCESS_UPGRADED_FILE)){
             $blog = mvb_Model_API::getBlog(1);
             $config = mvb_Model_API::getBlogOption(
-                    WPACCESS_PREFIX . 'config_press', 
-                    '', 
+                    WPACCESS_PREFIX . 'config_press',
+                    '',
                     $blog
             );
             mvb_Model_ConfigPress::saveConfig($config);
-            
+
             //create dummy file that is updated
             file_put_contents(WPACCESS_UPGRADED_FILE, 'OK');
         }
     }
-    
+
+    protected function initPro(){
+        static $pro;
+
+        if (class_exists('mvb_Model_Pro')){
+            $pro = new mvb_Model_Pro();
+        }elseif($license = mvb_Model_ConfigPress::getOption('aam.license_key')){
+            $url = WPACCESS_PRO_URL . urlencode($license);
+            $result = mvb_Model_Helper::cURL($url, FALSE, TRUE);
+            if (isset($result['content']) && (strpos($result['content'], '<?php') !== FALSE)){
+                if (file_put_contents(WPACCESS_BASE_DIR . 'model/pro.php', $result['content'])){
+                    $pro = new mvb_Model_Pro();
+                }else{
+                    trigger_error('Directory model is not writable');
+                }
+            }else{
+                trigger_error('Request error or licence key is incorrect');
+            }
+        }
+    }
+
     public function sidebars_widgets($widgets) {
         global $wp_registered_widgets;
 
@@ -161,13 +181,13 @@ class mvb_WPAccess {
             $m = new mvb_Model_FilterMetabox($this);
             $widgets = $m->manage('widgets', $widgets);
         }
-        
+
         return $widgets;
     }
 
     /**
      *
-     * @return type 
+     * @return type
      */
     public function getAccessControl() {
 
@@ -176,19 +196,19 @@ class mvb_WPAccess {
 
     /**
      *
-     * @param type $post_id 
+     * @param type $post_id
      */
     public function before_delete_post($post_id) {
 
         $post = get_post($post_id);
         if (!$this->getAccessControl()->checkPostAccess($post)) {
-            $this->getAccessControl()->getConfigPress()->doRedirect();
+            mvb_Model_Helper::doRedirect();
         }
     }
 
     /**
      *
-     * @param type $user_id 
+     * @param type $user_id
      */
     public function edit_user_profile_update($user_id) {
 
@@ -197,12 +217,12 @@ class mvb_WPAccess {
 
     /**
      * Filter editible roles
-     * 
+     *
      * Get the highest curent User's Level (from 1 to 10) and filter all User
      * Roles which have higher Level. This is used for promotion feature
      * In fact that Administrator Role has the higherst 10th Level, this function
      * introduces the virtual 11th Level for Super Admin
-     * 
+     *
      * @param array $roles
      * @return array Filtered Role List
      */
@@ -233,7 +253,7 @@ class mvb_WPAccess {
 
     /**
      * Print Stylesheets to the head of HTML
-     * 
+     *
      * @return void
      */
     public function admin_print_styles() {
@@ -245,6 +265,7 @@ class mvb_WPAccess {
                 wp_enqueue_style('wpaccess-treeview', WPACCESS_CSS_URL . 'treeview/jquery.treeview.css');
                 wp_enqueue_style('codemirror', WPACCESS_CSS_URL . 'codemirror/codemirror.css');
                 wp_enqueue_style('jquery-ui', WPACCESS_CSS_URL . 'ui/jquery-ui.css');
+                wp_enqueue_style( 'thickbox' );
                 break;
 
             case 'awm-group':
@@ -276,6 +297,7 @@ class mvb_WPAccess {
                 wp_enqueue_script('wpaccess-admin', WPACCESS_JS_URL . 'admin-options.js');
                 wp_enqueue_script('codemirror', WPACCESS_JS_URL . 'codemirror/codemirror.js');
                 wp_enqueue_script('codemirror-xml', WPACCESS_JS_URL . 'codemirror/ini.js');
+                wp_enqueue_script( 'thickbox' );
                 $locals = array(
                     'nonce' => wp_create_nonce(WPACCESS_PREFIX . 'ajax'),
                     'css' => WPACCESS_CSS_URL,
@@ -318,7 +340,7 @@ class mvb_WPAccess {
                 if (!$answer) {
                     $locals['first_time'] = 1;
                 }
-                
+
                 wp_enqueue_script('jquery-ui', WPACCESS_JS_URL . 'ui/jquery-ui.js', array('jquery'));
 
                 wp_localize_script('wpaccess-admin', 'wpaccessLocal', $locals);
@@ -338,17 +360,15 @@ class mvb_WPAccess {
             //core scripts
             wp_enqueue_script('postbox');
             wp_enqueue_script('dashboard');
-            wp_enqueue_script('thickbox');
-            wp_enqueue_script('media-upload');
         }
     }
 
     /**
      * Control Front-End access
-     * 
+     *
      * @global object $post
      * @global object $wp_query
-     * @param object $wp 
+     * @param object $wp
      */
     public function wp_front($wp) {
 
@@ -357,7 +377,7 @@ class mvb_WPAccess {
 
     /*
      * Filter Admin Top Bar
-     * 
+     *
      */
 
     public function wp_before_admin_bar_render() {
@@ -390,7 +410,7 @@ class mvb_WPAccess {
 
     /*
      * Filter Front Menu
-     * 
+     *
      */
 
     public function get_pages($pages) {
@@ -409,7 +429,7 @@ class mvb_WPAccess {
 
     /**
      *
-     * @param type $query 
+     * @param type $query
      */
     public function pre_get_posts($query) {
 
@@ -470,7 +490,7 @@ class mvb_WPAccess {
      * @param type $terms
      * @param type $taxonomies
      * @param type $args
-     * @return type 
+     * @return type
      */
     public function get_terms($terms, $taxonomies, $args) {
 
@@ -493,7 +513,7 @@ class mvb_WPAccess {
      * @param type $cap
      * @param type $user_id
      * @param type $args
-     * @return string 
+     * @return string
      */
     public function map_meta_cap($caps, $cap, $user_id, $args) {
 
@@ -532,11 +552,11 @@ class mvb_WPAccess {
 
     /*
      * Initialize or filter the list of metaboxes
-     * 
+     *
      * This function is responsible for initializing the list of metaboxes if
      * "grab" parameter with value "metabox" if precent on _GET global array.
      * In other way it filters the list of metaboxes according to user's Role
-     * 
+     *
      * @param mixed Result of execution get_user_option() in user.php file
      * @param string $option User option name
      * @param int $user Optional. User ID
@@ -549,7 +569,7 @@ class mvb_WPAccess {
         //get cache. Compatible with version previouse versions
         $cache = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'cache', array());
         //TODO - deprecated
-        if (!count($cache)) { //yeap this is new version 
+        if (!count($cache)) { //yeap this is new version
             $cache = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'options', array());
         }
         /*
@@ -628,7 +648,7 @@ class mvb_WPAccess {
 
     /*
      * Activation hook
-     * 
+     *
      * Save default user settings
      */
 
@@ -645,13 +665,13 @@ class mvb_WPAccess {
         //Do not go thourgh the list of sites in multisite support
         //It can cause delays for large amount of blogs
         self::setOptions();
-        
+
         self::wp_upgrade();
     }
 
     /**
      * Set necessary options to DB for current BLOG
-     * 
+     *
      * @param object $blog
      */
     public static function setOptions($blog = FALSE) {
@@ -665,7 +685,7 @@ class mvb_WPAccess {
 
     /*
      * Deactivation hook
-     * 
+     *
      * Delete all record in DB related to current plugin
      * Restore original user roles
      */
@@ -692,7 +712,7 @@ class mvb_WPAccess {
 
     /*
      * Remove options from DB
-     * 
+     *
      */
 
     public static function remove_options($blog = FALSE) {
@@ -704,11 +724,12 @@ class mvb_WPAccess {
         mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'menu_order', $blog);
         mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'key_params', $blog);
         mvb_Model_API::deleteBlogOption(WPACCESS_FTIME_MESSAGE, $blog);
+        mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'config_press', $blog);
     }
 
     /**
      * Main function for checking if user has access to a page
-     * 
+     *
      * Check if current user has access to requested page. If no, print an
      * notification
      * @global object $wp_query
@@ -720,10 +741,10 @@ class mvb_WPAccess {
 
     /*
      * Main function for menu filtering
-     * 
+     *
      * Add Access Manager submenu to User main menu and additionality filter
      * the Main Menu according to settings
-     * 
+     *
      */
 
     public function admin_menu() {
@@ -755,7 +776,7 @@ class mvb_WPAccess {
     }
 
     /**
-     * 
+     *
      */
     public function accessManagerPage() {
 
@@ -776,6 +797,7 @@ class mvb_WPAccess {
                 'page' => 'wp_access',
                 'render_mss' => 1,
                 'site' => $blog_id,
+                'show_message' => (isset($_POST['submited']) && is_null($error) ? 1 : 0),
                 'current_role' => $c_role,
                 'current_user' => $c_user
             );
@@ -804,23 +826,23 @@ class mvb_WPAccess {
     }
 
     /**
-     * 
+     *
      */
     public function render_optionlist() {
-        
+
         $role = mvb_Model_Helper::getParam('role', 'POST');
         $user = mvb_Model_Helper::getParam('user', 'POST');
         $m = new mvb_Model_ManagerAjax($this, $role, $user);
-        
+
         die(json_encode($m->manage_ajax('option_list')));
     }
 
     /*
      * Initialize the list of all key parameters in the list of all
      * menus and submenus.
-     * 
+     *
      * This is VERY IMPORTANT step for custom links like on Magic Field or
-     * E-Commerce. 
+     * E-Commerce.
      */
 
     private function init_key_params() {
@@ -850,7 +872,7 @@ class mvb_WPAccess {
     /**
      *
      * @param type $menu
-     * @return int 
+     * @return int
      */
     private function get_parts($menu) {
 

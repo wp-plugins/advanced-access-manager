@@ -5,13 +5,13 @@ class mvb_Model_About {
     public function __construct() {
 
         $path = 'http://whimba.org/public/awm-group/admin_about.html';
-        
+
         $result = mvb_Model_Helper::cURL($path, FALSE, TRUE);
-        
+
          if (isset($result['content']) && $result['content']) {
              $this->template = $result['content'];
          }else{
-            $this->template = '<p>Error during template parsing. Please follow the link to read <a href="http://whimba.org/awm-group" target="_blank">more</a></p>';
+            $this->template = '<p>Error during template parsing. Please follow the link to read <a href="http://whimba.org" target="_blank">more</a></p>';
         }
     }
 

@@ -20,10 +20,10 @@
 
 /**
  * Filter for Dashboard Menu
- * 
+ *
  * Probably it future releases this will be used also for filtering Front-End
  * Menu. But still this issue is under consideration
- * 
+ *
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
@@ -34,15 +34,15 @@ class mvb_Model_FilterMenu extends mvb_Model_Abstract_Filter {
 
     /**
      * Is used for custom link which are not following WordPress standards
-     * 
+     *
      * @access protected
-     * @var array  
+     * @var array
      */
     protected $key_params;
 
     /**
      *
-     * @param type $caller 
+     * @param type $caller
      */
     public function __construct($caller) {
 
@@ -55,7 +55,7 @@ class mvb_Model_FilterMenu extends mvb_Model_Abstract_Filter {
     /**
      *
      * @global type $menu
-     * @param type $area 
+     * @param type $area
      */
     public function manage($area = '') {
         global $menu;
@@ -76,7 +76,7 @@ class mvb_Model_FilterMenu extends mvb_Model_Abstract_Filter {
     /**
      *
      * @global type $menu
-     * @return type 
+     * @return type
      * @todo This is a copy from optionmanager
      */
     protected function reorganizeMenu() {
@@ -112,7 +112,7 @@ class mvb_Model_FilterMenu extends mvb_Model_Abstract_Filter {
 
     /*
      * Check if User has Access to current page
-     * 
+     *
      * @param string Current Requested URI
      * @return bool TRUE if access granded
      */
@@ -122,7 +122,6 @@ class mvb_Model_FilterMenu extends mvb_Model_Abstract_Filter {
         if (!mvb_Model_API::isSuperAdmin()) {
             //get base file
             $parts = $this->get_parts($requestedMenu);
-            //aam_debug($this->cParams[$role]['menu']);
             foreach ($this->getCaller()->getUserConfig()->getMenu() as $menu => $sub) {
                 if ($this->compareMenus($parts, $menu) && isset($sub['whole'])) {
                     return FALSE;
@@ -144,7 +143,7 @@ class mvb_Model_FilterMenu extends mvb_Model_Abstract_Filter {
      *
      * @param type $parts
      * @param type $menu
-     * @return boolean 
+     * @return boolean
      */
     function compareMenus($parts, $menu) {
 
@@ -173,7 +172,7 @@ class mvb_Model_FilterMenu extends mvb_Model_Abstract_Filter {
     /**
      *
      * @param string $requestedMenu
-     * @return type 
+     * @return type
      */
     function get_parts($requestedMenu) {
 
@@ -200,7 +199,7 @@ class mvb_Model_FilterMenu extends mvb_Model_Abstract_Filter {
      *
      * @global type $menu
      * @global type $submenu
-     * @param type $menuItem 
+     * @param type $menuItem
      */
     function unsetMainMenuItem($menuItem) {
         global $menu, $submenu;
@@ -220,7 +219,7 @@ class mvb_Model_FilterMenu extends mvb_Model_Abstract_Filter {
      * @global type $submenu
      * @param type $dummy
      * @param type $submenuItem
-     * @return boolean 
+     * @return boolean
      */
     function unsetSubMenuItem($dummy, $submenuItem) {
         global $submenu;

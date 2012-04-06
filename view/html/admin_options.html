@@ -1,22 +1,22 @@
 <div class="wrap" id="aam_wrap">
     <form action="###form_action###" method="post" id="wp-access">
         <div class="plugin-logo"></div>
-        <div class="plugin-title"><h2>###LABEL_1###</h2></div>
+        <div class="plugin-title"><h2>###LABEL_1###</h2>###version_type###</div>
         <br class="clear" />
         <div class="message-passive" style="width:70%;" id="manager-error-message">
-            <div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"> 
-                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span> 
+            <div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;">
+                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
                     <strong>###LABEL_3###:</strong> <span class="manager-error-text"></span></p>
             </div>
         </div>
         <div class="message-passive" id="error-message">
-            <div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"> 
-                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span> 
+            <div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;">
+                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
                     <strong>###LABEL_3###:</strong> ###LABEL_4###: "<span id="error-text"></span>". ###LABEL_5###</p>
             </div>
         </div>
         <div class="###message_class###">
-            <div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;"> 
+            <div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;">
                 <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
                     <span style="color:#006505;">###LABEL_6###!</span></p>
             </div>
@@ -29,7 +29,7 @@
         <input type="hidden" name="current_role" id="current_role" value="###current_role_id###" />
         <input type="hidden" name="current_user" id="current_user" value="###current_user_id###" />
         <div class="postbox-container" style="width:70%;">
-            <div class="metabox-holder">	
+            <div class="metabox-holder">
                 <div class="meta-box-sortables">
                     <!-- ###MAIN_OPTIONS_LIST### begin-->
                     <div id="metabox-wpaccess-options" class="postbox">
@@ -46,7 +46,7 @@
                                 </ul>
                                 <!-- ###MAIN_MENU_TAB### begin-->
                                 <div id="tabs-1">
-                                    <div class="ui-state-highlight ui-corner-all dialog" id="sorting-tip" style="float:left; padding: 3px; margin-top: 2px;"> 
+                                    <div class="ui-state-highlight ui-corner-all dialog" id="sorting-tip" style="float:left; padding: 3px; margin-top: 2px;">
                                         <span class="ui-icon ui-icon-info" style="float: left; margin-right: 2px;"></span>
                                         <span style="color:#006505;">###LABEL_11###</span>
                                     </div>
@@ -81,16 +81,18 @@
                                 <!-- ###METABOX_TAB### begin-->
                                 <div id="tabs-2">
                                     <div id="initiate-message">
-                                        <p>###LABEL_14###</p>
-                                        <div style="float:left; width:80%;">
-                                            <div class="initiate-url-empty">###LABEL_15###</div>
-                                            <input type="text" id="initiateURL" class="initiate-url-text" value="" />&nbsp;&nbsp;
-                                            <a href="#" class="button initiate-url" >###LABEL_16###</a>
+                                        <div class="help-menu postbox">
+                                            <div class="tooltip tooltip-large help-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_14###</span></div>
+                                            <div style="float:left; width:80%;">
+                                                <div class="initiate-url-empty">###LABEL_15###</div>
+                                                <input type="text" id="initiateURL" class="initiate-url-text" value="" />&nbsp;&nbsp;
+                                                <a href="#" class="button initiate-url" >###LABEL_16###</a>
+                                            </div>
+                                            <div style="float:right;margin-top:8px;">
+                                                <a href="#" class="initiate-metaboxes button" >###LABEL_17###</a>
+                                            </div>
+                                            <br class="clear" />
                                         </div>
-                                        <div style="float:right;margin-top:8px;">
-                                            <a href="#" class="initiate-metaboxes button" >###LABEL_17###</a>
-                                        </div>
-                                        <br class="clear" />
                                     </div>
                                     <div id="progressbar"></div>
                                     <div id="metabox-list">
@@ -98,8 +100,8 @@
                                         <div>
                                             <h4><a href="#" >###post_type_label###</a></h4>
                                             <div>
-                                                <!-- ###POST_METABOXES_LIST### begin-->    
-                                                <!-- ###POST_METABOXES_ITEM### begin-->    
+                                                <!-- ###POST_METABOXES_LIST### begin-->
+                                                <!-- ###POST_METABOXES_ITEM### begin-->
                                                 <div class="postbox metabox-item" >
                                                     <h3 style="cursor: default;"><span>###title###</span></h3>
                                                     <div class="inside">
@@ -126,7 +128,7 @@
                                                     </div>
                                                 </div>
                                                 <!-- ###POST_METABOXES_ITEM### end-->
-                                                <!-- ###WIDGET_ITEM### begin-->    
+                                                <!-- ###WIDGET_ITEM### begin-->
                                                 <div class="postbox metabox-item" >
                                                     <h3 style="cursor: default;"><span>###title###</span></h3>
                                                     <div class="inside">
@@ -149,13 +151,13 @@
                                                     </div>
                                                 </div>
                                                 <!-- ###WIDGET_ITEM### end-->
-                                                <!-- ###POST_METABOXES_LIST### end--> 
+                                                <!-- ###POST_METABOXES_LIST### end-->
                                             </div>
                                         </div>
                                         <!-- ###METABOX_LIST_ITEM### end-->
                                         <!-- ###METABOX_LIST_EMPTY### begin-->
                                         <div class="ui-widget">
-                                            <div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;"> 
+                                            <div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;">
                                                 <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
                                                     <span style="color:#D54E21;">###LABEL_22### <a href="#" class="initiate-metaboxes" >###LABEL_23###</a></span></p>
                                             </div>
@@ -181,8 +183,8 @@
                                     <!-- ###CAPABILITY_ITEM### end-->
                                     <!-- ###CAPABILITY_LIST### end-->
                                     <!-- ###CAPABILITY_LIST_EMPTY### begin-->
-                                    <div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"> 
-                                        <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span> 
+                                    <div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;">
+                                        <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
                                             <strong>###LABEL_3###:</strong> ###LABEL_146###</p>
                                     </div>
                                     <!-- ###CAPABILITY_LIST_EMPTY### end-->
@@ -208,18 +210,18 @@
                                     <div class="tree-holder postbox">
                                         <div id="sidetreecontrol"><a href="#">###LABEL_40###</a>&nbsp;|&nbsp;<a href="#">###LABEL_41###</a></div>
                                         <br class="clear" />
-                                        <ul id="tree">
+                                        <ul id="tree" class="filetree">
                                         </ul>
                                     </div>
                                     <div class="post-information postbox">
                                         <div class="message-passive" id="expire-error-message">
-                                            <div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;"> 
-                                                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span> 
+                                            <div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;">
+                                                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
                                                     <strong>###LABEL_3###:</strong> ###LABEL_42###!</p>
                                             </div>
                                         </div>
                                         <div class="message-passive" id="expire-success-message">
-                                            <div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;"> 
+                                            <div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;">
                                                 <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
                                                     <span style="color:#006505;">###LABEL_6###!</span></p>
                                             </div>
@@ -341,7 +343,7 @@
                                             <a href="#" class="button-primary save-postinfo" title="###LABEL_59###">###LABEL_60###</a>&nbsp;<a href="#" class="button-primary save-postinfo-all" ###disabled_apply_all### title="###LABEL_61###">###LABEL_62###</a>
                                             <!-- ###CATEGORY### end-->
                                             <!-- ###POST_INFORMATION### end-->
-                                            <div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;"> 
+                                            <div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;">
                                                 <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
                                                     <span>###LABEL_71###</span></p>
                                             </div>
@@ -352,7 +354,12 @@
                                 <!-- ###RESTRICTION_TAB### end-->
                                 <!-- ###CONFIG_PRESS_TAB### begin-->
                                 <div id="tabs-5">
-                                    <p>###LABEL_157###</p>
+                                    <div class="help-menu postbox">
+                                        <div class="tooltip tooltip-large help-info" id="cp-ref"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>###LABEL_161###</em>###LABEL_156###</div>
+                                        <a href="###reference_url###?width=800&TB_iframe=true" class="thickbox" id="cp-ref-trigger"></a>
+                                        <span>###LABEL_157###</span>
+                                        <br class="clear" />
+                                    </div>
                                     <textarea id="access_config" name="wpaccess[config_press]">###access_config###</textarea>
                                 </div>
                                 <!-- ###CONFIG_PRESS_TAB### end-->
@@ -364,7 +371,7 @@
             </div>
         </div>
         <div class="postbox-container" style="width:20%; margin-left: 10px;">
-            <div class="metabox-holder">	
+            <div class="metabox-holder">
                 <div class="meta-box-sortables">
                     <!-- ###SUBMIT_METABOX### begin-->
                     <div id="submitdiv" class="postbox">
@@ -472,7 +479,7 @@
                             </div>
                             <div id="new-role-message-ok">
                                 <div class="ui-widget">
-                                    <div class="ui-state-highlight ui-corner-all" style="margin-top:5px; padding: 0 .7em;"> 
+                                    <div class="ui-state-highlight ui-corner-all" style="margin-top:5px; padding: 0 .7em;">
                                         <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
                                             <span style="color:#006505;">###LABEL_89###!</span></p>
                                     </div>
@@ -480,8 +487,8 @@
                             </div>
                             <div id="new-role-message-error">
                                 <div class="ui-widget">
-                                    <div class="ui-state-error ui-corner-all" style="margin-top:5px; padding: 0 .7em;"> 
-                                        <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
+                                    <div class="ui-state-error ui-corner-all" style="margin-top:5px; padding: 0 .7em;">
+                                        <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
                                             <strong>###LABEL_90###:</strong> ###LABEL_91###</p>
                                     </div>
                                 </div>

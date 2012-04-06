@@ -19,7 +19,7 @@
 
 /**
  * Option Manager Model Class
- * 
+ *
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
@@ -30,7 +30,7 @@ class mvb_Model_Manager {
 
     /**
      * HTML templated from file
-     * 
+     *
      * @var string Template to work with
      * @access protected
      */
@@ -38,7 +38,7 @@ class mvb_Model_Manager {
 
     /**
      * Array of User Roles
-     * 
+     *
      * @var array
      * @access protected
      */
@@ -46,7 +46,7 @@ class mvb_Model_Manager {
 
     /**
      * Current role to work with
-     * 
+     *
      * @var string
      * @access protected
      */
@@ -54,7 +54,7 @@ class mvb_Model_Manager {
 
     /**
      * Current user to work with
-     * 
+     *
      * @var int
      * @access protected
      */
@@ -62,7 +62,7 @@ class mvb_Model_Manager {
 
     /**
      * Copy of a config array from main object
-     * 
+     *
      * @var array
      * @access protected
      */
@@ -70,7 +70,7 @@ class mvb_Model_Manager {
 
     /**
      * Cache config
-     * 
+     *
      * @var array
      * @access protected
      */
@@ -80,7 +80,7 @@ class mvb_Model_Manager {
 
     /**
      * Initiate an object and other parameters
-     * 
+     *
      * @param object Main Object
      * @param string $role Current role to work with
      * @param string $rser Current user to work with
@@ -95,9 +95,9 @@ class mvb_Model_Manager {
         $this->setCurrentUser($user);
         $this->initConfig();
     }
-    
+
     protected function initConfig(){
-        
+
         if ($this->current_user) {
             $this->config = mvb_Model_API::getUserAccessConfig($this->current_user);
         } else {
@@ -291,6 +291,8 @@ class mvb_Model_Manager {
             '###nonce###' => wp_nonce_field(WPACCESS_PREFIX . 'options', '_wpnonce', TRUE, FALSE),
             '###form_action###' => $submit_link,
             '###message_class###' => $message_class,
+            '###version_type###' => mvb_Model_Helper::getVersionTypeHTML(),
+            '###reference_url###' => WPACCESS_BASE_URL . 'view/reference.php'
         );
 
         //get current user data
@@ -340,23 +342,25 @@ class mvb_Model_Manager {
             $this->config->saveConfig();
 
             mvb_Model_ConfigPress::saveConfig(stripslashes($params['config_press']));
-
-            return $error_message;
+        }else{
+            $error_message = FALSE;
         }
+
+        return $error_message;
     }
 
     /**
      * Get Menu Ordered according to settings
-     * 
+     *
      * @global type $menu
-     * @return type 
+     * @return type
      * @todo the same functionality as in filtermenu
      */
     public function getRoleMenu() {
         global $menu;
 
         $r_menu = array();
-        
+
         if (is_array($menu)) {
             $r_menu = $menu;
             ksort($r_menu);

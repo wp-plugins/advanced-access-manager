@@ -20,7 +20,7 @@
 
 /**
  * External API Class for AAM
- * 
+ *
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
@@ -31,7 +31,7 @@ final class mvb_Model_API {
 
     /**
      * Cache current blog object
-     * 
+     *
      * @access protected
      * @var object
      */
@@ -39,7 +39,7 @@ final class mvb_Model_API {
 
     /**
      * Cache Role List
-     * 
+     *
      * @access protected
      * @var array
      */
@@ -47,7 +47,7 @@ final class mvb_Model_API {
 
     /**
      * Current User's Object
-     * 
+     *
      * @access protected
      * @var object
      */
@@ -55,7 +55,7 @@ final class mvb_Model_API {
 
     /**
      * Role Config Cache
-     * 
+     *
      * @access protected
      * @var array
      */
@@ -72,7 +72,7 @@ final class mvb_Model_API {
 
     /**
      * Check if is multisite network panel is used now
-     * 
+     *
      * @see is_multisite(), is_network_admin()
      * @since version 1.5.5
      * @return bool
@@ -84,7 +84,7 @@ final class mvb_Model_API {
 
     /**
      * Check if user is super admin
-     * 
+     *
      * @since version 1.5.5
      * @param int $user_id
      * @return bool
@@ -98,15 +98,15 @@ final class mvb_Model_API {
         }else{
             $super = (self::getCurrentUser()->has_cap(WPACCESS_SADMIN_ROLE) ? TRUE : FALSE);
         }
-       
+
         return $super;
     }
 
     /**
      * Get Blog information
-     * 
+     *
      * If it is not a multisite setup will return default blog object
-     * 
+     *
      * @global object $wpdb
      * @param init $blog_id
      * @return object Return object mvb_Model_Blog or FALSE if blog not found
@@ -143,8 +143,8 @@ final class mvb_Model_API {
 
     /**
      * Get Current Blog info
-     * 
-     * @return object 
+     *
+     * @return object
      */
     public static function getCurrentBlog() {
 
@@ -157,7 +157,7 @@ final class mvb_Model_API {
 
     /**
      * Set current blog
-     * 
+     *
      * @param int $blog_id
      * @return bool
      */
@@ -172,14 +172,14 @@ final class mvb_Model_API {
 
     /**
      * Get current blog's option
-     * 
+     *
      * Check if multisite and execute a proper WP function to get option from DB
-     * 
+     *
      * @global object $wpdb
      * @param string $option
      * @param mixed $default
      * @param object $blog
-     * @return mixed 
+     * @return mixed
      */
     public static function getBlogOption($option, $default = FALSE, $blog = FALSE) {
         global $wpdb;
@@ -198,7 +198,7 @@ final class mvb_Model_API {
 
     /**
      * Get User Access Config Object
-     * 
+     *
      * @param int $user_id
      * @param array $force_roles
      * @return object
@@ -208,7 +208,7 @@ final class mvb_Model_API {
         if ($force_roles || !($config = mvb_Model_Cache::getCacheData('user', $user_id))) {
 
             $config = new mvb_Model_UserConfig($user_id);
-            
+
             if (!$config->getID()) { //user is logged in
                 $config = new mvb_Model_RoleConfig('_visitor');
             } else {
@@ -221,7 +221,7 @@ final class mvb_Model_API {
                 foreach ($role_list as $role) {
                     mvb_merge_configs($m_config, mvb_Model_API::getRoleAccessConfig($role));
                 }
-                
+
                 mvb_merge_configs($config, $m_config);
 
                 if (!$force_roles) {
@@ -235,9 +235,9 @@ final class mvb_Model_API {
 
     /**
      * Get User Role configuration
-     * 
+     *
      * @param object $conf
-     * @param string $role 
+     * @param string $role
      */
     public static function getRoleAccessConfig($role) {
 
@@ -250,12 +250,12 @@ final class mvb_Model_API {
 
     /**
      * Get list of User Roles
-     * 
+     *
      * Depending on $all parameter it'll return whole list of roles or filtered
-     * 
+     *
      * @global object $wpdb
      * @param bool $filter
-     * @return array 
+     * @return array
      */
     public static function getRoleList($filter = TRUE) {
         global $wpdb;
@@ -279,8 +279,8 @@ final class mvb_Model_API {
 
     /**
      * Get list of all capabilities in the system
-     * 
-     * @return type 
+     *
+     * @return type
      */
     public static function getAllCapabilities() {
 
@@ -299,14 +299,14 @@ final class mvb_Model_API {
 
     /**
      * Update Blog Option
-     * 
+     *
      * If $blog is not specified, will user current blog
-     * 
+     *
      * @global object $wpdb
      * @param string $option
      * @param mixed $data
      * @param object $blog
-     * @return bool 
+     * @return bool
      */
     public static function updateBlogOption($option, $data, $blog = FALSE) {
         global $wpdb;
@@ -325,7 +325,7 @@ final class mvb_Model_API {
 
     /**
      * Delete Blog Option
-     * 
+     *
      * @global object $wpdb
      * @param string $option
      * @param object $blog
@@ -348,10 +348,10 @@ final class mvb_Model_API {
 
     /**
      * Get current User Role
-     * 
+     *
      * This function is for web developers how are developing own component for
      * Advaced Access Manager. It'll return current User Role
-     * 
+     *
      * @return string
      */
     public static function getCurrentEditableUserRole() {
@@ -370,7 +370,7 @@ final class mvb_Model_API {
 
     /**
      *
-     * @return boolean 
+     * @return boolean
      */
     public static function getCurrentEditableUser() {
 
@@ -385,7 +385,7 @@ final class mvb_Model_API {
 
     /**
      * Return User Role List
-     * 
+     *
      * @param int $user_id
      * @return array
      */
@@ -396,7 +396,7 @@ final class mvb_Model_API {
 
     /**
      * Get Current User
-     * 
+     *
      * @return mvb_Model_User
      */
     public static function getCurrentUser() {

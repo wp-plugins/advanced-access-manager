@@ -42,7 +42,7 @@
 }
 
 #new-role-name{
-    font-size: 10px; 
+    font-size: 10px;
     width:150px;
 }
 
@@ -69,15 +69,50 @@
     display:block;
     float:left;
     width:70%;
-    margin: 5px 0;    
+    margin: 5px 0;
 }
 .message-passive{
     display:none;
 }
 
-.plugin-title{ 
+.plugin-title{
+    float: left;
+    margin: 5px 0 0 15px;
+}
+
+.plugin-title h2{
     float:left;
-    margin:0px 0 0 15px;
+}
+
+.version{
+    float: left;
+    font-family: "Courier New";
+    font-size: 11px;
+    font-weight: bold;
+    margin-top: 5px;
+    text-transform: uppercase;
+}
+
+.basic-type a{
+    color: #FF0000;
+    text-decoration: none;
+}
+
+.help-menu{
+    padding: 5px;
+}
+
+.help-info{
+    float:left;
+    width:24px;
+    height: 24px;
+    margin: 2px 4px;
+    cursor: pointer;
+    background: url('images/help.png') no-repeat;
+}
+
+.pro-type{
+    color: #2BB0D7;
 }
 
 .misc-role-section{
@@ -173,8 +208,8 @@
     display:none;
 }
 
-.ui-progressbar-value { 
-    background-image: url(ui/images/pbar-ani.gif); 
+.ui-progressbar-value {
+    background-image: url(ui/images/pbar-ani.gif);
 }
 
 .metaboxlist-holder{
@@ -350,7 +385,7 @@
 }
 
 #site-select{
-    margin-top: 5px;    
+    margin-top: 5px;
 }
 
 #site-select #site{
@@ -368,9 +403,15 @@
     float:left;
 }
 
+.tooltip-large {
+    width: 24px;
+    height: 24px;
+    margin:2px 4px;
+}
+
 .icon-info{
     cursor: help;
-    background: url(images/info.png) no-repeat; 
+    background: url(images/info.png) no-repeat;
 }
 
 .icon-info:hover {
@@ -381,7 +422,7 @@
     position: absolute;
 }
 .tooltip:hover span {
-    border-radius: 5px 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; 
+    border-radius: 5px 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1); -webkit-box-shadow: 5px 5px rgba(0, 0, 0, 0.1); -moz-box-shadow: 5px 5px rgba(0, 0, 0, 0.1);
     font-family: Calibri, Tahoma, Geneva, sans-serif;
     position: absolute; left: 1em; top: 2em; z-index: 99;

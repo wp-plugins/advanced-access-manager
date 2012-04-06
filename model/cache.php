@@ -20,9 +20,9 @@
 
 /**
  * Cache Model Class
- * 
+ *
  * Caching system
- * 
+ *
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
@@ -35,7 +35,7 @@ class mvb_Model_Cache {
      *
      * @param type $type
      * @param type $id
-     * @return type 
+     * @return type
      */
     public static function getCacheData($type, $id) {
 
@@ -50,13 +50,14 @@ class mvb_Model_Cache {
 
     /**
      * Check if object can be cached
-     * 
-     * @return boolean 
+     *
+     * @return boolean
      */
     public static function canBeCached() {
 
         $result = FALSE;
-        if (WPACCESS_CACHE_STATUS == 'ON' && is_writable(WPACCESS_CACHE_DIR)) {
+        if ( (mvb_Model_ConfigPress::getOption('aam.caching', 'true') == 'true')
+                && is_writable(WPACCESS_CACHE_DIR)) {
             $result = TRUE;
         }
 
@@ -67,7 +68,7 @@ class mvb_Model_Cache {
      *
      * @param type $type
      * @param type $id
-     * @param type $data 
+     * @param type $data
      */
     public static function saveCacheData($type, $id, $data) {
 
@@ -79,7 +80,7 @@ class mvb_Model_Cache {
 
     /**
      * Get Zend Cache object
-     * 
+     *
      * @return object
      */
     public static function getCacheObject() {
@@ -108,17 +109,17 @@ class mvb_Model_Cache {
             $cache = self::getCacheObject();
             $cache->clean(Zend_Cache::CLEANING_MODE_ALL);
         }
-        
+
         //TODO - there is some mess with cache. Should be fixed
         mvb_Model_API::clearCache();
     }
-    
+
     /**
      *
-     * @param type $user_id 
+     * @param type $user_id
      */
     public static function removeUserCache($user_id){
-        
+
         if (self::canBeCached()) {
             $cache = self::getCacheObject();
             $cache->remove('user_' . $user_id);

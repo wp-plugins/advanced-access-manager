@@ -20,7 +20,7 @@
 
 /**
  * Labels Model Class
- * 
+ *
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
@@ -31,7 +31,7 @@ class mvb_Model_Label {
 
     /**
      * Labels container
-     * 
+     *
      * @var array
      * @access public
      */
@@ -39,7 +39,7 @@ class mvb_Model_Label {
 
     /**
      * Initialize Labels with current language
-     * 
+     *
      * @return void
      */
     public static function initLabels() {
@@ -56,7 +56,7 @@ class mvb_Model_Label {
         self::$labels['LABEL_11'] = __('To Reorganize menu just Drag and Drop Items on the List and click Save Order', 'aam');
         self::$labels['LABEL_12'] = __('Reorganize', 'aam');
         self::$labels['LABEL_13'] = __('Whole Branch', 'aam');
-        self::$labels['LABEL_14'] = __('To initialize list of metaboxes manually, copy and paste the URL to edit screen page (e.g. http://localhost/basic/wp-admin/post.php?post=1&action=edit) into text field and click "Initiate URL". List of all new metaboxes will be added automatically.', 'aam');
+        self::$labels['LABEL_14'] = __('To initialize list of metaboxes manually, copy and paste the URL to edit screen page (e.g. http://localhost/wp-admin/post.php?post=1&action=edit) into text field and click "Initiate URL". List of all new metaboxes will be added automatically.', 'aam');
         self::$labels['LABEL_15'] = __('Enter Correct URL', 'aam');
         self::$labels['LABEL_16'] = __('Initiate URL', 'aam');
         self::$labels['LABEL_17'] = __('Refresh List', 'aam');
@@ -178,7 +178,7 @@ class mvb_Model_Label {
         self::$labels['LABEL_137'] = __('Apply All', 'aam');
         self::$labels['LABEL_138'] = __('Error during information grabbing!', 'aam');
         self::$labels['LABEL_139'] = __('Advaned Access Manager will not work properly in fact other Error Handler detected.', 'aam');
-        self::$labels['LABEL_140'] = __('', 'aam');
+        self::$labels['LABEL_140'] = __('Premium', 'aam');
         self::$labels['LABEL_141'] = __('Create', 'aam');
         self::$labels['LABEL_142'] = __('Do not Create', 'aam');
         self::$labels['LABEL_143'] = __('Change Role', 'aam');
@@ -190,32 +190,33 @@ class mvb_Model_Label {
         <p>For your safety, after you press <b>OK</b> button, Super Admin Role will be created specifically for your user.</p>
         <p>Users with already defined Super Admin Role will be deprived of it and replaced with Administrator Role</p>
         <p>If you have Multi-Site Setup, you will see the same message again for each new Blog you entered or created.</p>', 'aam');
-        self::$labels['LABEL_148'] = __('You have a basic version of AAM. Settings applied only for first '.WPACCESS_APPLY_LIMIT.' blogs. Please upgrade AAM by following the <a href="http://whimba.org/add-ons" target="_blank">link</a>', 'aam');
-        self::$labels['LABEL_149'] = __('', 'aam');
+        self::$labels['LABEL_148'] = __('You have a basic version of AAM. Settings applied only for first '.WPACCESS_APPLY_LIMIT.' blogs. Please upgrade AAM by following the <a href="http://whimba.org/advanced-access-manager" target="_blank">link</a>', 'aam');
+        self::$labels['LABEL_149'] = __('Basic', 'aam');
         self::$labels['LABEL_150'] = __('Action completed successfully', 'aam');
         self::$labels['LABEL_151'] = __('Action failed', 'aam');
-        self::$labels['LABEL_152'] = __('', 'aam');
+        self::$labels['LABEL_152'] = __('Visit whimba.org for more information', 'aam');
         self::$labels['LABEL_153'] = __('empty', 'aam');
         self::$labels['LABEL_154'] = __('Administrator added Successfully', 'aam');
         self::$labels['LABEL_155'] = __('Failed to add new Administrator', 'aam');
-        self::$labels['LABEL_156'] = __('', 'aam');
-        self::$labels['LABEL_80'] = __('Config Press', 'aam');
+        self::$labels['LABEL_156'] = __('Click for more information', 'aam');
+        self::$labels['LABEL_80'] = __('ConfigPress', 'aam');
         self::$labels['LABEL_119'] = __('Current User', 'aam');
         self::$labels['LABEL_120'] = __('All Users', 'aam');
         self::$labels['LABEL_121'] = __('Delete current capability', 'aam');
-        self::$labels['LABEL_157'] = __('Config Press is a flexible way to configure your Access Manager. For more information please follow the <a href="http://whimba.org/support#viewforum.php?f=4" target="_blank">support link</a>.', 'aam');
-        self::$labels['upgrade_restriction'] = __('Install <a href="http://whimba.org/add-ons" target="_blank">Extend Restriction</a> to be able to set more then 5 restrictions for one Role', 'aam');
+        self::$labels['LABEL_157'] = __('ConfigPress is a flexible way to configure your Access Manager. For more information please check reference or follow the <a href="http://whimba.org/support#viewforum.php?f=4" target="_blank">support link</a>.', 'aam');
+        self::$labels['upgrade_restriction'] = __('Basic version does not allow to setup more then 5 restrictions. Please upgrade AAM. <a href="http://whimba.org/advanced-access-manager" target="_blank">More...</a>', 'aam');
         self::$labels['restrict_message'] = __('<p>You do not have sufficient permissions to perform this action</p>', 'aam');
         self::$labels['LABEL_158'] = __('Donate', 'aam');
         self::$labels['LABEL_159'] = __('Feedback & Donation', 'aam');
         self::$labels['LABEL_160'] = __('Send Email', 'aam');
-        
+        self::$labels['LABEL_161'] = __('ConfigPress reference', 'aam');
+
         self::initCapabilityDescriptions();
     }
 
     /**
      * Init Capability Descriptions
-     * 
+     *
      * @todo Rewrite Caps Description
      */
     public static function initCapabilityDescriptions() {
@@ -244,7 +245,7 @@ class mvb_Model_Label {
 					- user can edit other posts through function get_others_drafts()
 					- user can see other images in inline-uploading', 'aam'),
             'manage_options' => __('Since 2.0
-				Allows access to Administration Panel options: 
+				Allows access to Administration Panel options:
                     - Settings > General
                     - Settings > Writing
                     - Settings > Writing
@@ -256,42 +257,42 @@ class mvb_Model_Label {
 				Allows access to Administration Panel option:
 					- Appearance > Add New Themes', 'aam'),
             'activate_plugins' => __('Since 2.0
-				Allows access to Administration Panel option:  
+				Allows access to Administration Panel option:
 					- Plugins', 'aam'),
             'edit_plugins' => __('Since 2.0
-				Allows access to Administration Panel option:  
+				Allows access to Administration Panel option:
 					- Plugins > Plugin Editor', 'aam'),
             'install_plugins' => __('Since 2.0
-				Allows access to Administration Panel option:  
+				Allows access to Administration Panel option:
 					- Plugins > Add New', 'aam'),
             'edit_users' => __('Since 2.0
-				Allows access to Administration Panel option:  
+				Allows access to Administration Panel option:
 					- Users', 'aam'),
             'edit_files' => __('Since 2.0
 				Note: No longer used.', 'aam'),
             'moderate_comments' => __('Since 2.0
 				Allows users to moderate comments from the Comments SubPanel (although a user needs the edit_posts Capability in order to access this)', 'aam'),
             'manage_categories' => __('Since 2.0
-				Allows access to Administration Panel options:  
+				Allows access to Administration Panel options:
 					- Posts > Categories
 					- Links > Categories', 'aam'),
             'manage_links' => __('Since 2.0
-				Allows access to Administration Panel options:  
+				Allows access to Administration Panel options:
 					- Links
 					- Links > Add New', 'aam'),
             'upload_files' => __('Since 2.0
-				Allows access to Administration Panel options:  
+				Allows access to Administration Panel options:
 					- Media
 					- Media > Add New', 'aam'),
             'import' => __('Since 2.0
-				Allows access to Administration Panel options:  
+				Allows access to Administration Panel options:
 					- Tools > Import
 					- Tools > Export', 'aam'),
             'unfiltered_html' => __('Since 2.0
 				Allows user to post HTML markup or even JavaScript code in pages, posts, and comments.
 				Note: Enabling this option for untrusted users may result in their posting malicious or poorly formatted code.', 'aam'),
             'edit_posts' => __('Since 2.0
-				Allows access to Administration Panel options:  
+				Allows access to Administration Panel options:
 					- Posts
 					- Posts > Add New
 					- Comments
@@ -300,7 +301,7 @@ class mvb_Model_Label {
 				See and use the "publish" button when editing their post (otherwise they can only save drafts)
 				Can use XML-RPC to publish (otherwise they get a "Sorry, you can not post on this weblog or category.")', 'aam'),
             'edit_pages' => __('Since 2.0
-				Allows access to Administration Panel options:  
+				Allows access to Administration Panel options:
 					- Pages
 					- Pages > Add New', 'aam'),
             'read' => __('Since 2.0
@@ -369,7 +370,7 @@ class mvb_Model_Label {
 
     /**
      * Get label from store
-     * 
+     *
      * @param string $label
      * @return string|bool
      */

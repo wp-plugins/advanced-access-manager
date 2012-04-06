@@ -22,6 +22,7 @@
 define('WPACCESS_PREFIX', 'wpaccess_');
 define('WPACCESS_BASE_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 define('WPACCESS_DIRNAME', basename(WPACCESS_BASE_DIR));
+define('WPACCESS_PRO_URL', 'http://whimba.org/get-pro/');
 
 define('WPACCESS_UPGRADED_FILE', WPACCESS_BASE_DIR . '.__upgraded');
 
@@ -42,10 +43,6 @@ define('WPACCESS_CACHE_DIR', WPACCESS_BASE_DIR . 'cache'); //cache dir
 define('WPACCESS_LOG_DIR', WPACCESS_BASE_DIR . 'logs'); //logs dir
 
 define('WPACCESS_FTIME_MESSAGE', WPACCESS_PREFIX . 'first_time');
-
-define('WPACCESS_CACHE_STATUS', 'ON');
-
-define('WPACCESS_ERROR_REPORTING', 'ON');
 
 //configure include path for library
 $path = WPACCESS_BASE_DIR . 'library/';

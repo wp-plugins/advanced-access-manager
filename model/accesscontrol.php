@@ -20,7 +20,7 @@
 
 /**
  * Main Access Control Model
- * 
+ *
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
@@ -31,23 +31,23 @@ class mvb_Model_AccessControl {
 
     /**
      * User Config
-     * 
+     *
      * @access protected
-     * @var mvb_Model_UserConfig 
+     * @var mvb_Model_UserConfig
      */
     protected $user_config;
 
     /**
      * Menu Filter
-     * 
+     *
      * @access protected
-     * @var mvb_Model_FilterMenu 
+     * @var mvb_Model_FilterMenu
      */
     protected $menu_filter = NULL;
 
     /**
      * Class that called current
-     * 
+     *
      * @access protected
      * @var object
      */
@@ -55,8 +55,8 @@ class mvb_Model_AccessControl {
 
     /**
      * Init Object
-     * 
-     * @param int $user_id 
+     *
+     * @param int $user_id
      */
     public function __construct($caller, $user_id = FALSE) {
 
@@ -71,10 +71,10 @@ class mvb_Model_AccessControl {
 
     /**
      * Main function for checking if user has access to a page
-     * 
+     *
      * Check if current user has access to requested page. If no, print an
      * notification
-     * 
+     *
      * @access public
      * @global object $wp_query
      * @global object $post
@@ -92,7 +92,7 @@ class mvb_Model_AccessControl {
             //check if user has access to requested Menu
             $uri = $_SERVER['REQUEST_URI'];
             if (!$this->getMenuFilter()->checkAccess($uri)) {
-                mvb_Model_ConfigPress::doRedirect();
+                mvb_Model_Helper::doRedirect();
             }
 
             //check if current user has access to requested Post
@@ -100,23 +100,23 @@ class mvb_Model_AccessControl {
             if ($post_id) {
                 $post = get_post($post_id);
                 if (!$this->checkPostAccess($post)) {
-                    mvb_Model_ConfigPress::doRedirect();
+                    mvb_Model_Helper::doRedirect();
                 }
             } elseif (isset($_GET['taxonomy']) && isset($_GET['tag_ID'])) { // TODO - Find better way
                 if (!$this->checkCategoryAccess($_GET['tag_ID'])) {
-                    mvb_Model_ConfigPress::doRedirect();
+                    mvb_Model_Helper::doRedirect();
                 }
             }
         } else {
             if (is_category()) {
                 $cat_obj = $wp_query->get_queried_object();
                 if (!$this->checkCategoryAccess($cat_obj->term_id)) {
-                    mvb_Model_ConfigPress::doRedirect();
+                    mvb_Model_Helper::doRedirect();
                 }
             } else {
                 if (!$wp_query->is_home() && $post) {
                     if (!$this->checkPostAccess($post)) {
-                        mvb_Model_ConfigPress::doRedirect();
+                        mvb_Model_Helper::doRedirect();
                     }
                 }
             }
@@ -125,9 +125,9 @@ class mvb_Model_AccessControl {
 
     /**
      * Get User Config
-     * 
+     *
      * @access public
-     * @return mvb_Model_UserConfig 
+     * @return mvb_Model_UserConfig
      */
     public function getUserConfig() {
 
@@ -136,7 +136,7 @@ class mvb_Model_AccessControl {
 
     /**
      * Get Menu Filter
-     * 
+     *
      * @access public
      * @return mvb_Model_FilterMenu
      */
@@ -147,7 +147,7 @@ class mvb_Model_AccessControl {
 
     /**
      * Check Category Restriction
-     * 
+     *
      * @param int $id
      * @return boolean TRUE if restricted
      */
@@ -167,13 +167,13 @@ class mvb_Model_AccessControl {
 
     /**
      * Check if user has access to current post
-     * 
+     *
      * @param object $post
      * @return boolean
      */
     public function checkPostAccess($post) {
-	
-		if (!is_object($post)){ //TODO - find the root cause of this issue
+
+        if (!is_object($post)){ //TODO - find the root cause of this issue
             return TRUE; //silence errors if get_posts didn't return
         }
 
@@ -182,8 +182,8 @@ class mvb_Model_AccessControl {
         $taxonomies = get_object_taxonomies($post);
         if (is_array($taxonomies) && count($taxonomies)){
             $cat_list = wp_get_object_terms(
-                    $post->ID, 
-                    $taxonomies, 
+                    $post->ID,
+                    $taxonomies,
                     array('fields' => 'ids')
             );
             if (is_array($cat_list)) {
@@ -209,9 +209,9 @@ class mvb_Model_AccessControl {
 
     /**
      * Check if page is excluded from the menu
-     * 
+     *
      * @param type $page
-     * @return boolean 
+     * @return boolean
      * @todo Delete This is not necessary
      */
     public function checkPageExcluded($page) {

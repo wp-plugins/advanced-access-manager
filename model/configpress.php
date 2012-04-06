@@ -20,9 +20,9 @@
 
 /**
  * Access Script Model Class
- * 
+ *
  * Access Script
- * 
+ *
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
@@ -53,72 +53,23 @@ class mvb_Model_ConfigPress {
         //also save to db as backup
         $default_blog = mvb_Model_API::getBlog(1);
         mvb_Model_API::updateBlogOption(
-                WPACCESS_PREFIX . 'config_press', 
-                $config, 
-                $default_blog
+                WPACCESS_PREFIX . 'config_press', $config, $default_blog
         );
+        //clear cache
+        self::$config = NULL;
     }
 
     public static function readConfig() {
-        
+
         $file = WPACCESS_BASE_DIR . 'config.ini';
-        
-        if (is_readable($file)){
+
+        if (is_readable($file)) {
             $config = file_get_contents(WPACCESS_BASE_DIR . 'config.ini');
-        }else{
+        } else {
             $config = FALSE;
         }
-        
-        
 
         return $config;
-    }
-
-    /**
-     * Redirect
-     * 
-     * @param string $area
-     */
-    public static function doRedirect() {
-
-        if (is_admin()) {
-            $redirect = self::getOption('backend.access');
-            if (isset($redirect->deny->redirect)) {
-                self::parseRedirect($redirect->deny->redirect);
-            }
-        } else {
-            $redirect = self::getOption('frontend.access');
-            if (isset($redirect->deny->redirect)) {
-                self::parseRedirect($redirect->deny->redirect);
-            }
-        }
-
-        if (isset($redirect->deny->message)) {
-            $message = self::parseParam($redirect->deny->message);
-        } else {
-            mvb_Model_Label::initLabels();
-            $message = mvb_Model_Label::get('LABEL_127');
-        }
-        wp_die($message);
-    }
-
-    /**
-     * Parse Redirect
-     * 
-     * @todo Delete in next release
-     * @param mixed
-     */
-    protected static function parseRedirect($redirect) {
-
-        if (filter_var($redirect, FILTER_VALIDATE_URL)) {
-            wp_redirect($redirect);
-            exit;
-        } elseif (is_int($redirect)) {
-            wp_redirect(get_post_permalink($redirect));
-            exit;
-        } else {
-            self::parseParam($param);
-        }
     }
 
     protected static function parseParam($param) {
@@ -148,26 +99,7 @@ class mvb_Model_ConfigPress {
             }
         }
 
-        return $tree;
-    }
-
-    protected static function traceOption($level, $param = NULL) {
-        static $levels;
-
-        aam_debug($level);
-        if (empty($levels)) {
-            $levels = explode('.', $param);
-        }
-
-        $param = array_shift($levels);
-        $result = NULL;
-
-
-        if (isset($level->{$param})) {
-            $result = (count($levels) ? self::traceOption($level->{$param}) : $level->{$param});
-        }
-
-        return $result;
+        return self::parseParam($tree);
     }
 
 }

@@ -20,9 +20,9 @@
 
 /**
  * Abstract class for Advanced Access Manager Configuration Object
- * 
+ *
  * Define general logic for Configuration object
- * 
+ *
  * @package AAM
  * @subpackage Abstract Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
@@ -52,15 +52,15 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Current Object ID
-     * 
+     *
      * @var int|string
-     * @access protected 
+     * @access protected
      */
     protected $id;
-    
+
     /**
      * Object type, weather it is User or Role
-     * 
+     *
      * @var string
      * @access protected
      */
@@ -68,7 +68,7 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Admin Menu config
-     * 
+     *
      * @var array
      * @access protected
      */
@@ -76,7 +76,7 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Menu Order config
-     * 
+     *
      * @var array
      * @access protected
      */
@@ -84,15 +84,15 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Metaboxes config
-     * 
-     * @var array 
+     *
+     * @var array
      * @access protected
      */
     protected $metaboxes = array();
 
     /**
      * Capabilities list
-     * 
+     *
      * @var array
      * @access protected
      */
@@ -100,7 +100,7 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Post & Taxonomy restrictions
-     * 
+     *
      * @var array
      * @access protected
      */
@@ -108,7 +108,7 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Exclude Pages from Navigation
-     * 
+     *
      * @var array
      * @access protected
      */
@@ -116,8 +116,8 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Initialize object
-     * 
-     * @param int|string $id 
+     *
+     * @param int|string $id
      */
     public function __construct($id) {
 
@@ -125,72 +125,72 @@ abstract class mvb_Model_Abstract_Config {
         //get configuration from db
         $this->getConfig();
     }
-    
+
     /**
      * For custom set and get methods
-     * 
+     *
      * @param string $name
-     * @param array $arguments 
+     * @param array $arguments
      */
     public function __call($name, $arguments) {
-        
+
         $result = NULL;
-        if (preg_match('/^(set|get)([\w\d]+)$/i', $name, $match)){
+        if (preg_match('/^(set|get)([\w\d]+)$/i', $name, $match)) {
             $var = strtolower(preg_replace('/\B([A-Z])/', '_$1', $match[2]));
-            switch($match[1]){
+            switch ($match[1]) {
                 case 'set':
                     $this->{$var} = $arguments[0];
                     break;
-                
+
                 case 'get':
                     $result = (isset($this->{$var}) ? $this->{$var} : NULL);
                     break;
-                
+
                 default:
                     break;
             }
         }
-        
+
         return $result;
     }
 
     /**
      * Save Configuration to database
-     * 
+     *
      * @access public
      */
     abstract public function saveConfig();
 
     /**
      * Get Configuration from database
-     * 
+     *
      * @access protected
      */
     abstract protected function getConfig();
 
     /**
      * Return current ID
-     * 
+     *
      * @return int|string
      */
     public function getID() {
 
         return $this->ID;
     }
-    
+
     /**
      * Return Object Type
-     * 
+     *
      * @return string
      */
-    public function getType(){
-        
+    public function getType() {
+
         return $this->type;
     }
 
     /**
      * Set Menu Config array
-     * 
+     *
      * @param array $menu
      */
     public function setMenu($menu) {
@@ -200,42 +200,42 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Get Menu Config array
-     * 
-	 * @param boolean $branch
+     *
+     * @param boolean $branch
      * @return array
      */
     public function getMenu($branch = FALSE) {
-		
-		if ($branch){
-			$result = ($this->hasMenu($branch) ? $this->menu[$branch] : FALSE);
-		}else{
-			$result = $this->menu;
-		}
+
+        if ($branch) {
+            $result = ($this->hasMenu($branch) ? $this->menu[$branch] : FALSE);
+        } else {
+            $result = $this->menu;
+        }
 
         return $result;
     }
-    
-    public function hasMenu($menu){
-        
+
+    public function hasMenu($menu) {
+
         return (isset($this->menu[$menu]) ? TRUE : FALSE);
     }
-    
-    public function hasSubMenu($menu, $submenu){
-        
+
+    public function hasSubMenu($menu, $submenu) {
+
         $result = FALSE;
-        if($this->hasMenu($menu)){
+        if ($this->hasMenu($menu)) {
             $menu = $this->menu[$menu];
-            if (isset($menu['sub'][$submenu]) || isset($menu['whole'])){
+            if (isset($menu['sub'][$submenu]) || isset($menu['whole'])) {
                 $result = TRUE;
             }
         }
-        
+
         return $result;
     }
 
     /**
      * Set Menu Order
-     * 
+     *
      * @param array $menu_order
      */
     public function setMenuOrder($menu_order) {
@@ -245,7 +245,7 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Get Menu Order
-     * 
+     *
      * @return array
      */
     public function getMenuOrder() {
@@ -255,7 +255,7 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Set Metaboxes Config array
-     * 
+     *
      * @param array $metaboxes
      */
     public function setMetaboxes($metaboxes) {
@@ -265,7 +265,7 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Get Metaboxes Config Array
-     * 
+     *
      * @return array
      */
     public function getMetaboxes() {
@@ -275,7 +275,7 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Check if metabox is set
-     * 
+     *
      * @param string $id
      * @return bool
      */
@@ -286,8 +286,8 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Set Capabilities
-     * 
-     * @param array $capabilities 
+     *
+     * @param array $capabilities
      */
     public function setCapabilities($capabilities) {
 
@@ -295,8 +295,8 @@ abstract class mvb_Model_Abstract_Config {
     }
 
     /**
-     * Get Capabilities 
-     * 
+     * Get Capabilities
+     *
      * @return array
      */
     public function getCapabilities() {
@@ -306,8 +306,8 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Add New Capability
-     * 
-     * @param string $capability 
+     *
+     * @param string $capability
      */
     public function addCapability($capability) {
 
@@ -318,7 +318,7 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Check if capability is present in config array
-     * 
+     *
      * @param string $capability
      * @return bool
      */
@@ -329,7 +329,7 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Set Restrictions
-     * 
+     *
      * @access public
      * @param bool $init
      */
@@ -340,7 +340,7 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Initialize hierarhical restriction tree
-     *  
+     *
      */
     public function initRestrictionTree() {
 
@@ -391,9 +391,9 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Check if access is expired according to date
-     * 
+     *
      * @param array $data
-     * @return int 
+     * @return int
      */
     protected function checkExpiration($data) {
 
@@ -417,7 +417,7 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Get Restrictions
-     * 
+     *
      * @return array
      */
     public function getRestrictions() {
@@ -427,10 +427,10 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Check if restriction specified
-     * 
+     *
      * @param string $type
      * @param int $id
-     * @return bool 
+     * @return bool
      */
     public function hasRestriction($type, $id) {
 
@@ -454,10 +454,10 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Get Restriction info
-     * 
+     *
      * @param string $type
      * @param int $id
-     * @return array 
+     * @return array
      */
     public function getRestriction($type, $id) {
 
@@ -483,10 +483,10 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Update Restriction
-     * 
+     *
      * @param string $type
      * @param int $id
-     * @param array $data 
+     * @param array $data
      */
     public function updateRestriction($type, $id, $data) {
 
@@ -515,9 +515,9 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Delete Restriction
-     * 
+     *
      * @param string $type
-     * @param int $id 
+     * @param int $id
      */
     public function deleteRestriction($type, $id) {
 
@@ -542,7 +542,7 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Set Excludes
-     * 
+     *
      * @param array $excludes
      */
     public function setExcludes($excludes) {
@@ -552,7 +552,7 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Get Excludes
-     * 
+     *
      * @return array
      */
     public function getExcludes() {
@@ -562,9 +562,9 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Check if page is excluded
-     * 
+     *
      * @param int $id
-     * @return bool 
+     * @return bool
      */
     public function hasExclude($id) {
 
@@ -573,7 +573,7 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Add Exclude
-     * 
+     *
      * @param int $id
      */
     public function addExclude($id) {
@@ -585,8 +585,8 @@ abstract class mvb_Model_Abstract_Config {
 
     /**
      * Delete Exclude
-     * 
-     * @param int $id 
+     *
+     * @param int $id
      */
     public function deleteExclude($id) {
 
@@ -594,6 +594,7 @@ abstract class mvb_Model_Abstract_Config {
             unset($this->excludes[$id]);
         }
     }
+
 }
 
 ?>

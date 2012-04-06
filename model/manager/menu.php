@@ -19,7 +19,7 @@
 
 /**
  * Admin Menu Manager
- * 
+ *
  * @package AAM
  * @subpackage Model
  */
@@ -30,27 +30,25 @@ class mvb_Model_Manager_Menu {
      * @global array $submenu
      * @param string $tmpl
      * @param mvb_Model_Manager $parent
-     * @return string 
+     * @return string
      */
     public static function render($tmpl, $parent) {
         global $submenu;
 
         $sorted_menu = $parent->getRoleMenu();
-        //aam_debug($sorted_menu);
         $item_tmpl = mvb_Model_Template::retrieveSub(
-                'MAIN_MENU_ITEM', $tmpl
+                        'MAIN_MENU_ITEM', $tmpl
         );
-        //aam_debug(htmlspecialchars($item_tmpl));
         $sublist_tmpl = mvb_Model_Template::retrieveSub(
-                'MAIN_MENU_SUBLIST', $item_tmpl
+                        'MAIN_MENU_SUBLIST', $item_tmpl
         );
         $subitem_tmpl = mvb_Model_Template::retrieveSub(
-                'MAIN_MENU_SUBITEM', $sublist_tmpl
+                        'MAIN_MENU_SUBITEM', $sublist_tmpl
         );
         $list = '';
 
         foreach ($sorted_menu as $menu) {
-            if (self::isSeperator($menu)){ 
+            if (self::isSeperator($menu)) {
                 continue;
             }
             //render submenu
@@ -60,23 +58,23 @@ class mvb_Model_Manager_Menu {
                     $markers = array(
                         '###submenu_name###' => mvb_Model_Helper::removeHTML($sub_menu[0]),
                         '###value###' => $sub_menu[2],
-                        '###checked###' =>  ($parent->getConfig()
-                            ->hasSubMenu($menu[2], $sub_menu[2]) ? 'checked' : '')
+                        '###checked###' => ($parent->getConfig()
+                                ->hasSubMenu($menu[2], $sub_menu[2]) ? 'checked' : '')
                     );
                     $sub_list .= mvb_Model_Template::updateMarkers(
-                            $markers, $subitem_tmpl
+                                    $markers, $subitem_tmpl
                     );
                 }
                 $sub_list = mvb_Model_Template::replaceSub(
-                        'MAIN_MENU_SUBITEM', $sub_list, $sublist_tmpl
+                                'MAIN_MENU_SUBITEM', $sub_list, $sublist_tmpl
                 );
             }
-            
+
             $temp = mvb_Model_Template::replaceSub(
-                    'MAIN_MENU_SUBLIST', $sub_list, $item_tmpl
+                            'MAIN_MENU_SUBLIST', $sub_list, $item_tmpl
             );
-            
-			$whole = $parent->getConfig()->getMenu($menu[2]);
+
+            $whole = $parent->getConfig()->getMenu($menu[2]);
             $markers = array(
                 '###name###' => mvb_Model_Helper::removeHTML($menu[0]),
                 '###id###' => $menu[5],
@@ -88,15 +86,15 @@ class mvb_Model_Manager_Menu {
 
         return mvb_Model_Template::replaceSub('MAIN_MENU_ITEM', $list, $tmpl);
     }
-    
+
     /**
      *
      * @param array $menu
-     * @return boolean 
+     * @return boolean
      */
-    public static function isSeperator($menu){
-        
-        return ($menu[0] ? FALSE : TRUE);
+    public static function isSeperator($menu) {
+
+        return (isset($menu[0]) && $menu[0] ? FALSE : TRUE);
     }
 
 }

@@ -20,7 +20,7 @@
 
 /**
  * Helper Model Class
- * 
+ *
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
@@ -31,35 +31,35 @@ class mvb_Model_Helper {
 
     /**
      * Current Blog Object
-     * 
+     *
      * @var object
      */
     public static $current_blog;
 
     /**
      * User is Super Admin
-     * 
-     * @var int 
+     *
+     * @var int
      */
     public static $is_super_admin = FALSE;
 
     /**
      * Skip term filtering
-     * 
-     * @var type 
+     *
+     * @var type
      */
     public static $skip_term_filter = FALSE;
 
     /**
      * Holds all configuration options WPACCESS_PREFIX . 'options'
-     * 
-     * @var array 
+     *
+     * @var array
      */
     public static $config_cache = array();
 
     /**
      * Make the lable shorter
-     * 
+     *
      * @param string $title
      * @return string
      */
@@ -74,10 +74,10 @@ class mvb_Model_Helper {
 
     /**
      * Check what type of visibility current post has
-     * 
+     *
      * @global arra $wp_post_statuses
      * @param object $post
-     * @return string 
+     * @return string
      */
     public static function checkVisibility($post) {
         global $wp_post_statuses;
@@ -94,10 +94,52 @@ class mvb_Model_Helper {
     }
 
     /**
+     * Check what type of plugin is installed
+     *
+     * @access public
+     * @return string
+     */
+    public static function getVersionTypeHTML() {
+
+        if (defined('AAM_PRO')) {
+            $result = '<span class="version pro-type">' . mvb_Model_Label::get('LABEL_140') . '</span>';
+        } else {
+            $result = '<span class="version basic-type"><a href="http://whimba.org/advanced-access-manager" target="_blank" title="' . mvb_Model_Label::get('LABEL_152') . '">' . mvb_Model_Label::get('LABEL_149') . '</a></span>';
+        }
+
+        return $result;
+    }
+
+    public static function doRedirect() {
+        if (is_admin()) {
+            $redirect = mvb_Model_ConfigPress::getOption('backend.access.deny.redirect');
+            $message = mvb_Model_ConfigPress::getOption('backend.access.deny.message');
+        } else {
+            $redirect = mvb_Model_ConfigPress::getOption('frontend.access.deny.redirect');
+            $message = mvb_Model_ConfigPress::getOption('frontend.access.deny.message');
+        }
+
+        if (filter_var($redirect, FILTER_VALIDATE_URL)) {
+            wp_redirect($redirect);
+            exit;
+        } elseif (is_int($redirect)) {
+            wp_redirect(get_post_permalink($redirect));
+            exit;
+        }
+
+        if (is_null($message)) {
+            mvb_Model_Label::initLabels();
+            $message = mvb_Model_Label::get('LABEL_127');
+        }
+
+        wp_die($message);
+    }
+
+    /**
      * Return Edit Post Link
-     * 
+     *
      * @param object $post
-     * @return string 
+     * @return string
      */
     public static function editPostLink($post) {
 
@@ -112,9 +154,9 @@ class mvb_Model_Helper {
 
     /**
      * Returst Edit Term Link
-     * 
+     *
      * @param object $term
-     * @return string 
+     * @return string
      */
     public static function editTermLink($term) {
 
@@ -126,7 +168,7 @@ class mvb_Model_Helper {
 
     /**
      * Initiate HTTP request
-     * 
+     *
      * @param string $url Requested URL
      * @param bool $send_cookies Wheather send cookies or not
      * @param bool $return_content Return content or not
@@ -174,8 +216,8 @@ class mvb_Model_Helper {
 
     /**
      * Get current Advanced Access Manager version
-     * 
-     * @return string 
+     *
+     * @return string
      */
     public static function getCurrentVersion() {
 
@@ -192,8 +234,8 @@ class mvb_Model_Helper {
 
     /**
      * Get Highest User Level according to set of capabilities
-     * 
-     * @param array $cap_list 
+     *
+     * @param array $cap_list
      * @return int
      */
     public static function getHighestUserLevel($cap_list) {
@@ -212,7 +254,7 @@ class mvb_Model_Helper {
      *
      * @param type $f_config
      * @param type $s_config
-     * @return type 
+     * @return type
      */
     public static function isLowerLevel($f_config, $s_config) {
 
@@ -227,7 +269,7 @@ class mvb_Model_Helper {
      * @param type $name
      * @param type $method
      * @param type $default
-     * @return type 
+     * @return type
      */
     public static function getParam($name, $method = 'GET', $default = FALSE) {
 
@@ -257,7 +299,7 @@ class mvb_Model_Helper {
 
     /**
      * Make a string shorter
-     * 
+     *
      * @param string $str
      * @param int $length
      * @param string $add
@@ -276,8 +318,8 @@ class mvb_Model_Helper {
      * Merge unlimited number or arrays recursively
      * It works the same way as array_merge_recursive but with one exception
      * it does not overwrite the integer keys
-     * 
-     * @return array 
+     *
+     * @return array
      */
     public static function array_merge_recursive() {
 
@@ -300,7 +342,7 @@ class mvb_Model_Helper {
 
     /**
      * Get list of sites if multisite setup
-     * 
+     *
      * @return mixed Array of sites of FALSE if not mulitisite setup
      */
     public static function getSiteList() {
@@ -339,7 +381,7 @@ class mvb_Model_Helper {
 
     /**
      * Return label of given capability
-     * 
+     *
      * @todo Probably not the best place to keep this function here
      * @param string $cap
      * @return string
@@ -361,7 +403,7 @@ class mvb_Model_Helper {
      *
      * @global object $wpdb
      * @param type $term_id
-     * @return type 
+     * @return type
      */
     public static function getTaxonomyByTerm($term_id) {
         global $wpdb;
@@ -374,7 +416,7 @@ class mvb_Model_Helper {
 
     /**
      * Get Current Post ID from REQUEST
-     * 
+     *
      * @access public
      * @return int
      */
@@ -393,7 +435,7 @@ class mvb_Model_Helper {
 
     /**
      * Clear unpropriate text
-     *  
+     *
      * @param string $text
      * @return string
      */
