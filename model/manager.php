@@ -219,9 +219,13 @@ class mvb_Model_Manager {
 
     function manage() {
 
+        //render error list if applicable
+        //render Role Manager Metabox
+        $tmpl = $this->renderErrorList($this->template);
+
         //render Admin Menu Tab
         $tmpl = mvb_Model_Template::replaceSub(
-                        'MAIN_MENU_TAB', $this->renderMenuTab(), $this->template
+                        'MAIN_MENU_TAB', $this->renderMenuTab(), $tmpl
         );
 
         //render Metabox & Widgets Tab
@@ -260,6 +264,50 @@ class mvb_Model_Manager {
 
         //add filter to future add-ons
         echo apply_filters(WPACCESS_PREFIX . 'option_page', $tmpl);
+    }
+
+    public function renderErrorList($tmpl){
+
+        $item_tmpl = mvb_Model_Template::retrieveSub('ERROR_LIST', $tmpl);
+        $list = '';
+        if (!is_writable(WPACCESS_BASE_DIR . 'config.ini')){
+            $list .= mvb_Model_Template::updateMarkers(
+                    array(
+                        '###message###' => mvb_Model_Label::get('LABEL_162'),
+                        '###url###' => WPACCESS_ERROR162_URL
+                    ),
+                    $item_tmpl
+            );
+        }
+        if (!is_writable(WPACCESS_BASE_DIR . 'model')){
+            $list .= mvb_Model_Template::updateMarkers(
+                    array(
+                        '###message###' => mvb_Model_Label::get('LABEL_164'),
+                        '###url###' => WPACCESS_ERROR164_URL
+                    ),
+                    $item_tmpl
+            );
+        }
+        if (!is_writable(WPACCESS_BASE_DIR . 'logs/error.log')){
+            $list .= mvb_Model_Template::updateMarkers(
+                    array(
+                        '###message###' => mvb_Model_Label::get('LABEL_163'),
+                        '###url###' => WPACCESS_ERROR163_URL
+                    ),
+                    $item_tmpl
+            );
+        }
+        if (filesize(WPACCESS_BASE_DIR . 'logs/error.log')){
+            $list .= mvb_Model_Template::updateMarkers(
+                    array(
+                        '###message###' => mvb_Model_Label::get('LABEL_165'),
+                        '###url###' => WPACCESS_ERROR165_URL
+                    ),
+                    $item_tmpl
+            );
+        }
+
+        return mvb_Model_Template::replaceSub('ERROR_LIST', $list, $tmpl);
     }
 
     public function updateMarkers($tmpl) {

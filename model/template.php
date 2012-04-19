@@ -20,7 +20,7 @@
 
 /**
  * Template Model Class
- * 
+ *
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
@@ -28,18 +28,18 @@
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
 class mvb_Model_Template {
-    
+
     /**
      * Read template from file
      *
-     * Read file 
+     * Read file
      *
      * @param string Absolute path to file with template
      * @return mixed Return string on success and False if failed
      */
 
     public static function readTemplate($path) {
-        
+
         if ($path) {
             $template = file_get_contents($path);
         }
@@ -50,10 +50,10 @@ class mvb_Model_Template {
     /**
      * Get subpart from template
      *
-     * Searching for specified subpart in template and return subpart's content  
-     * if found. Example of subpart - 
+     * Searching for specified subpart in template and return subpart's content
+     * if found. Example of subpart -
      * <!-- ###HELLO_WORLD### begin-->Some content<!-- ###HELLO_WORLD### end-->
-     * 
+     *
      * @param string Subpart name
      * @param string Template to search in
      * @return string
@@ -83,12 +83,11 @@ class mvb_Model_Template {
      */
 
     public static function replaceSub($subTemplate, $content, $template) {
-        
-        $result = '';
+
         $regExp = '/<!\-\-[\s]?###' . $subTemplate . '###[\s]?begin\-\->';
         $regExp .= '.*<!\-\-[\s]?###' . $subTemplate . '###[\s]?end\-\->/si';
 
-        return $template = preg_replace($regExp, $content, $template);
+        return preg_replace($regExp, $content, $template);
     }
 
     /**
@@ -96,14 +95,14 @@ class mvb_Model_Template {
      *
      * Take array with key => value pair and replace key with value
      * Example of a marker - ###hello_world###
-     * 
+     *
      * @param array key => value pair array
      * @param string HTML template
      * @return string HTML template with replaced markers
      */
 
     public static function updateMarkers($markers, $template) {
-        
+
         if (is_array($markers)) {
             foreach ($markers as $marker => $content) {
                 $template = str_replace($marker, $content, $template);

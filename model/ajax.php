@@ -564,7 +564,6 @@ class mvb_Model_Ajax {
         }
         //render list of posts in current category
         if ($parent == 0) {
-
             $query = "SELECT p.ID FROM `{$wpdb->posts}` AS p ";
             $query .= "LEFT JOIN `{$wpdb->term_relationships}` AS r ON ( p.ID = r.object_id ) ";
             $query .= "WHERE (p.post_type = '{$post_type}') AND (p.post_status NOT IN ('trash', 'auto-draft')) AND (p.post_parent = 0) AND r.object_id IS NULL";
@@ -577,14 +576,15 @@ class mvb_Model_Ajax {
 
         if (is_array($posts)) {
             foreach ($posts as $post_id) {
-                $post = get_post($post_id);
-                $onClick = "loadInfo(event, \"post\", {$post->ID});";
-                $tree[] = (object) array(
-                            'text' => "<a href='#' onclick='{$onClick}'>{$post->post_title}</a>",
-                            'hasChildren' => $this->has_post_childs($post),
-                            'classes' => 'file',
-                            'id' => 'post-' . $post->ID
-                );
+                if ($post = get_post($post_id)) {
+                    $onClick = "loadInfo(event, \"post\", {$post->ID});";
+                    $tree[] = (object) array(
+                                'text' => "<a href='#' onclick='{$onClick}'>{$post->post_title}</a>",
+                                'hasChildren' => $this->has_post_childs($post),
+                                'classes' => 'file',
+                                'id' => 'post-' . $post->ID
+                    );
+                }
             }
         }
 

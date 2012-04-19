@@ -165,42 +165,46 @@ mvbam_object.prototype.removeAjaxLoader = function(selector, type){
 }
 
 mvbam_object.prototype.getRoleOptionList = function(currentRoleID){
-    this.showAjaxLoader('#tabs');
 
-    var params = {
-        'action' : 'render_optionlist',
-        '_ajax_nonce': wpaccessLocal.nonce,
-        'role' : currentRoleID
-    };
-    jQuery('#current_role').val(currentRoleID);
-    var _this = this;
-    //restore some params
-    this.sorting = false;
-    this.sorted = false;
-
-    jQuery.post(wpaccessLocal.handlerURL, params, function(data){
-        jQuery('#metabox-wpaccess-options').replaceWith(data.html);
-        _this.configureElements();
-        jQuery('div #role-select').hide();
-        jQuery('#current-role-display').html(jQuery('#role option:selected').text());
-        jQuery('.change-role').show();
-        //get list of users
+    try{
+        this.showAjaxLoader('#tabs');
         var params = {
-            'action' : 'mvbam',
-            'sub_action' : 'get_userlist',
+            'action' : 'render_optionlist',
             '_ajax_nonce': wpaccessLocal.nonce,
             'role' : currentRoleID
         };
-        jQuery('#current_user').val(0);
-        jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
-            if (data.status == 'success'){
-                jQuery('#user').html(data.html);
-                jQuery('div #user-select').hide();
-                jQuery('.change-user').show();
-                jQuery('#current-user-display').html(jQuery('#user option:eq(0)').text());
-            }
+        jQuery('#current_role').val(currentRoleID);
+        var _this = this;
+        //restore some params
+        this.sorting = false;
+        this.sorted = false;
+
+        jQuery.post(wpaccessLocal.handlerURL, params, function(data){
+            jQuery('#metabox-wpaccess-options').replaceWith(data.html);
+            _this.configureElements();
+            jQuery('div #role-select').hide();
+            jQuery('#current-role-display').html(jQuery('#role option:selected').text());
+            jQuery('.change-role').show();
+            //get list of users
+            var params = {
+                'action' : 'mvbam',
+                'sub_action' : 'get_userlist',
+                '_ajax_nonce': wpaccessLocal.nonce,
+                'role' : currentRoleID
+            };
+            jQuery('#current_user').val(0);
+            jQuery.post(wpaccessLocal.ajaxurl, params, function(data){
+                if (data.status == 'success'){
+                    jQuery('#user').html(data.html);
+                    jQuery('div #user-select').hide();
+                    jQuery('.change-user').show();
+                    jQuery('#current-user-display').html(jQuery('#user option:eq(0)').text());
+                }
+            }, 'json');
         }, 'json');
-    }, 'json');
+    }catch(e){
+         mObj.handleError(err);
+    }
 }
 
 mvbam_object.prototype.getUserOptionList = function(currentRoleID, currentUserID){
@@ -426,7 +430,6 @@ mvbam_object.prototype.configureCapabilities = function(){
             }
         }, 'json');
     });
-
 }
 
 mvbam_object.prototype.postPage = function(){
@@ -866,9 +869,9 @@ mvbam_object.prototype.saveInfo = function(obj, pi, type, id, apply){
 }
 
 mvbam_object.prototype.handleError = function(err){
-
-    jQuery('#error-message #error-text').html(err.toString());
-    jQuery('#error-message').removeClass('message-passive');
+    jQuery('.plugin-notification').append('<p>' + wpaccessLocal.LABEL_166 + ' <a href="' + wpaccessLocal.js_error_url + '" target="_blank">Read more...</a></p>');
+    jQuery('.wrap').removeClass('aam-warning');
+    jQuery('.wrap').addClass('aam-error');
 }
 
 mvbam_object.prototype.deleteCapability = function(cap, label){
@@ -1195,10 +1198,13 @@ jQuery(document).ready(function(){
             }
             jQuery( "#dialog-error" ).dialog(pa);
         }
-
     }catch(err){
         mObj.handleError(err);
         jQuery('#wp-access').show();
+    }
+
+    if (jQuery('.plugin-notification p').length){
+        jQuery('.wrap').addClass('aam-warning');
     }
 });
 

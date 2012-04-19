@@ -2,19 +2,12 @@
     <form action="###form_action###" method="post" id="wp-access">
         <div class="plugin-logo"></div>
         <div class="plugin-title"><h2>###LABEL_1###</h2>###version_type###</div>
+        <div class="plugin-notification">
+            <!-- ###ERROR_LIST### begin-->
+            <p>###message### <a href="###url###" target="_blank">###LABEL_168###</a></p>
+            <!-- ###ERROR_LIST### end-->
+        </div>
         <br class="clear" />
-        <div class="message-passive" style="width:70%;" id="manager-error-message">
-            <div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;">
-                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
-                    <strong>###LABEL_3###:</strong> <span class="manager-error-text"></span></p>
-            </div>
-        </div>
-        <div class="message-passive" id="error-message">
-            <div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;">
-                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
-                    <strong>###LABEL_3###:</strong> ###LABEL_4###: "<span id="error-text"></span>". ###LABEL_5###</p>
-            </div>
-        </div>
         <div class="###message_class###">
             <div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;">
                 <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
@@ -168,19 +161,32 @@
                                 <!-- ###METABOX_TAB### end-->
                                 <!-- ###CAPABILITY_TAB### begin-->
                                 <div id="tabs-3">
-                                    <!-- ###CAPABILITY_LIST### begin-->
-                                    <!-- ###CAPABILITY_ITEM### begin-->
-                                    <div class="capability-item">
-                                        <div class="capability-name">
-                                            <input type="checkbox" id="cap-###title###" name="wpaccess[advance][###title###]" value="1" ###checked### />
-                                                   &nbsp;&nbsp;<label for="cap-###title###">###cap_name###</label>
-                                        </div>
-                                        <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###description###</span></div>
-                                        <!-- ###CAPABILITY_DELETE### begin-->
-                                        <div class="icon-delete tooltip" onclick="mObj.deleteCapability('###title###', '###cap_name###');"><span class="custom critical"><img src="###critical_image###" alt="Critical" height="48" width="48" /><em>###LABEL_118###</em>###LABEL_121###</span></div>
-                                        <!-- ###CAPABILITY_DELETE### end-->
+                                    <div class="help-menu postbox">
+                                        <div class="help-info"></div>
+                                        <span>###LABEL_169###</span>
+                                        <br class="clear" />
                                     </div>
-                                    <!-- ###CAPABILITY_ITEM### end-->
+                                    <!-- ###CAPABILITY_LIST### begin-->
+                                    <div id="capability-list">
+                                        <!-- ###CAPABILITY_ROW### begin-->
+                                        <h4>###group_title###</h4>
+                                        <div>
+                                            <!-- ###CAPABILITY_ITEM### begin-->
+                                            <div class="capability-item ###premium###">
+                                                <div class="capability-name">
+                                                    <input type="checkbox" id="cap-###title###" name="wpaccess[advance][###title###]" value="1" ###checked### />
+                                                           &nbsp;&nbsp;<label for="cap-###title###" title="###cap_name_full###">###cap_name###</label>
+                                                </div>
+                                                <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Info - ###cap_name_full###</em>###description###</span></div>
+                                                <!-- ###CAPABILITY_DELETE### begin-->
+                                                <div class="tooltip icon-delete" onclick="mObj.deleteCapability('###title###', '###cap_name###');"><span class="custom critical"><img src="###critical_image###" alt="Critical" height="48" width="48" /><em>###LABEL_118###</em>###LABEL_121###</span></div>
+                                                <!-- ###CAPABILITY_DELETE### end-->
+                                            </div>
+                                            <!-- ###CAPABILITY_ITEM### end-->
+                                            <br class="clear" />
+                                        </div>
+                                        <!-- ###CAPABILITY_ROW### end-->
+                                    </div>
                                     <!-- ###CAPABILITY_LIST### end-->
                                     <!-- ###CAPABILITY_LIST_EMPTY### begin-->
                                     <div class="ui-state-error ui-corner-all" style="padding: 0pt 0.7em;">

@@ -190,7 +190,7 @@ class mvb_Model_Label {
         <p>For your safety, after you press <b>OK</b> button, Super Admin Role will be created specifically for your user.</p>
         <p>Users with already defined Super Admin Role will be deprived of it and replaced with Administrator Role</p>
         <p>If you have Multi-Site Setup, you will see the same message again for each new Blog you entered or created.</p>', 'aam');
-        self::$labels['LABEL_148'] = __('You have a basic version of AAM. Settings applied only for first '.WPACCESS_APPLY_LIMIT.' blogs. Please upgrade AAM by following the <a href="http://whimba.org/advanced-access-manager" target="_blank">link</a>', 'aam');
+        self::$labels['LABEL_148'] = __('You have a basic version of AAM. Settings applied only for first ' . WPACCESS_APPLY_LIMIT . ' blogs. Please upgrade AAM by following the <a href="http://whimba.org/advanced-access-manager" target="_blank">link</a>', 'aam');
         self::$labels['LABEL_149'] = __('Basic', 'aam');
         self::$labels['LABEL_150'] = __('Action completed successfully', 'aam');
         self::$labels['LABEL_151'] = __('Action failed', 'aam');
@@ -210,6 +210,14 @@ class mvb_Model_Label {
         self::$labels['LABEL_159'] = __('Feedback & Donation', 'aam');
         self::$labels['LABEL_160'] = __('Send Email', 'aam');
         self::$labels['LABEL_161'] = __('ConfigPress reference', 'aam');
+        self::$labels['LABEL_162'] = __('Config File is not Writable.', 'aam');
+        self::$labels['LABEL_163'] = __('Error Log File is not Writable.', 'aam');
+        self::$labels['LABEL_164'] = __('Module Directory is not Writable.', 'aam');
+        self::$labels['LABEL_165'] = __('Error Log is not Empty.', 'aam');
+        self::$labels['LABEL_166'] = __('JavaScript Error Appeared on Page.', 'aam');
+        self::$labels['LABEL_167'] = __('Only first 5 blog applied.', 'aam');
+        self::$labels['LABEL_168'] = __('Read more...', 'aam');
+        self::$labels['LABEL_169'] = __('For more information about Capabilities in WordPress, please read the topic <a href="http://codex.wordpress.org/Roles_and_Capabilities" target="_blank">Roles and Capabilities</a>. For any questions send me an email of visit my <a href="http://whimba.org/support" target="_blank">Forum</a>.', 'aam');
 
         self::initCapabilityDescriptions();
     }
@@ -364,7 +372,12 @@ class mvb_Model_Label {
             'level_10' => __('User Level 10 converts to Administrator', 'aam'),
             'publish_pages' => __('Description does not exist', 'aam'),
             'administrator' => __('Description does not exist', 'aam'),
-            'update_themes' => __('Description does not exist', 'aam'))
+            'update_themes' => __('Description does not exist', 'aam'),
+            'trash_comment' => __('Allow trash comment. Is available only for Premium Version.', 'aam'),
+            'approve_comment' => __('Allow approve comment. Is available only for Premium Version.', 'aam'),
+            'delete_comment' => __('Allow delete comment. Is available only for Premium Version.', 'aam'),
+            'spam_comment' => __('Allow mark comment as spam. Is available only for Premium Version.', 'aam'),
+                )
         );
     }
 

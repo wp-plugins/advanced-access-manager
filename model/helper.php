@@ -308,7 +308,7 @@ class mvb_Model_Helper {
     public static function cutStr($str, $length, $add = '...') {
 
         if (is_string($str)) {
-            $str = (strlen($str) >= $length ? substr($str, 0, $length) . $add : $str);
+            $str = (strlen($str) > $length ? substr($str, 0, $length) . $add : $str);
         }
 
         return $str;

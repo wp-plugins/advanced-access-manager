@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access to WordPress Backend and Frontend.
-  Version: 1.6.2
+  Version: 1.6.3
   Author: Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
   Author URI: http://www.whimba.org
  */
@@ -52,7 +52,7 @@ require_once('mvb_config.php');
  *
  * @package AAM
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
- * @copyrights Copyright Â© 2011 Vasyl Martyniuk
+ * @copyrights Copyright © 2011 Vasyl Martyniuk
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
 class mvb_WPAccess {
@@ -100,7 +100,9 @@ class mvb_WPAccess {
             add_action('admin_action_render_optionlist', array($this, 'render_optionlist'));
 
             //Add Capabilities WP core forgot to
+            add_filter('user_has_cap', array($this, 'user_has_cap'), 10, 3);
             add_filter('map_meta_cap', array($this, 'map_meta_cap'), 10, 4);
+            add_filter('comment_row_actions', array($this, 'comment_row_actions'), 10);
 
             add_action('before_delete_post', array($this, 'before_delete_post'));
             add_action('trash_post', array($this, 'before_delete_post'));
@@ -109,7 +111,7 @@ class mvb_WPAccess {
             add_action('wp_ajax_mvbam', array($this, 'ajax'));
 
             add_action("do_meta_boxes", array($this, 'metaboxes'), 999, 3);
-           // add_thickbox();
+            // add_thickbox();
             //user edit
             add_action('edit_user_profile_update', array($this, 'edit_user_profile_update'));
             //roles
@@ -138,37 +140,60 @@ class mvb_WPAccess {
      *
      * @access public
      */
-    public static function wp_upgrade(){
+    public static function wp_upgrade() {
 
-        if (!file_exists(WPACCESS_UPGRADED_FILE)){
+        if (!file_exists(WPACCESS_UPGRADED_FILE)) {
             $blog = mvb_Model_API::getBlog(1);
             $config = mvb_Model_API::getBlogOption(
-                    WPACCESS_PREFIX . 'config_press',
-                    '',
-                    $blog
+                            WPACCESS_PREFIX . 'config_press', '', $blog
             );
             mvb_Model_ConfigPress::saveConfig($config);
 
             //create dummy file that is updated
             file_put_contents(WPACCESS_UPGRADED_FILE, 'OK');
+
+            //add custom capabilities
+            $roles = mvb_Model_API::getRoleList(FALSE);
+            $custom_caps = array(
+                'edit_comment' => 1,
+                'approve_comment' => 1,
+                'unapprove_comment' => 1,
+                'reply_comment' => 1,
+                'quick_edit_comment' => 1,
+                'spam_comment' => 1,
+                'unspam_comment' => 1,
+                'trash_comment' => 1,
+                'untrash_comment' => 1,
+                'delete_comment' => 1
+            );
+            if (isset($roles[WPACCESS_SADMIN_ROLE])) {
+                $roles[WPACCESS_SADMIN_ROLE]['capabilities'] = array_merge(
+                        $roles[WPACCESS_SADMIN_ROLE]['capabilities'], $custom_caps
+                );
+            }
+            $roles[WPACCESS_ADMIN_ROLE]['capabilities'] = array_merge(
+                    $roles[WPACCESS_ADMIN_ROLE]['capabilities'], $custom_caps
+            );
+
+            mvb_Model_API::updateBlogOption('user_roles', $roles);
         }
     }
 
-    protected function initPro(){
+    protected function initPro() {
         static $pro;
 
-        if (class_exists('mvb_Model_Pro')){
+        if (class_exists('mvb_Model_Pro')) {
             $pro = new mvb_Model_Pro();
-        }elseif($license = mvb_Model_ConfigPress::getOption('aam.license_key')){
+        } elseif ($license = mvb_Model_ConfigPress::getOption('aam.license_key')) {
             $url = WPACCESS_PRO_URL . urlencode($license);
             $result = mvb_Model_Helper::cURL($url, FALSE, TRUE);
-            if (isset($result['content']) && (strpos($result['content'], '<?php') !== FALSE)){
-                if (file_put_contents(WPACCESS_BASE_DIR . 'model/pro.php', $result['content'])){
+            if (isset($result['content']) && (strpos($result['content'], '<?php') !== FALSE)) {
+                if (file_put_contents(WPACCESS_BASE_DIR . 'model/pro.php', $result['content'])) {
                     $pro = new mvb_Model_Pro();
-                }else{
+                } else {
                     trigger_error('Directory model is not writable');
                 }
-            }else{
+            } else {
                 trigger_error('Request error or licence key is incorrect');
             }
         }
@@ -177,7 +202,7 @@ class mvb_WPAccess {
     public function sidebars_widgets($widgets) {
         global $wp_registered_widgets;
 
-        if (!mvb_Model_API::isSuperAdmin()){
+        if (!mvb_Model_API::isSuperAdmin()) {
             $m = new mvb_Model_FilterMetabox($this);
             $widgets = $m->manage('widgets', $widgets);
         }
@@ -265,7 +290,7 @@ class mvb_WPAccess {
                 wp_enqueue_style('wpaccess-treeview', WPACCESS_CSS_URL . 'treeview/jquery.treeview.css');
                 wp_enqueue_style('codemirror', WPACCESS_CSS_URL . 'codemirror/codemirror.css');
                 wp_enqueue_style('jquery-ui', WPACCESS_CSS_URL . 'ui/jquery-ui.css');
-                wp_enqueue_style( 'thickbox' );
+                wp_enqueue_style('thickbox');
                 break;
 
             case 'awm-group':
@@ -297,7 +322,7 @@ class mvb_WPAccess {
                 wp_enqueue_script('wpaccess-admin', WPACCESS_JS_URL . 'admin-options.js');
                 wp_enqueue_script('codemirror', WPACCESS_JS_URL . 'codemirror/codemirror.js');
                 wp_enqueue_script('codemirror-xml', WPACCESS_JS_URL . 'codemirror/ini.js');
-                wp_enqueue_script( 'thickbox' );
+                wp_enqueue_script('thickbox');
                 $locals = array(
                     'nonce' => wp_create_nonce(WPACCESS_PREFIX . 'ajax'),
                     'css' => WPACCESS_CSS_URL,
@@ -320,6 +345,8 @@ class mvb_WPAccess {
                     'LABEL_141' => mvb_Model_Label::get('LABEL_141'),
                     'LABEL_142' => mvb_Model_Label::get('LABEL_142'),
                     'LABEL_143' => mvb_Model_Label::get('LABEL_143'),
+                    'LABEL_166' => mvb_Model_Label::get('LABEL_166'),
+                    'js_error_url' => WPACCESS_ERROR166_URL
                 );
 
                 if (mvb_Model_API::isNetworkPanel()) {
@@ -507,19 +534,76 @@ class mvb_WPAccess {
         return $terms;
     }
 
-    /**
-     *
-     * @param string $caps
-     * @param type $cap
-     * @param type $user_id
-     * @param type $args
-     * @return string
-     */
+    public function comment_row_actions($actions) {
+
+        $user = mvb_Model_API::getUserAccessConfig(get_current_user_id());
+        if (!$user->hasCapability('approve_comment') && defined('AAM_PRO')) {
+            unset($actions['approve']);
+        }
+        if (!$user->hasCapability('unapprove_comment')) {
+            unset($actions['unapprove']);
+        }
+        if (!$user->hasCapability('reply_comment')) {
+            unset($actions['reply']);
+        }
+        if (!$user->hasCapability('quick_edit_comment')) {
+            unset($actions['quickedit']);
+        }
+        if (!$user->hasCapability('spam_comment') && defined('AAM_PRO')) {
+            unset($actions['spam']);
+        }
+        if (!$user->hasCapability('unspam_comment')) {
+            unset($actions['unspam']);
+        }
+        if (!$user->hasCapability('trash_comment') && defined('AAM_PRO')) {
+            unset($actions['trash']);
+        }
+        if (!$user->hasCapability('untrash_comment')) {
+            unset($actions['untrash']);
+        }
+        if (!$user->hasCapability('delete_comment') && defined('AAM_PRO')) {
+            unset($actions['delete']);
+        }
+
+        return $actions;
+    }
+
     public function map_meta_cap($caps, $cap, $user_id, $args) {
 
         switch ($cap) {
             case 'edit_comment':
-                $caps[] = 'edit_comment';
+            case 'moderate_comments':
+                if (mvb_Model_Helper::getParam('trash', 'POST', FALSE) && defined('AAM_PRO')) {
+                    $caps[] = 'trash_comment';
+                } elseif (mvb_Model_Helper::getParam('untrash', 'POST', FALSE)) {
+                    $caps[] = 'untrash_comment';
+                } elseif (mvb_Model_Helper::getParam('spam', 'POST', FALSE) && defined('AAM_PRO')) {
+                    $caps[] = 'spam_comment';
+                } elseif (mvb_Model_Helper::getParam('unspam', 'POST', FALSE)) {
+                    $caps[] = 'unspam_comment';
+                } elseif (mvb_Model_Helper::getParam('delete', 'POST', FALSE) && defined('AAM_PRO')) {
+                    $caps[] = 'delete_comment';
+                } elseif (mvb_Model_Helper::getParam('action', 'POST', FALSE) == 'dim-comment') {
+                    if ($comment = get_comment($args[0])) {
+                        $current = wp_get_comment_status($comment->comment_ID);
+                        if (in_array($current, array('unapproved', 'spam'))) {
+                            if (defined('AAM_PRO')) {
+                                $caps[] = 'approve_comment';
+                            }
+                        } else {
+                            $caps[] = 'unapprove_comment';
+                        }
+                    }
+                } else {
+                    $caps[] = 'edit_comment';
+                }
+
+                break;
+
+            case 'edit_post':
+                if (mvb_Model_Helper::getParam('action', 'POST', FALSE) == 'replyto-comment') {
+                    $caps[] = 'reply_comment';
+                }
                 break;
 
             default:
@@ -527,6 +611,63 @@ class mvb_WPAccess {
         }
 
         return $caps;
+    }
+
+    /**
+     * Hook for changind User Capabilities
+     *
+     * @param array $all_caps
+     * @param array $caps
+     * @param array $args
+     * @return array
+     */
+    public function user_has_cap($all_caps, $caps, $args) {
+
+        switch ($args[0]) {
+            case 'edit_comment':
+            case 'moderate_comments':
+                if (mvb_Model_Helper::getParam('trash', 'POST', FALSE)) {
+                    $this->filter_cap(&$all_caps, $args[1], 'trash_comment');
+                } elseif (mvb_Model_Helper::getParam('untrash', 'POST', FALSE)) {
+                    $this->filter_cap(&$all_caps, $args[1], 'untrash_comment');
+                } elseif (mvb_Model_Helper::getParam('spam', 'POST', FALSE)) {
+                    $this->filter_cap(&$all_caps, $args[1], 'spam_comment');
+                } elseif (mvb_Model_Helper::getParam('unspam', 'POST', FALSE)) {
+                    $this->filter_cap(&$all_caps, $args[1], 'unspam_comment');
+                } elseif (mvb_Model_Helper::getParam('delete', 'POST', FALSE)) {
+                    $this->filter_cap(&$all_caps, $args[1], 'delete_comment');
+                } elseif (mvb_Model_Helper::getParam('action', 'POST', FALSE) == 'dim-comment') {
+                    if ($comment = get_comment($args[2])) {
+                        $current = wp_get_comment_status($comment->comment_ID);
+                        if (in_array($current, array('unapproved', 'spam'))) {
+                            $this->filter_cap(&$all_caps, $args[1], 'approve_comment');
+                        } else {
+                            $this->filter_cap(&$all_caps, $args[1], 'unapprove_comment');
+                        }
+                    }
+                } else {
+                    $this->filter_cap(&$all_caps, $args[1], 'edit_comment');
+                }
+                break;
+
+            case 'edit_post':
+                if (mvb_Model_Helper::getParam('action', 'POST', FALSE) == 'replyto-comment') {
+                    $this->filter_cap(&$all_caps, $args[1], 'reply_comment');
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        return $all_caps;
+    }
+
+    protected function filter_cap($all_caps, $user_id, $cap) {
+
+        if (isset($all_caps[$cap]) && !mvb_Model_API::getUserAccessConfig($user_id)->hasCapability($cap)) {
+            unset($all_caps[$cap]);
+        }
     }
 
     /*
@@ -807,11 +948,14 @@ class mvb_WPAccess {
             $result = mvb_Model_Helper::cURL($url, TRUE, TRUE);
             if (isset($result['content']) && $result['content']) {
                 $content = phpQuery::newDocument($result['content']);
-                if ($error){
-                    $content['#manager-error-message']->removeClass('message-passive');
-                    $content['#manager-error-message .manager-error-text']->html($error);
-                }else{
-                    $content['#manager-error-message']->remove();
+                if ($error) {
+                    //TODO
+                    $content['.plugin-notification']->append(
+                            '<p>' . mvb_Model_Label::get('LABEL_167')
+                            . ' <a href="' . WPACCESS_ERROR167_URL
+                            . '" target="_blank">'
+                            . mvb_Model_Label::get('LABEL_168') .'</a></p>'
+                    );
                 }
                 echo $content['#aam_wrap']->htmlOuter();
                 unset($content);
@@ -898,5 +1042,4 @@ register_uninstall_hook(__FILE__, array('mvb_WPAccess', 'uninstall'));
 
 add_action('init', 'init_wpaccess');
 add_action('set_current_user', 'aam_set_current_user');
-
 ?>

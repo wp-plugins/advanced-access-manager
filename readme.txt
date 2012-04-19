@@ -1,10 +1,10 @@
 === Advanced Access Manager ===
 Contributors: vasyl_m
 Donate link: http://whimba.org/donation
-Tags: access manager, access control, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role, access config
+Tags: access manager, access control, comments, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role, access config
 Requires at least: 3.2
 Tested up to: 3.3.1
-Stable tag: 1.6.2
+Stable tag: 1.6.3
 
 Graphic interface to manage User Access to your Front-end and Back-end
 
@@ -19,6 +19,7 @@ This is the basic list of features you can perform this AAM:
 * Filter Admin Panel
 * Filter Dashboard Widgets
 * Filter Metaboxes
+* Manage Comments
 * Manage Capabilities (Create, Delete)
 * Manage User Roles (Create, Edit, Delete)
 * Manage Access to your Posts, Pages or even Custom Post Types
@@ -49,13 +50,6 @@ If you are Super Admin, you can manage the Administrator's Role as other User
 Roles. To give an access to Access Manager's Option Page, just create a new
 capability <b>AAM Manage</b> and check it for Administrator's User Role.
 
-= Why do I have a red message "JavaScript Error" =
-
-The reason you see this message is because of incompatibility with some plugin
-or theme which is not following the simply WordPress Coding Standards. Many
-plugins print additional JavaScript libraries without any reason and this is the
-most common reason for conflicts.
-
 = What is "Initiate URL" button, under "Metaboxes & Widgets" Tab? =
 
 Sometimes list of additional metaboxes is conditional on edit post page. Like e.g.
@@ -63,11 +57,6 @@ display custom metabox "Photos" only if Post Status is Published. Access Manager
 initiates the list of metaboxes for each post in default status ("auto-draft").
 That is why you have to manually initialize the URL to the edit post page where
 the list of additional metaboxes can be picked by AAM.
-
-= I can't edit comments. What should I do? =
-
-To be able to edit comments, just go to "Capabilities" Tab and add new Capability -
-"Edit Comment".
 
 = How can I delete created Capability? =
 
@@ -92,6 +81,11 @@ just filter Main Menu.
 5. ConfigPress
 
 == Changelog ==
+
+= 1.6.3 =
+* Added more advanced possibility to manage comments
+* Change Capabilities view
+* Added additional checking for plugin's reliability
 
 = 1.6.2 =
 * Few GUI changes

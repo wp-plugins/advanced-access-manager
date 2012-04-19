@@ -216,7 +216,7 @@ class mvb_Model_AccessControl {
      */
     public function checkPageExcluded($page) {
 
-        return ($this->getUserConfig()->hasExclude($page->ID) ? TRUE : FALSE);
+        return (isset($page->ID) && $this->getUserConfig()->hasExclude($page->ID) ? TRUE : FALSE);
     }
 
 }

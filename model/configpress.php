@@ -35,10 +35,11 @@ class mvb_Model_ConfigPress {
 
     protected static function getConfig() {
 
-        if (self::$config == NULL) {
+        $file = WPACCESS_BASE_DIR . 'config.ini';
+        if ( (self::$config == NULL) && is_readable($file) ) {
             require_once('Zend/Config.php');
             require_once('Zend/Config/Ini.php');
-            self::$config = new Zend_Config_Ini(WPACCESS_BASE_DIR . 'config.ini');
+            self::$config = new Zend_Config_Ini($file);
         }
 
         return self::$config;

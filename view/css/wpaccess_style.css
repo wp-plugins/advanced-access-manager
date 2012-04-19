@@ -1,3 +1,11 @@
+.aam-warning{
+    background-color: #f8e7a5;
+}
+
+.aam-error{
+    background-color: #f9c6c9;
+}
+
 #wp-access{
     display:none;
 }
@@ -26,6 +34,16 @@
     margin-left:30px;
     width:80px;
     height:80px;
+}
+
+.plugin-notification{
+    float:right;
+    width:auto;
+    margin-right: 10px;
+    height:100%;
+    font-family: "Courier New";
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .delete-role-table{
@@ -153,10 +171,23 @@
 }
 
 .capability-item{
-    width: 200px;
+    width: 230px;
     margin-bottom: 5px;
     float:left;
     font-size: 11px;
+    border: 1px solid #dfdfdf;
+    padding: 1px 0px 1px 3px;
+    margin-left: 8px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.premium-capability{
+    background-color: #f1dcdc;
+}
+
+.capability-item:hover{
+    background-color : #eeeeee;
 }
 
 #capability-form input{
@@ -258,8 +289,7 @@
     height: 10px;
     background: url(images/xit.gif) no-repeat;
     margin-top:2px;
-    float: left;
-    margin-left: 10px;
+    margin-right: 2px;
     cursor: pointer;
 }
 
@@ -411,6 +441,8 @@
 
 .icon-info{
     cursor: help;
+    float : right;
+    margin-right: 5px;
     background: url(images/info.png) no-repeat;
 }
 
