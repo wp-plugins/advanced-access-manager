@@ -20,9 +20,9 @@
 
 /**
  * Role Config Model Class
- * 
+ *
  * Role Config Object
- * 
+ *
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
@@ -30,8 +30,8 @@
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
 class mvb_Model_RoleConfig extends mvb_Model_Abstract_Config {
-    
-     /**
+
+    /**
      * {@inheritdoc}
      */
     protected $type = 'role';
@@ -52,12 +52,11 @@ class mvb_Model_RoleConfig extends mvb_Model_Abstract_Config {
                     'metaboxes' => $this->getMetaboxes(),
                     'menu_order' => $this->getMenuOrder(),
                     'restrictions' => $this->getRestrictions(),
-                    'excludes' => $this->getExcludes()
         );
         mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'config_' . $this->getID(), $options);
 
         mvb_Model_Cache::clearCache();
-        
+
         do_action(WPACCESS_PREFIX . 'do_save');
     }
 
@@ -67,66 +66,17 @@ class mvb_Model_RoleConfig extends mvb_Model_Abstract_Config {
     protected function getConfig() {
 
         $config = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'config_' . $this->getID());
-        if (!$config) { //TODO - Delete is deprecated
-            $options = (object) $this->getOldData(WPACCESS_PREFIX . 'options');
-            $m_order = $this->getOldData(WPACCESS_PREFIX . 'menu_order');
-            $restric = $this->getOldData(WPACCESS_PREFIX . 'restrictions');
-            $exclude = $this->getExcludeList($restric);
-            $config = (object) array();
-            $config->menu = (isset($options->menu) ? $options->menu : array());
-            $config->metaboxes = (isset($options->metaboxes) ? $options->metaboxes : array());
-            $config->menu_order = (is_array($m_order) ? $m_order : array());
-            $config->restrictions = (is_array($restric) ? $restric : array());
-            $config->excludes = (is_array($exclude) ? $exclude : array());
+        if ($config) {
+            $this->setMenu($config->menu);
+            $this->setMenuOrder($config->menu_order);
+            $this->setMetaboxes($config->metaboxes);
+            $this->setRestrictions($config->restrictions);
         }
+        
         $roles = mvb_Model_API::getRoleList(FALSE); //TODO - Potensially hole
-
-        $this->setMenu($config->menu);
-        $this->setMenuOrder($config->menu_order);
-        $this->setMetaboxes($config->metaboxes);
         if (isset($roles[$this->getID()]['capabilities'])) {
             $this->setCapabilities($roles[$this->getID()]['capabilities']);
         }
-        $this->setRestrictions($config->restrictions);
-        $this->setExcludes($config->excludes);
-    }
-
-    /**
-     * Get Data from Database
-     * 
-     * @param string $option
-     * @return array
-     * @todo Delete in next releases
-     */
-    protected function getOldData($option) {
-
-        $id = $this->getID();
-        $data = mvb_Model_API::getBlogOption($option);
-        $data = ( isset($data[$id]) ? $data[$id] : array());
-
-        return $data;
-    }
-
-    /**
-     * Get Exclude list from current configurations
-     * 
-     * @access protected
-     * @param array $restric
-     * @return array
-     * @todo Should be deleted in next releases
-     */
-    protected function getExcludeList($restric) {
-
-        $exclude = array();
-        if (isset($restric['posts']) && is_array($restric['posts'])) {
-            foreach ($restric['posts'] as $post_id => $data) {
-                if (isset($data['exclude']) && ($data['exclude'] == 1)) {
-                    $exclude[$post_id] = 1;
-                }
-            }
-        }
-
-        return $exclude;
     }
 
 }

@@ -349,6 +349,7 @@ class mvb_Model_Manager {
             $markers['###current_user###'] = $user->user_login;
             $markers['###current_user_id###'] = $user->ID;
         } else {
+            $markers['###current_user_id###'] = 0;
             $markers['###current_user###'] = mvb_Model_Label::get('LABEL_120');
         }
 

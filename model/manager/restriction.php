@@ -19,7 +19,7 @@
 
 /**
  * Metabox & Widget Manager
- * 
+ *
  * @package AAM
  * @subpackage Model
  */
@@ -30,7 +30,7 @@ class mvb_Model_Manager_Restriction {
      * @global array $submenu
      * @param string $tmpl
      * @param mvb_Model_Manager $parent
-     * @return string 
+     * @return string
      */
     public static function render($tmpl, $parent) {
 
@@ -46,51 +46,22 @@ class mvb_Model_Manager_Restriction {
                 $post = get_post($id);
                 if ($post->ID) {
                     $tmpl = mvb_Model_Template::retrieveSub('POST', $tmpl);
-                    if ($parent->getConfig()->hasRestriction('post', $id)) {
-                        $restiction = $parent->getConfig()
-                                ->getRestriction('post', $id);
-                        $checked = ($restiction['restrict'] ? 'checked' : '');
-                        $checked_front = ($restiction['restrict_front'] ? 'checked' : '');
-                        $exclude = ($parent->getConfig()->hasExclude($id) ? 'checked' : '');
-                        $expire = esc_js($restiction['expire']);
+                    $tmpl = phpQuery::newDocument($tmpl);
+                    $data = $parent->getConfig()->getRestriction('post', $id);
+                    foreach($data as $key => $value){
+                        $tmpl['#' . $key]->attr('checked', 'checked');
                     }
-                    $markers = array(
-                        '###post_title###' => mvb_Model_Helper::editPostLink($post),
-                        '###disabled_apply_all###' => ($parent->getCurrentUser() ? 'disabled="disabled"' : ''),
-                        '###restrict_checked###' => (isset($checked) ? $checked : ''),
-                        '###restrict_front_checked###' => (isset($checked_front) ? $checked_front : ''),
-                        '###restrict_expire###' => (isset($expire) ? $expire : ''),
-                        '###exclude_page_checked###' => (isset($exclude) ? $exclude : ''),
-                        '###post_type###' => ucfirst($post->post_type),
-                        '###post_status###' => $wp_post_statuses[$post->post_status]->label,
-                        '###post_visibility###' => mvb_Model_Helper::checkVisibility($post),
-                        '###ID###' => $post->ID,
-                        '###info_image###' => WPACCESS_CSS_URL . 'images/Info-tooltip.png',
-                    );
+                    if ($parent->getCurrentUser()){
+                        $tmpl['.save-postinfo-all']->attr('disabled', 'disabled');
+                    }
+                    $tmpl['.category-title']->html(mvb_Model_Helper::editPostLink($post));
                     //check what type of post is it and render exclude if page
-                    $render_exclude = FALSE;
                     if (isset($wp_post_types[$post->post_type])) {
-                        switch ($wp_post_types[$post->post_type]->capability_type) {
-                            case 'page':
-                                $render_exclude = TRUE;
-                                break;
-
-                            default:
-                                break;
+                        if ($wp_post_types[$post->post_type]->capability_type != 'page'){
+                            $tmpl['#exclude']->remove();
                         }
                     }
-
-                    if ($render_exclude) {
-                        $excld_tmpl = mvb_Model_Template::retrieveSub(
-                                        'EXCLUDE_PAGE', $tmpl
-                        );
-                    } else {
-                        $excld_tmpl = '';
-                    }
-                    $tmpl = mvb_Model_Template::replaceSub(
-                                    'EXCLUDE_PAGE', $excld_tmpl, $tmpl
-                    );
-                    $tmpl = mvb_Model_Template::updateMarkers($markers, $tmpl);
+                    $tmpl = $tmpl->htmlOuter();
                 }
                 break;
 
@@ -100,23 +71,21 @@ class mvb_Model_Manager_Restriction {
                 $term = get_term($id, $taxonomy);
                 if ($term->term_id) {
                     $tmpl = mvb_Model_Template::retrieveSub('CATEGORY', $tmpl);
-                    if ($parent->getConfig()->hasRestriction('taxonomy', $id)) {
-                        $tax = $parent->getConfig()->getRestriction('taxonomy', $id);
-                        $checked = ($tax['restrict'] ? 'checked' : '');
-                        $checked_front = ($tax['restrict_front'] ? 'checked' : '');
-                        $expire = ($tax['expire'] ? date('m/d/Y', $tax['expire']) : '');
+                    $tmpl = phpQuery::newDocument($tmpl);
+                    $data = $parent->getConfig()->getRestriction('taxonomy', $id);
+                    foreach($data as $key => $value){
+                        $tmpl['#' . $key]->attr('checked', 'checked');
                     }
-                    $markers = array(
-                        '###name###' => mvb_Model_Helper::editTermLink($term),
-                        '###disabled_apply_all###' => ($parent->getCurrentUser() ? 'disabled="disabled"' : ''),
-                        '###restrict_checked###' => (isset($checked) ? $checked : ''),
-                        '###restrict_front_checked###' => (isset($checked_front) ? $checked_front : ''),
-                        '###restrict_expire###' => (isset($expire) ? $expire : ''),
-                        '###post_number###' => $term->count,
-                        '###ID###' => $term->term_id,
-                        '###info_image###' => WPACCESS_CSS_URL . 'images/Info-tooltip.png',
-                    );
-                    $tmpl = mvb_Model_Template::updateMarkers($markers, $tmpl);
+                    if ($parent->getCurrentUser()){
+                        $tmpl['.save-postinfo-all']->attr('disabled', 'disabled');
+                    }
+                    $tmpl['.category-title']->html(mvb_Model_Helper::editTermLink($term));
+                    $tmpl['.subposts']->html(sprintf(mvb_Model_Label::get('LABEL_178'), $term->name));
+                    if (defined('AAM_PRO')){
+                        $tmpl['.premium']->removeClass('premium');
+                        $tmpl['#premium-ind']->html('&nbsp;');
+                    }
+                    $tmpl = $tmpl->htmlOuter();
                 }
                 break;
 
@@ -124,12 +93,12 @@ class mvb_Model_Manager_Restriction {
                 $tmpl = '';
                 break;
         }
-        
+
         $result = array(
             'status' => 'success',
             'html' => mvb_Model_Template::clearTemplate($tmpl)
         );
-        
+
         return $result;
     }
 

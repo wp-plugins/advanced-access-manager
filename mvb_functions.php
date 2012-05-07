@@ -80,9 +80,6 @@ function mvb_merge_configs($config, $m_config) {
     $rests = mvb_Model_Helper::array_merge_recursive($m_config->getRestrictions(), $config->getRestrictions());
     $config->setRestrictions($rests, FALSE);
 
-    $excludes = mvb_Model_Helper::array_merge_recursive($config->getExcludes(), $m_config->getExcludes());
-    $config->setExcludes($excludes);
-
     return $config;
 }
 
@@ -108,7 +105,7 @@ function mvb_warning() {
         <p><strong>" . mvb_Model_Label::get('LABEL_139') . "</strong></p></div>";
 }
 
-if (mvb_Model_ConfigPress::getOption('aam.error_reporting', 'true') == 'true') {
+if (mvb_Model_ConfigPress::getOption('aam.error_reporting', 'false') == 'true') {
     error_reporting(E_ALL | E_STRICT);
     ini_set('display_errors', FALSE);
 

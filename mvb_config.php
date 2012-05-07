@@ -31,7 +31,15 @@ define('WPACCESS_ERROR165_URL', 'http://whimba.org/forum/viewtopic.php?f=7&t=247
 define('WPACCESS_ERROR166_URL', 'http://whimba.org/forum/viewtopic.php?f=7&t=5');
 define('WPACCESS_ERROR167_URL', 'http://whimba.org/forum/viewtopic.php?f=7&t=248');
 
-define('WPACCESS_UPGRADED_FILE', WPACCESS_BASE_DIR . '.__upgraded');
+define('WPACCESS_ACCESS_LIST', 'list');
+define('WPACCESS_ACCESS_EXCLUDE', 'exclude');
+define('WPACCESS_ACCESS_BROWSE', 'browse');
+define('WPACCESS_ACCESS_EDIT', 'edit');
+define('WPACCESS_ACCESS_READ', 'read');
+define('WPACCESS_ACCESS_TRASH', 'trash');
+define('WPACCESS_ACCESS_DELETE', 'delete');
+define('WPACCESS_ACCESS_COMMENT', 'comment');
+define('WPACCESS_ACCESS_PUBLISH', 'publish');
 
 //Plugin constants
 define('WPACCESS_BASE_URL', WP_PLUGIN_URL . '/' . WPACCESS_DIRNAME . '/');
@@ -54,6 +62,11 @@ define('WPACCESS_FTIME_MESSAGE', WPACCESS_PREFIX . 'first_time');
 //configure include path for library
 $path = WPACCESS_BASE_DIR . 'library/';
 set_include_path(get_include_path() . PATH_SEPARATOR . $path);
+
+//require phpQuery
+if (!class_exists('phpQuery')) {
+    require_once(WPACCESS_BASE_DIR . 'library/phpQuery/phpQuery.php');
+}
 
 //load general files
 require_once('mvb_functions.php');

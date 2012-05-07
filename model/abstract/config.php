@@ -30,25 +30,6 @@
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
 abstract class mvb_Model_Abstract_Config {
-    /**
-     * No Restrictions
-     */
-    const RESTRICT_NO = 0;
-
-    /**
-     * Restrict Backend
-     */
-    const RESTRICT_BACK = 1;
-
-    /**
-     * Restrict Frontend
-     */
-    const RESTRICT_FRONT = 2;
-
-    /**
-     * Rescrict Both Sides
-     */
-    const RESTRICT_BOTH = 3;
 
     /**
      * Current Object ID
@@ -339,83 +320,6 @@ abstract class mvb_Model_Abstract_Config {
     }
 
     /**
-     * Initialize hierarhical restriction tree
-     *
-     */
-    public function initRestrictionTree() {
-
-        $rests = $this->getRestrictions();
-
-        if (isset($rests['categories']) && is_array($rests['categories'])) {
-            foreach ($rests['categories'] as $id => $restrict) {
-                $r = $this->checkExpiration($restrict);
-                if ($r) {
-                    $rests['categories'][$id]['restrict'] = ($r & self::RESTRICT_BACK ? 1 : 0);
-                    $rests['categories'][$id]['restrict_front'] = ($r & self::RESTRICT_FRONT ? 1 : 0);
-                    //get list of all subcategories
-                    $taxonomy = mvb_Model_Helper::getTaxonomyByTerm($id);
-                    $rests['categories'][$id]['taxonomy'] = $taxonomy;
-                    $cat_list = get_term_children($id, $taxonomy);
-                    if (is_array($cat_list)) {
-                        foreach ($cat_list as $cid) {
-                            $rests['categories'][$cid] = $rests['categories'][$id];
-                        }
-                    }
-                } else {
-                    unset($rests['categories'][$id]);
-                }
-            }
-        }
-        //prepare list of posts and pages
-        if (isset($rests['posts']) && is_array($rests['posts'])) {
-            foreach ($rests['posts'] as $id => $restrict) {
-                //now check combination of options
-                $r = $this->checkExpiration($restrict);
-                if ($r) {
-                    $rests['posts'][$id]['restrict'] = ($r & self::RESTRICT_BACK ? 1 : 0);
-                    $rests['posts'][$id]['restrict_front'] = ($r & self::RESTRICT_FRONT ? 1 : 0);
-                } else {
-                    if (isset($rests['posts'][$id]['exclude_page'])) {
-                        $rests['posts'][$id] = array(
-                            'exclude_page' => 1
-                        );
-                    } else {
-                        unset($rests['posts'][$id]);
-                    }
-                }
-            }
-        }
-
-        $this->setRestrictions($rests);
-    }
-
-    /**
-     * Check if access is expired according to date
-     *
-     * @param array $data
-     * @return int
-     */
-    protected function checkExpiration($data) {
-
-        $result = self::RESTRICT_NO;
-        if (($data['restrict'] || $data['restrict_front']) && !trim($data['expire'])) {
-            $result = ($data['restrict'] ? $result | self::RESTRICT_BACK : $result);
-            $result = ($data['restrict_front'] ? $result | self::RESTRICT_FRONT : $result);
-        } elseif (($data['restrict'] || $data['restrict_front']) && trim($data['expire'])) {
-            if (strtotime($data['expire']) >= time()) {
-                $result = ($data['restrict'] ? $result | self::RESTRICT_BACK : $result);
-                $result = ($data['restrict_front'] ? $result | self::RESTRICT_FRONT : $result);
-            }
-        } elseif (trim($data['expire'])) {
-            if (time() <= strtotime($data['expire'])) {
-                $result = self::RESTRICT_BOTH; //TODO - Think about it
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Get Restrictions
      *
      * @return array
@@ -434,22 +338,7 @@ abstract class mvb_Model_Abstract_Config {
      */
     public function hasRestriction($type, $id) {
 
-        $result = FALSE;
-
-        switch ($type) {
-            case 'post':
-                $result = (isset($this->restrictions['posts'][$id]) ? TRUE : FALSE);
-                break;
-
-            case 'taxonomy':
-                $result = (isset($this->restrictions['categories'][$id]) ? TRUE : FALSE);
-                break;
-
-            default:
-                break;
-        }
-
-        return $result;
+        return isset($this->restrictions[$type][$id]);
     }
 
     /**
@@ -464,18 +353,59 @@ abstract class mvb_Model_Abstract_Config {
         $result = array();
 
         if ($this->hasRestriction($type, $id)) {
-            switch ($type) {
-                case 'post':
-                    $result = $this->restrictions['posts'][$id];
-                    break;
+            $result = $this->restrictions[$type][$id];
+        } else { //get default restriction set
+            if ($type == 'post') {
+                $taxonomies = get_object_taxonomies(get_post($id));
+                if (is_array($taxonomies) && count($taxonomies)) {
+                    $cat_list = wp_get_object_terms(
+                            $id, $taxonomies, array('fields' => 'ids')
+                    );
 
-                case 'taxonomy':
-                    $result = $this->restrictions['categories'][$id];
-                    break;
-
-                default:
-                    break;
+                    if (is_array($cat_list)) {
+                        $cat_list = array_reverse($cat_list);
+                        foreach ($cat_list as $cat_id) {
+                            if ($this->hasRestriction('taxonomy', $cat_id)) {
+                                $r = $this->getRestriction('taxonomy', $cat_id);
+                                if (isset($r['post_in_category'])) {
+                                    foreach ($r as $key => $value) {
+                                        if (strpos($key, '_post_')) {
+                                            $result[$key] = $value;
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }elseif($type == 'taxonomy'){
+                $taxonomy = mvb_Model_Helper::getTaxonomyByTerm($id);
+                foreach(get_ancestors($id, $taxonomy) as $ans){
+                    if ($this->hasRestriction('taxonomy', $ans)){
+                        $result = $this->getRestriction('taxonomy', $ans);
+                        break;
+                    }
+                }
             }
+
+            //update restriction by configPress
+            if (empty($result)) {
+                $result = $this->populateRestriction($type);
+            }
+
+            $this->addRestriction($type, $id, $result); //cache result
+        }
+
+        return $result;
+    }
+
+    protected function populateRestriction($type) {
+
+        $result = array();
+
+        if (defined('AAM_PRO')) {
+            $result = mvb_Model_Pro::populateRestriction($type);
         }
 
         return $result;
@@ -490,27 +420,27 @@ abstract class mvb_Model_Abstract_Config {
      */
     public function updateRestriction($type, $id, $data) {
 
-        $rests = $this->getRestrictions();
-        switch ($type) {
-            case 'post':
-                if (!isset($rests['posts'])) {
-                    $rests['posts'] = array();
-                }
-                $rests['posts'][$id] = $data;
-                break;
+        if (!$this->hasRestriction($type, $id)){
+            $this->addRestriction($type, $id, $data);
+        }else{
+            $this->restrictions[$type][$id] = $data;
+        }
+    }
 
-            case 'taxonomy':
-                if (!isset($rests['categories'])) {
-                    $rests['categories'] = array();
-                }
-                $rests['categories'][$id] = $data;
-                break;
+    /**
+     * Add Restriction
+     *
+     * @param type $type
+     * @param type $id
+     * @param type $data
+     */
+    public function addRestriction($type, $id, $data){
 
-            default:
-                break;
+        if (!isset($this->restrictions[$type])){
+            $this->restrictions[$type] = array();
         }
 
-        $this->setRestrictions($rests);
+        $this->restrictions[$type][$id] = $data;
     }
 
     /**
@@ -523,75 +453,8 @@ abstract class mvb_Model_Abstract_Config {
 
         if ($this->hasRestriction($type, $id)) {
             $rests = $this->getRestrictions();
-            switch ($type) {
-                case 'post':
-                    unset($rests['posts'][$id]);
-                    break;
-
-                case 'taxonomy':
-                    unset($rests['categories'][$id]);
-                    break;
-
-                default:
-                    break;
-            }
-
+            unset($rests[$type][$id]);
             $this->setRestrictions($rests);
-        }
-    }
-
-    /**
-     * Set Excludes
-     *
-     * @param array $excludes
-     */
-    public function setExcludes($excludes) {
-
-        $this->excludes = (is_array($excludes) ? $excludes : array());
-    }
-
-    /**
-     * Get Excludes
-     *
-     * @return array
-     */
-    public function getExcludes() {
-
-        return $this->excludes;
-    }
-
-    /**
-     * Check if page is excluded
-     *
-     * @param int $id
-     * @return bool
-     */
-    public function hasExclude($id) {
-
-        return (isset($this->excludes[$id]) ? TRUE : FALSE);
-    }
-
-    /**
-     * Add Exclude
-     *
-     * @param int $id
-     */
-    public function addExclude($id) {
-
-        if (!$this->hasExclude($id)) {
-            $this->excludes[$id] = 1;
-        }
-    }
-
-    /**
-     * Delete Exclude
-     *
-     * @param int $id
-     */
-    public function deleteExclude($id) {
-
-        if ($this->hasExclude($id)) {
-            unset($this->excludes[$id]);
         }
     }
 

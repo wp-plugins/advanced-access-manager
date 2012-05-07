@@ -19,20 +19,20 @@
 
 /**
  * Metabox & Widget Manager
- * 
+ *
  * @package AAM
  * @subpackage Model
  */
 class mvb_Model_Manager_Metabox {
 
     public static $parent;
-    
+
     /**
      *
      * @global array $submenu
      * @param string $tmpl
      * @param mvb_Model_Manager $parent
-     * @return string 
+     * @return string
      */
     public static function render($tmpl, $parent) {
         global $wp_post_types;
@@ -62,6 +62,8 @@ class mvb_Model_Manager_Metabox {
             );
 
             foreach ($cache['metaboxes'] as $type => $metaboxes) {
+
+                $render = TRUE;
                 switch ($type) {
                     case 'widgets':
                         $temp = self::renderWidget($widget_tmpl, $metaboxes);
@@ -82,16 +84,18 @@ class mvb_Model_Manager_Metabox {
                             );
                             $label =  $wp_post_types[$type]->labels->name;
                         }else{
-                            continue;
+                            $render = FALSE;
                         }
                         break;
                 }
-                $temp = mvb_Model_Template::replaceSub(
-                        'POST_METABOXES_LIST', $temp, $row_tmpl
-                );
-                $list .= mvb_Model_Template::updateMarkers(
-                        array('###post_type_label###' => $label), $temp
-                );
+                if ($render){
+                    $temp = mvb_Model_Template::replaceSub(
+                            'POST_METABOXES_LIST', $temp, $row_tmpl
+                    );
+                    $list .= mvb_Model_Template::updateMarkers(
+                            array('###post_type_label###' => $label), $temp
+                    );
+                }
             }
             $content = mvb_Model_Template::replaceSub(
                     'METABOX_LIST_ITEM', $list, $tmpl
@@ -110,7 +114,7 @@ class mvb_Model_Manager_Metabox {
                     'METABOX_LIST_EMPTY', $empty_tmpl, $content
             );
         }
-        
+
         return $content;
     }
 
@@ -123,12 +127,12 @@ class mvb_Model_Manager_Metabox {
                 if (is_array($data)) {
                     $desc = mvb_Model_Helper::removeHTML($data['description']);
                     $markers = array(
-                        '###title###' => mvb_Model_Helper::removeHTML($data['title']),
+                        '###title###' => utf8_encode(mvb_Model_Helper::removeHTML($data['title'])),
                         '###classname###' => $classname,
-                        '###description###' => $desc,
-                        '###description_short###' => mvb_Model_Helper::cutStr(
+                        '###description###' => utf8_encode($desc),
+                        '###description_short###' => utf8_encode(mvb_Model_Helper::cutStr(
                                 $desc, 20
-                        ),
+                        )),
                         '###checked###' => (self::$parent->getConfig()
                             ->hasMetabox($classname) ? 'checked' : '')
                     );
@@ -154,9 +158,9 @@ class mvb_Model_Manager_Metabox {
                                     $data['title']
                             );
                             $markers = array(
-                                '###title###' => mvb_Model_Helper::removeHTML(
+                                '###title###' => utf8_encode(mvb_Model_Helper::removeHTML(
                                         $data['title']
-                                ),
+                                )),
                                 '###short_id###' => mvb_Model_Helper::cutStr(
                                         $data['id'], 25
                                 ),
@@ -175,7 +179,7 @@ class mvb_Model_Manager_Metabox {
                 }
             }
         }
-        
+
         return $content;
     }
 }

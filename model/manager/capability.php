@@ -37,7 +37,7 @@ class mvb_Model_Manager_Capability {
             'edit_others_posts', 'edit_pages', 'edit_private_posts',
             'edit_private_pages', 'edit_posts', 'edit_published_pages',
             'edit_published_posts', 'publish_pages', 'publish_posts', 'read',
-            'read_private_pages', 'read_private_posts'
+            'read_private_pages', 'read_private_posts', 'edit_permalink'
         ),
         'comment' => array(
             'delete_comment', 'approve_comment', 'edit_comment', 'moderate_comments',
@@ -177,7 +177,7 @@ class mvb_Model_Manager_Capability {
 
     private static function isPremium($capability){
 
-        return (in_array($capability, self::$premium_caps) && !defined('AAM_PRO') ? 'premium-capability' : '');
+        return (in_array($capability, self::$premium_caps) && !defined('AAM_PRO') ? 'premium' : '');
     }
 
 }

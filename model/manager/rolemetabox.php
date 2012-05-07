@@ -19,7 +19,7 @@
 
 /**
  * Role Metabox Manager
- * 
+ *
  * @package AAM
  * @subpackage Model
  */
@@ -31,7 +31,7 @@ class mvb_Model_Manager_RoleMetabox {
      * @global array $submenu
      * @param string $tmpl
      * @param mvb_Model_Manager $parent
-     * @return string 
+     * @return string
      */
     public static function render($tmpl, $parent) {
 
@@ -45,7 +45,7 @@ class mvb_Model_Manager_RoleMetabox {
         $list = mvb_Model_Template::replaceSub(
                 'DELETE_ROLE_ITEM', $list, $list_tmpl
         );
-        
+
         return mvb_Model_Template::replaceSub('DELETE_ROLE_LIST', $list, $tmpl);
     }
 
@@ -58,7 +58,7 @@ class mvb_Model_Manager_RoleMetabox {
 
         $markers = array(
             '###role_id###' => esc_js($role),
-            '###role_name###' => stripcslashes($data['name']),
+            '###role_name###' => utf8_encode(stripcslashes($data['name'])),
             '###count###' => $count,
         );
         if ($count) {

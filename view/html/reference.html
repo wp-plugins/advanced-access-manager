@@ -38,6 +38,34 @@
                                         <li><a href="#" link="message">message</a></li>
                                     </ul>
                                 </li>
+                                <li>
+                                    <a href="#" link="taxonomy">taxonomy</a>
+                                    <ul>
+                                        <li>
+                                            <a href="#" link="default">default</a>
+                                            <ul>
+                                                <li><a href="#" link="list">list</a></li>
+                                                <li><a href="#" link="browse">browse</a></li>
+                                                <li><a href="#" link="edit">edit</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#" link="post">post</a>
+                                    <ul>
+                                        <li>
+                                            <a href="#" link="default">default</a>
+                                            <ul>
+                                                <li><a href="#" link="list">list</a></li>
+                                                <li><a href="#" link="trash">trash</a></li>
+                                                <li><a href="#" link="delete">delete</a></li>
+                                                <li><a href="#" link="edit">edit</a></li>
+                                                <li><a href="#" link="publish">publish</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
                             </ul>
                         </li>
                     </ul>
@@ -53,6 +81,31 @@
                                     <ul>
                                         <li><a href="#" link="redirect">redirect</a></li>
                                         <li><a href="#" link="message">message</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#" link="taxonomy">taxonomy</a>
+                                    <ul>
+                                        <li>
+                                            <a href="#" link="default">default</a>
+                                            <ul>
+                                                <li><a href="#" link="list">list</a></li>
+                                                <li><a href="#" link="browse">browse</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#" link="post">post</a>
+                                    <ul>
+                                        <li>
+                                            <a href="#" link="default">default</a>
+                                            <ul>
+                                                <li><a href="#" link="list">list</a></li>
+                                                <li><a href="#" link="read">read</a></li>
+                                                <li><a href="#" link="comment">comment</a></li>
+                                            </ul>
+                                        </li>
                                     </ul>
                                 </li>
                             </ul>
@@ -103,7 +156,7 @@
         <p><span style="color: #00BFFF">[aam]</span><br/><br/>delete_capabilities = <span style="color: #BF4000">"false"</span></p>
     </div>
     <div class="error-reporting">
-        <p>Use Advanced Access Manager error reporting feature and log all errors, related to this plugin to internal error log. By default is true</p>
+        <p>Use Advanced Access Manager error reporting feature and log all errors, related to this plugin to internal error log. By default is false</p>
         <p><span style="color: #00BFFF">[aam]</span><br/><br/>error_reporting = <span style="color: #BF4000">"true"</span></p>
     </div>
     <div class="multisite">
@@ -144,5 +197,39 @@
     </div>
     <div class="frontend-section">
         <p>Section to specify Advanced Access Manager behavior on Frontend</p>
+    </div>
+    <div class="default">
+        <p>Holder for default behavior</p>
+    </div>
+    <div class="taxonomy">
+        <p>Holder for taxonomy configurations</p>
+    </div>
+    <div class="post">
+        <p>Holder for post configurations</p>
+    </div>
+    <div class="list">
+        <p>Specify default listing. It means allow or deny listing post or taxonomy</p>
+        <p><span style="color: #00BFFF">[backend]</span><br/><br/>access.taxonomy.default.list = <span style="color: #BF4000">"deny"</span></p>
+    </div>
+    <div class="browse">
+        <p>Not commented yet.</p>
+    </div>
+    <div class="edit">
+        <p>Not commented yet.</p>
+    </div>
+    <div class="read">
+        <p>Not commented yet.</p>
+    </div>
+    <div class="comment">
+        <p>Not commented yet.</p>
+    </div>
+    <div class="publish">
+        <p>Not commented yet.</p>
+    </div>
+    <div class="trash">
+        <p>Not commented yet.</p>
+    </div>
+    <div class="delete">
+        <p>Not commented yet.</p>
     </div>
 </div>

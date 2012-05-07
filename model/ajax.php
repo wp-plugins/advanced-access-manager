@@ -500,9 +500,9 @@ class mvb_Model_Ajax {
         global $wp_post_types;
 
         $type = $_REQUEST['root'];
+        $tree = array();
 
         if ($type == "source") {
-            $tree = array();
             if (is_array($wp_post_types)) {
                 foreach ($wp_post_types as $post_type => $data) {
                     //show only list of post type which have User Interface
@@ -536,7 +536,6 @@ class mvb_Model_Ajax {
                     break;
 
                 default:
-                    $tree = array();
                     break;
             }
         }
@@ -577,7 +576,7 @@ class mvb_Model_Ajax {
         if (is_array($posts)) {
             foreach ($posts as $post_id) {
                 if ($post = get_post($post_id)) {
-                    $onClick = "loadInfo(event, \"post\", {$post->ID});";
+                    $onClick = "mObj.loadInfo(event, \"post\", {$post->ID});";
                     $tree[] = (object) array(
                                 'text' => "<a href='#' onclick='{$onClick}'>{$post->post_title}</a>",
                                 'hasChildren' => $this->has_post_childs($post),
@@ -598,7 +597,13 @@ class mvb_Model_Ajax {
         if ($parent) {
             //$taxonomy = $this->get_taxonomy_get_term($parent);
             //firstly render the list of sub categories
-            $cat_list = get_terms($taxonomy, array('get' => 'all', 'parent' => $parent));
+            $cat_list = get_terms(
+                    $taxonomy, array(
+                'get' => 'all',
+                'parent' => $parent,
+                'hide_empty' => FALSE
+                    )
+            );
             if (is_array($cat_list)) {
                 foreach ($cat_list as $category) {
                     $tree[] = $this->build_category($category);
@@ -608,7 +613,12 @@ class mvb_Model_Ajax {
             $taxonomies = get_object_taxonomies($post_type);
             foreach ($taxonomies as $taxonomy) {
                 if (is_taxonomy_hierarchical($taxonomy)) {
-                    $term_list = get_terms($taxonomy, array('parent' => $parent));
+                    $term_list = get_terms(
+                            $taxonomy, array(
+                        'parent' => $parent,
+                        'hide_empty' => FALSE
+                            )
+                    );
                     if (is_array($term_list)) {
                         foreach ($term_list as $term) {
                             $tree[] = $this->build_category($term);
@@ -623,7 +633,7 @@ class mvb_Model_Ajax {
 
     private function build_category($category) {
 
-        $onClick = "loadInfo(event, \"taxonomy\", {$category->term_id});";
+        $onClick = "mObj.loadInfo(event, \"taxonomy\", {$category->term_id});";
         $branch = (object) array(
                     'text' => "<a href='#' onclick='{$onClick}'>{$category->name}</a>",
                     'expanded' => FALSE,
@@ -662,7 +672,7 @@ class mvb_Model_Ajax {
         global $wpdb;
 
         //get number of categories
-        $query = "SELECT COUNT(*) FROM {$wpdb->term_taxonomy} WHERE parent={$cat->term_id}";
+        $query = "SELECT COUNT(*) FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id={$cat->term_id}";
         $counter = $wpdb->get_var($query) + $cat->count;
 
         return ($counter ? TRUE : FALSE);
@@ -692,48 +702,21 @@ class mvb_Model_Ajax {
      * @param type $info
      * @return string
      */
-    protected function updateRestrictions($config, $info) {
+    protected function updateRestriction($config, $info) {
 
-        $admin = (isset($info['restrict']) ? 1 : 0);
-        $front = (isset($info['restrict_front']) ? 1 : 0);
-        $exclude = (isset($info['exclude_page']) ? 1 : 0);
-        $expire = trim($info['restrict_expire']);
-        $result = array();
-
-        $limit = apply_filters(WPACCESS_PREFIX . 'restrict_limit', WPACCESS_RESTRICTION_LIMIT);
+        $limit = apply_filters(
+                WPACCESS_PREFIX . 'restrict_limit', WPACCESS_RESTRICTION_LIMIT
+        );
         $rests = $config->getRestrictions();
-        switch ($info['type']) {
-            case 'post':
-                $count = (isset($rests['posts']) ? count($rests['posts']) : 0);
-                if ($exclude) {
-                    $config->addExclude($info['id']);
-                } else {
-                    $config->deleteExclude($info['id']);
-                }
-                break;
-
-            case 'taxonomy':
-                $count = (isset($rests['categories']) ? count($rests['categories']) : 0);
-                break;
-
-            default:
-                break;
-        }
+        $count = ($info['type'] == 'post' ? @count($rests['post']) : @count($rests['taxonomy']));
         if (!$config->hasRestriction($info['type'], $info['id'])) {
             $count++;
         }
 
         if ($limit == -1 || $count <= $limit) {
-
-            if ($admin || $front || $expire) {
-                $config->updateRestriction($info['type'], $info['id'], array(
-                    'restrict' => $admin,
-                    'restrict_front' => $front,
-                    'expire' => $expire)
-                );
-            } else {
-                $config->deleteRestriction($info['type'], $info['id']);
-            }
+            //prepare data
+            $prep = $this->prepareRestrictions($info);
+            $config->updateRestriction($info['type'], $info['id'], $prep);
             $result['status'] = 'success';
         } else {
             $result['status'] = 'error';
@@ -747,6 +730,26 @@ class mvb_Model_Ajax {
         return $result;
     }
 
+    protected function prepareRestrictions($data) {
+
+        $prep = array();
+        if (isset($data['data']) && is_array($data['data'])) {
+            foreach ($data['data'] as $input) {
+                if (($data['type'] == 'taxonomy')
+                        && (strpos($input['name'], '_post_') !== FALSE)
+                        && !defined('AAM_PRO')) {
+                    continue;
+                }
+                $prep[$input['name']] = $input['value'];
+            }
+            if ($data['type'] == 'taxonomy') {
+                $prep['taxonomy'] = mvb_Model_Helper::getTaxonomyByTerm($data['id']);
+            }
+        }
+
+        return $prep;
+    }
+
     /**
      * Save information about page/post/category restriction
      *
@@ -754,28 +757,30 @@ class mvb_Model_Ajax {
      */
     protected function save_info() {
 
-        $role = $_POST['role'];
-        $user = $_POST['user'];
-        $apply_all = intval($_POST['apply']);
-        $exclude = (isset($_POST['exclude_page']) ? 1 : 0);
-        $apply_all_cb = intval($_POST['apply_all_cb']);
-        mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'hide_apply_all', $apply_all_cb);
+        $role = mvb_Model_Helper::getParam('role', 'POST');
+        $user = mvb_Model_Helper::getParam('user', 'POST');
+        $apply_all = mvb_Model_Helper::getParam('apply', 'POST');
+        $apply_all_cb = mvb_Model_Helper::getParam('apply_all_cb', 'POST');
+        $info = mvb_Model_Helper::getParam('info', 'POST');
+        mvb_Model_API::updateBlogOption(
+                WPACCESS_PREFIX . 'hide_apply_all', $apply_all_cb
+        );
 
         if ($user) {
             $config = mvb_Model_API::getUserAccessConfig($user);
-            $result = $this->updateRestrictions($config, $_POST['info']);
+            $result = $this->updateRestriction($config, $info);
         } else {
             if ($apply_all) {
                 foreach (mvb_Model_API::getRoleList() as $role => $dummy) {
                     $config = mvb_Model_API::getRoleAccessConfig($role);
-                    $result = $this->updateRestrictions($config, $_POST['info']);
+                    $result = $this->updateRestriction($config, $info);
                     if ($result['status'] == 'error') {
                         break;
                     }
                 }
             } else {
                 $config = mvb_Model_API::getRoleAccessConfig($role);
-                $result = $this->updateRestrictions($config, $_POST['info']);
+                $result = $this->updateRestriction($config, $info);
             }
         }
 

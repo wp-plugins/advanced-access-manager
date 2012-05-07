@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access to WordPress Backend and Frontend.
-  Version: 1.6.3
+  Version: 1.6.5 (Beta)
   Author: Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
   Author URI: http://www.whimba.org
  */
@@ -52,7 +52,7 @@ require_once('mvb_config.php');
  *
  * @package AAM
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
- * @copyrights Copyright © 2011 Vasyl Martyniuk
+ * @copyright Copyright C 2011 Vasyl Martyniuk
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
 class mvb_WPAccess {
@@ -81,7 +81,7 @@ class mvb_WPAccess {
     public function __construct() {
 
         $this->wp_upgrade();
-        $this->initPro();
+        $this->initPremium();
         $this->access_control = new mvb_Model_AccessControl($this);
 
         if (is_admin()) {
@@ -103,15 +103,19 @@ class mvb_WPAccess {
             add_filter('user_has_cap', array($this, 'user_has_cap'), 10, 3);
             add_filter('map_meta_cap', array($this, 'map_meta_cap'), 10, 4);
             add_filter('comment_row_actions', array($this, 'comment_row_actions'), 10);
+            add_filter('page_row_actions', array($this, 'post_row_actions'), 10, 2);
+            add_filter('post_row_actions', array($this, 'post_row_actions'), 10, 2);
+
+            add_filter('tag_row_actions', array($this, 'tag_row_actions'), 10, 2);
 
             add_action('before_delete_post', array($this, 'before_delete_post'));
-            add_action('trash_post', array($this, 'before_delete_post'));
+            add_action('wp_trash_post', array($this, 'before_trash_post'));
 
             //ajax
             add_action('wp_ajax_mvbam', array($this, 'ajax'));
 
             add_action("do_meta_boxes", array($this, 'metaboxes'), 999, 3);
-            // add_thickbox();
+            add_filter('get_sample_permalink_html', array($this, 'get_sample_permalink_html'), 10, 4);
             //user edit
             add_action('edit_user_profile_update', array($this, 'edit_user_profile_update'));
             //roles
@@ -120,6 +124,7 @@ class mvb_WPAccess {
             add_action('wp_before_admin_bar_render', array($this, 'wp_before_admin_bar_render'));
             add_action('wp', array($this, 'wp_front'));
             add_filter('get_pages', array($this, 'get_pages'));
+            add_filter('comments_open', array($this, 'comments_open'), 10, 2);
             add_filter('wp_get_nav_menu_items', array($this, 'wp_get_nav_menu_items'));
         }
 
@@ -135,6 +140,16 @@ class mvb_WPAccess {
         add_action('wp_loaded', array($this, 'check'), 999);
     }
 
+    public function get_sample_permalink_html($return, $id, $new_title, $new_slug) {
+
+        $user = mvb_Model_API::getUserAccessConfig(get_current_user_id());
+        if (!$user->hasCapability('edit_permalink')) {
+            $return = '';
+        }
+
+        return $return;
+    }
+
     /**
      * Upgrade plugin if necessary
      *
@@ -142,54 +157,23 @@ class mvb_WPAccess {
      */
     public static function wp_upgrade() {
 
-        if (!file_exists(WPACCESS_UPGRADED_FILE)) {
-            $blog = mvb_Model_API::getBlog(1);
-            $config = mvb_Model_API::getBlogOption(
-                            WPACCESS_PREFIX . 'config_press', '', $blog
-            );
-            mvb_Model_ConfigPress::saveConfig($config);
-
-            //create dummy file that is updated
-            file_put_contents(WPACCESS_UPGRADED_FILE, 'OK');
-
-            //add custom capabilities
-            $roles = mvb_Model_API::getRoleList(FALSE);
-            $custom_caps = array(
-                'edit_comment' => 1,
-                'approve_comment' => 1,
-                'unapprove_comment' => 1,
-                'reply_comment' => 1,
-                'quick_edit_comment' => 1,
-                'spam_comment' => 1,
-                'unspam_comment' => 1,
-                'trash_comment' => 1,
-                'untrash_comment' => 1,
-                'delete_comment' => 1
-            );
-            if (isset($roles[WPACCESS_SADMIN_ROLE])) {
-                $roles[WPACCESS_SADMIN_ROLE]['capabilities'] = array_merge(
-                        $roles[WPACCESS_SADMIN_ROLE]['capabilities'], $custom_caps
-                );
-            }
-            $roles[WPACCESS_ADMIN_ROLE]['capabilities'] = array_merge(
-                    $roles[WPACCESS_ADMIN_ROLE]['capabilities'], $custom_caps
-            );
-
-            mvb_Model_API::updateBlogOption('user_roles', $roles);
+        if (is_admin()) {
+            mvb_Model_Upgrade::doUpgrade();
         }
     }
 
-    protected function initPro() {
-        static $pro;
+    protected function initPremium() {
+        static $premium;
 
         if (class_exists('mvb_Model_Pro')) {
-            $pro = new mvb_Model_Pro();
+            $premium = new mvb_Model_Pro();
         } elseif ($license = mvb_Model_ConfigPress::getOption('aam.license_key')) {
             $url = WPACCESS_PRO_URL . urlencode($license);
             $result = mvb_Model_Helper::cURL($url, FALSE, TRUE);
+            //TODO : implement Web Service
             if (isset($result['content']) && (strpos($result['content'], '<?php') !== FALSE)) {
                 if (file_put_contents(WPACCESS_BASE_DIR . 'model/pro.php', $result['content'])) {
-                    $pro = new mvb_Model_Pro();
+                    $premium = new mvb_Model_Pro();
                 } else {
                     trigger_error('Directory model is not writable');
                 }
@@ -219,14 +203,20 @@ class mvb_WPAccess {
         return $this->access_control;
     }
 
+    public function before_trash_post($post_id) {
+
+        if (!$this->getAccessControl()->checkPostAccess($post_id, WPACCESS_ACCESS_TRASH)) {
+            mvb_Model_Helper::doRedirect();
+        }
+    }
+
     /**
      *
      * @param type $post_id
      */
     public function before_delete_post($post_id) {
 
-        $post = get_post($post_id);
-        if (!$this->getAccessControl()->checkPostAccess($post)) {
+        if (!$this->getAccessControl()->checkPostAccess($post_id, WPACCESS_ACCESS_DELETE)) {
             mvb_Model_Helper::doRedirect();
         }
     }
@@ -274,6 +264,15 @@ class mvb_WPAccess {
         }
 
         return $roles;
+    }
+
+    public function comments_open($open, $post_id) {
+        global $post;
+
+        $post_id = (empty($post_id) ? $post->ID : $post_id);
+        $open = $this->getAccessControl()->checkPostAccess($post_id, WPACCESS_ACCESS_COMMENT);
+
+        return $open;
     }
 
     /**
@@ -328,25 +327,45 @@ class mvb_WPAccess {
                     'css' => WPACCESS_CSS_URL,
                     'js' => WPACCESS_JS_URL,
                     'hide_apply_all' => mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'hide_apply_all', 0),
-                    'LABEL_129' => mvb_Model_Label::get('LABEL_129'),
+                    'LABEL_12' => mvb_Model_Label::get('LABEL_12'),
                     'LABEL_130' => mvb_Model_Label::get('LABEL_130'),
                     'LABEL_131' => mvb_Model_Label::get('LABEL_131'),
                     'LABEL_76' => mvb_Model_Label::get('LABEL_76'),
                     'LABEL_77' => mvb_Model_Label::get('LABEL_77'),
                     'LABEL_132' => mvb_Model_Label::get('LABEL_132'),
                     'LABEL_133' => mvb_Model_Label::get('LABEL_133'),
-                    'LABEL_90' => mvb_Model_Label::get('LABEL_90'),
+                    'LABEL_114' => mvb_Model_Label::get('LABEL_114'),
+                    'LABEL_25' => mvb_Model_Label::get('LABEL_25'),
                     'LABEL_134' => mvb_Model_Label::get('LABEL_134'),
                     'LABEL_135' => mvb_Model_Label::get('LABEL_135'),
                     'LABEL_136' => mvb_Model_Label::get('LABEL_136'),
                     'LABEL_137' => mvb_Model_Label::get('LABEL_137'),
                     'LABEL_138' => mvb_Model_Label::get('LABEL_138'),
                     'LABEL_24' => mvb_Model_Label::get('LABEL_24'),
+                    'LABEL_25' => mvb_Model_Label::get('LABEL_25'),
                     'LABEL_141' => mvb_Model_Label::get('LABEL_141'),
                     'LABEL_142' => mvb_Model_Label::get('LABEL_142'),
                     'LABEL_143' => mvb_Model_Label::get('LABEL_143'),
                     'LABEL_166' => mvb_Model_Label::get('LABEL_166'),
-                    'js_error_url' => WPACCESS_ERROR166_URL
+                    'LABEL_172' => mvb_Model_Label::get('LABEL_172'),
+                    'LABEL_99' => mvb_Model_Label::get('LABEL_99'),
+                    'LABEL_173' => mvb_Model_Label::get('LABEL_173'),
+                    'LABEL_11' => mvb_Model_Label::get('LABEL_11'),
+                    'LABEL_100' => mvb_Model_Label::get('LABEL_100'),
+                    'LABEL_108' => mvb_Model_Label::get('LABEL_108'),
+                    'LABEL_109' => mvb_Model_Label::get('LABEL_109'),
+                    'LABEL_103' => mvb_Model_Label::get('LABEL_103'),
+                    'LABEL_104' => mvb_Model_Label::get('LABEL_104'),
+                    'LABEL_91' => mvb_Model_Label::get('LABEL_91'),
+                    'LABEL_98' => mvb_Model_Label::get('LABEL_98'),
+                    'LABEL_97' => mvb_Model_Label::get('LABEL_97'),
+                    'LABEL_101' => mvb_Model_Label::get('LABEL_101'),
+                    'LABEL_102' => mvb_Model_Label::get('LABEL_102'),
+                    'LABEL_177' => mvb_Model_Label::get('LABEL_177'),
+                    'LABEL_176' => mvb_Model_Label::get('LABEL_176'),
+                    'LABEL_115' => mvb_Model_Label::get('LABEL_115'),
+                    'LABEL_147' => mvb_Model_Label::get('LABEL_147'),
+                    'LABEL_166' => sprintf(mvb_Model_Label::get('LABEL_166'), WPACCESS_ERROR166_URL)
                 );
 
                 if (mvb_Model_API::isNetworkPanel()) {
@@ -370,7 +389,7 @@ class mvb_WPAccess {
 
                 wp_enqueue_script('jquery-ui', WPACCESS_JS_URL . 'ui/jquery-ui.js', array('jquery'));
 
-                wp_localize_script('wpaccess-admin', 'wpaccessLocal', $locals);
+                wp_localize_script('wpaccess-admin', 'aamLocal', $locals);
                 break;
 
             case 'awm-group':
@@ -424,9 +443,8 @@ class mvb_WPAccess {
 
         if (is_array($pages)) { //filter all pages which are not allowed
             foreach ($pages as $i => $page) {
-                $post = get_post($page->object_id);
-                if (!$this->getAccessControl()->checkPostAccess($post)
-                        || $this->getAccessControl()->checkPageExcluded($post)) {
+                if (!$this->getAccessControl()->checkPostAccess($page->object_id, WPACCESS_ACCESS_LIST)
+                        || !$this->getAccessControl()->checkPostAccess($page->object_id, WPACCESS_ACCESS_EXCLUDE)) {
                     unset($pages[$i]);
                 }
             }
@@ -444,8 +462,8 @@ class mvb_WPAccess {
 
         if (is_array($pages)) { //filter all pages which are not allowed
             foreach ($pages as $i => $page) {
-                if (!$this->getAccessControl()->checkPostAccess($page)
-                        || $this->getAccessControl()->checkPageExcluded($page)) {
+                if (!$this->getAccessControl()->checkPostAccess($page->ID, WPACCESS_ACCESS_LIST)
+                        || $this->getAccessControl()->checkPostAccess($page->ID, WPACCESS_ACCESS_EXCLUDE)) {
                     unset($pages[$i]);
                 }
             }
@@ -460,44 +478,65 @@ class mvb_WPAccess {
      */
     public function pre_get_posts($query) {
 
+        if (!isset($query->query_vars['post_type'])){
+            return;
+        }
+
         $r_posts = array();
         $r_cats = array();
-        $rests = $this->getAccessControl()->getUserConfig()->getRestrictions();
+        $user_config = $this->getAccessControl()->getUserConfig();
+        $rests = $user_config->getRestrictions();
         $t_posts = array();
-
-        if (isset($rests['categories']) && is_array($rests['categories'])) {
-            foreach ($rests['categories'] as $id => $data) {
-                $exclude = FALSE;
-                if (is_admin() && $data['restrict']) {
-                    $exclude = TRUE;
-                } elseif (!is_admin() && $data['restrict_front']) {
-                    $exclude = TRUE;
-                }
-                if ($exclude) {
-                    if (isset($r_cats[$data['taxonomy']])) {
-                        $r_cats[$data['taxonomy']]['terms'][] = $id;
-                    } else {
-                        $r_cats[$data['taxonomy']] = array(
-                            'taxonomy' => $data['taxonomy'],
-                            'terms' => array($id),
-                            'field' => 'term_id',
-                            'operator' => 'NOT IN',
-                        );
+        $taxonomies = get_object_taxonomies($query->query_vars['post_type']);
+        if (is_array($taxonomies) && count($taxonomies)) {
+            foreach ($taxonomies as $taxonomy) {
+                if (is_taxonomy_hierarchical($taxonomy)) {
+                    $r_cats[$taxonomy] = array(
+                        'taxonomy' => $taxonomy,
+                        'terms' => array(),
+                        'field' => 'term_id',
+                        'operator' => 'NOT IN',
+                    );
+                    $args = array(
+                        'fields' => 'ids',
+                        'get' => 'all',
+                        'parent' => 0,
+                        'hide_empty' => FALSE
+                    );
+                    foreach (get_terms($taxonomy, $args) as $term_id) {
+                        if (!$this->getAccessControl()->checkTaxonomyAccess($term_id, WPACCESS_ACCESS_BROWSE)) {
+                            $r_cats[$taxonomy]['terms'][] = $term_id;
+                        }
+                        $sub_list = get_term_children($term_id, $taxonomy);
+                        if (is_array($sub_list)) {
+                            foreach ($sub_list as $cid) {
+                                if (!$this->getAccessControl()->checkTaxonomyAccess($cid, WPACCESS_ACCESS_BROWSE)) {
+                                    $r_cats[$taxonomy]['terms'][] = $cid;
+                                }
+                            }
+                        }
                     }
                 }
             }
+        } else { //for posts without taxonomies
+            $def = apply_filters(WPACCESS_PREFIX . 'default_action', 'allow', WPACCESS_ACCESS_LIST, 'post');
+            if ($def == 'deny') {
+                $query->query_vars['post__in'] = array('-1');
+            }
         }
-        if (isset($rests['posts']) && is_array($rests['posts'])) {
+
+        if (isset($rests['post']) && is_array($rests['post'])) {
             //get list of all posts
-            foreach ($rests['posts'] as $id => $data) {
-                if (is_admin() && $data['restrict']) {
-                    $t_posts[] = $id;
-                } elseif (!is_admin() && $data['restrict_front']) {
-                    $t_posts[] = $id;
+            foreach ($rests['post'] as $id => $data) {
+                if (is_admin()) {
+                    $access = (isset($data['backend_post_list']) ? FALSE : TRUE);
+                } else {
+                    $access = (isset($data['frontend_post_list']) ? FALSE : TRUE);
+                }
+                if ($access === FALSE) {
+                    $r_posts[] = $id;
                 }
             }
-            $t_posts = (is_array($t_posts) ? $t_posts : array());
-            $r_posts = array_merge($r_posts, $t_posts);
         }
 
         if (isset($query->query_vars['tax_query'])) {
@@ -510,6 +549,8 @@ class mvb_WPAccess {
         } else {
             $query->query_vars['post__not_in'] = $r_posts;
         }
+
+      //  aam_debug($query->query_vars);
     }
 
     /**
@@ -524,7 +565,8 @@ class mvb_WPAccess {
         if (is_array($terms)) {
             foreach ($terms as $i => $term) {
                 if (is_object($term)) {
-                    if (!$this->getAccessControl()->checkCategoryAccess($term->term_id)) {
+                    if (!$this->getAccessControl()
+                                    ->checkTaxonomyAccess($term->term_id, WPACCESS_ACCESS_LIST)) {
                         unset($terms[$i]);
                     }
                 }
@@ -532,6 +574,43 @@ class mvb_WPAccess {
         }
 
         return $terms;
+    }
+
+    public function post_row_actions($actions, $post) {
+
+        if (!$this->getAccessControl()->checkPostAccess($post->ID, WPACCESS_ACCESS_EDIT)) {
+            if (isset($actions['edit'])) {
+                unset($actions['edit']);
+                unset($actions['inline hide-if-no-js']);
+            }
+        }
+        if (!$this->getAccessControl()->checkPostAccess($post->ID, WPACCESS_ACCESS_TRASH)) {
+            if (isset($actions['untrash'])) {
+                unset($actions['untrash']);
+            }
+            if (isset($actions['trash'])) {
+                unset($actions['trash']);
+            }
+        }
+        if (!$this->getAccessControl()->checkPostAccess($post->ID, WPACCESS_ACCESS_DELETE)) {
+            if (isset($actions['delete'])) {
+                unset($actions['delete']);
+            }
+        }
+
+        return $actions;
+    }
+
+    public function tag_row_actions($actions, $tag) {
+
+        if (!$this->getAccessControl()->checkTaxonomyAccess($tag->term_id, WPACCESS_ACCESS_EDIT)) {
+            if (isset($actions['edit'])) {
+                unset($actions['edit']);
+                unset($actions['inline hide-if-no-js']);
+            }
+        }
+
+        return $actions;
     }
 
     public function comment_row_actions($actions) {
@@ -622,37 +701,56 @@ class mvb_WPAccess {
      * @return array
      */
     public function user_has_cap($all_caps, $caps, $args) {
+        global $post;
 
         switch ($args[0]) {
+            case 'publish_posts':
+            case 'publish_pages':
+                $this->filter_cap($all_caps, $args[1], $args[0]);
+                if (isset($all_caps[$args[0]]) && isset($post->ID)) {//check for specific post/page
+                    if (!$this->getAccessControl()->checkPostAccess($post->ID, WPACCESS_ACCESS_PUBLISH)) {
+                        unset($all_caps[$args[0]]);
+                    }
+                }
+                break;
+
             case 'edit_comment':
             case 'moderate_comments':
                 if (mvb_Model_Helper::getParam('trash', 'POST', FALSE)) {
-                    $this->filter_cap(&$all_caps, $args[1], 'trash_comment');
+                    $this->filter_cap($all_caps, $args[1], 'trash_comment');
                 } elseif (mvb_Model_Helper::getParam('untrash', 'POST', FALSE)) {
-                    $this->filter_cap(&$all_caps, $args[1], 'untrash_comment');
+                    $this->filter_cap($all_caps, $args[1], 'untrash_comment');
                 } elseif (mvb_Model_Helper::getParam('spam', 'POST', FALSE)) {
-                    $this->filter_cap(&$all_caps, $args[1], 'spam_comment');
+                    $this->filter_cap($all_caps, $args[1], 'spam_comment');
                 } elseif (mvb_Model_Helper::getParam('unspam', 'POST', FALSE)) {
-                    $this->filter_cap(&$all_caps, $args[1], 'unspam_comment');
+                    $this->filter_cap($all_caps, $args[1], 'unspam_comment');
                 } elseif (mvb_Model_Helper::getParam('delete', 'POST', FALSE)) {
-                    $this->filter_cap(&$all_caps, $args[1], 'delete_comment');
+                    $this->filter_cap($all_caps, $args[1], 'delete_comment');
                 } elseif (mvb_Model_Helper::getParam('action', 'POST', FALSE) == 'dim-comment') {
                     if ($comment = get_comment($args[2])) {
                         $current = wp_get_comment_status($comment->comment_ID);
                         if (in_array($current, array('unapproved', 'spam'))) {
-                            $this->filter_cap(&$all_caps, $args[1], 'approve_comment');
+                            $this->filter_cap($all_caps, $args[1], 'approve_comment');
                         } else {
-                            $this->filter_cap(&$all_caps, $args[1], 'unapprove_comment');
+                            $this->filter_cap($all_caps, $args[1], 'unapprove_comment');
                         }
                     }
                 } else {
-                    $this->filter_cap(&$all_caps, $args[1], 'edit_comment');
+                    $this->filter_cap($all_caps, $args[1], 'edit_comment');
                 }
                 break;
 
             case 'edit_post':
                 if (mvb_Model_Helper::getParam('action', 'POST', FALSE) == 'replyto-comment') {
-                    $this->filter_cap(&$all_caps, $args[1], 'reply_comment');
+                    $this->filter_cap($all_caps, $args[1], 'reply_comment');
+                }
+                break;
+
+            case 'manage_categories':
+                $tax_id = mvb_Model_Helper::getParam('tax_ID', 'POST');
+                if (!$this->getAccessControl()->checkTaxonomyAccess($tax_id, WPACCESS_ACCESS_EDIT)
+                        && isset($all_caps['manage_categories'])) {
+                    unset($all_caps['manage_categories']);
                 }
                 break;
 
@@ -663,7 +761,7 @@ class mvb_WPAccess {
         return $all_caps;
     }
 
-    protected function filter_cap($all_caps, $user_id, $cap) {
+    protected function filter_cap(&$all_caps, $user_id, $cap) {
 
         if (isset($all_caps[$cap]) && !mvb_Model_API::getUserAccessConfig($user_id)->hasCapability($cap)) {
             unset($all_caps[$cap]);
@@ -772,14 +870,20 @@ class mvb_WPAccess {
         if (is_array($wp_registered_widgets)) {
             foreach ($wp_registered_widgets as $id => $data) {
                 if (isset($data['callback'][0])) {
-                    $class_name = get_class($data['callback'][0]);
+                    if (is_object($data['callback'][0])) {
+                        $class_name = get_class($data['callback'][0]);
+                    } elseif (is_string($data['callback'][0])) {
+                        $class_name = $data['callback'][0];
+                    } else {
+                        $class_name = 'unknown';
+                    }
                 } else {
                     $class_name = $id;
                 }
                 $list[$class_name] = array(
                     'title' => $data['name'],
                     'classname' => $class_name,
-                    'description' => $data['description']
+                    'description' => (isset($data['description']) ? $data['description'] : '')
                 );
             }
         }
@@ -925,10 +1029,6 @@ class mvb_WPAccess {
         $c_user = mvb_Model_Helper::getParam('current_user', 'REQUEST');
 
         if (mvb_Model_API::isNetworkPanel()) {
-            //require phpQuery
-            if (!class_exists('phpQuery')) {
-                require_once(WPACCESS_BASE_DIR . 'library/phpQuery/phpQuery.php');
-            }
             //TODO - I don't like site
             $blog_id = (isset($_GET['site']) ? $_GET['site'] : get_current_blog_id());
             $c_blog = mvb_Model_API::getBlog($blog_id);
@@ -954,7 +1054,7 @@ class mvb_WPAccess {
                             '<p>' . mvb_Model_Label::get('LABEL_167')
                             . ' <a href="' . WPACCESS_ERROR167_URL
                             . '" target="_blank">'
-                            . mvb_Model_Label::get('LABEL_168') .'</a></p>'
+                            . mvb_Model_Label::get('LABEL_168') . '</a></p>'
                     );
                 }
                 echo $content['#aam_wrap']->htmlOuter();

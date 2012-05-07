@@ -20,9 +20,9 @@
 
 /**
  * User Config Model Class
- * 
+ *
  * User Config Object
- * 
+ *
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
@@ -33,12 +33,12 @@ class mvb_Model_UserConfig extends mvb_Model_Abstract_Config {
 
     /**
      * User's Object
-     * 
+     *
      * @var mvb_Model_User
      * @access protected
      */
     protected $user;
-    
+
     /**
      * {@inheritdoc}
      */
@@ -64,7 +64,6 @@ class mvb_Model_UserConfig extends mvb_Model_Abstract_Config {
                     'capabilities' => $this->getCapabilities(),
                     'menu_order' => $this->getMenuOrder(),
                     'restrictions' => $this->getRestrictions(),
-                    'excludes' => $this->getExcludes()
         );
 
         update_user_meta($this->getID(), WPACCESS_PREFIX . 'config', $options);
@@ -80,73 +79,20 @@ class mvb_Model_UserConfig extends mvb_Model_Abstract_Config {
     protected function getConfig() {
 
         $config = get_user_meta($this->getID(), WPACCESS_PREFIX . 'config', TRUE);
-
-        if (!$config) { //TODO - Should be deleted in next release is deprecated
-            $options = (object) $this->getOldData(WPACCESS_PREFIX . 'options');
-            $restric = $this->getOldData(WPACCESS_PREFIX . 'restrictions');
-            $config = (object) array();
-            $config->menu = (isset($options->menu) ? $options->menu : array());
-            $config->metaboxes = (isset($options->metaboxes) ? $options->metaboxes : array());
-            $config->menu_order = $this->getOldData(WPACCESS_PREFIX . 'menu_order');
-            $config->restrictions = $restric;
-            $config->capabilities = $this->getOldData(WPACCESS_PREFIX . 'capabilities');
-            $config->excludes = $this->getExcludeList($restric);
-        }
-
-        $this->setMenu($config->menu);
-        $this->setMenuOrder($config->menu_order);
-        $this->setMetaboxes($config->metaboxes);
-        if (count($config->capabilities)){
+        if ($config) {
+            $this->setMenu($config->menu);
+            $this->setMenuOrder($config->menu_order);
+            $this->setMetaboxes($config->metaboxes);
+            $this->setRestrictions($config->restrictions);
             $this->setCapabilities($config->capabilities);
         }else{
             $this->setCapabilities($this->user->getAllCaps());
         }
-        
-        $this->setRestrictions($config->restrictions);
-        $this->setExcludes($config->excludes);
-    }
-
-    /**
-     * Get Data from Database
-     * 
-     * @param string $option
-     * @return array
-     * @todo Delete in next releases
-     */
-    protected function getOldData($option) {
-
-        $data = get_user_meta($this->getID(), $option, TRUE);
-        $data = ( is_array($data) ? $data : array());
-
-        return $data;
-    }
-
-    /**
-     * Get Exclude list from current configurations
-     * 
-     * @access protected
-     * @param array $exclude
-     * @param array $restric
-     * @return array
-     * @todo Should be deleted in next releases
-     */
-    protected function getExcludeList($restric) {
-
-        $exclude = array();
-        if (isset($restric['posts']) && is_array($restric['posts'])) {
-            foreach ($restric['posts'] as $post_id => $data) {
-                if (isset($data['exclude']) && ($data['exclude'] == 1)) {
-                    $exclude[$post_id] = 1;
-                }
-            }
-        }
-
-        return $exclude;
     }
 
     /**
      * Return current User Object
-     * 
+     *
      * @return mvb_Model_User
      */
     public function getUser() {

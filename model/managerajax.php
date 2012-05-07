@@ -74,6 +74,18 @@ class mvb_Model_ManagerAjax extends mvb_Model_Manager {
         $id = mvb_Model_Helper::getParam('id', 'POST');
         $type = mvb_Model_Helper::getParam('type', 'POST');
 
+        if (mvb_Model_Helper::getParam('restore', 'POST')) {
+            $user = mvb_Model_Helper::getParam('user', 'POST');
+            $role = mvb_Model_Helper::getParam('role', 'POST');
+            if ($user) {
+                $config = mvb_Model_API::getUserAccessConfig($user);
+            } else {
+                $config = mvb_Model_API::getRoleAccessConfig($role);
+            }
+            $config->deleteRestriction($type, $id);
+            $config->saveConfig();
+        }
+
         $tmpl = mvb_Model_Template::retrieveSub(
                         'POST_INFORMATION', $this->template
         );
@@ -195,7 +207,8 @@ class mvb_Model_ManagerAjax extends mvb_Model_Manager {
         $tmpl = mvb_Model_Template::clearTemplate($tmpl);
 
         $result = array(
-            'html' => apply_filters(WPACCESS_PREFIX . 'option_page', $tmpl)
+            'html' => apply_filters(WPACCESS_PREFIX . 'option_page', $tmpl),
+            'status' => 'success'
         );
 
         return $result;

@@ -1,5 +1,5 @@
 <div class="wrap" id="aam_wrap">
-    <form action="###form_action###" method="post" id="wp-access">
+    <form action="###form_action###" method="post" id="aam-form">
         <div class="plugin-logo"></div>
         <div class="plugin-title"><h2>###LABEL_1###</h2>###version_type###</div>
         <div class="plugin-notification">
@@ -29,7 +29,7 @@
                         <div class="handlediv" title="###LABEL_72###"><br /></div>
                         <h3 class="hndle"><span>###LABEL_128###</span></h3>
                         <div class="inside">
-                            <div id="tabs">
+                            <div class="aam-tabs">
                                 <ul>
                                     <li><a href="#tabs-1">###LABEL_7###</a></li>
                                     <li><a href="#tabs-2">###LABEL_8###</a></li>
@@ -39,13 +39,13 @@
                                 </ul>
                                 <!-- ###MAIN_MENU_TAB### begin-->
                                 <div id="tabs-1">
-                                    <div class="ui-state-highlight ui-corner-all dialog" id="sorting-tip" style="float:left; padding: 3px; margin-top: 2px;">
-                                        <span class="ui-icon ui-icon-info" style="float: left; margin-right: 2px;"></span>
-                                        <span style="color:#006505;">###LABEL_11###</span>
+                                    <div class="helpbox postbox main-menu-help">
+                                        <div class="help-info"></div>
+                                        <div class="help-text">###LABEL_172###</div>
+                                        <a href="#" class="button reorganize-menu">###LABEL_12###</a>
+                                        <br class="clear" />
                                     </div>
-                                    <a href="#" class="button" id="reorganize">###LABEL_12###</a>
-                                    <br class="clear" />
-                                    <div id="main-menu-options">
+                                    <div class="main-menu-accordion">
                                         <!-- ###MAIN_MENU_ITEM### begin-->
                                         <div id="###id###">
                                             <h4><a href="#" >###name###</a></h4>
@@ -73,22 +73,19 @@
                                 <!-- ###MAIN_MENU_TAB### end-->
                                 <!-- ###METABOX_TAB### begin-->
                                 <div id="tabs-2">
-                                    <div id="initiate-message">
-                                        <div class="help-menu postbox">
-                                            <div class="tooltip tooltip-large help-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_14###</span></div>
-                                            <div style="float:left; width:80%;">
-                                                <div class="initiate-url-empty">###LABEL_15###</div>
-                                                <input type="text" id="initiateURL" class="initiate-url-text" value="" />&nbsp;&nbsp;
-                                                <a href="#" class="button initiate-url" >###LABEL_16###</a>
-                                            </div>
-                                            <div style="float:right;margin-top:8px;">
-                                                <a href="#" class="initiate-metaboxes button" >###LABEL_17###</a>
-                                            </div>
-                                            <br class="clear" />
+                                    <div class="helpbox postbox metabox-help">
+                                        <div class="tooltip tooltip-large help-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_14###</span></div>
+                                        <div style="float:left; width:80%;">
+                                            <input type="text" placeholder="###LABEL_15###" class="initialize-url-text" value="" />&nbsp;&nbsp;
+                                            <a href="#" class="button initialize-url" >###LABEL_16###</a>
                                         </div>
+                                        <div style="float:right;margin-top:8px;">
+                                            <a href="#" class="refresh-metagox-list button" >###LABEL_17###</a>
+                                        </div>
+                                        <br class="clear" />
                                     </div>
                                     <div id="progressbar"></div>
-                                    <div id="metabox-list">
+                                    <div class="metabox-accordion">
                                         <!-- ###METABOX_LIST_ITEM### begin-->
                                         <div>
                                             <h4><a href="#" >###post_type_label###</a></h4>
@@ -152,7 +149,7 @@
                                         <div class="ui-widget">
                                             <div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;">
                                                 <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
-                                                    <span style="color:#D54E21;">###LABEL_22### <a href="#" class="initiate-metaboxes" >###LABEL_23###</a></span></p>
+                                                    <span style="color:#D54E21;">###LABEL_22### <a href="#" class="refresh-metagox-list" >###LABEL_23###</a></span></p>
                                             </div>
                                         </div>
                                         <!-- ###METABOX_LIST_EMPTY### end-->
@@ -161,7 +158,7 @@
                                 <!-- ###METABOX_TAB### end-->
                                 <!-- ###CAPABILITY_TAB### begin-->
                                 <div id="tabs-3">
-                                    <div class="help-menu postbox">
+                                    <div class="helpbox postbox capability-help">
                                         <div class="help-info"></div>
                                         <span>###LABEL_169###</span>
                                         <br class="clear" />
@@ -199,7 +196,7 @@
                                         <div class="new-capability">
                                             <a href="#" class="button" id="new-capability" title="###LABEL_26###">###LABEL_27###</a>
                                         </div>
-                                        <div class="default-roles">
+                                        <div class="default-cap-set">
                                             <a href="#" class="button" title="###LABEL_28###" id="radio1">###LABEL_29###</a>
                                             <a href="#" class="button" title="###LABEL_30###" id="radio2">###LABEL_31###</a>
                                             <a href="#" class="button" title="###LABEL_32###" id="radio3">###LABEL_33###</a>
@@ -214,10 +211,9 @@
                                 <!-- ###RESTRICTION_TAB### begin-->
                                 <div id="tabs-4">
                                     <div class="tree-holder postbox">
-                                        <div id="sidetreecontrol"><a href="#">###LABEL_40###</a>&nbsp;|&nbsp;<a href="#">###LABEL_41###</a></div>
+                                        <div id="sidetreecontrol"><a href="#">###LABEL_40###</a>&nbsp;|&nbsp;<a href="#">###LABEL_41###</a>&nbsp;|&nbsp;<span>Refresh</span></div>
                                         <br class="clear" />
-                                        <ul id="tree" class="filetree">
-                                        </ul>
+                                        <ul id="tree" class="filetree"></ul>
                                     </div>
                                     <div class="post-information postbox">
                                         <div class="message-passive" id="expire-error-message">
@@ -235,118 +231,149 @@
                                         <div id="post-date">
                                             <!-- ###POST_INFORMATION### begin-->
                                             <!-- ###POST### begin-->
-                                            <table class="info-table" cellspacing="0" >
+                                            <table class="restriction-table" cellspacing="0" >
+                                                <thead>
+                                                    <tr>
+                                                        <td colspan="3" class="category-title">###name###</td>
+                                                    </tr>
+                                                </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <th>###LABEL_43###</th>
-                                                        <td>###post_title###</td>
-                                                        <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_44###</span></div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>###LABEL_46###</th>
-                                                        <td>###post_type###</td>
-                                                        <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_45###</span></div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>###LABEL_47###</th>
-                                                        <td>###post_status###</td>
-                                                        <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_48###</span></div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>###LABEL_49###</th>
-                                                        <td>###post_visibility###</td>
-                                                        <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_50###</span></div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>###LABEL_51###</th>
-                                                        <td><input type="checkbox" name="restrict_access" ###restrict_checked### value="1" /></td>
-                                                        <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_52###</span></div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>###LABEL_53###</th>
-                                                        <td><input type="checkbox" name="restrict_front_access" ###restrict_front_checked### value="1" /></td>
-                                                        <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_54###</span></div>
-                                                        </td>
-                                                    </tr>
-                                                    <!-- ###EXCLUDE_PAGE### begin-->
-                                                    <tr>
-                                                        <th>###LABEL_55###</th>
-                                                        <td><input type="checkbox" name="exclude_page" ###exclude_page_checked### value="1" /></td>
-                                                        <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_56###</span></div>
-                                                        </td>
-                                                    </tr>
-                                                    <!-- ###EXCLUDE_PAGE### end-->
-                                                    <tr>
-                                                        <th>###LABEL_57###</th>
-                                                        <td><input type="text" id="restrict_expire" value="###restrict_expire###" /></td>
-                                                        <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_58###</span></div>
-                                                        </td>
-                                                    </tr>
+                                                        <th>&nbsp;</th>
+                                                        <th><div class="table-center">Frontend</div></th>
+                                                <th><div class="table-center">Backend</div></th>
+                                                </tr>
+                                                <tr>
+                                                    <th>List</th>
+                                                    <td><input type="checkbox" name="frontend_post_list" id="frontend_post_list" value="1" /></td>
+                                                    <td><input type="checkbox" name="backend_post_list" id="backend_post_list" value="1" /></td>
+                                                </tr>
+                                                <tr id="exclude">
+                                                    <th>Exclude</th>
+                                                    <td><input type="checkbox" name="frontend_post_exclude" id="frontend_post_exclude" value="1" /></td>
+                                                    <td><input type="checkbox" name="backend_post_exclude" disabled /></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Read</th>
+                                                    <td><input type="checkbox" name="frontend_post_read" id="frontend_post_read" value="1" /></td>
+                                                    <td><input type="checkbox" disabled /></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Trash</th>
+                                                    <td><input type="checkbox" disabled /></td>
+                                                    <td><input type="checkbox" name="backend_post_trash" id="backend_post_trash" value="1" /></td>
+                                                </tr>
+
+                                                <tr>
+                                                    <th>Delete</th>
+                                                    <td><input type="checkbox" disabled /></td>
+                                                    <td><input type="checkbox" name="backend_post_delete" id="backend_post_delete" value="1" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Edit</th>
+                                                    <td><input type="checkbox" disabled /></td>
+                                                    <td><input type="checkbox" name="backend_post_edit" id="backend_post_edit" value="1" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Publish</th>
+                                                    <td><input type="checkbox" disabled /></td>
+                                                    <td><input type="checkbox" name="backend_post_publish" id="backend_post_publish" value="1" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Comment</th>
+                                                    <td><input type="checkbox" name="frontend_post_comment" id="frontend_post_comment" value="1" /></td>
+                                                    <td><input type="checkbox" disabled /></td>
+                                                </tr>
                                                 </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="3">
+                                                            <a href="#" class="button restore-postinfo" title="###LABEL_171###">###LABEL_170###</a>&nbsp;
+                                                            <a href="#" class="button-primary save-postinfo" title="###LABEL_59###">###LABEL_60###</a>&nbsp;
+                                                            <a href="#" class="button-primary save-postinfo-all" title="###LABEL_61###">###LABEL_62###</a>
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
                                             </table>
-                                            <a href="#" class="button-primary save-postinfo" title="###LABEL_59###">###LABEL_60###</a>&nbsp;<a href="#" class="button-primary save-postinfo-all" ###disabled_apply_all### title="###LABEL_61###">###LABEL_62###</a>
                                             <!-- ###POST### end-->
                                             <!-- ###CATEGORY### begin-->
-                                            <table class="info-table" cellspacing="0" >
+                                            <table class="restriction-table" >
+                                                <thead>
+                                                    <tr>
+                                                        <td colspan="3" class="category-title">###name###</td>
+                                                    </tr>
+                                                </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <th>###LABEL_43###</th>
-                                                        <td>###name###</td>
-                                                        <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_64###</span></div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>###LABEL_46###</th>
-                                                        <td>###LABEL_63###</td>
-                                                        <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_65###</span></div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>###LABEL_66###</th>
-                                                        <td>###post_number###</td>
-                                                        <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_67###</span></div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>###LABEL_51###</th>
-                                                        <td><input type="checkbox" name="restrict_access" ###restrict_checked### value="1" /></td>
-                                                        <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_68###</span></div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>###LABEL_53###</th>
-                                                        <td><input type="checkbox" name="restrict_front_access" ###restrict_front_checked### value="1" /></td>
-                                                        <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_69###</span></div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>###LABEL_57###</th>
-                                                        <td><input type="text" id="restrict_expire" value="###restrict_expire###" /></td>
-                                                        <td>
-                                                            <div class="tooltip icon-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_70###</span></div>
-                                                        </td>
-                                                    </tr>
+                                                        <th>&nbsp;</th>
+                                                        <th><div class="table-center">Frontend</div></th>
+                                                <th><div class="table-center">Backend</div></th>
+                                                </tr>
+                                                <tr>
+                                                    <th>List</th>
+                                                    <td><input type="checkbox" name="frontend_list" id="frontend_list" value="1" /></td>
+                                                    <td><input type="checkbox" name="backend_list" id="backend_list" value="1" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Browse</th>
+                                                    <td><input type="checkbox" name="frontend_browse" id="frontend_browse" value="1" /></td>
+                                                    <td><input type="checkbox" name="backend_browse" id="backend_browse" value="1" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Edit</th>
+                                                    <td><input type="checkbox" disabled /></td>
+                                                    <td><input type="checkbox" name="backend_edit" id="backend_edit" value="1" /></td>
+                                                </tr>
+                                                <tr class="premium">
+                                                    <td>
+                                                        <div class="table-left text-italic subposts"></div>
+                                                    </td>
+                                                    <td>
+                                                        <input type="checkbox" name="post_in_category" id="post_in_category" value="1" />
+                                                    </td>
+                                                    <td id="premium-ind"><span style="font-size: 10px; font-style: italic; font-weight: bold;">Premium</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Read</th>
+                                                    <td><input type="checkbox" name="frontend_post_read" id="frontend_post_read" class="frontend-browse incat-check" value="1" /></td>
+                                                    <td><input type="checkbox" disabled /></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Trash</th>
+                                                    <td><input type="checkbox" disabled /></td>
+                                                    <td><input type="checkbox" name="backend_post_trash" id="backend_post_trash" class="backend-browse incat-check" value="1" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Delete</th>
+                                                    <td><input type="checkbox" disabled /></td>
+                                                    <td><input type="checkbox" name="backend_post_delete" id="backend_post_delete" class="backend-browse incat-check" value="1" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Edit</th>
+                                                    <td><input type="checkbox" disabled /></td>
+                                                    <td><input type="checkbox" name="backend_post_edit" id="backend_post_edit" class="backend-browse incat-check" value="1" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Publish</th>
+                                                    <td><input type="checkbox" disabled /></td>
+                                                    <td><input type="checkbox" name="backend_post_publish" id="backend_post_publish" class="backend-browse incat-check" value="1" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Comment</th>
+                                                    <td><input type="checkbox" name="frontend_post_comment" id="frontend_post_comment" class="frontend-browse incat-check" value="1" /></td>
+                                                    <td><input type="checkbox" disabled /></td>
+                                                </tr>
                                                 </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="3">
+                                                            <a href="#" class="button restore-postinfo" title="###LABEL_171###">###LABEL_170###</a>&nbsp;
+                                                            <a href="#" class="button-primary save-postinfo" title="###LABEL_59###">###LABEL_60###</a>&nbsp;
+                                                            <a href="#" class="button-primary save-postinfo-all" title="###LABEL_61###">###LABEL_62###</a>
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
                                             </table>
-                                            <a href="#" class="button-primary save-postinfo" title="###LABEL_59###">###LABEL_60###</a>&nbsp;<a href="#" class="button-primary save-postinfo-all" ###disabled_apply_all### title="###LABEL_61###">###LABEL_62###</a>
                                             <!-- ###CATEGORY### end-->
                                             <!-- ###POST_INFORMATION### end-->
                                             <div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;">
@@ -360,7 +387,7 @@
                                 <!-- ###RESTRICTION_TAB### end-->
                                 <!-- ###CONFIG_PRESS_TAB### begin-->
                                 <div id="tabs-5">
-                                    <div class="help-menu postbox">
+                                    <div class="helpbox postbox">
                                         <div class="tooltip tooltip-large help-info" id="cp-ref"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>###LABEL_161###</em>###LABEL_156###</div>
                                         <a href="###reference_url###?width=800&TB_iframe=true" class="thickbox" id="cp-ref-trigger"></a>
                                         <span>###LABEL_157###</span>
@@ -478,8 +505,7 @@
                                     <!-- ###DELETE_ROLE_LIST### end-->
                                 </div>
                                 <div id="role_tab-2">
-                                    <div class="new-role-name-empty">###LABEL_87###</div>
-                                    <input type="text" value="" id="new-role-name" />
+                                    <input type="text" value="" id="new-role-name" placeholder="###LABEL_87###" />
                                     <a href="#" class="hide-if-no-js button" id="new-role-ok">###LABEL_88###</a>
                                 </div>
                             </div>
@@ -491,14 +517,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="new-role-message-error">
-                                <div class="ui-widget">
-                                    <div class="ui-state-error ui-corner-all" style="margin-top:5px; padding: 0 .7em;">
-                                        <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                                            <strong>###LABEL_90###:</strong> ###LABEL_91###</p>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <!-- ###ROLE_METABOX### end-->
@@ -506,49 +524,23 @@
             </div>
         </div>
     </form>
-    <div id="dialog-delete-confirm" class="dialog" title="###LABEL_97###">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 5px 0;"></span>###LABEL_98### - <b><span id="delete-role-title"></span></b></p>
+
+    <div id="general-dialog" class="dialog">
+        <p>
+            <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 5px 0;"></span>
+            <span class="dialog-text"></span>
+        </p>
     </div>
-    <div id="dialog-error" class="dialog" title="###LABEL_25###">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 5px 0;"></span><span id="dialog_error_message"></span></p>
+
+    <div id="capability-form" class="dialog" title="###LABEL_26###">
+        <div class="helpbox postbox">
+            <span>###LABEL_174###</span>
+        </div>
+        <input type="text" id="new-cap" placeholder="###LABEL_175###" style="width : 100%;" />
     </div>
-    <div id="dialog-reorder-confirm" class="dialog" title="###LABEL_99###">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 5px 0;"></span>###LABEL_100### - <b><span id="role-title"></span></b></p>
-    </div>
-    <div id="dialog-delete-capability" class="dialog" title="###LABEL_101###">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 5px 0;"></span>###LABEL_102### - <b><span id="delete-capability-title"></span></b></p>
-    </div>
-    <div id="dialog-confirm" class="dialog" title="###LABEL_103###">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>###LABEL_104###</p>
-    </div>
+
     <div id="dialog-apply-all" class="dialog" title="###LABEL_105###">
         <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>###LABEL_106###</p>
         <p><input type="checkbox" id="hide-apply-all" />&nbsp;<label for="hide-apply-all">###LABEL_107###</label></p>
     </div>
-    <div id="leave-confirm" class="dialog" title="###LABEL_108###">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>###LABEL_109###</p>
-    </div>
-    <div id="capability-form" class="dialog" title="###LABEL_110###">
-        <input type="text" value="" id="new-cap" name="new-cap" />
-    </div>
-    <div id="success-message" class="dialog" title="###LABEL_150###">
-        <div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em; height: auto">
-            <p>
-                <span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
-                <span style="color:#006505;" class="message-text"></span>
-            </p>
-        </div>
-    </div>
-    <div id="failed-message" class="dialog" title="###LABEL_151###">
-        <div class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; height: auto;">
-            <p>
-                <span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
-                <span class="message-text"></span>
-            </p>
-        </div>
-    </div>
-    <div id="addon-proposal" class="dialog" title="###LABEL_114###">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 5px 0;"></span><span id="addon-message"></span></p>
-    </div>
-    <div id="dialog-firsttime" class="dialog" title="###LABEL_115###">###LABEL_147###</div>
 </div>

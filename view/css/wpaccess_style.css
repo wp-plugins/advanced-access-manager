@@ -1,3 +1,7 @@
+#aam_wrap{
+    display: none;
+}
+
 .aam-warning{
     background-color: #f8e7a5;
 }
@@ -6,8 +10,14 @@
     background-color: #f9c6c9;
 }
 
-#wp-access{
-    display:none;
+#sidetreecontrol span{
+    color: #006505;
+    text-decoration: underline;
+    cursor: pointer
+}
+
+#sidetreecontrol span:hover{
+    color : #4f7da6;
 }
 
 #metabox-list{
@@ -71,13 +81,6 @@
     font: 11px "Lucida Grande", Verdana, Arial, "Bitstream Vera Sans", sans-serif
 }
 
-.initiate-url-empty{
-    position:absolute;
-    margin: 8px 0 0 7px;
-    color: #9E9B9B;
-    font: 12px "Lucida Grande", Verdana, Arial, "Bitstream Vera Sans", sans-serif
-}
-
 .delete-role-table td{
     font-size: 12px;
     padding: 3px 0px;
@@ -116,9 +119,17 @@
     text-decoration: none;
 }
 
-.help-menu{
+.helpbox{
     padding: 5px;
+    clear : both;
 }
+
+.help-text{
+    float: left;
+    margin: 5px 2px;
+    width : 70%;
+    position: relative;
+ }
 
 .help-info{
     float:left;
@@ -182,7 +193,7 @@
     border-radius: 3px;
 }
 
-.premium-capability{
+.premium{
     background-color: #f1dcdc;
 }
 
@@ -234,13 +245,12 @@
 #progressbar{
     height: 22px;
     width:98%;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 5px auto;
     display:none;
 }
 
 .ui-progressbar-value {
-    background-image: url(ui/images/pbar-ani.gif);
+    background-image: url(images/pbar-ani.gif);
 }
 
 .metaboxlist-holder{
@@ -265,7 +275,7 @@
     padding: 5px 0 0 15px;
 }
 
-.initiate-url-text{
+.initialize-url-text{
     width:70%;
 }
 
@@ -273,7 +283,7 @@
     text-align: justify;
 }
 
-.default-roles{
+.default-cap-set{
     float:right;
 }
 
@@ -322,23 +332,67 @@
     position: relative;
 }
 
-.info-table{
-    margin: 3px 0 5px 7px;
+.restriction-table{
+    width : 90%;
+    margin: 0px auto;
 }
 
-.info-table th{
-    padding-top: 5px;
+.restriction-table thead{
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: bold;
+}
+.restriction-table thead a{
+    text-decoration: none;
+}
+.restriction-table thead td{
+    border-bottom: 1px solid #FF0000;
+    padding: 3px 0px 6px 0px;
+}
+
+.restriction-table tbody th{
+    font-weight: bold;
     text-align: left;
-    font-size: 12px;
+    padding: 4px 0px;
 }
 
-.info-table td{
-    padding-top: 5px;
-    padding-left: 7px;
+.restriction-table tbody td{
+    text-align: center;
+}
+
+.table-center{
+    text-align: center;
+    margin: 0px auto;
+}
+.table-left{
+    text-align: left;
+}
+.text-italic{
+    font-style: italic;
+}
+
+.last{
+    padding-bottom: 10px;
+}
+
+
+
+.subposts{
+    padding: 4px;
+}
+
+.restriction-table tfoot td{
+    padding-top: 6px;
 }
 
 .save-postinfo, .save-postinfo-all{
     float:right;
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
+
+.restore-postinfo{
+    float:left;
     margin-bottom: 5px;
     margin-right: 5px;
 }
@@ -351,9 +405,9 @@
     font-weight: bold;
 }
 
-#reorganize{
+.reorganize-menu{
     float:right;
-    margin-bottom: 5px;
+    margin: 2px 3px 2px 0;
 }
 #sorting-tip{
     font-size: 11px;
