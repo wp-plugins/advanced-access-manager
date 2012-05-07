@@ -25,9 +25,7 @@ define('WPACCESS_DIRNAME', basename(WPACCESS_BASE_DIR));
 define('WPACCESS_PRO_URL', 'http://whimba.org/get-pro/');
 
 define('WPACCESS_ERROR162_URL', 'http://whimba.org/forum/viewtopic.php?f=7&t=244');
-define('WPACCESS_ERROR163_URL', 'http://whimba.org/forum/viewtopic.php?f=7&t=245');
 define('WPACCESS_ERROR164_URL', 'http://whimba.org/forum/viewtopic.php?f=7&t=246');
-define('WPACCESS_ERROR165_URL', 'http://whimba.org/forum/viewtopic.php?f=7&t=247');
 define('WPACCESS_ERROR166_URL', 'http://whimba.org/forum/viewtopic.php?f=7&t=5');
 define('WPACCESS_ERROR167_URL', 'http://whimba.org/forum/viewtopic.php?f=7&t=248');
 

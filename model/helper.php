@@ -408,10 +408,15 @@ class mvb_Model_Helper {
     public static function getTaxonomyByTerm($term_id) {
         global $wpdb;
 
-        $query = "SELECT taxonomy FROM {$wpdb->term_taxonomy} ";
-        $query .= "WHERE term_id = {$term_id}";
+        if ($term_id){
+            $query = "SELECT taxonomy FROM {$wpdb->term_taxonomy} ";
+            $query .= "WHERE term_id = {$term_id}";
+            $result = $wpdb->get_var($query);
+        }else{
+            $result = FALSE;
+        }
 
-        return $wpdb->get_var($query);
+        return $result;
     }
 
     /**

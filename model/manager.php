@@ -288,24 +288,6 @@ class mvb_Model_Manager {
                     $item_tmpl
             );
         }
-        if (!is_writable(WPACCESS_BASE_DIR . 'logs/error.log')){
-            $list .= mvb_Model_Template::updateMarkers(
-                    array(
-                        '###message###' => mvb_Model_Label::get('LABEL_163'),
-                        '###url###' => WPACCESS_ERROR163_URL
-                    ),
-                    $item_tmpl
-            );
-        }
-        if (filesize(WPACCESS_BASE_DIR . 'logs/error.log')){
-            $list .= mvb_Model_Template::updateMarkers(
-                    array(
-                        '###message###' => mvb_Model_Label::get('LABEL_165'),
-                        '###url###' => WPACCESS_ERROR165_URL
-                    ),
-                    $item_tmpl
-            );
-        }
 
         return mvb_Model_Template::replaceSub('ERROR_LIST', $list, $tmpl);
     }

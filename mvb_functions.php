@@ -100,21 +100,4 @@ function aam_set_current_user() {
     }
 }
 
-function mvb_warning() {
-    echo "<div id='mvb-warning' class='updated fade'>
-        <p><strong>" . mvb_Model_Label::get('LABEL_139') . "</strong></p></div>";
-}
-
-if (mvb_Model_ConfigPress::getOption('aam.error_reporting', 'false') == 'true') {
-    error_reporting(E_ALL | E_STRICT);
-    ini_set('display_errors', FALSE);
-
-    //autoloading is not working during error handling
-    require_once('model/errorhandler.php');
-
-    if (set_error_handler('mvb_Model_errorHandler::handle')) {
-        add_action('admin_notices', 'mvb_warning');
-    }
-    register_shutdown_function('mvb_Model_errorHandler::fatalHandler');
-}
 ?>

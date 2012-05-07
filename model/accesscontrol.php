@@ -152,7 +152,7 @@ class mvb_Model_AccessControl {
      */
     public function checkTaxonomyAccess($id, $action) {
 
-        $access = add_filter(WPACCESS_PREFIX . 'default_action', TRUE, $action, 'taxonomy');
+        $access = apply_filters(WPACCESS_PREFIX . 'default_action', TRUE, $action, 'taxonomy');
 
         if ($data = $this->getUserConfig()->getRestriction('taxonomy', $id)) {
             if (is_admin()) {
@@ -175,7 +175,7 @@ class mvb_Model_AccessControl {
      */
     public function checkPostAccess($post_id, $action) {
 
-        $access = add_filter(WPACCESS_PREFIX . 'default_action', TRUE, $action, 'post');
+        $access = apply_filters(WPACCESS_PREFIX . 'default_action', TRUE, $action, 'post');
         $data = $this->getUserConfig()->getRestriction('post', $post_id);
         if (!empty($data)){
              if (is_admin()) {

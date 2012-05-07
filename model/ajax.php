@@ -518,7 +518,7 @@ class mvb_Model_Ajax {
                 }
             }
         } else {
-            $parts = preg_split('/\-/', $type);
+            $parts = explode('-', $type);
 
             switch (count($parts)) {
                 case 1: //root of the post type

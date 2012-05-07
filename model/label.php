@@ -139,7 +139,6 @@ class mvb_Model_Label {
         self::$labels['LABEL_136'] = __('Current Role can not be restored!', 'aam');
         self::$labels['LABEL_137'] = __('Apply All', 'aam');
         self::$labels['LABEL_138'] = __('Error during information grabbing!', 'aam');
-        self::$labels['LABEL_139'] = __('Advaned Access Manager will not work properly in fact other Error Handler detected.', 'aam');
         self::$labels['LABEL_140'] = __('Premium', 'aam');
         self::$labels['LABEL_141'] = __('Create', 'aam');
         self::$labels['LABEL_142'] = __('Do not Create', 'aam');
@@ -168,9 +167,7 @@ class mvb_Model_Label {
         self::$labels['restrict_message'] = __('<p>You do not have sufficient permissions to perform this action</p>', 'aam');
         self::$labels['LABEL_161'] = __('ConfigPress reference', 'aam');
         self::$labels['LABEL_162'] = __('Config File is not Writable.', 'aam');
-        self::$labels['LABEL_163'] = __('Error Log File is not Writable.', 'aam');
         self::$labels['LABEL_164'] = __('Module Directory is not Writable.', 'aam');
-        self::$labels['LABEL_165'] = __('Error Log is not Empty.', 'aam');
         self::$labels['LABEL_166'] = __('JavaScript Error Appeared on Page. <a href="%s" target="_blank">Ream more...</a>', 'aam');
         self::$labels['LABEL_167'] = __('Only first 5 blog applied.', 'aam');
         self::$labels['LABEL_168'] = __('Read more...', 'aam');
@@ -227,6 +224,9 @@ class mvb_Model_Label {
         self::$labels['LABEL_58'] = __('', 'aam');
         self::$labels['LABEL_4'] = __('', 'aam');
         self::$labels['LABEL_5'] = __('', 'aam');
+        self::$labels['LABEL_139'] = __('', 'aam');
+        self::$labels['LABEL_165'] = __('', 'aam');
+        self::$labels['LABEL_163'] = __('', 'aam');
 
         self::initCapabilityDescriptions();
     }

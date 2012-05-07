@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access to WordPress Backend and Frontend.
-  Version: 1.6.5 (Beta)
+  Version: 1.6.5.1 (Beta)
   Author: Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
   Author URI: http://www.whimba.org
  */
@@ -463,7 +463,7 @@ class mvb_WPAccess {
         if (is_array($pages)) { //filter all pages which are not allowed
             foreach ($pages as $i => $page) {
                 if (!$this->getAccessControl()->checkPostAccess($page->ID, WPACCESS_ACCESS_LIST)
-                        || $this->getAccessControl()->checkPostAccess($page->ID, WPACCESS_ACCESS_EXCLUDE)) {
+                        || !$this->getAccessControl()->checkPostAccess($page->ID, WPACCESS_ACCESS_EXCLUDE)) {
                     unset($pages[$i]);
                 }
             }
