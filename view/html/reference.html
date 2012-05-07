@@ -1,0 +1,236 @@
+<div id="sidetree" class="postbox">
+    <div id="sidetreecontrol"><a href="?#">Collapse All</a> | <a href="?#">Expand All</a></div>
+
+    <ul id="tree">
+        <li><strong>Introduction</strong>
+            <ul>
+                <li><a href="#" link="basic-idea">Basic Idea</a></li>
+                <li><a href="#" link="syntax">Syntax</a></li>
+            </ul>
+        </li>
+        <li><span><strong>Reference</strong></span>
+            <ul>
+                <li><a href="#" link="aam-section">AAM Section</a>
+                    <ul>
+                        <li><a href="#" link="caching">caching</a></li>
+                        <li><a href="#" link="delete-capabilities">delete_capabilities</a></li>
+                        <li><a href="#" link="error-reporting">error_reporting</a></li>
+                        <li>
+                            <a href="#" link="multisite">multisite</a>
+                            <ul>
+                                <li><a href="#" link="apply-all">apply_all</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#" link="page-category">page_category</a></li>
+                        <li><a href="#" link="license-key">lincense_key</a></li>
+                    </ul>
+                </li>
+
+                <li><a href="#" link="backend-section">Backend Section</a>
+                    <ul>
+                        <li>
+                            <a href="#" link="access">access</a>
+                            <ul>
+                                <li>
+                                    <a href="#" link="deny">deny</a>
+                                    <ul>
+                                        <li><a href="#" link="redirect">redirect</a></li>
+                                        <li><a href="#" link="message">message</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#" link="taxonomy">taxonomy</a>
+                                    <ul>
+                                        <li>
+                                            <a href="#" link="default">default</a>
+                                            <ul>
+                                                <li><a href="#" link="list">list</a></li>
+                                                <li><a href="#" link="browse">browse</a></li>
+                                                <li><a href="#" link="edit">edit</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#" link="post">post</a>
+                                    <ul>
+                                        <li>
+                                            <a href="#" link="default">default</a>
+                                            <ul>
+                                                <li><a href="#" link="list">list</a></li>
+                                                <li><a href="#" link="trash">trash</a></li>
+                                                <li><a href="#" link="delete">delete</a></li>
+                                                <li><a href="#" link="edit">edit</a></li>
+                                                <li><a href="#" link="publish">publish</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+                <li><a href="#" link="frontend-section">Frontend Section</a>
+                    <ul>
+                        <li>
+                            <a href="#" link="access">access</a>
+                            <ul>
+                                <li>
+                                    <a href="#" link="deny">deny</a>
+                                    <ul>
+                                        <li><a href="#" link="redirect">redirect</a></li>
+                                        <li><a href="#" link="message">message</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#" link="taxonomy">taxonomy</a>
+                                    <ul>
+                                        <li>
+                                            <a href="#" link="default">default</a>
+                                            <ul>
+                                                <li><a href="#" link="list">list</a></li>
+                                                <li><a href="#" link="browse">browse</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#" link="post">post</a>
+                                    <ul>
+                                        <li>
+                                            <a href="#" link="default">default</a>
+                                            <ul>
+                                                <li><a href="#" link="list">list</a></li>
+                                                <li><a href="#" link="read">read</a></li>
+                                                <li><a href="#" link="comment">comment</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+
+    </ul>
+</div>
+<div id="content" class="postbox">
+    <p>Select a topic from Guide Reference Tree</p>
+</div>
+
+<div class="context">
+    <div class="basic-idea">
+        <p>ConfigPress originally was designed to avoid frequent code changes and give ability for administrator, easy and fast configure plugin behavior.</p>
+        <p>Configuration is based on INI format which is quite popular and easy to learn.</p>
+        <p>For any questions or concerns please visit a forum <a href="http://whimba.org/support" target="_blank">here</a></p>
+    </div>
+    <div class="syntax">
+        <p>There are three major configuration parts you will deal with: comments, sections and parameters</p>
+        <p><b>Comments</b></p>
+        <p>It is good practice to leave some comments about parameters and values you specified. That is why comments are very important part</p>
+        <p>Comment starts from semicolon <b>;</b> and ends in the end of line:</p>
+        <p><span style="color: #00BFFF">[aam]</span><br/><br/>
+            <span style="font-style: italic;color: #BFBF00;">;specify callback function to check if user has access to delete capabilities</span><br/><br/>
+            delete_capabilities.userFunc = <span style="color: #BF4000">"checkUser::hasDeleteCap"</span>
+        </p>
+        <p><b>Sections</b></p>
+        <p>All ConfigPress parameters are grouped by section. Section starts from open <b>[</b> and ends by closing <b>]</b></p>
+        <p><span style="color: #00BFFF">[aam]</span><br/><br/>
+        <p><span style="color: #00BFFF">[backend]</span><br/><br/>
+        <p><b>Parameters</b></p>
+        <p>Each Parameter should belong to section and it allows to have only alphanumeric symbols, underscore or dash. Also all parameters follow the same logic. It means you can define userFunc for anyone.</p>
+        <p><span style="color: #00BFFF">[aam]</span><br/><br/>error_reporting = <span style="color: #BF4000">"true"</span></p>
+    </div>
+    <div class="aam-section">
+        <p>AAM is a section for configuring the way plugin's core works. Something like caching, error reporting or modifying Access Manager Option page</p>
+    </div>
+    <div class="caching">
+        <p>Advanced Access Manager has internal caching for User's and Role's configurations. By default caching is turned on.</p>
+        <p><span style="color: #00BFFF">[aam]</span><br/><br/>caching = <span style="color: #BF4000">"true"</span></p>
+    </div>
+    <div class="delete-capabilities">
+        <p>This is additional protection layout in fact capabilities are the most important part of access management in WordPress. By default it is false</p>
+        <p><span style="color: #00BFFF">[aam]</span><br/><br/>delete_capabilities = <span style="color: #BF4000">"false"</span></p>
+    </div>
+    <div class="error-reporting">
+        <p>Deprecated and Removed in release 1.6.5.1 (Beta)</p>
+        <p>Use Advanced Access Manager error reporting feature and log all errors, related to this plugin to internal error log. By default is false</p>
+        <p><span style="color: #00BFFF">[aam]</span><br/><br/>error_reporting = <span style="color: #BF4000">"true"</span></p>
+    </div>
+    <div class="multisite">
+        <p>Group of settings for multisite support</p>
+    </div>
+    <div class="apply-all">
+        <p>If you have a lot of sites on multisite setup, you have possibility to apply configurations to all sites. It'll duplicate Admin Menu, Menu Order, Metaboxes and Widgets, Capabilities. Please notice that this feature is limited for basic version of Advanced Access Manager. By default it is false.</p>
+        <p><span style="color: #00BFFF">[aam]</span><br/><br/>multisite.apply_all = <span style="color: #BF4000">"false"</span></p>
+    </div>
+    <div class="page-category">
+        <p>Group Pages into Categories. It works the same way as Post's Categories. This option is working ONLY for Premium version of Advanced Access Manager. Default value is false.</p>
+        <p><span style="color: #00BFFF">[aam]</span><br/><br/>page_category = <span style="color: #BF4000">"false"</span></p>
+    </div>
+    <div class="license-key">
+        <p>If you have purchased premium version of Advanced Access Manager, you have to receive a license key.</p>
+        <p><span style="color: #00BFFF">[aam]</span><br/><br/>license_key = <span style="color: #BF4000">"2337eb1b9e4c9e8a64ffddf5b5735f9a7c983a26"</span</p>
+    </div>
+    <div class="backend-section">
+        <p>Section to specify Advanced Access Manager behavior in Backend</p>
+    </div>
+    <div class="access">
+        <p>Group of settings for resource access</p>
+    </div>
+    <div class="deny">
+        <p>Group of settings for access denied behavior to resource</p>
+    </div>
+    <div class="redirect">
+        <p>Specify redirect if access is denied for specific resource. This will enforce the redirect to specified URL or if it is userFunc it'll execute this function.<br/>
+            PLEASE NOTICE! Custom userFunc should die an application or redirect to some URL by sending header, otherwise the application will through the Exception "Unauthorized Action"<br/>
+            If redirect is valid URL then it'll redirect to that URL<br/>
+            If redirect is number, it'll try to redirect to page or post with that ID by using WordPress function get_permalink<br/>
+            If redirect has property userFunc it'll execute the userFunc</p>
+        <p><span style="color: #00BFFF">[backend]</span><br/><br/>access.deny.redirect = <span style="color: #BF4000">"5"</span></p>
+    </div>
+    <div class="message">
+        <p>Specify the restriction message if access is denied.</p>
+        <p><span style="color: #00BFFF">[backend]</span><br/><br/>access.deny.message = <span style="color: #BF4000">"You are not allowed to view this page"</span></p>
+    </div>
+    <div class="frontend-section">
+        <p>Section to specify Advanced Access Manager behavior on Frontend</p>
+    </div>
+    <div class="default">
+        <p>Holder for default behavior</p>
+    </div>
+    <div class="taxonomy">
+        <p>Holder for taxonomy configurations</p>
+    </div>
+    <div class="post">
+        <p>Holder for post configurations</p>
+    </div>
+    <div class="list">
+        <p>Specify default listing. It means allow or deny listing post or taxonomy</p>
+        <p><span style="color: #00BFFF">[backend]</span><br/><br/>access.taxonomy.default.list = <span style="color: #BF4000">"deny"</span></p>
+    </div>
+    <div class="browse">
+        <p>Not commented yet.</p>
+    </div>
+    <div class="edit">
+        <p>Not commented yet.</p>
+    </div>
+    <div class="read">
+        <p>Not commented yet.</p>
+    </div>
+    <div class="comment">
+        <p>Not commented yet.</p>
+    </div>
+    <div class="publish">
+        <p>Not commented yet.</p>
+    </div>
+    <div class="trash">
+        <p>Not commented yet.</p>
+    </div>
+    <div class="delete">
+        <p>Not commented yet.</p>
+    </div>
+</div>
