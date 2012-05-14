@@ -93,9 +93,9 @@ final class mvb_Model_API {
 
         $user_id = ($user_id ? $user_id : get_current_user_id());
 
-        if (mvb_Model_API::isNetworkPanel()){
+        if (mvb_Model_API::isNetworkPanel()) {
             $super = (is_super_admin($user_id) ? TRUE : FALSE);
-        }else{
+        } else {
             $super = (self::getCurrentUser()->has_cap(WPACCESS_SADMIN_ROLE) ? TRUE : FALSE);
         }
 
@@ -217,12 +217,44 @@ final class mvb_Model_API {
                 } else {
                     $role_list = $config->getUser()->getRoles();
                 }
-                $m_config = mvb_Model_API::getRoleAccessConfig(array_shift($role_list));
-                foreach ($role_list as $role) {
-                    mvb_merge_configs($m_config, mvb_Model_API::getRoleAccessConfig($role));
+                //get first role and use as base
+                //TODO - probably implement multirole support
+                $r_config = mvb_Model_API::getRoleAccessConfig(array_shift($role_list));
+
+                if (!count($config->getMenu())) {
+                    $config->setMenu($r_config->getMenu());
                 }
 
-                mvb_merge_configs($config, $m_config);
+                if (!count($config->getMetaboxes())) {
+                    $config->setMetaboxes($r_config->getMetaboxes());
+                }
+
+                if (!count($config->getMenuOrder())) {
+                    $config->setMenuOrder($r_config->getMenuOrder());
+                }
+
+                if (!count($config->getCapabilities())) {
+                    $config->setCapabilities($r_config->getCapabilities());
+                }
+
+                //merge restrictions
+                $role_restrs = $r_config->getRestrictions();
+                if (count($role_restrs)) {
+                    if (isset($role_restrs['post'])) {
+                        foreach ($role_restrs['post'] as $id => $data) {
+                            if (!$config->hasRestriction('post', $id)) {
+                                $config->addRestriction('post', $id, $data);
+                            }
+                        }
+                    }
+                    if (isset($role_restrs['taxonomy'])){
+                        foreach ($role_restrs['taxonomy'] as $id => $data) {
+                            if (!$config->hasRestriction('taxonomy', $id)) {
+                                $config->addRestriction('taxonomy', $id, $data);
+                            }
+                        }
+                    }
+                }
 
                 if (!$force_roles) {
                     mvb_Model_Cache::saveCacheData('user', $user_id, $config);

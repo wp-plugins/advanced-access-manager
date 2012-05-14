@@ -51,38 +51,6 @@ function mvb_autoload($class_name) {
 
 spl_autoload_register('mvb_autoload');
 
-/**
- * Merget to configs
- *
- * @param object $config
- * @param object $m_config
- */
-function mvb_merge_configs($config, $m_config) {
-
-    if (!count($config->getMenu())) {
-        $config->setMenu($m_config->getMenu());
-    }
-
-    if (!count($config->getMetaboxes())) {
-        $config->setMetaboxes($m_config->getMetaboxes());
-    }
-
-    if (!count($config->getMenuOrder())) {
-        $config->setMenuOrder($m_config->getMenuOrder());
-    }
-
-//    if (mvb_Model_Helper::isLowerLevel($config, $m_config)) {
-//    }
-
-    $caps = array_merge($config->getCapabilities(), $m_config->getCapabilities());
-    $config->setCapabilities($caps);
-
-    $rests = mvb_Model_Helper::array_merge_recursive($m_config->getRestrictions(), $config->getRestrictions());
-    $config->setRestrictions($rests, FALSE);
-
-    return $config;
-}
-
 function aam_set_current_user() {
     global $current_user;
 

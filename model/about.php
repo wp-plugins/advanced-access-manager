@@ -1,18 +1,31 @@
 <?php
 
+/*
+  Copyright (C) <2011>  Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ */
+
 class mvb_Model_About {
+
+    protected $template;
 
     public function __construct() {
 
-        $path = 'http://whimba.org/public/awm-group/admin_about.html';
-
-        $result = mvb_Model_Helper::cURL($path, FALSE, TRUE);
-
-         if (isset($result['content']) && $result['content']) {
-             $this->template = $result['content'];
-         }else{
-            $this->template = '<p>Error during template parsing. Please follow the link to read <a href="http://whimba.org" target="_blank">more</a></p>';
-        }
+        $client = new SoapClient(WPACCESS_AWM_WSDL, array('cache_wsdl' => TRUE));
+        $this->template = base64_decode($client->retrieveAboutHTML());
     }
 
     public function manage() {

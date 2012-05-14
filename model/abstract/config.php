@@ -350,7 +350,7 @@ abstract class mvb_Model_Abstract_Config {
      */
     public function getRestriction($type, $id) {
 
-        $result = array();
+        $result = NULL;
 
         if ($this->hasRestriction($type, $id)) {
             $result = $this->restrictions[$type][$id];
@@ -365,8 +365,7 @@ abstract class mvb_Model_Abstract_Config {
                     if (is_array($cat_list)) {
                         $cat_list = array_reverse($cat_list);
                         foreach ($cat_list as $cat_id) {
-                            if ($this->hasRestriction('taxonomy', $cat_id)) {
-                                $r = $this->getRestriction('taxonomy', $cat_id);
+                            if ( $r = $this->getRestriction('taxonomy', $cat_id)) {
                                 if (isset($r['post_in_category'])) {
                                     foreach ($r as $key => $value) {
                                         if (strpos($key, '_post_')) {
@@ -390,11 +389,13 @@ abstract class mvb_Model_Abstract_Config {
             }
 
             //update restriction by configPress
-            if (empty($result)) {
+            if (is_null($result)) {
                 $result = $this->populateRestriction($type);
             }
 
-            $this->addRestriction($type, $id, $result); //cache result
+            if (!is_null($result)){
+                $this->addRestriction($type, $id, $result); //cache result
+            }
         }
 
         return $result;
@@ -404,7 +405,7 @@ abstract class mvb_Model_Abstract_Config {
 
         $result = array();
 
-        if (defined('AAM_PRO')) {
+        if (mvb_Model_Helper::isPremium()) {
             $result = mvb_Model_Pro::populateRestriction($type);
         }
 

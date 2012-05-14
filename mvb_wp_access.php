@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access to WordPress Backend and Frontend.
-  Version: 1.6.5.1 (Beta)
+  Version: 1.6.5.2
   Author: Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
   Author URI: http://www.whimba.org
  */
@@ -24,22 +24,6 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
- */
-
-
-/*
- * =============================================================================
- *                        ALL DEVELOPERS NOTIFICATION
- *                        ===========================
- * If you read this message it means you are interested in code and can be treated
- * as a developer.
- * I'm not recommending for current version of plugin, do patches or add-ons.
- * Version 2.0 will be totally different and will follow MVC patterns.
- * There are some filters already implemented in this plugin so I'll leave them
- * in latest version for compatibility reasons.
- * If you have any questions of want to participate in this project, contact me
- * via e-mail whimba@gmail.com
- * =============================================================================
  */
 
 require_once('mvb_config.php');
@@ -76,6 +60,7 @@ class mvb_WPAccess {
     /**
      * Initialize all necessary vars and hooks
      *
+     * @access public
      * @return void
      */
     public function __construct() {
@@ -85,11 +70,9 @@ class mvb_WPAccess {
         $this->access_control = new mvb_Model_AccessControl($this);
 
         if (is_admin()) {
-            //init labels
-            mvb_Model_Label::initLabels();
-
-            add_action('admin_print_scripts', array($this, 'admin_print_scripts'));
-            add_action('admin_print_styles', array($this, 'admin_print_styles'));
+            //print required JS & CSS
+            add_action('admin_print_scripts', array($this, 'adminPrintScripts'));
+            add_action('admin_print_styles', array($this, 'adminPrintStyles'));
 
             if (mvb_Model_API::isNetworkPanel()) {
                 add_action('network_admin_menu', array($this, 'admin_menu'), 999);
@@ -99,15 +82,12 @@ class mvb_WPAccess {
 
             add_action('admin_action_render_optionlist', array($this, 'render_optionlist'));
 
-            //Add Capabilities WP core forgot to
             add_filter('user_has_cap', array($this, 'user_has_cap'), 10, 3);
             add_filter('map_meta_cap', array($this, 'map_meta_cap'), 10, 4);
             add_filter('comment_row_actions', array($this, 'comment_row_actions'), 10);
             add_filter('page_row_actions', array($this, 'post_row_actions'), 10, 2);
             add_filter('post_row_actions', array($this, 'post_row_actions'), 10, 2);
-
             add_filter('tag_row_actions', array($this, 'tag_row_actions'), 10, 2);
-
             add_action('before_delete_post', array($this, 'before_delete_post'));
             add_action('wp_trash_post', array($this, 'before_trash_post'));
 
@@ -140,6 +120,115 @@ class mvb_WPAccess {
         add_action('wp_loaded', array($this, 'check'), 999);
     }
 
+    /**
+     * Print Stylesheets to the head of HTML
+     *
+     * @access public
+     * @return void
+     */
+    public function adminPrintStyles() {
+
+        $print_common = TRUE;
+        switch (mvb_Model_Helper::getParam('page')) {
+            case 'wp_access':
+                wp_enqueue_style('wpaccess-style', WPACCESS_CSS_URL . 'wpaccess_style.css');
+                wp_enqueue_style('wpaccess-treeview', WPACCESS_CSS_URL . 'treeview/jquery.treeview.css');
+                wp_enqueue_style('codemirror', WPACCESS_CSS_URL . 'codemirror/codemirror.css');
+                wp_enqueue_style('jquery-ui', WPACCESS_CSS_URL . 'ui/jquery-ui.css');
+                wp_enqueue_style('thickbox');
+                break;
+
+            case 'awm-group':
+                $client = new SoapClient(WPACCESS_AWM_WSDL, array('cache_wsdl' => TRUE));
+                $header = $client->retrieveAboutHeader();
+                if (isset($header['css'])){
+                    foreach($header['css'] as $key => $link){
+                        wp_enqueue_style($key, $link);
+                    }
+                }
+                break;
+
+            default:
+                $print_common = FALSE;
+                break;
+        }
+
+        if ($print_common) {
+            //core styles
+            wp_enqueue_style('dashboard');
+            wp_enqueue_style('global');
+            wp_enqueue_style('wp-admin');
+        }
+    }
+
+    /**
+     * Print JS Script to the HTML header
+     *
+     * @access public
+     */
+    public function adminPrintScripts() {
+
+        $print_common = TRUE;
+        switch (mvb_Model_Helper::getParam('page')) {
+            case 'wp_access':
+                wp_enqueue_script('jquery-treeview', WPACCESS_JS_URL . 'treeview/jquery.treeview.js');
+                wp_enqueue_script('jquery-treeedit', WPACCESS_JS_URL . 'treeview/jquery.treeview.edit.js');
+                wp_enqueue_script('jquery-treeview-ajax', WPACCESS_JS_URL . 'treeview/jquery.treeview.async.js');
+                wp_enqueue_script('wpaccess-admin', WPACCESS_JS_URL . 'admin-options.js');
+                wp_enqueue_script('codemirror', WPACCESS_JS_URL . 'codemirror/codemirror.js');
+                wp_enqueue_script('codemirror-xml', WPACCESS_JS_URL . 'codemirror/ini.js');
+                wp_enqueue_script('thickbox');
+                wp_enqueue_script('jquery-ui', WPACCESS_JS_URL . 'ui/jquery-ui.js', array('jquery'));
+                $locals = array(
+                    'nonce' => wp_create_nonce(WPACCESS_PREFIX . 'ajax'),
+                    'css' => WPACCESS_CSS_URL,
+                    'js' => WPACCESS_JS_URL,
+                    'hide_apply_all' => mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'hide_apply_all', 0),
+                );
+                $locals = array_merge($locals, mvb_Model_Label::getJSLocalization());
+
+                if (mvb_Model_API::isNetworkPanel()) {
+                    //can't use admin-ajax.php in fact it doesn't load menu and submenu
+                    $blog_id = (isset($_GET['site']) ? $_GET['site'] : get_current_blog_id());
+                    $c_blog = mvb_Model_API::getBlog($blog_id);
+                    $locals['handlerURL'] = get_admin_url($c_blog->getID(), 'index.php');
+                    $locals['ajaxurl'] = get_admin_url($c_blog->getID(), 'admin-ajax.php');
+                    wp_enqueue_script('wpaccess-admin-multisite', WPACCESS_JS_URL . 'admin-multisite.js');
+                    wp_enqueue_script('wpaccess-admin-url', WPACCESS_JS_URL . 'jquery.url.js');
+                } else {
+                    $locals['handlerURL'] = admin_url('index.php');
+                    $locals['ajaxurl'] = admin_url('admin-ajax.php');
+                }
+
+                if (!mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'first_time')) {
+                    $locals['first_time'] = 1;
+                }
+
+                wp_localize_script('wpaccess-admin', 'aamLocal', $locals);
+                break;
+
+            case 'awm-group':
+                $client = new SoapClient(WPACCESS_AWM_WSDL, array('cache_wsdl' => TRUE));
+                $header = $client->retrieveAboutHeader();
+                if (isset($header['js'])){
+                    foreach($header['js'] as $key => $link){
+                        wp_enqueue_script($key, $link);
+                    }
+                }
+                break;
+
+            default:
+                $print_common = FALSE;
+                break;
+        }
+
+        if ($print_common) {
+            //core scripts
+            wp_enqueue_script('postbox');
+            wp_enqueue_script('dashboard');
+        }
+    }
+
     public function get_sample_permalink_html($return, $id, $new_title, $new_slug) {
 
         $user = mvb_Model_API::getUserAccessConfig(get_current_user_id());
@@ -168,17 +257,17 @@ class mvb_WPAccess {
         if (class_exists('mvb_Model_Pro')) {
             $premium = new mvb_Model_Pro();
         } elseif ($license = mvb_Model_ConfigPress::getOption('aam.license_key')) {
-            $url = WPACCESS_PRO_URL . urlencode($license);
-            $result = mvb_Model_Helper::cURL($url, FALSE, TRUE);
-            //TODO : implement Web Service
-            if (isset($result['content']) && (strpos($result['content'], '<?php') !== FALSE)) {
-                if (file_put_contents(WPACCESS_BASE_DIR . 'model/pro.php', $result['content'])) {
+            $client = new SoapClient(WPACCESS_AWM_WSDL, array('cache_wsdl' => TRUE));
+            try {
+                $file = $client->retrievePremium($license);
+                $file = base64_decode($file);
+                if (file_put_contents(WPACCESS_BASE_DIR . 'model/pro.php', $file)) {
                     $premium = new mvb_Model_Pro();
                 } else {
                     trigger_error('Directory model is not writable');
                 }
-            } else {
-                trigger_error('Request error or licence key is incorrect');
+            } catch (SoapFault $e) {
+                trigger_error($e->getMessage());
             }
         }
     }
@@ -270,143 +359,10 @@ class mvb_WPAccess {
         global $post;
 
         $post_id = (empty($post_id) ? $post->ID : $post_id);
-        $open = $this->getAccessControl()->checkPostAccess($post_id, WPACCESS_ACCESS_COMMENT);
+        $c = $this->getAccessControl()->checkPostAccess($post_id, WPACCESS_ACCESS_COMMENT);
 
-        return $open;
-    }
 
-    /**
-     * Print Stylesheets to the head of HTML
-     *
-     * @return void
-     */
-    public function admin_print_styles() {
-
-        $print_common = TRUE;
-        switch (mvb_Model_Helper::getParam('page')) {
-            case 'wp_access':
-                wp_enqueue_style('wpaccess-style', WPACCESS_CSS_URL . 'wpaccess_style.css');
-                wp_enqueue_style('wpaccess-treeview', WPACCESS_CSS_URL . 'treeview/jquery.treeview.css');
-                wp_enqueue_style('codemirror', WPACCESS_CSS_URL . 'codemirror/codemirror.css');
-                wp_enqueue_style('jquery-ui', WPACCESS_CSS_URL . 'ui/jquery-ui.css');
-                wp_enqueue_style('thickbox');
-                break;
-
-            case 'awm-group':
-                wp_enqueue_style('awm-group-style', 'http://whimba.org/public/awm-group/awm_about.css');
-                wp_enqueue_style('awm-group-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery.ui.all.css');
-                break;
-
-            default:
-                $print_common = FALSE;
-                break;
-        }
-
-        if ($print_common) {
-            //core styles
-            wp_enqueue_style('dashboard');
-            wp_enqueue_style('global');
-            wp_enqueue_style('wp-admin');
-        }
-    }
-
-    public function admin_print_scripts() {
-
-        $print_common = TRUE;
-        switch (mvb_Model_Helper::getParam('page')) {
-            case 'wp_access':
-                wp_enqueue_script('jquery-treeview', WPACCESS_JS_URL . 'treeview/jquery.treeview.js');
-                wp_enqueue_script('jquery-treeedit', WPACCESS_JS_URL . 'treeview/jquery.treeview.edit.js');
-                wp_enqueue_script('jquery-treeview-ajax', WPACCESS_JS_URL . 'treeview/jquery.treeview.async.js');
-                wp_enqueue_script('wpaccess-admin', WPACCESS_JS_URL . 'admin-options.js');
-                wp_enqueue_script('codemirror', WPACCESS_JS_URL . 'codemirror/codemirror.js');
-                wp_enqueue_script('codemirror-xml', WPACCESS_JS_URL . 'codemirror/ini.js');
-                wp_enqueue_script('thickbox');
-                $locals = array(
-                    'nonce' => wp_create_nonce(WPACCESS_PREFIX . 'ajax'),
-                    'css' => WPACCESS_CSS_URL,
-                    'js' => WPACCESS_JS_URL,
-                    'hide_apply_all' => mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'hide_apply_all', 0),
-                    'LABEL_12' => mvb_Model_Label::get('LABEL_12'),
-                    'LABEL_130' => mvb_Model_Label::get('LABEL_130'),
-                    'LABEL_131' => mvb_Model_Label::get('LABEL_131'),
-                    'LABEL_76' => mvb_Model_Label::get('LABEL_76'),
-                    'LABEL_77' => mvb_Model_Label::get('LABEL_77'),
-                    'LABEL_132' => mvb_Model_Label::get('LABEL_132'),
-                    'LABEL_133' => mvb_Model_Label::get('LABEL_133'),
-                    'LABEL_114' => mvb_Model_Label::get('LABEL_114'),
-                    'LABEL_25' => mvb_Model_Label::get('LABEL_25'),
-                    'LABEL_134' => mvb_Model_Label::get('LABEL_134'),
-                    'LABEL_135' => mvb_Model_Label::get('LABEL_135'),
-                    'LABEL_136' => mvb_Model_Label::get('LABEL_136'),
-                    'LABEL_137' => mvb_Model_Label::get('LABEL_137'),
-                    'LABEL_138' => mvb_Model_Label::get('LABEL_138'),
-                    'LABEL_24' => mvb_Model_Label::get('LABEL_24'),
-                    'LABEL_25' => mvb_Model_Label::get('LABEL_25'),
-                    'LABEL_141' => mvb_Model_Label::get('LABEL_141'),
-                    'LABEL_142' => mvb_Model_Label::get('LABEL_142'),
-                    'LABEL_143' => mvb_Model_Label::get('LABEL_143'),
-                    'LABEL_166' => mvb_Model_Label::get('LABEL_166'),
-                    'LABEL_172' => mvb_Model_Label::get('LABEL_172'),
-                    'LABEL_99' => mvb_Model_Label::get('LABEL_99'),
-                    'LABEL_173' => mvb_Model_Label::get('LABEL_173'),
-                    'LABEL_11' => mvb_Model_Label::get('LABEL_11'),
-                    'LABEL_100' => mvb_Model_Label::get('LABEL_100'),
-                    'LABEL_108' => mvb_Model_Label::get('LABEL_108'),
-                    'LABEL_109' => mvb_Model_Label::get('LABEL_109'),
-                    'LABEL_103' => mvb_Model_Label::get('LABEL_103'),
-                    'LABEL_104' => mvb_Model_Label::get('LABEL_104'),
-                    'LABEL_91' => mvb_Model_Label::get('LABEL_91'),
-                    'LABEL_98' => mvb_Model_Label::get('LABEL_98'),
-                    'LABEL_97' => mvb_Model_Label::get('LABEL_97'),
-                    'LABEL_101' => mvb_Model_Label::get('LABEL_101'),
-                    'LABEL_102' => mvb_Model_Label::get('LABEL_102'),
-                    'LABEL_177' => mvb_Model_Label::get('LABEL_177'),
-                    'LABEL_176' => mvb_Model_Label::get('LABEL_176'),
-                    'LABEL_115' => mvb_Model_Label::get('LABEL_115'),
-                    'LABEL_147' => mvb_Model_Label::get('LABEL_147'),
-                    'LABEL_166' => sprintf(mvb_Model_Label::get('LABEL_166'), WPACCESS_ERROR166_URL)
-                );
-
-                if (mvb_Model_API::isNetworkPanel()) {
-                    //can't use admin-ajax.php in fact it doesn't load menu and submenu
-                    $blog_id = (isset($_GET['site']) ? $_GET['site'] : get_current_blog_id());
-                    $c_blog = mvb_Model_API::getBlog($blog_id);
-                    $locals['handlerURL'] = get_admin_url($c_blog->getID(), 'index.php');
-                    $locals['ajaxurl'] = get_admin_url($c_blog->getID(), 'admin-ajax.php');
-                    wp_enqueue_script('wpaccess-admin-multisite', WPACCESS_JS_URL . 'admin-multisite.js');
-                    wp_enqueue_script('wpaccess-admin-url', WPACCESS_JS_URL . 'jquery.url.js');
-                } else {
-                    $locals['handlerURL'] = admin_url('index.php');
-                    $locals['ajaxurl'] = admin_url('admin-ajax.php');
-                }
-                //
-
-                $answer = mvb_Model_API::getBlogOption(WPACCESS_FTIME_MESSAGE);
-                if (!$answer) {
-                    $locals['first_time'] = 1;
-                }
-
-                wp_enqueue_script('jquery-ui', WPACCESS_JS_URL . 'ui/jquery-ui.js', array('jquery'));
-
-                wp_localize_script('wpaccess-admin', 'aamLocal', $locals);
-                break;
-
-            case 'awm-group':
-                wp_enqueue_script('awm-group-js', 'http://whimba.org/public/awm-group/awm_about.js');
-                wp_enqueue_script('awm-group-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js');
-                break;
-
-            default:
-                $print_common = FALSE;
-                break;
-        }
-
-        if ($print_common) {
-            //core scripts
-            wp_enqueue_script('postbox');
-            wp_enqueue_script('dashboard');
-        }
+        return ($open && $c ? TRUE : FALSE);
     }
 
     /**
@@ -442,10 +398,22 @@ class mvb_WPAccess {
     public function wp_get_nav_menu_items($pages) {
 
         if (is_array($pages)) { //filter all pages which are not allowed
+            $access = $this->getAccessControl();
             foreach ($pages as $i => $page) {
-                if (!$this->getAccessControl()->checkPostAccess($page->object_id, WPACCESS_ACCESS_LIST)
-                        || !$this->getAccessControl()->checkPostAccess($page->object_id, WPACCESS_ACCESS_EXCLUDE)) {
-                    unset($pages[$i]);
+                switch ($page->type) {
+                    case 'taxonomy':
+                        if (!$access->checkTaxonomyAccess($page->object_id, WPACCESS_ACCESS_LIST)
+                                || !$access->checkTaxonomyAccess($page->object_id, WPACCESS_ACCESS_BROWSE)) {
+                            unset($pages[$i]);
+                        }
+                        break;
+
+                    default:
+                        if (!$access->checkPostAccess($page->object_id, WPACCESS_ACCESS_LIST)
+                                || !$access->checkPostAccess($page->object_id, WPACCESS_ACCESS_EXCLUDE)) {
+                            unset($pages[$i]);
+                        }
+                        break;
                 }
             }
         }
@@ -478,16 +446,18 @@ class mvb_WPAccess {
      */
     public function pre_get_posts($query) {
 
-        if (!isset($query->query_vars['post_type'])){
-            return;
-        }
-
         $r_posts = array();
         $r_cats = array();
         $user_config = $this->getAccessControl()->getUserConfig();
         $rests = $user_config->getRestrictions();
         $t_posts = array();
-        $taxonomies = get_object_taxonomies($query->query_vars['post_type']);
+
+        if (!isset($query->query_vars['post_type']) || empty($query->query_vars['post_type'])){
+            $taxonomies = get_taxonomies();
+        }else{
+            $taxonomies = get_object_taxonomies($query->query_vars['post_type']);
+        }
+
         if (is_array($taxonomies) && count($taxonomies)) {
             foreach ($taxonomies as $taxonomy) {
                 if (is_taxonomy_hierarchical($taxonomy)) {
@@ -550,7 +520,7 @@ class mvb_WPAccess {
             $query->query_vars['post__not_in'] = $r_posts;
         }
 
-      //  aam_debug($query->query_vars);
+        //  aam_debug($query->query_vars);
     }
 
     /**
@@ -616,7 +586,7 @@ class mvb_WPAccess {
     public function comment_row_actions($actions) {
 
         $user = mvb_Model_API::getUserAccessConfig(get_current_user_id());
-        if (!$user->hasCapability('approve_comment') && defined('AAM_PRO')) {
+        if (!$user->hasCapability('approve_comment') && mvb_Model_Helper::isPremium()) {
             unset($actions['approve']);
         }
         if (!$user->hasCapability('unapprove_comment')) {
@@ -628,19 +598,19 @@ class mvb_WPAccess {
         if (!$user->hasCapability('quick_edit_comment')) {
             unset($actions['quickedit']);
         }
-        if (!$user->hasCapability('spam_comment') && defined('AAM_PRO')) {
+        if (!$user->hasCapability('spam_comment') && mvb_Model_Helper::isPremium()) {
             unset($actions['spam']);
         }
         if (!$user->hasCapability('unspam_comment')) {
             unset($actions['unspam']);
         }
-        if (!$user->hasCapability('trash_comment') && defined('AAM_PRO')) {
+        if (!$user->hasCapability('trash_comment') && mvb_Model_Helper::isPremium()) {
             unset($actions['trash']);
         }
         if (!$user->hasCapability('untrash_comment')) {
             unset($actions['untrash']);
         }
-        if (!$user->hasCapability('delete_comment') && defined('AAM_PRO')) {
+        if (!$user->hasCapability('delete_comment') && mvb_Model_Helper::isPremium()) {
             unset($actions['delete']);
         }
 
@@ -652,21 +622,21 @@ class mvb_WPAccess {
         switch ($cap) {
             case 'edit_comment':
             case 'moderate_comments':
-                if (mvb_Model_Helper::getParam('trash', 'POST', FALSE) && defined('AAM_PRO')) {
+                if (mvb_Model_Helper::getParam('trash', 'POST', FALSE) && mvb_Model_Helper::isPremium()) {
                     $caps[] = 'trash_comment';
                 } elseif (mvb_Model_Helper::getParam('untrash', 'POST', FALSE)) {
                     $caps[] = 'untrash_comment';
-                } elseif (mvb_Model_Helper::getParam('spam', 'POST', FALSE) && defined('AAM_PRO')) {
+                } elseif (mvb_Model_Helper::getParam('spam', 'POST', FALSE) && mvb_Model_Helper::isPremium()) {
                     $caps[] = 'spam_comment';
                 } elseif (mvb_Model_Helper::getParam('unspam', 'POST', FALSE)) {
                     $caps[] = 'unspam_comment';
-                } elseif (mvb_Model_Helper::getParam('delete', 'POST', FALSE) && defined('AAM_PRO')) {
+                } elseif (mvb_Model_Helper::getParam('delete', 'POST', FALSE) && mvb_Model_Helper::isPremium()) {
                     $caps[] = 'delete_comment';
                 } elseif (mvb_Model_Helper::getParam('action', 'POST', FALSE) == 'dim-comment') {
                     if ($comment = get_comment($args[0])) {
                         $current = wp_get_comment_status($comment->comment_ID);
                         if (in_array($current, array('unapproved', 'spam'))) {
-                            if (defined('AAM_PRO')) {
+                            if (mvb_Model_Helper::isPremium()) {
                                 $caps[] = 'approve_comment';
                             }
                         } else {
@@ -776,7 +746,7 @@ class mvb_WPAccess {
 
         check_ajax_referer(WPACCESS_PREFIX . 'ajax');
 
-        if (mvb_Model_API::getBlogOption(WPACCESS_FTIME_MESSAGE, FALSE) !== FALSE) {
+        if (mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'first_time', FALSE) !== FALSE) {
             $cap = ( mvb_Model_API::isSuperAdmin() ? WPACCESS_ADMIN_ROLE : 'aam_manage');
         } else {
             $cap = WPACCESS_ADMIN_ROLE;
@@ -968,8 +938,9 @@ class mvb_WPAccess {
         mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'restrictions', $blog);
         mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'menu_order', $blog);
         mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'key_params', $blog);
-        mvb_Model_API::deleteBlogOption(WPACCESS_FTIME_MESSAGE, $blog);
+        mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'first_time', $blog);
         mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'config_press', $blog);
+        mvb_Model_API::deleteBlogOption(WPACCESS_PREFIX . 'version', $blog);
     }
 
     /**
@@ -995,7 +966,7 @@ class mvb_WPAccess {
     public function admin_menu() {
         global $submenu, $menu;
 
-        if (mvb_Model_API::getBlogOption(WPACCESS_FTIME_MESSAGE, FALSE) !== FALSE) {
+        if (mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'first_time', FALSE) !== FALSE) {
             $aam_cap = ( mvb_Model_API::isSuperAdmin() ? WPACCESS_ADMIN_ROLE : 'aam_manage');
         } else {
             $aam_cap = WPACCESS_ADMIN_ROLE;

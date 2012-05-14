@@ -93,23 +93,6 @@ class mvb_Model_Helper {
         return $visibility;
     }
 
-    /**
-     * Check what type of plugin is installed
-     *
-     * @access public
-     * @return string
-     */
-    public static function getVersionTypeHTML() {
-
-        if (defined('AAM_PRO')) {
-            $result = '<span class="version pro-type">' . mvb_Model_Label::get('LABEL_140') . '</span>';
-        } else {
-            $result = '<span class="version basic-type"><a href="http://whimba.org/advanced-access-manager" target="_blank" title="' . mvb_Model_Label::get('LABEL_152') . '">' . mvb_Model_Label::get('LABEL_149') . '</a></span>';
-        }
-
-        return $result;
-    }
-
     public static function doRedirect() {
         if (is_admin()) {
             $redirect = mvb_Model_ConfigPress::getOption('backend.access.deny.redirect');
@@ -128,12 +111,29 @@ class mvb_Model_Helper {
         }
 
         if (is_null($message)) {
-            mvb_Model_Label::initLabels();
+            mvb_Model_Label::initGUILabels();
             $message = mvb_Model_Label::get('LABEL_127');
         }
 
         wp_die($message);
     }
+
+	/**
+	 * Check if AAM is Premium
+	 *
+	 * @access public
+	 * @return boolean
+	 */
+	public static function isPremium(){
+
+		if (defined('AAM_PREMIUM')){
+			$result = TRUE;
+		}else{
+			$result = FALSE;
+		}
+
+		return $result;
+	}
 
     /**
      * Return Edit Post Link

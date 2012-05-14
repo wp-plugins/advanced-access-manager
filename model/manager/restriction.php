@@ -81,7 +81,7 @@ class mvb_Model_Manager_Restriction {
                     }
                     $tmpl['.category-title']->html(mvb_Model_Helper::editTermLink($term));
                     $tmpl['.subposts']->html(sprintf(mvb_Model_Label::get('LABEL_178'), $term->name));
-                    if (defined('AAM_PRO')){
+                    if (mvb_Model_Helper::isPremium()){
                         $tmpl['.premium']->removeClass('premium');
                         $tmpl['#premium-ind']->html('&nbsp;');
                     }
@@ -93,6 +93,7 @@ class mvb_Model_Manager_Restriction {
                 $tmpl = '';
                 break;
         }
+        $tmpl = mvb_Model_Label::clearLabels($tmpl);
 
         $result = array(
             'status' => 'success',

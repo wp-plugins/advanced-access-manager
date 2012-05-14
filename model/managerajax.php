@@ -105,6 +105,7 @@ class mvb_Model_ManagerAjax extends mvb_Model_Manager {
         $content = mvb_Model_Manager_RoleMetabox::renderRoleRow(
                         $this->role, array('name' => $this->role_label), $tmpl
         );
+        $content = mvb_Model_Label::clearLabels($content);
 
         return mvb_Model_Template::clearTemplate($content);
     }
@@ -115,6 +116,7 @@ class mvb_Model_ManagerAjax extends mvb_Model_Manager {
                         'SUBMIT_METABOX', $this->template
         );
         $content = mvb_Model_Manager_SubmitMetabox::renderUserSelector($tmpl, $this);
+        $content = mvb_Model_Label::clearLabels($content);
 
         $result = array(
             'status' => 'success',
@@ -146,6 +148,7 @@ class mvb_Model_ManagerAjax extends mvb_Model_Manager {
             '###critical_image###' => WPACCESS_CSS_URL . 'images/Critical-tooltip.png',
         );
         $content = mvb_Model_Template::updateMarkers($markers, $content);
+        $content = mvb_Model_Label::clearLabels($content);
 
         $result = array(
             'status' => 'success',
@@ -163,6 +166,8 @@ class mvb_Model_ManagerAjax extends mvb_Model_Manager {
 
         $content = mvb_Model_Manager_Metabox::render($template, $this);
         $content = $this->updateMarkers($content);
+        $content = mvb_Model_Label::clearLabels($content);
+
         $result = array(
             'status' => 'success',
             'html' => mvb_Model_Template::clearTemplate($content)
@@ -203,7 +208,7 @@ class mvb_Model_ManagerAjax extends mvb_Model_Manager {
         );
 
         $tmpl = $this->updateMarkers($tmpl);
-
+        $tmpl = mvb_Model_Label::clearLabels($tmpl);
         $tmpl = mvb_Model_Template::clearTemplate($tmpl);
 
         $result = array(

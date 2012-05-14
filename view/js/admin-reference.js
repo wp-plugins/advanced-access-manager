@@ -26,7 +26,7 @@ jQuery(document).ready(function(){
 
     jQuery('a').each(function(){
        if (jQuery(this).attr('href') == '#'){
-           jQuery(this).bind('click', function(){
+           jQuery(this).bind('click', function(event){
                var link = jQuery(this).attr('link');
                jQuery('#content').empty().html(jQuery('.' + link).clone());
            })

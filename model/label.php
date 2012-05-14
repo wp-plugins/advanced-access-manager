@@ -24,7 +24,7 @@
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
- * @copyrights Copyright © 2011 Vasyl Martyniuk
+ * @copyright Copyright © 2011 Vasyl Martyniuk
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
 class mvb_Model_Label {
@@ -38,12 +38,44 @@ class mvb_Model_Label {
     public static $labels = array();
 
     /**
-     * Initialize Labels with current language
+     * Indicator that GUI Labels already been initialized
      *
-     * @return void
+     * @access protected
+     * @var boolean
      */
-    public static function initLabels() {
+    protected static $gui_flag = FALSE;
+
+    /**
+     * Indicator that Capability Lables already been initialized
+     *
+     * @access protected
+     * @var boolean
+     */
+    protected static $cap_flag = FALSE;
+
+    /**
+     * Initialize ALL Labels with current system language
+     *
+     * @access public
+     */
+    public static function initAllLabels() {
+
+        self::initGUILabels();
+        self::initCapabilityLabels();
+    }
+
+    /**
+     * Initialize labels related to Grafic Interface under
+     * Access Manager page in backend
+     *
+     * @access public
+     */
+    public static function initGUILabels() {
+
+        if (self::$gui_flag){ return FALSE;}
+
         self::$labels['LABEL_1'] = __('Advanced Access Manager', 'aam');
+        self::$labels['LABEL_2'] = __('Basic version does not allow to setup more then %s restrictions. Please upgrade AAM. <a href="%s" target="_blank">More...</a>', 'aam');
         self::$labels['LABEL_3'] = __('Alert', 'aam');
         self::$labels['LABEL_6'] = __('Options updated successfully', 'aam');
         self::$labels['LABEL_7'] = __('Main Menu', 'aam');
@@ -163,8 +195,6 @@ class mvb_Model_Label {
         self::$labels['LABEL_120'] = __('All Users', 'aam');
         self::$labels['LABEL_121'] = __('Delete current capability', 'aam');
         self::$labels['LABEL_157'] = __('ConfigPress is a flexible way to configure your Access Manager. For more information please check reference or follow the <a href="http://whimba.org/support#viewforum.php?f=4" target="_blank">support link</a>.', 'aam');
-        self::$labels['upgrade_restriction'] = __('Basic version does not allow to setup more then 5 restrictions. Please upgrade AAM. <a href="http://whimba.org/advanced-access-manager" target="_blank">More...</a>', 'aam');
-        self::$labels['restrict_message'] = __('<p>You do not have sufficient permissions to perform this action</p>', 'aam');
         self::$labels['LABEL_161'] = __('ConfigPress reference', 'aam');
         self::$labels['LABEL_162'] = __('Config File is not Writable.', 'aam');
         self::$labels['LABEL_164'] = __('Module Directory is not Writable.', 'aam');
@@ -181,62 +211,70 @@ class mvb_Model_Label {
         self::$labels['LABEL_176'] = __('Would you like to restore default restrictions?', 'aam');
         self::$labels['LABEL_177'] = __('Restore Restrictions', 'aam');
         self::$labels['LABEL_178'] = __('Posts in %s', 'aam');
-        self::$labels['LABEL_2'] = __('', 'aam');
-        self::$labels['LABEL_158'] = __('', 'aam');
-        self::$labels['LABEL_159'] = __('', 'aam');
-        self::$labels['LABEL_160'] = __('', 'aam');
-        self::$labels['LABEL_150'] = __('', 'aam');
-        self::$labels['LABEL_151'] = __('', 'aam');
-        self::$labels['LABEL_129'] = __('', 'aam');
-        self::$labels['LABEL_108'] = __('', 'aam');
-        self::$labels['LABEL_109'] = __('', 'aam');
-        self::$labels['LABEL_110'] = __('', 'aam');
-        self::$labels['LABEL_111'] = __('', 'aam');
-        self::$labels['LABEL_92'] = __('', 'aam');
-        self::$labels['LABEL_93'] = __('', 'aam');
-        self::$labels['LABEL_94'] = __('', 'aam');
-        self::$labels['LABEL_95'] = __('', 'aam');
-        self::$labels['LABEL_96'] = __('', 'aam');
-        self::$labels['LABEL_90'] = __('', 'aam');
-        self::$labels['LABEL_63'] = __('', 'aam');
-        self::$labels['LABEL_64'] = __('', 'aam');
-        self::$labels['LABEL_65'] = __('', 'aam');
-        self::$labels['LABEL_66'] = __('', 'aam');
-        self::$labels['LABEL_67'] = __('', 'aam');
-        self::$labels['LABEL_68'] = __('', 'aam');
-        self::$labels['LABEL_69'] = __('', 'aam');
-        self::$labels['LABEL_70'] = __('', 'aam');
-        self::$labels['LABEL_43'] = __('', 'aam');
-        self::$labels['LABEL_44'] = __('', 'aam');
-        self::$labels['LABEL_45'] = __('', 'aam');
-        self::$labels['LABEL_46'] = __('', 'aam');
-        self::$labels['LABEL_47'] = __('', 'aam');
-        self::$labels['LABEL_48'] = __('', 'aam');
-        self::$labels['LABEL_49'] = __('', 'aam');
-        self::$labels['LABEL_50'] = __('', 'aam');
-        self::$labels['LABEL_51'] = __('', 'aam');
-        self::$labels['LABEL_52'] = __('', 'aam');
-        self::$labels['LABEL_53'] = __('', 'aam');
-        self::$labels['LABEL_54'] = __('', 'aam');
-        self::$labels['LABEL_55'] = __('', 'aam');
-        self::$labels['LABEL_56'] = __('', 'aam');
-        self::$labels['LABEL_57'] = __('', 'aam');
-        self::$labels['LABEL_58'] = __('', 'aam');
-        self::$labels['LABEL_4'] = __('', 'aam');
-        self::$labels['LABEL_5'] = __('', 'aam');
-        self::$labels['LABEL_139'] = __('', 'aam');
-        self::$labels['LABEL_165'] = __('', 'aam');
-        self::$labels['LABEL_163'] = __('', 'aam');
+        self::$labels['LABEL_158'] = __('Information', 'aam');
+        self::$labels['LABEL_159'] = __('Refresh', 'aam');
+        self::$labels['LABEL_160'] = __('Frontend', 'aam');
+        self::$labels['LABEL_150'] = __('Backend', 'aam');
+        self::$labels['LABEL_151'] = __('List', 'aam');
+        self::$labels['LABEL_129'] = __('Exclude', 'aam');
+        self::$labels['LABEL_108'] = __('Read', 'aam');
+        self::$labels['LABEL_109'] = __('Trash', 'aam');
+        self::$labels['LABEL_110'] = __('Delete', 'aam');
+        self::$labels['LABEL_111'] = __('Edit', 'aam');
+        self::$labels['LABEL_92'] = __('Publish', 'aam');
+        self::$labels['LABEL_93'] = __('Comment', 'aam');
+        self::$labels['LABEL_94'] = __('Browse', 'aam');
 
-        self::initCapabilityDescriptions();
+        /*
+         * These labels where deleted in previous release so you can use them
+         * to define new labels
+
+          self::$labels['LABEL_95'] = __('', 'aam');
+          self::$labels['LABEL_96'] = __('', 'aam');
+          self::$labels['LABEL_90'] = __('', 'aam');
+          self::$labels['LABEL_63'] = __('', 'aam');
+          self::$labels['LABEL_64'] = __('', 'aam');
+          self::$labels['LABEL_65'] = __('', 'aam');
+          self::$labels['LABEL_66'] = __('', 'aam');
+          self::$labels['LABEL_67'] = __('', 'aam');
+          self::$labels['LABEL_68'] = __('', 'aam');
+          self::$labels['LABEL_69'] = __('', 'aam');
+          self::$labels['LABEL_70'] = __('', 'aam');
+          self::$labels['LABEL_43'] = __('', 'aam');
+          self::$labels['LABEL_44'] = __('', 'aam');
+          self::$labels['LABEL_45'] = __('', 'aam');
+          self::$labels['LABEL_46'] = __('', 'aam');
+          self::$labels['LABEL_47'] = __('', 'aam');
+          self::$labels['LABEL_48'] = __('', 'aam');
+          self::$labels['LABEL_49'] = __('', 'aam');
+          self::$labels['LABEL_50'] = __('', 'aam');
+          self::$labels['LABEL_51'] = __('', 'aam');
+          self::$labels['LABEL_52'] = __('', 'aam');
+          self::$labels['LABEL_53'] = __('', 'aam');
+          self::$labels['LABEL_54'] = __('', 'aam');
+          self::$labels['LABEL_55'] = __('', 'aam');
+          self::$labels['LABEL_56'] = __('', 'aam');
+          self::$labels['LABEL_57'] = __('', 'aam');
+          self::$labels['LABEL_58'] = __('', 'aam');
+          self::$labels['LABEL_4'] = __('', 'aam');
+          self::$labels['LABEL_5'] = __('', 'aam');
+          self::$labels['LABEL_139'] = __('', 'aam');
+          self::$labels['LABEL_165'] = __('', 'aam');
+          self::$labels['LABEL_163'] = __('', 'aam');
+         */
+
+        self::$gui_flag = TRUE;
     }
 
     /**
-     * Init Capability Descriptions
+     * Initialize labels for Capabilities Tooltips for the Tab
+     * Capabilities under Access Manager page in backend
      *
-     * @todo Rewrite Caps Description
+     * @access public
      */
-    public static function initCapabilityDescriptions() {
+    public static function initCapabilityLabels() {
+
+        if (self::$cap_flag){ return FALSE;}
 
         self::$labels = array_merge(self::$labels, array(
             'switch_themes' => __('Since 2.0
@@ -385,8 +423,140 @@ class mvb_Model_Label {
             'trash_comment' => __('Allow trash comment. Is available only for Premium Version.', 'aam'),
             'approve_comment' => __('Allow approve comment. Is available only for Premium Version.', 'aam'),
             'delete_comment' => __('Allow delete comment. Is available only for Premium Version.', 'aam'),
-            'spam_comment' => __('Allow mark comment as spam. Is available only for Premium Version.', 'aam'),
-                )
+            'spam_comment' => __('Allow mark comment as spam. Is available only for Premium Version.', 'aam'))
+        );
+
+        self::$cap_flag = TRUE;
+    }
+
+    /**
+     * Initialize labels for ConfigPress Guide Reference
+     * Overwrite all other labels in fact this is separate
+     * screen
+     *
+     * @access public
+     */
+    public static function initConfigPressGuideLabels() {
+
+        self::$labels['LABEL_1'] = __('Introduction', 'aam');
+        self::$labels['LABEL_2'] = __('Basic Idea', 'aam');
+        self::$labels['LABEL_3'] = __('Syntax', 'aam');
+        self::$labels['LABEL_4'] = __('Reference', 'aam');
+        self::$labels['LABEL_5'] = __('AAM Section', 'aam');
+        self::$labels['LABEL_6'] = __('Backend Section', 'aam');
+        self::$labels['LABEL_7'] = __('Frontend Section', 'aam');
+        self::$labels['LABEL_8'] = __('Select a topic from Guide Reference Tree', 'aam');
+        self::$labels['LABEL_9'] = __('ConfigPress originally was designed to
+            avoid frequent code changes and give ability for administrator, easy
+            and fast configure plugin behavior. Configuration is based on INI
+            format which is quite popular and easy to learn. For any questions
+            or concerns please visit our forum at Whimba.org', 'aam');
+        self::$labels['LABEL_10'] = __('There are three major configuration parts
+            you will deal with: comments, sections and parameters
+        [b]Comments[/b]
+        It is good practice to leave some comments about parameters and values you specified. That is why comments are very important part
+        Comment starts from semicolon [b];[/b] and ends in the end of line:
+        [section][aam][/section]
+            [comment];specify callback function to check if user has access to delete capabilities[/comment]
+            delete_capabilities.userFunc = [value]"checkUser::hasDeleteCap"[/value]
+        [b]Sections[/b]
+        All ConfigPress parameters are grouped by section. Section starts from open [b][[/b] and ends by closing [b]][/b]
+        [section][aam][/section]
+        [section][backend][/section]
+        [b]Parameters[/b]
+        Each Parameter should belong to section and it allows to have only alphanumeric symbols, underscore or dash. Also all parameters follow the same logic. It means you can define userFunc for anyone.
+        [section][aam][/section]error_reporting = [value]"true"[/value]', 'aam');
+        self::$labels['LABEL_11'] = __('AAM is a section for configuring the way plugin\'s core works. Something like caching, error reporting or modifying Access Manager Option page', 'aam');
+        self::$labels['LABEL_12'] = __('Advanced Access Manager has internal caching for User\'s and Role\'s configurations. By default caching is turned on.
+        [section][aam][/section]caching = [value]"true"[/value]', 'aam');
+        self::$labels['LABEL_13'] = __('This is additional protection layout in fact capabilities are the most important part of access management in WordPress. By default it is false
+        [section][aam][/section]delete_capabilities = [value]"false"[/value]', 'aam');
+        self::$labels['LABEL_14'] = __('Deprecated and Removed in release 1.6.5.1 (Beta)
+        Use Advanced Access Manager error reporting feature and log all errors, related to this plugin to internal error log. By default is false
+        [section][aam][/section]error_reporting = [value]"true"[/value]', 'aam');
+        self::$labels['LABEL_15'] = __('Group of settings for multisite support', 'aam');
+        self::$labels['LABEL_16'] = __('If you have a lot of sites on multisite setup, you have possibility to apply configurations to all sites. It\'ll duplicate Admin Menu, Menu Order, Metaboxes and Widgets, Capabilities. Please notice that this feature is limited for basic version of Advanced Access Manager. By default it is false.
+        [section][aam][/section]multisite.apply_all = [value]"false"[/value]', 'aam');
+        self::$labels['LABEL_17'] = __('Group Pages into Categories. It works the same way as Post\'s Categories. This option is working ONLY for Premium version of Advanced Access Manager. Default value is false.
+        [section][aam][/section]page_category = [value]"false"[/value]', 'aam');
+        self::$labels['LABEL_18'] = __('If you have purchased premium version of Advanced Access Manager, you have to receive a license key.
+        [section][aam][/section]license_key = [value]"2337eb1b9e4c9e8a64ffddf5b5735f9a7c983a26"[/value]', 'aam');
+        self::$labels['LABEL_19'] = __('Section to specify Advanced Access Manager behavior in Backend', 'aam');
+        self::$labels['LABEL_20'] = __('Group of settings for resource access', 'aam');
+        self::$labels['LABEL_21'] = __('Group of settings for access denied behavior to resource', 'aam');
+        self::$labels['LABEL_22'] = __('Specify redirect if access is denied for specific resource. This will enforce the redirect to specified URL or if it is userFunc it\'ll execute this function.
+            PLEASE NOTICE! Custom userFunc should die an application or redirect to some URL by sending header, otherwise the application will through the Exception "Unauthorized Action"
+            If redirect is valid URL then it\'ll redirect to that URL
+            If redirect is number, it\'ll try to redirect to page or post with that ID by using WordPress function get_permalink
+            If redirect has property userFunc it\'ll execute the userFunc
+        [section][backend][/section]access.deny.redirect = [value]"5"[/value]', 'aam');
+        self::$labels['LABEL_23'] = __('Specify the restriction message if access is denied.
+        [section][backend][/section]access.deny.message = [value]"You are not allowed to view this page"[/value]', 'aam');
+        self::$labels['LABEL_24'] = __('Section to specify Advanced Access Manager behavior on Frontend', 'aam');
+        self::$labels['LABEL_25'] = __('Holder for default behavior', 'aam');
+        self::$labels['LABEL_26'] = __('Holder for taxonomy configurations', 'aam');
+        self::$labels['LABEL_27'] = __('Holder for post configurations', 'aam');
+        self::$labels['LABEL_28'] = __('Specify default listing. It means allow or deny listing post or taxonomy
+        [section][backend][/section]access.taxonomy.default.list = [value]"deny"[/value]', 'aam');
+        self::$labels['LABEL_29'] = __('Not commented yet.', 'aam');
+        self::$labels['LABEL_30'] = __('Not commented yet.', 'aam');
+        self::$labels['LABEL_31'] = __('Not commented yet.', 'aam');
+        self::$labels['LABEL_32'] = __('Not commented yet.', 'aam');
+        self::$labels['LABEL_33'] = __('Not commented yet.', 'aam');
+        self::$labels['LABEL_34'] = __('Not commented yet.', 'aam');
+        self::$labels['LABEL_35'] = __('Not commented yet.', 'aam');
+        self::$labels['LABEL_36'] = __('Collapse All', 'aam');
+        self::$labels['LABEL_37'] = __('Expand All', 'aam');
+    }
+
+    /**
+     * Get list of labels for JavaScript
+     *
+     * @access public
+     */
+    public static function getJSLocalization() {
+
+        self::initGUILabels();
+
+        return array(
+            'LABEL_11' => self::get('LABEL_11'),
+            'LABEL_12' => self::get('LABEL_12'),
+            'LABEL_24' => self::get('LABEL_24'),
+            'LABEL_25' => self::get('LABEL_25'),
+            'LABEL_76' => self::get('LABEL_76'),
+            'LABEL_77' => self::get('LABEL_77'),
+            'LABEL_91' => self::get('LABEL_91'),
+            'LABEL_98' => self::get('LABEL_98'),
+            'LABEL_97' => self::get('LABEL_97'),
+            'LABEL_99' => self::get('LABEL_99'),
+            'LABEL_100' => self::get('LABEL_100'),
+            'LABEL_101' => self::get('LABEL_101'),
+            'LABEL_102' => self::get('LABEL_102'),
+            'LABEL_103' => self::get('LABEL_103'),
+            'LABEL_104' => self::get('LABEL_104'),
+            'LABEL_108' => self::get('LABEL_108'),
+            'LABEL_109' => self::get('LABEL_109'),
+            'LABEL_114' => self::get('LABEL_114'),
+            'LABEL_130' => self::get('LABEL_130'),
+            'LABEL_131' => self::get('LABEL_131'),
+            'LABEL_132' => self::get('LABEL_132'),
+            'LABEL_133' => self::get('LABEL_133'),
+            'LABEL_134' => self::get('LABEL_134'),
+            'LABEL_135' => self::get('LABEL_135'),
+            'LABEL_136' => self::get('LABEL_136'),
+            'LABEL_137' => self::get('LABEL_137'),
+            'LABEL_138' => self::get('LABEL_138'),
+            'LABEL_141' => self::get('LABEL_141'),
+            'LABEL_142' => self::get('LABEL_142'),
+            'LABEL_143' => self::get('LABEL_143'),
+            'LABEL_166' => self::get('LABEL_166'),
+            'LABEL_115' => self::get('LABEL_115'),
+            'LABEL_147' => self::get('LABEL_147'),
+            'LABEL_166' => sprintf(self::get('LABEL_166'), WPACCESS_ERROR166_URL),
+            'LABEL_172' => self::get('LABEL_172'),
+            'LABEL_173' => self::get('LABEL_173'),
+            'LABEL_177' => self::get('LABEL_177'),
+            'LABEL_176' => self::get('LABEL_176'),
         );
     }
 
@@ -399,6 +569,26 @@ class mvb_Model_Label {
     public static function get($label) {
 
         return (isset(self::$labels[$label]) ? self::$labels[$label] : FALSE);
+    }
+
+    /**
+     * Clear template from labels
+     *
+     * @param type $template
+     * @return type
+     */
+    public static function clearLabels($template, $bbcode = NULL) {
+
+        //try to replace all labels
+        $l_list = array();
+        $i = 1;
+        for ($i = 1; $i <= 300; $i++) {
+            if (($label = self::get('LABEL_' . $i)) !== FALSE) {
+                $l_list['###LABEL_' . $i . '###'] = (is_null($bbcode) ? $label : $bbcode->render($label));
+            }
+        }
+
+        return mvb_Model_Template::updateMarkers($l_list, $template);
     }
 
 }

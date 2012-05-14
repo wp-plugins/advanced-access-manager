@@ -24,38 +24,94 @@
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
- * @copyrights Copyright © 2011 Vasyl Martyniuk
+ * @copyright Copyright © 2011 Vasyl Martyniuk
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
 class mvb_Model_Upgrade {
 
+    /**
+     * Main function
+     * Check if upgrade is required
+     *
+     * @access public
+     * @return boolean
+     */
     public static function doUpgrade() {
 
-        $db_v = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'version', '1.0');
+        $updated = FALSE;
+        $db_v = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'version', NULL);
         if (!function_exists('get_plugin_data')) {
             require_once(ABSPATH . 'wp-admin/includes/plugin.php');
         }
         $cr_v = get_plugin_data(WPACCESS_BASE_DIR . 'mvb_wp_access.php');
 
         if ($db_v != $cr_v['Version']) { //do upgrade
-            if ($db_v < '1.6.5') {
-                self::upgradeTo165();
+            self::transferConfigPress();
+
+            if (is_null($db_v)) {
+                $updated = self::upgradeTo1652();
+            } elseif ($db_v < '1.6.5') {
+                $updated = self::upgradeTo165();
+            } elseif ($db_v < '1.6.5.2') {
+                $updated = self::upgradeTo1652();
             }
+
+            self::setVersion($cr_v['Version']);
         }
+
+        return $updated;
     }
 
-    protected static function upgradeTo165() {
-        global $wpdb;
+    protected static function setVersion($version) {
 
+        mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'version', $version);
+    }
+
+    /**
+     * Transfer ConfigPress settings
+     *
+     * @access protected
+     */
+    protected static function transferConfigPress() {
+
+        //transfer ConfigPress first
         $blog = mvb_Model_API::getBlog(1);
         $config = mvb_Model_API::getBlogOption(
                         WPACCESS_PREFIX . 'config_press', '', $blog
         );
         mvb_Model_ConfigPress::saveConfig($config);
+    }
+
+    /**
+     * Add some additional capabilities
+     *
+     * @access protected
+     * @param array $cap_list
+     * @todo - Does not support multisite
+     */
+    protected static function extendCapabilities($cap_list) {
+
+        $roles = mvb_Model_API::getRoleList(FALSE);
+        if (isset($roles[WPACCESS_SADMIN_ROLE])) {
+            $roles[WPACCESS_SADMIN_ROLE]['capabilities'] = array_merge(
+                    $roles[WPACCESS_SADMIN_ROLE]['capabilities'], $cap_list
+            );
+        }
+        $roles[WPACCESS_ADMIN_ROLE]['capabilities'] = array_merge(
+                $roles[WPACCESS_ADMIN_ROLE]['capabilities'], $cap_list
+        );
+        mvb_Model_API::updateBlogOption('user_roles', $roles);
+    }
+
+    //***************************************************************
+    //=================== UPGRADE TO RELEASE 1.6.5 ==================
+    //***************************************************************
+
+    protected static function upgradeTo165() {
+        global $wpdb;
 
         //add custom capabilities
-        $roles = mvb_Model_API::getRoleList(FALSE);
-        $custom_caps = array(
+        self::extendCapabilities(array(
             'edit_comment' => 1,
             'approve_comment' => 1,
             'unapprove_comment' => 1,
@@ -65,17 +121,10 @@ class mvb_Model_Upgrade {
             'unspam_comment' => 1,
             'trash_comment' => 1,
             'untrash_comment' => 1,
-            'delete_comment' => 1
+            'delete_comment' => 1,
+            'edit_permalink' => 1)
         );
-        if (isset($roles[WPACCESS_SADMIN_ROLE])) {
-            $roles[WPACCESS_SADMIN_ROLE]['capabilities'] = array_merge(
-                    $roles[WPACCESS_SADMIN_ROLE]['capabilities'], $custom_caps
-            );
-        }
-        $roles[WPACCESS_ADMIN_ROLE]['capabilities'] = array_merge(
-                $roles[WPACCESS_ADMIN_ROLE]['capabilities'], $custom_caps
-        );
-        mvb_Model_API::updateBlogOption('user_roles', $roles);
+        $roles = mvb_Model_API::getRoleList(FALSE);
 
         //upgrade Restrictions - Roles first
         foreach ($roles as $role => $dummy) {
@@ -131,9 +180,6 @@ class mvb_Model_Upgrade {
                 update_user_meta($user->user_id, WPACCESS_PREFIX . 'config', $up_config);
             }
         }
-
-
-        mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'version', '1.6.5');
     }
 
     protected static function prepareRestrictions($old_list, $excludes) {
@@ -238,6 +284,28 @@ class mvb_Model_Upgrade {
         }
 
         return $exclude;
+    }
+
+    //***************************************************************
+    //=================== UPGRADE TO RELEASE 1.6.5.2 ================
+    //***************************************************************
+
+    protected static function upgradeTo1652() {
+
+        //add custom capabilities
+        self::extendCapabilities(array(
+            'edit_comment' => 1,
+            'approve_comment' => 1,
+            'unapprove_comment' => 1,
+            'reply_comment' => 1,
+            'quick_edit_comment' => 1,
+            'spam_comment' => 1,
+            'unspam_comment' => 1,
+            'trash_comment' => 1,
+            'untrash_comment' => 1,
+            'delete_comment' => 1,
+            'edit_permalink' => 1)
+        );
     }
 
 }

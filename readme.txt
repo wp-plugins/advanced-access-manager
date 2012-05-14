@@ -4,7 +4,7 @@ Donate link: http://whimba.org/donation
 Tags: access manager, access control, comments, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role, access config
 Requires at least: 3.2
 Tested up to: 3.3.1
-Stable tag: 1.6.5.1 (Beta)
+Stable tag: 1.6.5.2
 
 Graphic interface to manage User Access to your Front-end and Back-end
 
@@ -50,6 +50,11 @@ If you are Super Admin, you can manage the Administrator's Role as other User
 Roles. To give an access to Access Manager's Option Page, just create a new
 capability <b>AAM Manage</b> and check it for Administrator's User Role.
 
+= My users are not able to edit permalink. What should I do? =
+
+Release 1.6.5 introduced a custom Capability "Edit Permalink". Make sure that
+User or User Role has this Capability checked under Capabilities Tab.
+
 = What is "Initiate URL" button, under "Metaboxes & Widgets" Tab? =
 
 Sometimes list of additional metaboxes is conditional on edit post page. Like e.g.
@@ -81,6 +86,16 @@ just filter Main Menu.
 5. ConfigPress
 
 == Changelog ==
+
+= 1.6.5.2 =
+* Updated jQuery UI lib to 1.8.20
+* Minimized JavaScript
+* Implemented Web Service for AWM Group page
+* Implemented Web Service for Premium Version
+* Fixed bug with User Restrictions
+* Fixed bug with Edit Permalink
+* Fixed bug with Upgrade Hook
+* Reorganized Label Module (Preparing for Russian and Polish transactions)
 
 = 1.6.5.1 (Beta) =
 * Bug fixing

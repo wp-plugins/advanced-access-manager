@@ -94,9 +94,11 @@ class mvb_Model_Manager {
         $this->setCurrentRole($role);
         $this->setCurrentUser($user);
         $this->initConfig();
+
+        mvb_Model_Label::initAllLabels();
     }
 
-    protected function initConfig(){
+    protected function initConfig() {
 
         if ($this->current_user) {
             $this->config = mvb_Model_API::getUserAccessConfig($this->current_user);
@@ -220,8 +222,12 @@ class mvb_Model_Manager {
     function manage() {
 
         //render error list if applicable
-        //render Role Manager Metabox
         $tmpl = $this->renderErrorList($this->template);
+
+        //render version indicator
+        $tmpl = mvb_Model_Template::replaceSub(
+                        'VERSION', $this->renderVersionIndicator(), $tmpl
+        );
 
         //render Admin Menu Tab
         $tmpl = mvb_Model_Template::replaceSub(
@@ -260,32 +266,50 @@ class mvb_Model_Manager {
 
         $tmpl = $this->updateMarkers($tmpl);
 
+        $tmpl = mvb_Model_Label::clearLabels($tmpl);
         $tmpl = mvb_Model_Template::clearTemplate($tmpl);
 
         //add filter to future add-ons
         echo apply_filters(WPACCESS_PREFIX . 'option_page', $tmpl);
     }
 
-    public function renderErrorList($tmpl){
+    public function renderVersionIndicator() {
+
+        $template = mvb_Model_Template::retrieveSub(
+                        'VERSION', $this->template
+        );
+
+        if (mvb_Model_Helper::isPremium()) {
+            $tmpl = mvb_Model_Template::retrieveSub('VERSION_PREMIUM', $template);
+            $template = mvb_Model_Template::replaceSub('VERSION_BASIC', '', $template);
+            $template = mvb_Model_Template::replaceSub('VERSION_PREMIUM', $tmpl, $template);
+        } else {
+            $tmpl = mvb_Model_Template::retrieveSub('VERSION_BASIC', $template);
+            $template = mvb_Model_Template::replaceSub('VERSION_PREMIUM', '', $template);
+            $template = mvb_Model_Template::replaceSub('VERSION_BASIC', $tmpl, $template);
+        }
+
+        return $template;
+    }
+
+    public function renderErrorList($tmpl) {
 
         $item_tmpl = mvb_Model_Template::retrieveSub('ERROR_LIST', $tmpl);
         $list = '';
-        if (!is_writable(WPACCESS_BASE_DIR . 'config.ini')){
+        if (!is_writable(WPACCESS_BASE_DIR . 'config.ini')) {
             $list .= mvb_Model_Template::updateMarkers(
-                    array(
+                            array(
                         '###message###' => mvb_Model_Label::get('LABEL_162'),
                         '###url###' => WPACCESS_ERROR162_URL
-                    ),
-                    $item_tmpl
+                            ), $item_tmpl
             );
         }
-        if (!is_writable(WPACCESS_BASE_DIR . 'model')){
+        if (!is_writable(WPACCESS_BASE_DIR . 'model')) {
             $list .= mvb_Model_Template::updateMarkers(
-                    array(
+                            array(
                         '###message###' => mvb_Model_Label::get('LABEL_164'),
                         '###url###' => WPACCESS_ERROR164_URL
-                    ),
-                    $item_tmpl
+                            ), $item_tmpl
             );
         }
 
@@ -321,7 +345,6 @@ class mvb_Model_Manager {
             '###nonce###' => wp_nonce_field(WPACCESS_PREFIX . 'options', '_wpnonce', TRUE, FALSE),
             '###form_action###' => $submit_link,
             '###message_class###' => $message_class,
-            '###version_type###' => mvb_Model_Helper::getVersionTypeHTML(),
             '###reference_url###' => WPACCESS_BASE_URL . 'view/reference.php'
         );
 
@@ -373,7 +396,7 @@ class mvb_Model_Manager {
             $this->config->saveConfig();
 
             mvb_Model_ConfigPress::saveConfig(stripslashes($params['config_press']));
-        }else{
+        } else {
             $error_message = FALSE;
         }
 
@@ -416,6 +439,7 @@ class mvb_Model_Manager {
 
         return $r_menu;
     }
+
 }
 
 ?>

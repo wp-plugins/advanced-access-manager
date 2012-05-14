@@ -64,6 +64,8 @@ class mvb_Model_Ajax {
 
         $this->pObj = $pObj;
         $this->action = $this->get_action();
+
+        mvb_Model_Label::initAllLabels();
     }
 
     /**
@@ -250,12 +252,6 @@ class mvb_Model_Ajax {
     protected function restore_user($user_id) {
 
         delete_user_meta($user_id, WPACCESS_PREFIX . 'config');
-        //TODO - Delete in future releases
-        delete_user_meta($user_id, WPACCESS_PREFIX . 'options');
-        delete_user_meta($user_id, WPACCESS_PREFIX . 'restrictions');
-        delete_user_meta($user_id, WPACCESS_PREFIX . 'menu_order');
-        delete_user_meta($user_id, WPACCESS_PREFIX . 'capabilities');
-
         mvb_Model_Cache::clearCache();
 
         return array('status' => 'success');
@@ -720,7 +716,9 @@ class mvb_Model_Ajax {
             $result['status'] = 'success';
         } else {
             $result['status'] = 'error';
-            $result['message'] = mvb_Model_Label::get('upgrade_restriction');
+            $result['message'] = sprintf(
+                    mvb_Model_Label::get('LABEL_2'), WPACCESS_RESTRICTION_LIMIT, 'http://whimba.org/advanced-access-manager'
+            );
         }
 
         if ($result['status'] == 'success') {
@@ -733,17 +731,17 @@ class mvb_Model_Ajax {
     protected function prepareRestrictions($data) {
 
         $prep = array();
+        if ($data['type'] == 'taxonomy') {
+            $prep['taxonomy'] = mvb_Model_Helper::getTaxonomyByTerm($data['id']);
+        }
         if (isset($data['data']) && is_array($data['data'])) {
             foreach ($data['data'] as $input) {
                 if (($data['type'] == 'taxonomy')
                         && (strpos($input['name'], '_post_') !== FALSE)
-                        && !defined('AAM_PRO')) {
+                        && !mvb_Model_Helper::isPremium()) {
                     continue;
                 }
                 $prep[$input['name']] = $input['value'];
-            }
-            if ($data['type'] == 'taxonomy') {
-                $prep['taxonomy'] = mvb_Model_Helper::getTaxonomyByTerm($data['id']);
             }
         }
 
@@ -751,9 +749,10 @@ class mvb_Model_Ajax {
     }
 
     /**
-     * Save information about page/post/category restriction
+     * Save Restriction Information
      *
-     * @todo Junk
+     * @access protected
+     * @return array
      */
     protected function save_info() {
 
@@ -762,6 +761,7 @@ class mvb_Model_Ajax {
         $apply_all = mvb_Model_Helper::getParam('apply', 'POST');
         $apply_all_cb = mvb_Model_Helper::getParam('apply_all_cb', 'POST');
         $info = mvb_Model_Helper::getParam('info', 'POST');
+
         mvb_Model_API::updateBlogOption(
                 WPACCESS_PREFIX . 'hide_apply_all', $apply_all_cb
         );
@@ -941,7 +941,7 @@ class mvb_Model_Ajax {
                 }
                 if ($result['result'] == 'success') {
                     $this->deprive_role($user_id, WPACCESS_SADMIN_ROLE, WPACCESS_ADMIN_ROLE);
-                    mvb_Model_API::updateBlogOption(WPACCESS_FTIME_MESSAGE, $answer);
+                    mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'first_time', $answer);
                 }
             } else {
                 $result = array('result' => 'error');

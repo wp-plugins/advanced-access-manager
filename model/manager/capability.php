@@ -177,7 +177,7 @@ class mvb_Model_Manager_Capability {
 
     private static function isPremium($capability){
 
-        return (in_array($capability, self::$premium_caps) && !defined('AAM_PRO') ? 'premium' : '');
+        return (in_array($capability, self::$premium_caps) && !mvb_Model_Helper::isPremium() ? 'premium' : '');
     }
 
 }

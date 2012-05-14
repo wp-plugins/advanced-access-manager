@@ -37,7 +37,6 @@ class mvb_Model_Template {
      * @param string Absolute path to file with template
      * @return mixed Return string on success and False if failed
      */
-
     public static function readTemplate($path) {
 
         if ($path) {
@@ -58,7 +57,6 @@ class mvb_Model_Template {
      * @param string Template to search in
      * @return string
      */
-
     public static function retrieveSub($subTemplate, $template) {
         $subPart = '';
         $regExp = '/<!\-\-[\s]?###' . $subTemplate . '###[\s]?begin\-\->';
@@ -81,7 +79,6 @@ class mvb_Model_Template {
      * @param string Template to search and replace in
      * @return string Template with replaced subpart
      */
-
     public static function replaceSub($subTemplate, $content, $template) {
 
         $regExp = '/<!\-\-[\s]?###' . $subTemplate . '###[\s]?begin\-\->';
@@ -100,7 +97,6 @@ class mvb_Model_Template {
      * @param string HTML template
      * @return string HTML template with replaced markers
      */
-
     public static function updateMarkers($markers, $template) {
 
         if (is_array($markers)) {
@@ -112,15 +108,15 @@ class mvb_Model_Template {
         return $template;
     }
 
+    /**
+     * Clear template for not updated markers
+     *
+     * @access public
+     * @param string $template
+     * @param string $pattern
+     * @return string
+     */
     public static function clearTemplate($template, $pattern = '/(###[a-z0-9_\-]+###)/si') {
-
-        //try to replace all labels
-        $l_list = array();
-        $i = 1;
-        while (($label = mvb_Model_Label::get('LABEL_' . $i)) !== FALSE) {
-            $l_list['###LABEL_' . $i++ . '###'] = $label;
-        }
-        $template = self::updateMarkers($l_list, $template);
 
         return preg_replace($pattern, '', $template);
     }

@@ -1,7 +1,19 @@
 <div class="wrap" id="aam_wrap">
     <form action="###form_action###" method="post" id="aam-form">
         <div class="plugin-logo"></div>
-        <div class="plugin-title"><h2>###LABEL_1###</h2>###version_type###</div>
+        <div class="plugin-title">
+			<h2>###LABEL_1###</h2>
+			<!-- ###VERSION### begin-->
+				<!-- ###VERSION_BASIC### begin-->
+				<span class="version basic-type">
+					<a href="http://whimba.org/advanced-access-manager" target="_blank" title="###LABEL_152###">###LABEL_149###</a>
+				</span>
+				<!-- ###VERSION_BASIC### end-->
+				<!-- ###VERSION_PREMIUM### begin-->
+				<span class="version pro-type">###LABEL_140###</span>
+				<!-- ###VERSION_PREMIUM### end-->
+			<!-- ###VERSION### end-->
+		</div>
         <div class="plugin-notification">
             <!-- ###ERROR_LIST### begin-->
             <p>###message### <a href="###url###" target="_blank">###LABEL_168###</a></p>
@@ -74,7 +86,7 @@
                                 <!-- ###METABOX_TAB### begin-->
                                 <div id="tabs-2">
                                     <div class="helpbox postbox metabox-help">
-                                        <div class="tooltip tooltip-large help-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>Information</em>###LABEL_14###</span></div>
+                                        <div class="tooltip tooltip-large help-info"><span class="custom info"><img src="###info_image###" alt="Info" height="48" width="48" /><em>###LABEL_158###</em>###LABEL_14###</span></div>
                                         <div style="float:left; width:80%;">
                                             <input type="text" placeholder="###LABEL_15###" class="initialize-url-text" value="" />&nbsp;&nbsp;
                                             <a href="#" class="button initialize-url" >###LABEL_16###</a>
@@ -211,7 +223,7 @@
                                 <!-- ###RESTRICTION_TAB### begin-->
                                 <div id="tabs-4">
                                     <div class="tree-holder postbox">
-                                        <div id="sidetreecontrol"><a href="#">###LABEL_40###</a>&nbsp;|&nbsp;<a href="#">###LABEL_41###</a>&nbsp;|&nbsp;<span>Refresh</span></div>
+                                        <div id="sidetreecontrol"><a href="#">###LABEL_40###</a>&nbsp;|&nbsp;<a href="#">###LABEL_41###</a>&nbsp;|&nbsp;<span>###LABEL_159###</span></div>
                                         <br class="clear" />
                                         <ul id="tree" class="filetree"></ul>
                                     </div>
@@ -240,47 +252,47 @@
                                                 <tbody>
                                                     <tr>
                                                         <th>&nbsp;</th>
-                                                        <th><div class="table-center">Frontend</div></th>
-                                                <th><div class="table-center">Backend</div></th>
+                                                        <th><div class="table-center">###LABEL_160###</div></th>
+                                                <th><div class="table-center">###LABEL_150###</div></th>
                                                 </tr>
                                                 <tr>
-                                                    <th>List</th>
+                                                    <th>###LABEL_151###</th>
                                                     <td><input type="checkbox" name="frontend_post_list" id="frontend_post_list" value="1" /></td>
                                                     <td><input type="checkbox" name="backend_post_list" id="backend_post_list" value="1" /></td>
                                                 </tr>
                                                 <tr id="exclude">
-                                                    <th>Exclude</th>
+                                                    <th>###LABEL_129###</th>
                                                     <td><input type="checkbox" name="frontend_post_exclude" id="frontend_post_exclude" value="1" /></td>
                                                     <td><input type="checkbox" name="backend_post_exclude" disabled /></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Read</th>
+                                                    <th>###LABEL_108###</th>
                                                     <td><input type="checkbox" name="frontend_post_read" id="frontend_post_read" value="1" /></td>
                                                     <td><input type="checkbox" disabled /></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Trash</th>
+                                                    <th>###LABEL_109###</th>
                                                     <td><input type="checkbox" disabled /></td>
                                                     <td><input type="checkbox" name="backend_post_trash" id="backend_post_trash" value="1" /></td>
                                                 </tr>
 
                                                 <tr>
-                                                    <th>Delete</th>
+                                                    <th>###LABEL_110###</th>
                                                     <td><input type="checkbox" disabled /></td>
                                                     <td><input type="checkbox" name="backend_post_delete" id="backend_post_delete" value="1" /></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Edit</th>
+                                                    <th>###LABEL_111###</th>
                                                     <td><input type="checkbox" disabled /></td>
                                                     <td><input type="checkbox" name="backend_post_edit" id="backend_post_edit" value="1" /></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Publish</th>
+                                                    <th>###LABEL_92###</th>
                                                     <td><input type="checkbox" disabled /></td>
                                                     <td><input type="checkbox" name="backend_post_publish" id="backend_post_publish" value="1" /></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Comment</th>
+                                                    <th>###LABEL_93###</th>
                                                     <td><input type="checkbox" name="frontend_post_comment" id="frontend_post_comment" value="1" /></td>
                                                     <td><input type="checkbox" disabled /></td>
                                                 </tr>
@@ -306,21 +318,21 @@
                                                 <tbody>
                                                     <tr>
                                                         <th>&nbsp;</th>
-                                                        <th><div class="table-center">Frontend</div></th>
-                                                <th><div class="table-center">Backend</div></th>
+                                                        <th><div class="table-center">###LABEL_160###</div></th>
+                                                <th><div class="table-center">###LABEL_150###</div></th>
                                                 </tr>
                                                 <tr>
-                                                    <th>List</th>
+                                                    <th>###LABEL_151###</th>
                                                     <td><input type="checkbox" name="frontend_list" id="frontend_list" value="1" /></td>
                                                     <td><input type="checkbox" name="backend_list" id="backend_list" value="1" /></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Browse</th>
+                                                    <th>###LABEL_94###</th>
                                                     <td><input type="checkbox" name="frontend_browse" id="frontend_browse" value="1" /></td>
                                                     <td><input type="checkbox" name="backend_browse" id="backend_browse" value="1" /></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Edit</th>
+                                                    <th>###LABEL_111###</th>
                                                     <td><input type="checkbox" disabled /></td>
                                                     <td><input type="checkbox" name="backend_edit" id="backend_edit" value="1" /></td>
                                                 </tr>
@@ -331,35 +343,40 @@
                                                     <td>
                                                         <input type="checkbox" name="post_in_category" id="post_in_category" value="1" />
                                                     </td>
-                                                    <td id="premium-ind"><span style="font-size: 10px; font-style: italic; font-weight: bold;">Premium</span></td>
+                                                    <td id="premium-ind"><span style="font-size: 10px; font-style: italic; font-weight: bold;">###LABEL_140###</span></td>
+                                                </tr>
+                                                 <tr>
+                                                    <th>###LABEL_151###</th>
+                                                    <td><input type="checkbox" name="frontend_post_list" id="frontend_post_list" class="frontend-browse incat-check" value="1" /></td>
+                                                    <td><input type="checkbox" name="backend_post_list" id="backend_post_list" class="backend-browse incat-check" value="1" /></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Read</th>
+                                                    <th>###LABEL_108###</th>
                                                     <td><input type="checkbox" name="frontend_post_read" id="frontend_post_read" class="frontend-browse incat-check" value="1" /></td>
                                                     <td><input type="checkbox" disabled /></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Trash</th>
+                                                    <th>###LABEL_109###</th>
                                                     <td><input type="checkbox" disabled /></td>
                                                     <td><input type="checkbox" name="backend_post_trash" id="backend_post_trash" class="backend-browse incat-check" value="1" /></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Delete</th>
+                                                    <th>###LABEL_110###</th>
                                                     <td><input type="checkbox" disabled /></td>
                                                     <td><input type="checkbox" name="backend_post_delete" id="backend_post_delete" class="backend-browse incat-check" value="1" /></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Edit</th>
+                                                    <th>###LABEL_111###</th>
                                                     <td><input type="checkbox" disabled /></td>
                                                     <td><input type="checkbox" name="backend_post_edit" id="backend_post_edit" class="backend-browse incat-check" value="1" /></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Publish</th>
+                                                    <th>###LABEL_92###</th>
                                                     <td><input type="checkbox" disabled /></td>
                                                     <td><input type="checkbox" name="backend_post_publish" id="backend_post_publish" class="backend-browse incat-check" value="1" /></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Comment</th>
+                                                    <th>###LABEL_93###</th>
                                                     <td><input type="checkbox" name="frontend_post_comment" id="frontend_post_comment" class="frontend-browse incat-check" value="1" /></td>
                                                     <td><input type="checkbox" disabled /></td>
                                                 </tr>
