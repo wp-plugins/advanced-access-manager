@@ -277,93 +277,36 @@ class mvb_Model_Label {
         if (self::$cap_flag){ return FALSE;}
 
         self::$labels = array_merge(self::$labels, array(
-            'switch_themes' => __('Since 2.0
-				Allows access to Administration Panel options:
-					- Appearance
-					- Appearance > Themes', 'aam'),
-            'edit_themes' => __('Since 2.0
-				Allows access to Appearance > Theme Editor to edit theme files.', 'aam'),
-            'edit_theme_options' => __('Since 3.0
-				Allows access to Administration Panel options:
-					- Appearance > Background
-					- Appearance > Header
-					- Appearance > Menus
-					- Appearance > Widgets
-					- Also allows access to Theme Options pages if they are included in the Theme', 'aam'),
-            'edit_published_posts' => __('Since 2.0
-				User can edit their published posts. This capability is off by default.
-				The core checks the capability edit_posts, but on demand this check is changed to edit_published_posts.
-				If you do not want a user to be able edit his published posts, remove this capability.', 'aam'),
-            'edit_others_posts' => __('Since 2.0
-				Allows access to Administration Panel options:
-					- Manage > Comments (Lets user delete and edit every comment, see edit_posts above)
-					- user can edit other posts through function get_others_drafts()
-					- user can see other images in inline-uploading', 'aam'),
-            'manage_options' => __('Since 2.0
-				Allows access to Administration Panel options:
-                    - Settings > General
-                    - Settings > Writing
-                    - Settings > Writing
-                    - Settings > Reading
-                    - Settings > Discussion
-                    - Settings > Permalinks
-                    - Settings > Miscellaneous', 'aam'),
-            'install_themes' => __('Since 2.0
-				Allows access to Administration Panel option:
-					- Appearance > Add New Themes', 'aam'),
-            'activate_plugins' => __('Since 2.0
-				Allows access to Administration Panel option:
-					- Plugins', 'aam'),
-            'edit_plugins' => __('Since 2.0
-				Allows access to Administration Panel option:
-					- Plugins > Plugin Editor', 'aam'),
-            'install_plugins' => __('Since 2.0
-				Allows access to Administration Panel option:
-					- Plugins > Add New', 'aam'),
-            'edit_users' => __('Since 2.0
-				Allows access to Administration Panel option:
-					- Users', 'aam'),
-            'edit_files' => __('Since 2.0
-				Note: No longer used.', 'aam'),
-            'moderate_comments' => __('Since 2.0
-				Allows users to moderate comments from the Comments SubPanel (although a user needs the edit_posts Capability in order to access this)', 'aam'),
-            'manage_categories' => __('Since 2.0
-				Allows access to Administration Panel options:
-					- Posts > Categories
-					- Links > Categories', 'aam'),
-            'manage_links' => __('Since 2.0
-				Allows access to Administration Panel options:
-					- Links
-					- Links > Add New', 'aam'),
-            'upload_files' => __('Since 2.0
-				Allows access to Administration Panel options:
-					- Media
-					- Media > Add New', 'aam'),
-            'import' => __('Since 2.0
-				Allows access to Administration Panel options:
-					- Tools > Import
-					- Tools > Export', 'aam'),
-            'unfiltered_html' => __('Since 2.0
-				Allows user to post HTML markup or even JavaScript code in pages, posts, and comments.
-				Note: Enabling this option for untrusted users may result in their posting malicious or poorly formatted code.', 'aam'),
-            'edit_posts' => __('Since 2.0
-				Allows access to Administration Panel options:
-					- Posts
-					- Posts > Add New
-					- Comments
-					- Comments > Awaiting Moderation', 'aam'),
-            'publish_posts' => __('Since 2.0
-				See and use the PUBLISH button when editing their post (otherwise they can only save drafts)
-				Can use XML-RPC to publish (otherwise they get a… Sorry, you can not post on this weblog or category.)', 'aam'),
-            'edit_pages' => __('Since 2.0
-				Allows access to Administration Panel options:
-					- Pages
-					- Pages > Add New', 'aam'),
-            'read' => __('Since 2.0
-				Allows access to Administration Panel options:
-					- Dashboard
-					- Users > Your Profile
-				Used nowhere in the core code except the menu.php', 'aam'),
+            'switch_themes' => __('Since 2.0 - Allows access to Administration Panel options: Appearance // Appearance > Themes', 'aam'),
+            'edit_themes' => __('Since 2.0 - Allows access to Appearance > Theme Editor to edit theme files.', 'aam'),
+            'edit_theme_options' => __('Since 3.0 - Allows access to Administration Panel options:  Appearance > Background // Appearance > Header // Appearance > Menus // Appearance > Widgets // Also allows access to Theme Options pages if they are included in the Theme', 'aam'),
+            'update_themes' => __('Since 2.0', 'aam'),
+            'edit_published_posts' => __('Since 2.0 - User can edit their published posts (off by default). The core checks the capability edit_posts, but on demand this check is changed to edit_published_posts. If you do not want a user to be able edit his published posts, remove this capability.', 'aam'),
+            'edit_others_posts' => __('Since 2.0 - Allows access to Administration Panel options:  Manage > Comments (Lets user delete and edit every comment, see edit_posts above) // User can edit other posts through function get_others_drafts()  // User can see other images in inline-uploading', 'aam'),
+            'manage_options' => __('Since 2.0 - Allows access to Administration Panel options:  Settings > General // Settings > Writing // Settings > Writing // Settings > Reading // Settings > Discussion // Settings > Permalinks // Settings > Miscellaneous', 'aam'),
+            'install_themes' => __('Since 2.0 - Allows access to Administration Panel option: Appearance > Add New Themes', 'aam'),
+            'activate_plugins' => __('Since 2.0 - Allows access to Administration Panel option: Plugins', 'aam'),
+            'edit_plugins' => __('Since 2.0 - Allows access to Administration Panel option:  Plugins > Plugin Editor', 'aam'),
+            'install_plugins' => __('Since 2.0 - Allows access to Administration Panel option: Plugins > Add New', 'aam'),
+            'edit_users' => __('Since 2.0 - Allows access to Administration Panel option:  Users', 'aam'),
+            'edit_files' => __('Since 2.0 - Note: No longer used.', 'aam'),
+            'moderate_comments' => __('Since 2.0 - Allows users to moderate comments from the Comments SubPanel (although a user needs the edit_posts Capability in order to access this)', 'aam'),
+            'reply_comment' => __('Since 2.0', 'aam'),
+            'quick_edit_comment' => __('Since 2.0', 'aam'),
+            'unapprove_comment' => __('Since 2.0', 'aam'),
+            'unspam_comment' => __('Since 2.0', 'aam'),
+            'untrash_comment' => __('Since 2.0', 'aam'),
+			'manage_categories' => __('Since 2.0 - Allows access to Administration Panel options: Posts > Categories // Links > Categories', 'aam'),
+            'manage_links' => __('Since 2.0 - Allows access to Administration Panel options:  Links // Links > Add New', 'aam'),
+            'upload_files' => __('Since 2.0 - Allows access to Administration Panel options: Media // Media > Add New', 'aam'),
+            'import' => __('Since 2.0 - Allows access to Administration Panel options:  Tools > Import // Tools > Export', 'aam'),
+            'unfiltered_html' => __('Since 2.0 - Allows user to post HTML markup or even JavaScript code in pages, posts, and comments. Note: Enabling this option for untrusted users may result in their posting malicious or poorly formatted code.', 'aam'),
+            'edit_posts' => __('Since 2.0 - Allows access to Administration Panel options:  Posts - Posts > Add New // Comments // Comments > Awaiting Moderation', 'aam'),
+            'publish_posts' => __('Since 2.0 - See and use the PUBLISH button when editing their post (otherwise they can only save drafts).  Can use XML-RPC to publish (otherwise they get a… Sorry, you can not post on this weblog or category.)', 'aam'),
+            'publish_pages' => __('Since 2.1', 'aam'),
+            'edit_pages' => __('Since 2.0 - Allows access to Administration Panel options: Pages - Pages > Add New', 'aam'),
+            'edit_permalink' => __('Since 2.1', 'aam'),
+            'read' => __('Since 2.0 - Allows access to Administration Panel options:  Dashboard - Users > Your Profile // Used only in menu.php', 'aam'),
             'edit_others_pages' => __('Since 2.1', 'aam'),
             'edit_published_pages' => __('Since 2.1', 'aam'),
             'edit_published_pages_2' => __('Since 2.1', 'aam'),
@@ -393,18 +336,10 @@ class mvb_Model_Label {
             'delete_themes' => __('Since 3.0', 'aam'),
             'export' => __('Since 3.0', 'aam'),
             'edit_comment' => __('Since 3.1', 'aam'),
-            'manage_sites' => __('Since 3.0
-				Multi-site only
-				Allows access to Network Sites menu
-				Allows user to add, edit, delete, archive, unarchive, activate, deactivate, spam and unspam new site/blog in the network', 'aam'),
-            'manage_network_users' => __('Since 3.0
-				Multi-site only
-				Allows access to Network Users menu', 'aam'),
-            'manage_network_themes' => __('Since 3.0
-				Multi-site only
-				Allows access to Network Themes menu', 'aam'),
-            'manage_network_options' => __('Since 3.0
-				Multi-site only
+            'manage_sites' => __('Since 3.0 - Multi-site only.  Allows access to Network Sites menu // Allows user to add, edit, delete, archive, unarchive, activate, deactivate, spam and unspam new site/blog in the network', 'aam'),
+            'manage_network_users' => __('Since 3.0 - Multi-site only. Allows access to Network Users menu', 'aam'),
+            'manage_network_themes' => __('Since 3.0 - Multi-site only. Allows access to Network Themes menu', 'aam'),
+            'manage_network_options' => __('Since 3.0 - Multi-site only
 				Allows access to Network Options menu', 'aam'),
             'level_0' => __('User Level 0 converts to Subscriber', 'aam'),
             'level_1' => __('User Level 1 converts to Contributor', 'aam'),
