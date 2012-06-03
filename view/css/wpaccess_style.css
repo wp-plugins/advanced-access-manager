@@ -555,6 +555,9 @@ width: 260px;
 .mbox { width: 94%;float: right; }
 .mbox .initialize-url { float: none; }
 .mbox .refresh-metagox-list { float: none; }
+.cbox { width: 94%;float: right;padding-bottom:8px; }
+.cbox .initialize-url { float: none; }
+.cbox .refresh-metagox-list { float: none; }
 
 input.lgsquarebutton, .ui-widget-content a.reorganize-menu, .initialize-url, .refresh-metagox-list, .helpbox a.squarebutton, a.squarebutton {
     padding-bottom: 20px;

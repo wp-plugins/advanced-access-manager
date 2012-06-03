@@ -131,11 +131,11 @@ aamObject.prototype.initMainMenuTab = function(){
                 }
             }
             _this.sort_status = 'passive';
-            _this.changeText(jQuery('.help-text', helper), aamLocal.LABEL_172);
+            _this.changeText(jQuery('.help1', helper), aamLocal.LABEL_172);
             _this.changeText(jQuery('.reorganize-menu', helper), aamLocal.LABEL_12);
             _this.initAccordion(jQuery('.main-menu-accordion'));
         }else{
-            _this.changeText(jQuery('.help-text', helper), aamLocal.LABEL_11);
+            _this.changeText(jQuery('.help1', helper), aamLocal.LABEL_11);
             _this.changeText(jQuery('.reorganize-menu', helper), aamLocal.LABEL_173);
             _this.initAccordion(jQuery('.main-menu-accordion'), true);
             _this.sort_status = 'active';
