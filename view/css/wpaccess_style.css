@@ -191,6 +191,8 @@ margin: 10px 0 0 15px;
     border-radius: 3px;
 }
 
+.capability-item .icon-delete { float: right;}
+
 .premium{
     background-color: #f1dcdc;
 }
@@ -274,7 +276,7 @@ margin: 10px 0 0 15px;
 }
 
 .initialize-url-text{
-    width: 55%;
+    width: 60%;
     margin: 4px
     padding: 4px;
 }
@@ -327,7 +329,7 @@ margin: 10px 0 0 15px;
 }
 
 .post-information{
-    width:45%;
+    width:48%;
     float:right;
     position: relative;
 }
@@ -523,7 +525,8 @@ div.tree-holder #sidetreecontrol a { color: #257DA6; }
 .aacsmicons { height: 30px;width: 25px;background-color: #efefef;border: 1px solid #bcbcbc; border-radius: 2px;
  } 
 .aachelp { background-position: -90px -50px; margin: 2px; }
-.aachelp span.help1 { margin: 0 100px 0 35px;position: absolute;line-height: 115%; }
+span.help1 { margin: 0 100px 0 35px;position: absolute;line-height: 115%; }
+span.help2 { margin: 0 20px;position: absolute;line-height: 120%; }
 .aacback { background-position: -112px -48px;border: 1px solid #bcbcbc;;height: 30px;width: 30px;margin: 0;float: left;background-color: #fefefe;border-radius: 15px;box-shadow: 0 0 3px #DDDDDD;
     -webkit-transition: border-color .218s;
     -moz-transition: border .218s;
@@ -553,8 +556,8 @@ width: 260px;
 }
 
 .mbox { width: 94%;float: right; }
-.mbox .initialize-url { float: none; }
-.mbox .refresh-metagox-list { float: none; }
+.mbox .initialize-url { float: none;margin:3px 3px 0 9px; }
+.mbox .refresh-metagox-list { margin: 3px 3px 0 3px; }
 .cbox { width: 94%;float: right;padding-bottom:8px; }
 .cbox .initialize-url { float: none; }
 .cbox .refresh-metagox-list { float: none; }
@@ -598,7 +601,7 @@ div a.lilsqbutton {
     color: #6e6e6e;
     font: bold 11px Helvetica, Arial, sans-serif;
     text-decoration: none;
-    padding: 6px 10px;
+    padding: 5px 10px;
     position: relative;
     display: inline-block;
     text-shadow: 0 1px 0 #ffffff;
@@ -618,24 +621,23 @@ div a.lilsqbutton {
 
 .tooltip {
 font-weight: bold;
-color: rgb(1,155,214);
+color: #434343;
 cursor: default;
 }
 
 .tooltip {
 position: relative;
 }
-
 .tooltip:hover::after {
 font-weight: normal;
 font-family: helvetica, arial, sans serif;
-font-size: 12px;
+font-size: 13px;
 line-height: 14px;
-color: rgb(85,85,85);
+color: #434343;
 content: attr(alt);
 text-align: left;
 text-shadow: 0px 1px 0px rgb(253,253,253);
-width: 180px;
+width: 200px;
 background-color: rgb(240,240,240);
 background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(245,245,245)), to(rgb(235,235,235)));
 background-image: -moz-linear-gradient(top,  rgb(245,245,245),  rgb(235,235,235));
@@ -658,10 +660,36 @@ box-shadow: inset 0px 1px 0px rgb(252,252,252), 1px 1px 3px rgb(240,240,240), -1
 .right { float: right; }
 #major-publishing-actions { padding: 8px 0 6px 8px; }
 #misc-publishing-actions { padding: 2px 0 20px 8px;color: #6888B8; }
-#current-role-display, #current-user-display { font-size: 14px;color: #333333;padding-right:4px; }
+#current-role-display, #current-user-display { font-size: 14px;color: #454545;padding-right:4px; }
 .change-role, .change-user { 
-    color: #CCCCCC;
+    color: #999999;
     font-size: 10px;
     text-decoration: none;
  }
 h3 span { font-family: veranda, sans-serif; }
+#role-cancel, #user-cancel { color: #cccccc;padding-left: 4px;text-decoration: none; }
+.wp-admin select {
+    background: none repeat scroll 0 0 #F3F3F3;
+    border: 1px solid #BCBCBC;
+    box-shadow: 0 0 2px #DDDDDD;
+    color: #6E6E6E;
+    height: 2em;
+    margin-right: 6px;
+    padding: 3px;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+#wpcontent option { background: #ffffff;text-shadow: 0 0; }
+#wpcontent option:hover { background: #eeeeee; }
+#new-role-ok { margin-left: 5px; } 
+.icon-delete .critical {
+    background: none repeat scroll 0 0 #FF0000;
+    border: 0 none;
+    border-radius: 10px 10px 10px 10px;
+    color: #FEFEFE;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 0;
+    margin-left: -20px;
+    margin-right: -20px;
+    padding: 0 6px;
+}

@@ -184,7 +184,7 @@
                                                     <label for="cap-###title###" title="###cap_name_full###" class="tooltip" alt="###description###">###cap_name###</label>
                                                 </div>
                                                 <!-- ###CAPABILITY_DELETE### begin-->
-                                                <div class="tooltip icon-delete" onclick="mObj.deleteCapability('###title###', '###cap_name###');"><span class="custom critical"><img src="###critical_image###" alt="Critical" height="48" width="48" /><em>###LABEL_118###</em>###LABEL_121###</span></div>
+                                                <div class="icon-delete" onclick="mObj.deleteCapability('###title###', '###cap_name###');"><span class="custom critical" rel="###LABEL_118###">!</span></div>
                                                 <!-- ###CAPABILITY_DELETE### end-->
                                             </div>
                                             <!-- ###CAPABILITY_ITEM### end-->
@@ -398,12 +398,12 @@
                                 <!-- ###RESTRICTION_TAB### end-->
                                 <!-- ###CONFIG_PRESS_TAB### begin-->
                                 <div id="tabs-5">
+                                <div class="helpbox postbox">
                                     <a href="###reference_url###?width=800&TB_iframe=true" class="thickbox" id="cp-ref-trigger">
                                     <span class="aacsprite aacsmicons aachelp tooltip" alt="###LABEL_161###"><img title="configpress" rel="configpress" src="###site_url###/wp-content/plugins/advanced-access-manager/view/css/images/nothing.gif" /></span>
                                     </a>
-                                        <div class="cbox">
-                                        <span>###LABEL_157###</span>
-                                        </div>
+                                        <span class="help2">###LABEL_157###</span>
+                                    </div>
                                         <br class="clear" />                                
                                     <textarea id="access_config" name="wpaccess[config_press]">###access_config###</textarea>
                                 </div>
@@ -453,7 +453,7 @@
                                                     <option value="###value###" ###selected### >###title###</option>
                                                     <!-- ###ROLE_LIST### end-->
                                                 </select>
-                                                <a href="#" class="hide-if-no-js button" id="role-ok">###LABEL_76###</a>
+                                                <a href="#" class="hide-if-no-js lilsqbutton" id="role-ok">###LABEL_76###</a>
                                                 <a href="#" class="hide-if-no-js" id="role-cancel">###LABEL_77###</a>
                                             </div>
                                         </div>
@@ -467,7 +467,7 @@
                                                     <option value="###value###" ###selected### >###title###</option>
                                                     <!-- ###USER_LIST### end-->
                                                 </select>
-                                                <a href="#" class="hide-if-no-js button" id="user-ok">###LABEL_76###</a>
+                                                <a href="#" class="hide-if-no-js lilsqbutton" id="user-ok">###LABEL_76###</a>
                                                 <a href="#" class="hide-if-no-js" id="user-cancel">###LABEL_77###</a>
                                             </div>
                                         </div>

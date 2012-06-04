@@ -145,7 +145,6 @@ class mvb_Model_ManagerAjax extends mvb_Model_Manager {
 
         $markers = array(
             '###info_image###' => WPACCESS_CSS_URL . 'images/Info-tooltip.png',
-            '###critical_image###' => WPACCESS_CSS_URL . 'images/Critical-tooltip.png',
         );
         $content = mvb_Model_Template::updateMarkers($markers, $content);
         $content = mvb_Model_Label::clearLabels($content);
