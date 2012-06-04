@@ -20,7 +20,7 @@
 
 /**
  * Role Model Class
- * 
+ *
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
@@ -36,13 +36,13 @@ class mvb_Model_Role extends WP_Roles {
 
     /**
      * Create a New User's Role
-     * 
+     *
      * Use add_role function from WP_Roles to create a new User Role
-     * 
+     *
      * @param string User Role title
      * @return array Result
      */
-    function createNewRole($newRoleTitle, $caps = array()) {
+    public function createNewRole($newRoleTitle, $caps = array()) {
 
         $role_id = sanitize_title_with_dashes($newRoleTitle);
         $role_id = str_replace('-', '_', $role_id);
@@ -58,6 +58,26 @@ class mvb_Model_Role extends WP_Roles {
             'result' => $status,
             'new_role' => $role_id,
         );
+
+        return $result;
+    }
+
+    public function add_role($role, $display_name, $capabilities = array()) {
+
+        if (mvb_Model_API::isNetworkPanel()){
+            $roles = mvb_Model_API::getRoleList(FALSE);
+            if (!isset($roles[$role])){
+                $roles[$role] = array(
+                    'name' => $display_name,
+                    'capabilities' => $capabilities
+                );
+                $result = mvb_Model_API::updateBlogOption('user_roles', $roles);
+            }else{
+                $result = FALSE;
+            }
+        }else{
+            $result = parent::add_role($role, $display_name, $capabilities);
+        }
 
         return $result;
     }

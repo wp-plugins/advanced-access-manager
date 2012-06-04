@@ -118,22 +118,34 @@ class mvb_Model_Helper {
         wp_die($message);
     }
 
-	/**
-	 * Check if AAM is Premium
-	 *
-	 * @access public
-	 * @return boolean
-	 */
-	public static function isPremium(){
+    public static function multisiteApplyAll(){
 
-		if (defined('AAM_PREMIUM')){
-			$result = TRUE;
-		}else{
-			$result = FALSE;
-		}
+        if (mvb_Model_API::isNetworkPanel()
+                && (mvb_Model_ConfigPress::getOption('aam.multisite.apply_all') == 'true')){
+            $result = TRUE;
+        }else{
+            $result = FALSE;
+        }
 
-		return $result;
-	}
+        return $result;
+    }
+
+    /**
+     * Check if AAM is Premium
+     *
+     * @access public
+     * @return boolean
+     */
+    public static function isPremium() {
+
+        if (defined('AAM_PREMIUM')) {
+            $result = TRUE;
+        } else {
+            $result = FALSE;
+        }
+
+        return $result;
+    }
 
     /**
      * Return Edit Post Link
@@ -358,6 +370,32 @@ class mvb_Model_Helper {
         return $sites;
     }
 
+    /**
+     * Get list of site to Apply settings for
+     *
+     * @access public
+     * @return array
+     */
+    public static function getApplySiteList(){
+
+        $limit = apply_filters(WPACCESS_PREFIX . 'msar_restrict_limit', WPACCESS_APPLY_LIMIT);
+        $current = new stdClass();
+        $current->blog_id = self::getParam('site');
+        $list = array();
+        foreach(mvb_Model_Helper::getSiteList() as $i => $site){
+            if ($site->blog_id == $current->blog_id){
+                continue;
+            }elseif(($i + 1 >= WPACCESS_APPLY_LIMIT) && ($limit != -1)){
+                $list[] = (object) array('blog_id' => 'error');
+                break;
+            }
+            $list[] = $site;
+        }
+        array_unshift($list, $current);
+
+        return $list;
+    }
+
     public static function getUserList($role) {
 
         $args = array(
@@ -408,11 +446,11 @@ class mvb_Model_Helper {
     public static function getTaxonomyByTerm($term_id) {
         global $wpdb;
 
-        if ($term_id){
+        if ($term_id) {
             $query = "SELECT taxonomy FROM {$wpdb->term_taxonomy} ";
             $query .= "WHERE term_id = {$term_id}";
             $result = $wpdb->get_var($query);
-        }else{
+        } else {
             $result = FALSE;
         }
 
@@ -454,6 +492,12 @@ class mvb_Model_Helper {
 
         // Return clean content
         return $text;
+    }
+
+    public static function triggerNotice($message){
+
+        echo '<div id="mvb-warning" class="updated"><p>',
+                '<strong>' , $message , '</strong></p></div>';
     }
 
 }

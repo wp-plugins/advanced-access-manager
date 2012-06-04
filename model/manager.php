@@ -100,6 +100,11 @@ class mvb_Model_Manager {
 
     protected function initConfig() {
 
+        if (mvb_Model_API::isNetworkPanel()) {
+            $blog_id = mvb_Model_Helper::getParam('site', 'GET', get_current_blog_id());
+            mvb_Model_API::setCurrentBlog($blog_id);
+        }
+
         if ($this->current_user) {
             $this->config = mvb_Model_API::getUserAccessConfig($this->current_user);
         } else {
@@ -366,34 +371,33 @@ class mvb_Model_Manager {
         if (isset($_POST['submited'])) {
             $params = (isset($_POST['wpaccess']) ? $_POST['wpaccess'] : array());
             $error_message = NULL;
-            if (mvb_Model_API::isNetworkPanel() && (mvb_Model_ConfigPress::getOption('aam.multisite.apply_all') == 'true')) {
-                $limit = apply_filters(WPACCESS_PREFIX . 'msar_restrict_limit', WPACCESS_APPLY_LIMIT);
-                foreach (mvb_Model_Helper::getSiteList() as $i => $site) {
-                    if ($site->blog_id == $_GET['site']) {
-                        continue;
-                    } elseif (($i + 1 >= WPACCESS_APPLY_LIMIT) && ($limit != -1)) {
+            if (mvb_Model_Helper::multisiteApplyAll()) {
+                //get Role list and transfer them to all subsites
+                $original = mvb_Model_API::getRole($this->current_role);
+                $m = new mvb_Model_Role(); //just in case
+                foreach (mvb_Model_Helper::getApplySiteList() as $site) {
+                    if ($site->blog_id == 'error') {
                         $error_message = mvb_Model_Label::get('LABEL_148');
                         break;
                     }
 
                     mvb_Model_API::setCurrentBlog($site->blog_id);
+                    if (mvb_Model_API::getRole($this->current_role) === FALSE) {
+                        $m->createNewRole($original['name'], $original['capabilities']);
+                    }
                     $this->initConfig();
                     $this->config->setMenu((isset($params['menu']) ? $params['menu'] : array()));
                     $this->config->setMetaboxes((isset($params['metabox']) ? $params['metabox'] : array()));
                     $this->config->setCapabilities((isset($params['advance']) ? $params['advance'] : array()));
+                    $this->config->setName($original['name']);
                     $this->config->saveConfig();
                 }
+            } else {
+                $this->config->setMenu((isset($params['menu']) ? $params['menu'] : array()));
+                $this->config->setMetaboxes((isset($params['metabox']) ? $params['metabox'] : array()));
+                $this->config->setCapabilities((isset($params['advance']) ? $params['advance'] : array()));
+                $this->config->saveConfig();
             }
-            //overwrite current blog
-            //TODO - maybe there is better way
-            if (isset($_GET['site'])) {
-                mvb_Model_API::setCurrentBlog($_GET['site']);
-            }
-
-            $this->config->setMenu((isset($params['menu']) ? $params['menu'] : array()));
-            $this->config->setMetaboxes((isset($params['metabox']) ? $params['metabox'] : array()));
-            $this->config->setCapabilities((isset($params['advance']) ? $params['advance'] : array()));
-            $this->config->saveConfig();
 
             mvb_Model_ConfigPress::saveConfig(stripslashes($params['config_press']));
         } else {

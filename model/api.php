@@ -205,7 +205,9 @@ final class mvb_Model_API {
      */
     public static function getUserAccessConfig($user_id, $force_roles = FALSE) {
 
-        if ($force_roles || !($config = mvb_Model_Cache::getCacheData('user', $user_id))) {
+        $config = mvb_Model_Cache::getCacheData('user', $user_id);
+        
+        if ($force_roles || !$config) {
 
             $config = new mvb_Model_UserConfig($user_id);
 
@@ -307,6 +309,25 @@ final class mvb_Model_API {
         }
 
         return $roles;
+    }
+
+    /**
+     * Get User Role by ID
+     *
+     * @access public
+     * @param string $id
+     * @return boolean|array
+     */
+    public static function getRole($id){
+
+        $role_list = self::getRoleList(FALSE);
+        if (isset($role_list[$id])){
+            $result = $role_list[$id];
+        }else{
+            $result = FALSE;
+        }
+
+        return $result;
     }
 
     /**

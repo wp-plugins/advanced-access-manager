@@ -39,10 +39,20 @@ class mvb_Model_ConfigPress {
         if ( (self::$config == NULL) && is_readable($file) ) {
             require_once('Zend/Config.php');
             require_once('Zend/Config/Ini.php');
-            self::$config = new Zend_Config_Ini($file);
+            try{
+                self::$config = new Zend_Config_Ini($file);
+            }catch(Zend_Config_Exception $e){
+                add_action('admin_notices', 'mvb_Model_ConfigPress::triggerError');
+            }
         }
 
         return self::$config;
+    }
+
+    public static function triggerError(){
+
+        mvb_Model_Label::initGUILabels();
+        mvb_Model_Helper::triggerNotice(mvb_Model_Label::get('LABEL_95'));
     }
 
     public static function saveConfig($config) {

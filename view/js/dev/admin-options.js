@@ -46,6 +46,15 @@ function aamObject(){
      */
     this.hide_apply_all = parseInt(aamLocal.hide_apply_all);
 
+    /**
+     * Hooks for other add-ons
+     *
+     * @var object
+     */
+    this.hooks = {
+        'tabs-loaded' : []
+    };
+
 
     /*
      * Array of pre-defined capabilities for default WP roles
@@ -131,11 +140,11 @@ aamObject.prototype.initMainMenuTab = function(){
                 }
             }
             _this.sort_status = 'passive';
-            _this.changeText(jQuery('.help1', helper), aamLocal.LABEL_172);
+            _this.changeText(jQuery('.help-text', helper), aamLocal.LABEL_172);
             _this.changeText(jQuery('.reorganize-menu', helper), aamLocal.LABEL_12);
             _this.initAccordion(jQuery('.main-menu-accordion'));
         }else{
-            _this.changeText(jQuery('.help1', helper), aamLocal.LABEL_11);
+            _this.changeText(jQuery('.help-text', helper), aamLocal.LABEL_11);
             _this.changeText(jQuery('.reorganize-menu', helper), aamLocal.LABEL_173);
             _this.initAccordion(jQuery('.main-menu-accordion'), true);
             _this.sort_status = 'active';
@@ -1025,6 +1034,19 @@ aamObject.prototype.deleteRole = function(role){
  * ****** MISCELANEOUS *******
  * ===========================
  */
+
+aamObject.prototype.addHook = function(zone, callback){
+
+    this.hooks[zone].push(callback);
+}
+
+aamObject.prototype.triggerHooks = function(){
+    //execute hooks
+    for(var i in this.hooks['tabs-loaded']){
+        this.hooks['tabs-loaded'][i].call();
+    }
+}
+
 aamObject.prototype.init = function(){
 
     var _this = this;
@@ -1094,6 +1116,7 @@ aamObject.prototype.initMainMetabox = function(){
     this.initPostTaxonomyTab();
     this.initConfigPressTab();
 
+    this.triggerHooks();
 }
 
 aamObject.prototype.initAccordion = function(element, sortable){

@@ -37,6 +37,14 @@ class mvb_Model_RoleConfig extends mvb_Model_Abstract_Config {
     protected $type = 'role';
 
     /**
+     * User Role Name
+     *
+     * @access protected
+     * @var string
+     */
+    protected $name = NULL;
+
+    /**
      * {@inheritdoc }
      */
     public function saveConfig() {
@@ -44,6 +52,9 @@ class mvb_Model_RoleConfig extends mvb_Model_Abstract_Config {
         $roles = mvb_Model_API::getRoleList(FALSE);
         if (isset($roles[$this->getID()])) {
             $roles[$this->getID()]['capabilities'] = $this->getCapabilities();
+            if (!is_null($this->name)){
+                $roles[$this->getID()]['name'] = $this->name;
+            }
             mvb_Model_API::updateBlogOption('user_roles', $roles);
         }
 
@@ -65,18 +76,22 @@ class mvb_Model_RoleConfig extends mvb_Model_Abstract_Config {
      */
     protected function getConfig() {
 
-        $config = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'config_' . $this->getID());
-        if ($config) {
-            $this->setMenu($config->menu);
-            $this->setMenuOrder($config->menu_order);
-            $this->setMetaboxes($config->metaboxes);
-            $this->setRestrictions($config->restrictions);
-        }
-        
         $roles = mvb_Model_API::getRoleList(FALSE); //TODO - Potensially hole
         if (isset($roles[$this->getID()]['capabilities'])) {
+            $config = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'config_' . $this->getID());
+            if ($config) {
+                $this->setMenu($config->menu);
+                $this->setMenuOrder($config->menu_order);
+                $this->setMetaboxes($config->metaboxes);
+                $this->setRestrictions($config->restrictions);
+            }
             $this->setCapabilities($roles[$this->getID()]['capabilities']);
         }
+    }
+
+    public function setName($name){
+
+        $this->name = $name;
     }
 
 }

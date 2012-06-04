@@ -55,6 +55,8 @@ define('WPACCESS_CACHE_LIFETIME', 864000); //10 days
 define('WPACCESS_CACHE_DIR', WPACCESS_BASE_DIR . 'cache'); //cache dir
 define('WPACCESS_LOG_DIR', WPACCESS_BASE_DIR . 'logs'); //logs dir
 
+define('WPACCESS_APPL_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
+
 //configure include path for library
 $path = WPACCESS_BASE_DIR . 'library/';
 set_include_path(get_include_path() . PATH_SEPARATOR . $path);

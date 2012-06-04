@@ -54,6 +54,8 @@ class mvb_Model_Upgrade {
                 $updated = self::upgradeTo165();
             } elseif ($db_v < '1.6.5.2') {
                 $updated = self::upgradeTo1652();
+            } else {
+                $updated = self::upgradeTo166();
             }
 
             self::setVersion($cr_v['Version']);
@@ -306,6 +308,15 @@ class mvb_Model_Upgrade {
             'delete_comment' => 1,
             'edit_permalink' => 1)
         );
+    }
+
+    //***************************************************************
+    //=================== UPGRADE TO RELEASE 1.6.6 ==================
+    //***************************************************************
+
+    protected static function upgradeTo166() {
+
+        self::upgradeTo1652();
     }
 
 }
