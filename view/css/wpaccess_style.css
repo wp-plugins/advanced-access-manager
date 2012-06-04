@@ -68,6 +68,7 @@ margin: 10px 0 0 15px;
 #new-role-name{
     font-size: 10px;
     width:150px;
+    padding: 5px;
 }
 
 .new-role-name-empty{
@@ -682,14 +683,20 @@ h3 span { font-family: veranda, sans-serif; }
 #wpcontent option:hover { background: #eeeeee; }
 #new-role-ok { margin-left: 5px; } 
 .icon-delete .critical {
-    background: none repeat scroll 0 0 #FF0000;
-    border: 0 none;
-    border-radius: 10px 10px 10px 10px;
-    color: #FEFEFE;
-    font-size: 12px;
-    font-weight: bold;
-    margin-bottom: 0;
-    margin-left: -20px;
-    margin-right: -20px;
-    padding: 0 6px;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 20px solid #FAD01C;
+    border-top: 0;
+    float: left;
+    font-size: 16px;
+    height: 0;
+    line-height: 25px;
+    margin-left: -25px;
+    margin-top: -3px;
+    padding: 0;
+    text-indent: -3px;
+    width: 0;
+    background: transparent;
+    color: #333333;
 }
+#ajax-loading { padding-right: 4px; }
