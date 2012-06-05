@@ -301,8 +301,8 @@ margin: 10px 0 0 15px;
     width: 10px;
     height: 10px;
     background: url(images/xit.gif) no-repeat;
-    margin-top:2px;
-    margin-right: 2px;
+    margin-top:4px;
+    margin-right: 3px;
     cursor: pointer;
 }
 
@@ -393,7 +393,6 @@ margin: 10px 0 0 15px;
 }
 
 .save-postinfo, .save-postinfo-all{
-    float:right;
     margin-bottom: 6px;
 }
 
@@ -489,7 +488,6 @@ margin: 10px 0 0 15px;
 .custom { padding: 0.5em 0.8em 0.8em 2em; }
 * html a:hover { background: transparent; }
 .classic {background: #FFFFAA; border: 1px solid #FFAD33; }
-.critical { background: #FFCCAA; border: 1px solid #FF3334;	}
 .help { background: #9FDAEE; border: 1px solid #2BB0D7;	}
 .info { background: #9FDAEE; border: 1px solid #2BB0D7;	}
 .warning { background: #FFFFAA; border: 1px solid #FFAD33; }
@@ -527,7 +525,7 @@ div.tree-holder #sidetreecontrol a { color: #257DA6; }
  } 
 .aachelp { background-position: -90px -50px; margin: 2px; }
 span.help1 { margin: 0 100px 0 35px;position: absolute;line-height: 115%; }
-span.help2 { margin: 0 20px;position: absolute;line-height: 120%; }
+span.help2 { margin: 0 10px;position: absolute;line-height: 120%; }
 .aacback { background-position: -112px -48px;border: 1px solid #bcbcbc;;height: 30px;width: 30px;margin: 0;float: left;background-color: #fefefe;border-radius: 15px;box-shadow: 0 0 3px #DDDDDD;
     -webkit-transition: border-color .218s;
     -moz-transition: border .218s;
@@ -557,8 +555,8 @@ width: 260px;
 }
 
 .mbox { width: 94%;float: right; }
-.mbox .initialize-url { float: none;margin:3px 3px 0 9px; }
-.mbox .refresh-metagox-list { margin: 3px 3px 0 3px; }
+.mbox .initialize-url { float: none;margin:3px 3px 0 9px;top: -2px; }
+.mbox .refresh-metagox-list { margin: 3px 3px 0 3px;float: right; }
 .cbox { width: 94%;float: right;padding-bottom:8px; }
 .cbox .initialize-url { float: none; }
 .cbox .refresh-metagox-list { float: none; }
@@ -682,21 +680,4 @@ h3 span { font-family: veranda, sans-serif; }
 #wpcontent option { background: #ffffff;text-shadow: 0 0; }
 #wpcontent option:hover { background: #eeeeee; }
 #new-role-ok { margin-left: 5px; } 
-.icon-delete .critical {
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-bottom: 20px solid #FAD01C;
-    border-top: 0;
-    float: left;
-    font-size: 16px;
-    height: 0;
-    line-height: 25px;
-    margin-left: -25px;
-    margin-top: -3px;
-    padding: 0;
-    text-indent: -3px;
-    width: 0;
-    background: transparent;
-    color: #333333;
-}
 #ajax-loading { padding-right: 4px; }
