@@ -498,11 +498,7 @@ margin: 10px 0 0 15px;
 
 
 
-
-
-
-
-
+ul.filetree { padding-bottom: 10px;padding-left:8px; }
 div.tree-holder #sidetreecontrol a { color: #257DA6; }
 
 .aam-tabs ul.ui-tabs-nav li.ui-state-default a { font-size: 11px;padding: 0.6em 1.2em; } 
