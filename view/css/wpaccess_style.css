@@ -559,7 +559,7 @@ width: 260px;
 .mbox { width: 94%;float: right; }
 .mbox .initialize-url { float: none;margin:3px 3px 0 9px;top: -2px; }
 .mbox .refresh-metagox-list { margin: 3px 3px 0 3px;float: right; }
-.cbox { width: 94%;float: right;padding-bottom:8px; }
+.cbox { width: 94%;float: right;padding-bottom:2px; }
 .cbox .initialize-url { float: none; }
 .cbox .refresh-metagox-list { float: none; }
 
