@@ -182,15 +182,20 @@ margin: 10px 0 0 15px;
 
 .capability-item{
     width: 230px;
-    margin-bottom: 5px;
+    height: 24px;
+    display: inline-block;
     float:left;
     font-size: 11px;
     border:0;
     padding: 1px 0px 1px 3px;
-    margin-left: 8px;
+    margin: 3px 6px 3px 6px;
     background: #F9F9F9;
     -moz-border-radius: 3px;
     border-radius: 3px;
+    box-shadow: 0 0 3px #cdcdcd inset;
+    font-family: veranda, sans-serif;
+    line-height: 24px;
+    
 }
 
 .capability-item .icon-delete { float: right;}
@@ -246,9 +251,10 @@ margin: 10px 0 0 15px;
 
 #progressbar{
     height: 22px;
-    width:98%;
-    margin: 5px auto;
+    width: 90%;
+    margin: 5px 10px 5px auto;
     display:none;
+float: right;
 }
 
 .ui-progressbar-value {
@@ -278,9 +284,9 @@ margin: 10px 0 0 15px;
 }
 
 .initialize-url-text{
-    width: 60%;
-    margin: 4px
-    padding: 4px;
+    width: 58%;
+    margin: 4px;
+    padding: 6px;
 }
 
 #metabox-wpaccess-general p{
@@ -339,10 +345,10 @@ margin: 10px 0 0 15px;
 }
 
 .restriction-table{
-    width : 90%;
+    width : 100%;
     margin: 0px auto;
     font-family: veranda, sans-serif;
-    padding-top: 10px;
+    padding: 10px 5px 2px 15px;
 }
 
 .restriction-table thead{
@@ -369,7 +375,6 @@ margin: 10px 0 0 15px;
 .restriction-table tbody td{
     text-align: center;
 }
-
 .table-center{
     text-align: center;
     margin: 0px auto;
@@ -389,20 +394,14 @@ margin: 10px 0 0 15px;
 
 .subposts{
     padding: 4px;
+    color: #257DA6;
 }
 
 .restriction-table tfoot td{
-    padding-top: 6px;
-}
-
+    padding-top: 12px;
+    }
 .save-postinfo, .save-postinfo-all{
     margin-bottom: 6px;
-}
-
-.restore-postinfo{
-    float:left;
-    margin-bottom: 5px;
-    margin-right: 5px;
 }
 
 #error-message{
@@ -494,6 +493,10 @@ margin: 10px 0 0 15px;
 .help { background: #9FDAEE; border: 1px solid #2BB0D7;	}
 .info { background: #9FDAEE; border: 1px solid #2BB0D7;	}
 .warning { background: #FFFFAA; border: 1px solid #FFAD33; }
+
+
+
+
 
 
 
@@ -640,7 +643,7 @@ background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(245,2
 background-image: -moz-linear-gradient(top,  rgb(245,245,245),  rgb(235,235,235));
 border: 1px solid rgb(210,210,210);
 position: absolute;
-top:15px;
+top:20px;
 left: 0px;
 padding: 10px 15px 10px 15px;
 line-height: 16px;
@@ -654,18 +657,7 @@ border-radius: 5px;
 -o-box-shadow: inset 0px 1px 0px rgb(252,252,252), 1px 1px 3px rgb(240,240,240), -1px 0px 3px rgb(240,240,240);
 box-shadow: inset 0px 1px 0px rgb(252,252,252), 1px 1px 3px rgb(240,240,240), -1px 0px 3px rgb(240,240,240);
 }
-label.tooltip {
-    border-radius: 2px;
-    box-shadow: 0 0 2px #898989 inset;
-    color: #555555;
-    display: block;
-    font-family: verdana,sans-serif;
-    height: 24px;
-    left: -4px;
-    line-height: 23px;
-    vertical-align: middle;
-    width: 235px;
-}
+label.tooltip { width: 100%;display: block; }
 .right { float: right; }
 #major-publishing-actions { padding: 8px 0 6px 8px; }
 #misc-publishing-actions { padding: 2px 0 20px 8px;color: #6888B8; }
@@ -706,3 +698,5 @@ h3 span { font-family: veranda, sans-serif; }
     line-height: 16px;
     margin: 3px 3px 3px 6px;
 }
+.restore-postinfo { margin-right: 10%; }
+#premium-ind { background: #eee; }
