@@ -200,9 +200,17 @@
 .capability-item .icon-delete {
     display: inline-block;
     float: right;
-    margin-right: 8px;
-    margin-top: -16px;
+    width: 10px;
+    height: 10px;
+    margin-top: 7px;
+    margin-right: 7px;
     z-index: 99999999;
+}
+
+.capability-item .icon-delete  img {
+    width: 10px;
+    height: 10px;
+    padding: 0.2em;
 }
 
 .premium{
@@ -658,7 +666,7 @@ border-radius: 5px;
 box-shadow: inset 0px 1px 0px rgb(252,252,252), 1px 1px 3px rgb(240,240,240), -1px 0px 3px rgb(240,240,240);
 }
 
-label.tooltip { width: 100%;display: block; }
+label.tooltip { width: 80%;display: block;float: left; }
 .right { float: right; }
 #major-publishing-actions { padding: 8px 0 6px 8px; }
 #misc-publishing-actions { padding: 2px 0 20px 8px;color: #6888B8; }
