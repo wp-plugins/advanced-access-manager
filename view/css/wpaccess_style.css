@@ -298,7 +298,7 @@
 }
 
 .initialize-url-text{
-    width: 58%;
+    width: 50%;
     margin: 4px;
     padding: 6px;
 }
@@ -380,7 +380,6 @@
     border-bottom: 1px solid #DDBE29;
     padding: 3px 0px 6px 0px;
     font-weight: normal;
-    text-align: left;
 }
 
 .restriction-table tbody th{
