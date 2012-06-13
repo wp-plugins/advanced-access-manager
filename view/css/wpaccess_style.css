@@ -28,7 +28,7 @@
     margin-top: 20px;
 }
 
-#current-role-display, #current-user-display{
+#current-role-display, #current-user-display, #current-site-display{
     font-weight: bold;
 }
 
@@ -155,7 +155,7 @@
     font-size: 11px;
 }
 
-.change-role, .change-user{
+.change-role, .change-user, .change-site{
     font-size: 10px;
 }
 
@@ -514,7 +514,7 @@
 .warning { background: #FFFFAA; border: 1px solid #FFAD33; }
 ul.filetree { padding-bottom: 10px;padding-left:8px; }
 div.tree-holder #sidetreecontrol a { color: #257DA6; }
-.aam-tabs ul.ui-tabs-nav li.ui-state-default a { font-size: 11px;padding: 0.6em 1.2em; } 
+.aam-tabs ul.ui-tabs-nav li.ui-state-default a { font-size: 11px;padding: 0.6em 1.2em; }
 
 .aacsprite {
 	background-image: url('images/whimba_imgsprite.png');
@@ -524,7 +524,7 @@ div.tree-holder #sidetreecontrol a { color: #257DA6; }
 
 .aaclogo { height: 50px;width: 50px;background-position: 0 0;margin-left:30px;margin-top:10px;background-color: transparent;border:0;float: left; }
 
-.aacicons { height: 50px;width: 50px;float: left;background-color: #efefef;border: 1px solid #bcbcbc;margin: 0 2px;border-radius: 2px;margin-top: -10px; } 
+.aacicons { height: 50px;width: 50px;float: left;background-color: #efefef;border: 1px solid #bcbcbc;margin: 0 2px;border-radius: 2px;margin-top: -10px; }
 
 .aacicons:hover { background-color: #fefefe; }
 .whimbawordpress { background-position: -50px 0; }
@@ -534,7 +534,7 @@ div.tree-holder #sidetreecontrol a { color: #257DA6; }
 .whimbaface { background-position: -250px 0; }
 .whimbatwit { background-position: -300px 0; }
 .whimbagoogle { background-position: -130px 0; }
-.aacsmicons { height: 30px;width: 25px;background-color: #efefef;border: 1px solid #bcbcbc; border-radius: 2px; } 
+.aacsmicons { height: 30px;width: 25px;background-color: #efefef;border: 1px solid #bcbcbc; border-radius: 2px; }
 .aachelp { background-position: -90px -50px; margin: 2px; }
 span.help1 { margin: 0 105px 0 35px;position: absolute;line-height: 115%; }
 span.help2 { margin: 0 10px;position: absolute;line-height: 120%; }
@@ -544,7 +544,7 @@ span.help2 { margin: 0 10px;position: absolute;line-height: 120%; }
     -o-transition: border-color .218s;
     transition: border-color .218s;
  }
-.aacback:hover { 
+.aacback:hover {
     background-color: #ffffff;
     border-color: #999;
     -moz-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2) -webkit-box-shadow:0 2px 5px rgba(0, 0, 0, 0.2);
@@ -554,7 +554,7 @@ span.help2 { margin: 0 10px;position: absolute;line-height: 120%; }
 .aactinyicons {
 	height: 40px;
 	width: 40px;
-} 
+}
 
 .infoicon { background-position: -10px -50px;margin: 2px 4px 4px 8px; }
 .infoicon span { float:left;padding: 15px 5px 5px 35px;width: 240px; }
@@ -669,15 +669,15 @@ label.tooltip { width: 80%;display: block;float: left; }
 .right { float: right; }
 #major-publishing-actions { padding: 8px 0 6px 8px; }
 #misc-publishing-actions { padding: 2px 0 20px 8px;color: #6888B8; }
-#current-role-display, #current-user-display { font-size: 14px;color: #454545;padding-right:4px; }
-.change-role, .change-user { 
+#current-role-display, #current-user-display, #current-site-display { font-size: 14px;color: #454545;padding-right:4px; }
+.change-role, .change-user, .change-site {
     color: #999999;
     font-size: 10px;
     text-decoration: none;
  }
- 
+
 h3 span { font-family: veranda, sans-serif; }
-#role-cancel, #user-cancel { color: #cccccc;padding-left: 4px;text-decoration: none; }
+#role-cancel, #user-cancel, #site-cancel { color: #cccccc;padding-left: 4px;text-decoration: none; }
 
 .wp-admin select {
     background: none repeat scroll 0 0 #F3F3F3;
@@ -692,10 +692,10 @@ h3 span { font-family: veranda, sans-serif; }
 
 #wpcontent option { background: #ffffff;text-shadow: 0 0; }
 #wpcontent option:hover { background: #eeeeee; }
-#new-role-ok { margin-left: 5px; } 
+#new-role-ok { margin-left: 5px; }
 #ajax-loading { padding-right: 4px; }
 
-.ui-widget-content div.ui-dialog-titlebar { 
+.ui-widget-content div.ui-dialog-titlebar {
     background: none repeat scroll 0 0 #6A8BBC;
     border: 1px solid #6A8BBD;
     box-shadow: 0 0 2px #DDDDDD inset;

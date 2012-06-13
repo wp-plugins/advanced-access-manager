@@ -376,11 +376,11 @@ class mvb_Model_Helper {
      * @access public
      * @return array
      */
-    public static function getApplySiteList(){
+    public static function getApplySiteList($current_id = NULL){
 
         $limit = apply_filters(WPACCESS_PREFIX . 'msar_restrict_limit', WPACCESS_APPLY_LIMIT);
         $current = new stdClass();
-        $current->blog_id = self::getParam('site');
+        $current->blog_id = ($current_id ? $current_id : self::getParam('site'));
         $list = array();
         foreach(mvb_Model_Helper::getSiteList() as $i => $site){
             if ($site->blog_id == $current->blog_id){

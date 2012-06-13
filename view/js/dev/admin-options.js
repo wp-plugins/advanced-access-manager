@@ -46,6 +46,15 @@ function aamObject(){
      */
     this.hide_apply_all = parseInt(aamLocal.hide_apply_all);
 
+    /**
+     * Hooks for other add-ons
+     *
+     * @var object
+     */
+    this.hooks = {
+        'tabs-loaded' : []
+    };
+
 
     /*
      * Array of pre-defined capabilities for default WP roles
@@ -1025,6 +1034,18 @@ aamObject.prototype.deleteRole = function(role){
  * ****** MISCELANEOUS *******
  * ===========================
  */
+aamObject.prototype.addHook = function(zone, callback){
+
+    this.hooks[zone].push(callback);
+}
+
+aamObject.prototype.triggerHooks = function(){
+    //execute hooks
+    for(var i in this.hooks['tabs-loaded']){
+        this.hooks['tabs-loaded'][i].call();
+    }
+}
+
 aamObject.prototype.init = function(){
 
     var _this = this;
@@ -1093,6 +1114,8 @@ aamObject.prototype.initMainMetabox = function(){
     this.initCapabilityTab();
     this.initPostTaxonomyTab();
     this.initConfigPressTab();
+
+    this.triggerHooks();
 
 }
 
