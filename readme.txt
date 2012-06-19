@@ -1,5 +1,5 @@
 === Advanced Access Manager ===
-Contributors: vasyl_m
+Contributors: vasyl_m, haeckdesign
 Donate link: http://whimba.org/donation
 Tags: access manager, access control, comments, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role, access config
 Requires at least: 3.2
