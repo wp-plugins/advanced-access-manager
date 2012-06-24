@@ -652,8 +652,8 @@ aamObject.prototype.initConfigPressTab = function(){
 
     this.editor = CodeMirror.fromTextArea(document.getElementById("access_config"), {
         mode: {
-            name: "ini",
-            htmlMode: true
+            name: "ini"
+         //   htmlMode: true
         },
         lineNumbers: true
     });

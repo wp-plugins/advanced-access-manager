@@ -151,10 +151,6 @@ class mvb_Model_Ajax {
                 $result = $this->update_role_name();
                 break;
 
-            case 'complete_sync':
-                $result = $this->complete_sync();
-                break;
-
             default:
                 $result = array('status' => 'error');
                 break;
@@ -998,35 +994,5 @@ class mvb_Model_Ajax {
             }
         }
     }
-
-    protected function complete_sync() {
-
-        $error = FALSE;
-        //prepare list
-        $role_list = mvb_Model_API::getRoleList(FALSE);
-        $role_conf = array();
-        foreach($role_list as $role => $data){
-            $role_conf[$role] = mvb_Model_API::getRoleAccessConfig($role);
-        }
-        
-        foreach (mvb_Model_Helper::getApplySiteList(get_current_blog_id()) as $site) {
-            if ($site->blog_id == 'error') {
-                $error = mvb_Model_Label::get('LABEL_148');
-                break;
-            }
-            mvb_Model_API::setCurrentBlog($site->blog_id);
-            //overwrite User Roles
-            mvb_Model_API::updateBlogOption('user_roles', $role_list);
-            foreach($role_conf as $role => $config){
-                $config->saveConfig();
-            }
-        }
-        return array(
-            'status' => ($error ? 'error' : 'success'),
-            'message' => $error
-            );
-    }
-
 }
-
 ?>

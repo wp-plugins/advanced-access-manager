@@ -442,6 +442,7 @@ class mvb_Model_Label {
         self::$labels['LABEL_35'] = __('Not commented yet.', 'aam');
         self::$labels['LABEL_36'] = __('Collapse All', 'aam');
         self::$labels['LABEL_37'] = __('Expand All', 'aam');
+        self::$labels['LABEL_38'] = __('Not commented yet.', 'aam');
     }
 
     /**
