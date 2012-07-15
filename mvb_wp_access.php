@@ -135,7 +135,6 @@ class mvb_WPAccess {
                 wp_enqueue_style('wpaccess-style', WPACCESS_CSS_URL . 'wpaccess_style.css');
                 wp_enqueue_style('wpaccess-treeview', WPACCESS_CSS_URL . 'treeview/jquery.treeview.css');
                 wp_enqueue_style('codemirror', WPACCESS_CSS_URL . 'codemirror/codemirror.css');
-                wp_enqueue_style('jquery-ui', WPACCESS_CSS_URL . 'ui/jquery-ui.css');
                 wp_enqueue_style('thickbox');
                 break;
 
