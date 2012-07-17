@@ -205,7 +205,7 @@
     font-size: 11px;
     border:0;
     padding: 1px 0px 1px 3px;
-    margin: 3px 6px 3px 6px;
+    margin: 3px 6px 6px;
     font-family: veranda, sans-serif;
     line-height: 24px;
     background: #F9F9F9;
@@ -619,7 +619,7 @@ span.help2 { margin: 0 10px;position: absolute;line-height: 120%; }
 .smplus:hover {}
 .smminus {}
 .smminus:hover {}
-.smex { background-position: -200px -52px;width:24px;height:24px;cursor:pointer;float:right; }
+.smex { background-position: -200px -52px;width:24px;height:24px;cursor:pointer;float:right;text-indent: -99999px; }
 .smex:hover { background-position: -200px -78px;width:24px;height:24px;cursor:pointer;float:right; }
 .acctop { padding-top: 20px; }
 .socbox { width: 260px; }
@@ -753,13 +753,13 @@ div a.lilsqbutton, .ui-dialog .ui-dialog-buttonpane button {
 
 .tooltip:hover:after {
     background: none repeat scroll 0 0 #FFFFFF;
-    border-top: 2px solid #999999;
+    border-top: 2px solid #787878;
     bottom: 0;
     color: #555555;
     content: attr(alt);
     float: left;
     font-family: helvetica,arial,sans serif;
-    font-size: 14px;
+    font-size: 15px;
     left: 0;
     line-height: 18px;
     padding: 12px 20px 10px 15px;
@@ -968,9 +968,6 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; }
 .ui-dialog { position: absolute; padding: .2em; width: 300px; overflow: hidden; -webkit-box-shadow: 0 0 20px #454545; -moz-box-shadow: 0 0 20px #454545; -o-box-shadow: 0 0 20px #454545; -khtml-box-shadow: 0 0 20px #454545; box-shadow: 0 0 20px #454545; }
 .ui-dialog .ui-dialog-titlebar { padding: .4em 1em; position: relative;  }
 .ui-dialog .ui-dialog-title { float: left; margin: .1em 16px .1em 0;text-shadow: -1px -1px 1px #787878;color: #FFD92B; } 
-.ui-dialog .ui-dialog-titlebar-close { position: absolute; right: .3em; top: 50%; width: 19px; margin: -10px 0 0 0; padding: 1px; height: 18px; }
-.ui-dialog .ui-dialog-titlebar-close span { display: block; margin: 1px; }
-.ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus { padding: 0; }
 .ui-dialog .ui-dialog-content { position: relative; border: 0; padding: .5em 1em; background: none; overflow: auto; zoom: 1; }
 .ui-dialog .ui-dialog-buttonpane { text-align: left; border-width: 1px 0 0 0; background-image: none; margin: .5em 0 0 0; padding: .3em 1em .5em .4em; }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { float: right; }
