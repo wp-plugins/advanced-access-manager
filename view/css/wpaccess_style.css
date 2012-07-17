@@ -989,3 +989,19 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; }
 .ui-tabs-panel .ui-accordion div div.ui-accordion-content { padding-left: 10px; padding-right: 10px;padding-bottom: 6px; -webkit-box-shadow: 0 0 4px #cccccc inset; -moz-box-shadow: 0 0 4px #cccccc inset;  -o-box-shadow: 0 0 4px #cccccc inset;  -khtml-box-shadow: 0 0 4px #cccccc inset;  box-shadow: 0 0 4px #cccccc inset; }
 .ui-tabs-panel .ui-accordion div div.postbox, .ui-tabs-panel .ui-accordion div div.mainmenu-subitem-whole, .ui-tabs-panel .ui-accordion div div.mainmenu-subitem { padding-left: 0; padding-right: 0; }
 .ui-tabs-panel .ui-accordion div.ui-accordion-content div.metabox-item { width: 100%; padding: 0 0;margin-top:8px;margin-bottom:8px; }
+.ui-icon-closethick {
+width: 20px; height: 20px; background-image: url(images/close.png);background-color: #aaaaaa;display: block; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat;margin:0;padding:0;line-height:12px;border:0;float: right;
+-webkit-border-radius: 4px;
+-moz-border-radius: 4px;
+-khtml-border-radius: 4px;
+-o-border-radius: 4px;
+border-radius: 4px;
+-webkit-box-shadow: 0 0 2px #787878;
+-moz-box-shadow: 0 0 2px #787878;
+-khtml-box-shadow: 0 0 2px #787878;
+-o-box-shadow: 0 0 2px #787878;
+box-shadow: 0 0 2px #787878;
+}
+.ui-icon-closethick:hover {
+background-color: #898989;border:0;
+}
