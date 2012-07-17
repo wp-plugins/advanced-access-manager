@@ -1005,3 +1005,5 @@ box-shadow: 0 0 2px #787878;
 .ui-icon-closethick:hover {
 background-color: #898989;border:0;
 }
+.ui-dialog-titlebar-close:hover { border: 0; }
+input.capability-name { margin: 5px; }
