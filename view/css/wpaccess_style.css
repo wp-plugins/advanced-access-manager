@@ -621,6 +621,20 @@ span.help2 { margin: 0 10px;position: absolute;line-height: 120%; }
 .smminus:hover {}
 .smex { background-position: -200px -52px;width:24px;height:24px;cursor:pointer;float:right;text-indent: -99999px; }
 .smex:hover { background-position: -200px -78px;width:24px;height:24px;cursor:pointer;float:right; }
+
+input ~ label.tooltip {
+background-position: -254px -73px;
+width:24px;height:24px;cursor:pointer;float:right;text-indent: -190px;
+}
+input:checked ~ label.tooltip {
+background-position: -294px -73px;
+width:24px;height:24px;cursor:pointer;float:right;text-indent: -190px;
+}
+input ~ label.tooltip:hover, input:checked ~ label.tooltip:hover {
+background-position: -274px -73px;
+width:24px;height:24px;cursor:pointer;float:right;text-indent: -190px;
+}
+
 .acctop { padding-top: 20px; }
 .socbox { width: 260px; }
 .mbox { width: 94%;float: right; }
@@ -1006,4 +1020,4 @@ box-shadow: 0 0 2px #787878;
 background-color: #898989;border:0;
 }
 .ui-dialog-titlebar-close:hover { border: 0; }
-input.capability-name { margin: 5px; }
+input.capability-name { margin: 5px;display: none; }
