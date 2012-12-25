@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access to WordPress Backend and Frontend.
-  Version: 1.6.8
+  Version: 1.6.8.1
   Author: Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
   Author URI: http://www.whimba.org
  */
@@ -86,6 +86,7 @@ class mvb_WPAccess {
             add_filter('user_has_cap', array($this, 'user_has_cap'), 10, 3);
             add_filter('map_meta_cap', array($this, 'map_meta_cap'), 10, 4);
             add_filter('comment_row_actions', array($this, 'comment_row_actions'), 10);
+            add_filter('bulk_actions-edit-comments', array($this, 'editCommentsBulk'), 10);
             add_filter('page_row_actions', array($this, 'post_row_actions'), 10, 2);
             add_filter('post_row_actions', array($this, 'post_row_actions'), 10, 2);
             add_filter('tag_row_actions', array($this, 'tag_row_actions'), 10, 2);
@@ -119,6 +120,10 @@ class mvb_WPAccess {
         //Main Hook, used to check if user is authorized to do an action
         //Executes after WordPress environment loaded and configured
         add_action('wp_loaded', array($this, 'check'), 999);
+    }
+
+    public function editCommentsBulk($actions){
+        return $this->comment_row_actions($actions);
     }
 
     /**
@@ -173,7 +178,7 @@ class mvb_WPAccess {
             case 'wp_access':
 
                 // if (WPACCESS_APPL_ENV == 'development') {
-                wp_enqueue_script('wpaccess-admin', WPACCESS_JS_URL . 'dev/admin-options.js');
+                wp_enqueue_script('wpaccess-admin', WPACCESS_JS_URL . 'admin-options.js');
                 // } else {
                 //    wp_enqueue_script('wpaccess-admin', WPACCESS_JS_URL . 'admin-options.js');
                 // }
@@ -199,7 +204,7 @@ class mvb_WPAccess {
                     $locals['handlerURL'] = get_admin_url($c_blog->getID(), 'index.php');
                     $locals['ajaxurl'] = get_admin_url($c_blog->getID(), 'admin-ajax.php');
                     // if (WPACCESS_APPL_ENV == 'development') {
-                    wp_enqueue_script('wpaccess-admin-multisite', WPACCESS_JS_URL . 'dev/admin-multisite.js');
+                    wp_enqueue_script('wpaccess-admin-multisite', WPACCESS_JS_URL . 'admin-multisite.js');
                     // } else {
                     //  wp_enqueue_script('wpaccess-admin-multisite', WPACCESS_JS_URL . 'admin-multisite.js');
                     // }
