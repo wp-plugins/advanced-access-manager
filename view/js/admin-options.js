@@ -1152,7 +1152,7 @@ aamObject.prototype.changeText = function(element, text){
 
 aamObject.prototype.showGeneralDialog = function(config, text){
 
-    jQuery('#general-dialog').dialog('destroy');
+    //jQuery('#general-dialog').dialog('destroy');
     jQuery('#general-dialog .dialog-text').html(text);
     jQuery('#general-dialog').dialog(config);
 }
