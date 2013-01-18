@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access to WordPress Backend and Frontend.
-  Version: 1.6.8.2
+  Version: 1.6.8.3
   Author: Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
   Author URI: http://www.whimba.org
  */
@@ -188,7 +188,16 @@ class mvb_WPAccess {
                 wp_enqueue_script('codemirror', WPACCESS_JS_URL . 'codemirror/codemirror.js');
                 wp_enqueue_script('codemirror-xml', WPACCESS_JS_URL . 'codemirror/ini.js');
                 wp_enqueue_script('thickbox');
-                wp_enqueue_script('jquery-ui', WPACCESS_JS_URL . 'ui/jquery-ui.js', array('jquery'));
+                wp_enqueue_script('jquery-ui-core');
+                wp_enqueue_script('jquery-effects-core');
+                wp_enqueue_script('jquery-ui-widget');
+                wp_enqueue_script('jquery-ui-tabs');
+                wp_enqueue_script('jquery-ui-accordion');
+                wp_enqueue_script('jquery-ui-progressbar');
+                wp_enqueue_script('jquery-ui-dialog');
+                wp_enqueue_script('jquery-ui-button');
+                wp_enqueue_script('jquery-ui-sortable');
+                wp_enqueue_script('jquery-effects-highlight');
                 $locals = array(
                     'nonce' => wp_create_nonce(WPACCESS_PREFIX . 'ajax'),
                     'css' => WPACCESS_CSS_URL,
