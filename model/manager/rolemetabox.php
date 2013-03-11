@@ -58,7 +58,7 @@ class mvb_Model_Manager_RoleMetabox {
 
         $markers = array(
             '###role_id###' => esc_js($role),
-            '###role_name###' => utf8_encode(stripcslashes($data['name'])),
+            '###role_name###' => (stripcslashes($data['name'])),
             '###count###' => $count,
         );
         if ($count) {

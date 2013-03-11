@@ -41,7 +41,7 @@ function mvb_autoload($class_name) {
 
     $parts = explode('_', $class_name);
 
-    if (array_shift($parts)  == 'mvb') {
+    if (array_shift($parts) == 'mvb') {
         $path = WPACCESS_BASE_DIR . strtolower(implode(DIRECTORY_SEPARATOR, $parts) . '.php');
         if (file_exists($path)) {
             require($path);
@@ -55,17 +55,15 @@ function aam_set_current_user() {
     global $current_user;
 
     //overwrite user capabilities
-    //TODO - Not optimized
-    $config = mvb_Model_API::getUserAccessConfig($current_user->ID);
-
-    if ($config instanceof mvb_Model_UserConfig) {
-        $current_user->allcaps = $config->getCapabilities();
-        if ($config->getUser() instanceof WP_User) {
-            foreach ($config->getUser()->getRoles() as $role) {
-                $current_user->allcaps[$role] = 1;
+    if (!isset($current_user->roles) || !in_array(WPACCESS_SADMIN_ROLE, $current_user->roles)) {
+        $config = mvb_Model_API::getUserAccessConfig($current_user->ID);
+        if ($config instanceof mvb_Model_UserConfig) {
+            $current_user->allcaps = $config->getCapabilities();
+            if ($config->getUser() instanceof WP_User) {
+                foreach ($config->getUser()->getRoles() as $role) {
+                    $current_user->allcaps[$role] = 1;
+                }
             }
         }
     }
 }
-
-?>

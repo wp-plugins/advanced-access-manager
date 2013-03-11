@@ -127,10 +127,10 @@ class mvb_Model_Manager_Metabox {
                 if (is_array($data)) {
                     $desc = mvb_Model_Helper::removeHTML($data['description']);
                     $markers = array(
-                        '###title###' => utf8_encode(mvb_Model_Helper::removeHTML($data['title'])),
+                        '###title###' => (mvb_Model_Helper::removeHTML($data['title'])),
                         '###classname###' => $classname,
-                        '###description###' => utf8_encode($desc),
-                        '###description_short###' => utf8_encode(mvb_Model_Helper::cutStr(
+                        '###description###' => ($desc),
+                        '###description_short###' => (mvb_Model_Helper::cutStr(
                                 $desc, 20
                         )),
                         '###checked###' => (self::$parent->getConfig()
@@ -153,12 +153,12 @@ class mvb_Model_Manager_Metabox {
             foreach ($set as $priority => $metaboxes) {
                 if (is_array($metaboxes)) {
                     foreach ($metaboxes as $id => $data) {
-                        if (is_array($data)) {
+                        if (is_array($data) && isset($data['id']) && !empty($data['id'])) {
                             $data['title'] = mvb_Model_Helper::removeHTML(
                                     $data['title']
                             );
                             $markers = array(
-                                '###title###' => utf8_encode(mvb_Model_Helper::removeHTML(
+                                '###title###' => (mvb_Model_Helper::removeHTML(
                                         $data['title']
                                 )),
                                 '###short_id###' => mvb_Model_Helper::cutStr(

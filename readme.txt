@@ -3,8 +3,8 @@ Contributors: vasyl_m, haeckdesign
 Donate link: http://whimba.org/donation
 Tags: access manager, access control, comments, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role, access configuration
 Requires at least: 3.2
-Tested up to: 3.4.1
-Stable tag: 1.6.8.3
+Tested up to: 3.5.1
+Stable tag: 1.6.9
 
 Graphic interface to manage User Access to your Front-end and Back-end
 
@@ -86,6 +86,12 @@ just filter Main Menu.
 5. ConfigPress
 
 == Changelog ==
+
+= 1.6.9 =
+* Encoding issue fixed
+* Removed AWM Group page
+* Removed .htaccess file
+* Fixed bug with Super Admin losing capabilities
 
 = 1.6.8.3 =
 * Implemented native WordPress jQuery UI include to avoid version issues

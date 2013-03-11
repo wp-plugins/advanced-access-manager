@@ -56,7 +56,7 @@ class mvb_Model_Manager_Menu {
             if (isset($submenu[$menu[2]]) && is_array($submenu[$menu[2]])) {
                 foreach ($submenu[$menu[2]] as $sub_menu) {
                     $markers = array(
-                        '###submenu_name###' => utf8_encode(mvb_Model_Helper::removeHTML($sub_menu[0])),
+                        '###submenu_name###' => (mvb_Model_Helper::removeHTML($sub_menu[0])),
                         '###value###' => $sub_menu[2],
                         '###checked###' => ($parent->getConfig()
                                 ->hasSubMenu($menu[2], $sub_menu[2]) ? 'checked' : '')
@@ -76,7 +76,7 @@ class mvb_Model_Manager_Menu {
 
             $whole = $parent->getConfig()->getMenu($menu[2]);
             $markers = array(
-                '###name###' => utf8_encode(mvb_Model_Helper::removeHTML($menu[0])),
+                '###name###' => (mvb_Model_Helper::removeHTML($menu[0])),
                 '###id###' => $menu[5],
                 '###menu###' => $menu[2],
                 '###whole_checked###' => (isset($whole['whole']) ? 'checked' : '')

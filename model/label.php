@@ -224,13 +224,13 @@ class mvb_Model_Label {
         self::$labels['LABEL_92'] = __('Publish', 'aam');
         self::$labels['LABEL_93'] = __('Comment', 'aam');
         self::$labels['LABEL_94'] = __('Browse', 'aam');
+        self::$labels['LABEL_95'] = __('Strong Recommendation', 'aam');
+        self::$labels['LABEL_96'] = __('', 'aam');
 
         /*
          * These labels where deleted in previous release so you can use them
          * to define new labels
 
-          self::$labels['LABEL_95'] = __('', 'aam');
-          self::$labels['LABEL_96'] = __('', 'aam');
           self::$labels['LABEL_90'] = __('', 'aam');
           self::$labels['LABEL_63'] = __('', 'aam');
           self::$labels['LABEL_64'] = __('', 'aam');

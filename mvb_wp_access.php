@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access to WordPress Backend and Frontend.
-  Version: 1.6.8.3
+  Version: 1.6.9
   Author: Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
   Author URI: http://www.whimba.org
  */
@@ -68,7 +68,6 @@ class mvb_WPAccess {
         $this->wp_upgrade();
         $this->initPremium();
         $this->access_control = new mvb_Model_AccessControl($this);
-
         if (is_admin()) {
             //print required JS & CSS
             add_action('admin_print_scripts', array($this, 'adminPrintScripts'));
@@ -1012,30 +1011,20 @@ class mvb_WPAccess {
 
     public function admin_menu() {
         global $submenu, $menu;
-
+        
         if (mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'first_time', FALSE) !== FALSE) {
             $aam_cap = ( mvb_Model_API::isSuperAdmin() ? WPACCESS_ADMIN_ROLE : 'aam_manage');
         } else {
             $aam_cap = WPACCESS_ADMIN_ROLE;
         }
 
-        if (!isset($submenu['awm-group'])) {
-            add_menu_page(
-                    __('AWM Group', 'aam'),
-                    __('AWM Group', 'aam'),
-                    'administrator',
-                    'awm-group',
-                    array($this, 'awm_group'),
-                    WPACCESS_CSS_URL . 'images/active-menu.png'
-            );
-        }
-        add_submenu_page(
-                'awm-group',
+        add_menu_page(
                 __('Access Manager', 'aam'),
                 __('Access Manager', 'aam'),
                 $aam_cap,
                 'wp_access',
-                array($this, 'accessManagerPage')
+                array($this, 'accessManagerPage'),
+                WPACCESS_CSS_URL . 'images/active-menu.png'
         );
 
         //init the list of key parameters
@@ -1044,12 +1033,6 @@ class mvb_WPAccess {
             //filter the menu
             $this->getAccessControl()->getMenuFilter()->manage();
         }
-    }
-
-    public function awm_group() {
-
-        $m = new mvb_Model_About();
-        $m->manage();
     }
 
     /**
