@@ -219,6 +219,26 @@ class mvb_Model_Manager {
         return mvb_Model_Manager_RoleMetabox::render($template, $this);
     }
 
+    public function renderAHMMetabox() {
+        if (!function_exists('plugins_api')) {
+            require_once(ABSPATH . '/wp-admin/includes/plugin-install.php');
+        }
+        $api = plugins_api('plugin_information', array('slug' => 'wp-bug-tracker'));
+        $status = install_plugin_install_status($api);
+        if ($status['status'] == 'install') {
+            $template = mvb_Model_Template::retrieveSub(
+                            'AHM_METABOX', $this->template
+            );
+            $template = mvb_Model_Template::updateMarkers(
+                            array('###install_link###' => $status['url']), $template
+            );
+        } else {
+            $template = '';
+        }
+
+        return $template;
+    }
+
     public function getConfig() {
 
         return $this->config;
@@ -267,6 +287,11 @@ class mvb_Model_Manager {
         //render Role Manager Metabox
         $tmpl = mvb_Model_Template::replaceSub(
                         'ROLE_METABOX', $this->renderRoleMetabox(), $tmpl
+        );
+
+        //render AHM banner
+        $tmpl = mvb_Model_Template::replaceSub(
+                        'AHM_METABOX', $this->renderAHMMetabox(), $tmpl
         );
 
         $tmpl = $this->updateMarkers($tmpl);
@@ -381,8 +406,7 @@ class mvb_Model_Manager {
                 $roles = mvb_Model_API::getRoleList(FALSE);
                 $m = new mvb_Model_Role(); //just in case
                 $apply = (array) mvb_Model_ConfigPress::getOption(
-                                'aam.multisite.apply',
-                                array('menu', 'menu_order', 'metaboxes', 'capabilities', 'current_role')
+                                'aam.multisite.apply', array('menu', 'menu_order', 'metaboxes', 'capabilities', 'current_role')
                 );
                 foreach (mvb_Model_Helper::getApplySiteList() as $site) {
                     if ($site->blog_id == 'error') {
@@ -391,30 +415,29 @@ class mvb_Model_Manager {
                     }
                     mvb_Model_API::setCurrentBlog($site->blog_id);
                     //apply settings based on ConfigPress settings
-                    if (in_array('role_list', $apply)){
+                    if (in_array('role_list', $apply)) {
                         mvb_Model_API::updateBlogOption('user_roles', $roles);
-                    }elseif(in_array('current_role', $apply)){
+                    } elseif (in_array('current_role', $apply)) {
                         if (mvb_Model_API::getRole($this->current_role) === FALSE) {
                             $m->createNewRole(
-                                    $roles[$this->current_role]['name'],
-                                    $roles[$this->current_role]['capabilities']
+                                    $roles[$this->current_role]['name'], $roles[$this->current_role]['capabilities']
                             );
                         }
                     }
                     $this->initConfig();
-                    if (in_array('menu', $apply)){
+                    if (in_array('menu', $apply)) {
                         $this->config->setMenu($config->getMenu());
                     }
-                    if (in_array('menu_order', $apply)){
+                    if (in_array('menu_order', $apply)) {
                         $this->config->setMenuOrder($config->getMenuOrder());
                     }
-                    if (in_array('metaboxes', $apply)){
+                    if (in_array('metaboxes', $apply)) {
                         $this->config->setMetaboxes($config->getMetaboxes());
                     }
-                    if (in_array('capabilities', $apply)){
+                    if (in_array('capabilities', $apply)) {
                         $this->config->setCapabilities($config->getCapabilities());
                     }
-                    if (in_array('restrictions', $apply)){
+                    if (in_array('restrictions', $apply)) {
                         $this->config->setRestrictions($config->getRestrictions());
                     }
                     $this->config->saveConfig();
@@ -429,15 +452,15 @@ class mvb_Model_Manager {
         return $error_message;
     }
 
-    protected function getParamSet(){
+    protected function getParamSet() {
         $params = mvb_Model_Helper::getParam('wpaccess', 'POST', array());
-        if (!isset($params['menu'])){
+        if (!isset($params['menu'])) {
             $params['menu'] = array();
         }
-        if (!isset($params['metabox'])){
+        if (!isset($params['metabox'])) {
             $params['metabox'] = array();
         }
-        if (!isset($params['advance'])){
+        if (!isset($params['advance'])) {
             $params['advance'] = array();
         }
 
