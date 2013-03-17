@@ -1,7 +1,7 @@
 <?php
 
 /*
-  Copyright (C) <2011>  Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
+  Copyright (C) <2011-2013>  Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,10 +26,11 @@
  * @package AAM
  * @subpackage Models
  * @author Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
- * @copyrights Copyright © 2011 Vasyl Martyniuk
+ * @copyrights © 2011-2013 Vasyl Martyniuk
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
-class mvb_Model_Cache {
+class mvb_Model_Cache
+{
 
     /**
      *
@@ -37,12 +38,12 @@ class mvb_Model_Cache {
      * @param type $id
      * @return type
      */
-    public static function getCacheData($type, $id) {
+    public static function getCacheData($type, $id)
+    {
 
         $data = FALSE;
         if (self::canBeCached()) {
-            $cache = self::getCacheObject();
-            $data = $cache->load($type . '_' . $id);
+            $data = mvb_Model_API::getBlogOption(WPACCESS_PREFIX . $type . '_' . $id);
         }
 
         return $data;
@@ -53,15 +54,9 @@ class mvb_Model_Cache {
      *
      * @return boolean
      */
-    public static function canBeCached() {
-
-        $result = FALSE;
-        if ( (mvb_Model_ConfigPress::getOption('aam.caching', 'true') == 'true')
-                && is_writable(WPACCESS_CACHE_DIR)) {
-            $result = TRUE;
-        }
-
-        return $result;
+    public static function canBeCached()
+    {
+        return (mvb_Model_ConfigPress::getOption('aam.caching', 'true') == 'true');
     }
 
     /**
@@ -70,62 +65,25 @@ class mvb_Model_Cache {
      * @param type $id
      * @param type $data
      */
-    public static function saveCacheData($type, $id, $data) {
-
+    public static function saveCacheData($type, $id, $data)
+    {
         if (self::canBeCached()) {
-            $cache = self::getCacheObject();
-            $cache->save($data, $type . '_' . $id);
+            mvb_Model_API::updateBlogOption(
+                WPACCESS_PREFIX . $type . '_' . $id, $data
+            );
         }
-    }
-
-    /**
-     * Get Zend Cache object
-     *
-     * @return object
-     */
-    public static function getCacheObject() {
-
-        require_once('Zend/Cache.php');
-
-        $f_opts = array(
-            'lifetime' => WPACCESS_CACHE_LIFETIME,
-            'automatic_serialization' => true
-        );
-        $b_opts = array(
-            'cache_dir' => WPACCESS_CACHE_DIR
-        );
-
-
-        // getting a Zend_Cache_Core object
-        return Zend_Cache::factory('Core', 'File', $f_opts, $b_opts);
     }
 
     /**
      * Clear Cache
      */
-    public static function clearCache() {
+    public static function clearCache()
+    {
+        global $wpdb;
 
-        if (self::canBeCached()) {
-            $cache = self::getCacheObject();
-            $cache->clean(Zend_Cache::CLEANING_MODE_ALL);
-        }
-
+        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '" . WPACCESS_PREFIX . 'user_%');
         //TODO - there is some mess with cache. Should be fixed
         mvb_Model_API::clearCache();
     }
 
-    /**
-     *
-     * @param type $user_id
-     */
-    public static function removeUserCache($user_id){
-
-        if (self::canBeCached()) {
-            $cache = self::getCacheObject();
-            $cache->remove('user_' . $user_id);
-        }
-    }
-
 }
-
-?>

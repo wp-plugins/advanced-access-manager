@@ -340,7 +340,9 @@ final class mvb_Model_API {
         $cap_list = array();
 
         foreach (self::getRoleList(FALSE) as $role => $data) {
-            $cap_list = array_merge($cap_list, $data['capabilities']);
+            if (isset($data['capabilities']) && is_array($data['capabilities'])){
+                $cap_list = array_merge($cap_list, $data['capabilities']);
+            }
         }
 
         if (isset($cap_list[WPACCESS_SADMIN_ROLE])) {

@@ -22,7 +22,7 @@
 define('WPACCESS_PREFIX', 'wpaccess_');
 define('WPACCESS_BASE_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 define('WPACCESS_DIRNAME', basename(WPACCESS_BASE_DIR));
-define('WPACCESS_AWM_WSDL', 'http://whimba.org/public/wsdl/awm.wsdl');
+define('WPACCESS_AWM_WSDL', dirname(__FILE__) . '/service/awm.wsdl');
 define('WPACCESS_PRO_URL', 'http://whimba.org/get-pro/');
 
 define('WPACCESS_ERROR162_URL', 'http://whimba.org/forum/viewtopic.php?f=7&t=244');
@@ -52,8 +52,6 @@ define('WPACCESS_RESTRICTION_LIMIT', 5);
 define('WPACCESS_APPLY_LIMIT', 4);
 define('WPACCESS_TOP_LEVEL', 10);
 
-define('WPACCESS_CACHE_LIFETIME', 864000); //10 days
-define('WPACCESS_CACHE_DIR', WPACCESS_BASE_DIR . 'cache'); //cache dir
 define('WPACCESS_LOG_DIR', WPACCESS_BASE_DIR . 'logs'); //logs dir
 
 define('WPACCESS_APPL_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));

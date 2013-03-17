@@ -72,7 +72,9 @@ class mvb_Model_Label {
      */
     public static function initGUILabels() {
 
-        if (self::$gui_flag){ return FALSE;}
+        if (self::$gui_flag) {
+            return FALSE;
+        }
 
         self::$labels['LABEL_1'] = __('Advanced Access Manager', 'aam');
         self::$labels['LABEL_2'] = __('Basic version does not allow to setup more then %s restrictions. Please upgrade AAM. <a href="%s" target="_blank">More...</a>', 'aam');
@@ -194,7 +196,7 @@ class mvb_Model_Label {
         self::$labels['LABEL_119'] = __('Current User', 'aam');
         self::$labels['LABEL_120'] = __('All Users', 'aam');
         self::$labels['LABEL_121'] = __('Delete current capability', 'aam');
-        self::$labels['LABEL_157'] = __('ConfigPress is a flexible way to configure your Access Manager. For more information please click on help button to see ConfigPress Reference Guide.', 'aam');
+        self::$labels['LABEL_157'] = __('ConfigPress is a flexible way to configure your Access Manager. For more information please click on help button to see <a href="' . WPACCESS_BASE_URL . 'docs/configpress.pdf" target="_blank">ConfigPress Reference Guide.</a>', 'aam');
         self::$labels['LABEL_161'] = __('Click Here for The ConfigPress Reference Notes', 'aam');
         self::$labels['LABEL_162'] = __('Config File is not Writable.', 'aam');
         self::$labels['LABEL_164'] = __('Module Directory is not Writable.', 'aam');
@@ -274,7 +276,9 @@ class mvb_Model_Label {
      */
     public static function initCapabilityLabels() {
 
-        if (self::$cap_flag){ return FALSE;}
+        if (self::$cap_flag) {
+            return FALSE;
+        }
 
         self::$labels = array_merge(self::$labels, array(
             'switch_themes' => __('Since 2.0 - Allows access to Administration Panel options: Appearance // Appearance > Themes', 'aam'),
@@ -296,7 +300,7 @@ class mvb_Model_Label {
             'unapprove_comment' => __('Since 2.0', 'aam'),
             'unspam_comment' => __('Since 2.0', 'aam'),
             'untrash_comment' => __('Since 2.0', 'aam'),
-			'manage_categories' => __('Since 2.0 - Allows access to Administration Panel options: Posts > Categories // Links > Categories', 'aam'),
+            'manage_categories' => __('Since 2.0 - Allows access to Administration Panel options: Posts > Categories // Links > Categories', 'aam'),
             'manage_links' => __('Since 2.0 - Allows access to Administration Panel options:  Links // Links > Add New', 'aam'),
             'upload_files' => __('Since 2.0 - Allows access to Administration Panel options: Media // Media > Add New', 'aam'),
             'import' => __('Since 2.0 - Allows access to Administration Panel options:  Tools > Import // Tools > Export', 'aam'),
@@ -362,87 +366,6 @@ class mvb_Model_Label {
         );
 
         self::$cap_flag = TRUE;
-    }
-
-    /**
-     * Initialize labels for ConfigPress Guide Reference
-     * Overwrite all other labels in fact this is separate
-     * screen
-     *
-     * @access public
-     */
-    public static function initConfigPressGuideLabels() {
-
-        self::$labels['LABEL_1'] = __('Introduction', 'aam');
-        self::$labels['LABEL_2'] = __('Basic Idea', 'aam');
-        self::$labels['LABEL_3'] = __('Syntax', 'aam');
-        self::$labels['LABEL_4'] = __('Reference', 'aam');
-        self::$labels['LABEL_5'] = __('AAM Section', 'aam');
-        self::$labels['LABEL_6'] = __('Backend Section', 'aam');
-        self::$labels['LABEL_7'] = __('Frontend Section', 'aam');
-        self::$labels['LABEL_8'] = __('[p]Select a topic from Guide Reference Tree.[/p]', 'aam');
-        self::$labels['LABEL_9'] = __('[p]ConfigPress was designed for advanced WordPress Users or Developers. Mainly it is used to configure some very specific AAM features which go out of GUI (Graphic User Interface).[/p]', 'aam');
-        self::$labels['LABEL_10'] = __('[p]There are three major configuration parts to deal with: comments, sections and parameters.[/p][p][b]Comments[/b]
-        It is good practice to leave some comments about parameters and values you specified. That is why comments are very important part. Comment starts from semicolon [b];[/b] and ends in the end of line:
-        [section][aam][/section]
-            [comment];specify callback function to check if user has access to delete capabilities[/comment]
-            delete_capabilities.userFunc = [value]"checkUser::hasDeleteCap"[/value][/p][p][b]Sections[/b]
-        All ConfigPress parameters are grouped by section. Section starts from open [b][[/b] and ends by closing [b]][/b]
-        [section][aam][/section]
-        [section][backend][/section][/p][p][b]Parameters[/b]
-        Each Parameter should belong to section and it allows to have only alphanumeric symbols, underscore or dash. Also all parameters follow the same logic. It means you can define userFunc for anyone.
-        [section][aam][/section]
-        error_reporting = [value]"true"[/value][/p]', 'aam');
-        self::$labels['LABEL_11'] = __('[p]AAM is a section for internal plugin features.[/p]', 'aam');
-        self::$labels['LABEL_12'] = __('[p]Advanced Access Manager has internal caching for User\'s and Role\'s configurations. By default caching is turned on.[/p]
-        [section][aam][/section]
-        caching = [value]"true"[/value]', 'aam');
-        self::$labels['LABEL_13'] = __('[p]This is additional protection layout in fact capabilities are the most important part of access management in WordPress. By default it is false.[/p]
-        [section][aam][/section]
-        delete_capabilities = [value]"false"[/value]', 'aam');
-        self::$labels['LABEL_14'] = __('[p]Deprecated and Removed in release 1.6.5.1 (Beta)[/p][p]Use Advanced Access Manager error reporting feature and log all errors, related to this plugin to internal error log. By default is true.[/p][section][aam][/section]
-        error_reporting = [value]"true"[/value]', 'aam');
-        self::$labels['LABEL_15'] = __('[p]Group of settings for multisite support.[/p]', 'aam');
-        self::$labels['LABEL_16'] = __('[p]If there is a lot of sites on multisite setup, you have possibility to apply configurations to all sites. It may duplicate Admin Menu, Menu Order, Metaboxes and Widgets, Capabilities, User Roles and Restrictions. Please notice that this feature is limited for basic version of Advanced Access Manager. By default it is false.[/p][section][aam][/section]
-        multisite.apply_all = [value]"false"[/value]', 'aam');
-        self::$labels['LABEL_17'] = __('[p]Group Pages into Categories. It works the same way as Post Categories. This option is working ONLY for Premium version of Advanced Access Manager. Default value is false.[/p][section][aam][/section]
-        page_category = [value]"false"[/value]', 'aam');
-        self::$labels['LABEL_18'] = __('[p]If you have purchased premium version for Advanced Access Manager, you have to receive a license key.[/p][section][aam][/section]
-        license_key = [value]"2337eb1b9e4c9e8a64ffddf5b5735f9a7c983a26"[/value]', 'aam');
-        self::$labels['LABEL_19'] = __('[p]Section to specify Advanced Access Manager behavior in Backend.[/p]', 'aam');
-        self::$labels['LABEL_20'] = __('[p]Group of settings for resource access.[/p]', 'aam');
-        self::$labels['LABEL_21'] = __('[p]Group of settings for access denied behavior to resource.[/p]', 'aam');
-        self::$labels['LABEL_22'] = __('[p]Specify redirect if access is denied for specific resource. This will enforce the redirect to specified URL or if it is userFunc it will execute this function.[/p][p]PLEASE NOTICE! Custom userFunc should die an application or redirect to some URL by sending header, otherwise the application will through the Exception "Unauthorized Action"
-            If redirect is valid URL then it\'ll redirect to that URL
-            If redirect is number, it\'ll try to redirect to page or post with that ID by using WordPress function get_permalink
-            If redirect has property userFunc it\'ll execute the userFunc.[/p][section][backend][/section]
-        access.deny.redirect = [value]"5"[/value]', 'aam');
-        self::$labels['LABEL_23'] = __('[p]Specify the restriction message if access is denied.[/p][section][backend][/section]
-        access.deny.message = [value]"You are not allowed to view this page"[/value]', 'aam');
-        self::$labels['LABEL_24'] = __('[p]Section to specify Advanced Access Manager behavior for Frontend.[/p]', 'aam');
-        self::$labels['LABEL_25'] = __('[p]Holder for default behavior.[/p]', 'aam');
-        self::$labels['LABEL_26'] = __('[p]Holder for taxonomy configurations.[/p]', 'aam');
-        self::$labels['LABEL_27'] = __('[p]Holder for post configurations.[/p]', 'aam');
-        self::$labels['LABEL_28'] = __('[p]Specify default listing. It means allow or deny listing post or taxonomy.[/p][section][backend][/section]
-        access.taxonomy.default.list = [value]"deny"[/value]', 'aam');
-        self::$labels['LABEL_29'] = __('Not commented yet.', 'aam');
-        self::$labels['LABEL_30'] = __('Not commented yet.', 'aam');
-        self::$labels['LABEL_31'] = __('Not commented yet.', 'aam');
-        self::$labels['LABEL_32'] = __('Not commented yet.', 'aam');
-        self::$labels['LABEL_33'] = __('Not commented yet.', 'aam');
-        self::$labels['LABEL_34'] = __('Not commented yet.', 'aam');
-        self::$labels['LABEL_35'] = __('Not commented yet.', 'aam');
-        self::$labels['LABEL_36'] = __('Collapse All', 'aam');
-        self::$labels['LABEL_37'] = __('Expand All', 'aam');
-        self::$labels['LABEL_38'] = __('[p]Define what information should be transfered to all sites. This is a possible set of parameters.[/p][section][aam][/section]
-            multisite.apply[] = [value]"menu"[/value]
-            multisite.apply[] = [value]"menu_order"[/value]
-            multisite.apply[] = [value]"metaboxes"[/value]
-            multisite.apply[] = [value]"capabilities"[/value]
-            multisite.apply[] = [value]"current_role"[/value]
-            multisite.apply[] = [value]"role_list"[/value][p]Default is menu, menu_order, metaboxes, capabilities, current_role.[/p]', 'aam');
-        self::$labels['LABEL_39'] = __('[p]Define a site which will be used as default settings holder for newely created sites.[/p][section]aam[/section]
-            multisite.default_site = [value]"1"[/value]', 'aam');
     }
 
     /**
@@ -528,5 +451,3 @@ class mvb_Model_Label {
     }
 
 }
-
-?>

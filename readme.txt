@@ -4,7 +4,7 @@ Donate link: http://whimba.org/donation
 Tags: access manager, access control, comments, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role, access configuration
 Requires at least: 3.2
 Tested up to: 3.5.1
-Stable tag: 1.6.9.1
+Stable tag: 1.7
 
 Graphic interface to manage User Access to your Front-end and Back-end
 
@@ -30,11 +30,8 @@ This is the basic list of features you can perform this AAM:
 
 And many-many other features.
 
-[youtube http://www.youtube.com/watch?v=zkyxply_JHs]
-
 If you have any problems with current plugin, please send me an email or leave a
 message on Forums Posts.
-
 
 == Installation ==
 
@@ -87,8 +84,16 @@ just filter Main Menu.
 
 == Changelog ==
 
+= 1.7 =
+* Removed Zend Caching mechanism
+* Silenced the issue with array_merge in API model
+* Removed the ConfigPress reference
+* Created ConfigPress PDF Tutorial
+* Moved SOAP wsdl to local directory
+
+
 = 1.6.9.1 =
-* Changed the way AHM displays 
+* Changed the way AHM displays
 
 = 1.6.9 =
 * Encoding issue fixed
