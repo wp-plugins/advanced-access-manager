@@ -79,7 +79,9 @@ class mvb_Model_Manager_Restriction {
                     if ($parent->getCurrentUser()){
                         $tmpl['.save-postinfo-all']->attr('disabled', 'disabled');
                     }
-                    $tmpl['.category-title']->html(mvb_Model_Helper::editTermLink($term));
+                    $tmpl['.category-title']->html(
+                            str_replace('&', '&amp;', mvb_Model_Helper::editTermLink($term))
+                    );
                     $tmpl['.subposts']->html(sprintf(mvb_Model_Label::get('LABEL_178'), $term->name));
                     if (mvb_Model_Helper::isPremium()){
                         $tmpl['.premium']->removeClass('premium');

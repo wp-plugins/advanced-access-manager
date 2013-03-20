@@ -181,7 +181,7 @@
                                             <div class="capability-item ###premium###">
                                                 <div>
                                                     <input type="checkbox" id="cap-###title###" name="wpaccess[advance][###title###]" value="1" class="capability-name" ###checked### />
-                                                    <label for="cap-###title###" title="###cap_name_full###" class="tooltip aacsprite" alt="###description###">###cap_name###</label>
+                                                    <label for="cap-###title###" title="###cap_name_full###" class="tooltip aacsprite">###cap_name###</label>
                                                 </div>
                                                 <!-- ###CAPABILITY_DELETE### begin-->
                                                 <div class="aacsprite smex" onclick="mObj.deleteCapability('###title###', '###cap_name###');"><img title="delete capability" rel="delete capability" src="###site_url###/wp-content/plugins/advanced-access-manager/view/css/images/nothing.gif" /></div>
@@ -247,50 +247,50 @@
                                                 <tbody>
                                                     <tr>
                                                         <th>&nbsp;</th>
-                                                        <th><div class="table-center">###LABEL_160###</div></th>
-                                                <th><div class="table-center">###LABEL_150###</div></th>
-                                                </tr>
-                                                <tr>
-                                                    <th>###LABEL_151###</th>
-                                                    <td><input type="checkbox" name="frontend_post_list" id="frontend_post_list" value="1" /></td>
-                                                    <td><input type="checkbox" name="backend_post_list" id="backend_post_list" value="1" /></td>
-                                                </tr>
-                                                <tr id="exclude">
-                                                    <th>###LABEL_129###</th>
-                                                    <td><input type="checkbox" name="frontend_post_exclude" id="frontend_post_exclude" value="1" /></td>
-                                                    <td><input type="checkbox" name="backend_post_exclude" disabled /></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>###LABEL_108###</th>
-                                                    <td><input type="checkbox" name="frontend_post_read" id="frontend_post_read" value="1" /></td>
-                                                    <td><input type="checkbox" disabled /></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>###LABEL_109###</th>
-                                                    <td><input type="checkbox" disabled /></td>
-                                                    <td><input type="checkbox" name="backend_post_trash" id="backend_post_trash" value="1" /></td>
-                                                </tr>
+                                                        <th style="text-align: center;">###LABEL_160###</th>
+                                                        <th style="text-align: center;">###LABEL_150###</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>###LABEL_151###</th>
+                                                        <td><input type="checkbox" name="frontend_post_list" id="frontend_post_list" value="1" /></td>
+                                                        <td><input type="checkbox" name="backend_post_list" id="backend_post_list" value="1" /></td>
+                                                    </tr>
+                                                    <tr id="exclude">
+                                                        <th>###LABEL_129###</th>
+                                                        <td><input type="checkbox" name="frontend_post_exclude" id="frontend_post_exclude" value="1" /></td>
+                                                        <td><input type="checkbox" name="backend_post_exclude" disabled /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>###LABEL_108###</th>
+                                                        <td><input type="checkbox" name="frontend_post_read" id="frontend_post_read" value="1" /></td>
+                                                        <td><input type="checkbox" disabled /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>###LABEL_109###</th>
+                                                        <td><input type="checkbox" disabled /></td>
+                                                        <td><input type="checkbox" name="backend_post_trash" id="backend_post_trash" value="1" /></td>
+                                                    </tr>
 
-                                                <tr>
-                                                    <th>###LABEL_110###</th>
-                                                    <td><input type="checkbox" disabled /></td>
-                                                    <td><input type="checkbox" name="backend_post_delete" id="backend_post_delete" value="1" /></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>###LABEL_111###</th>
-                                                    <td><input type="checkbox" disabled /></td>
-                                                    <td><input type="checkbox" name="backend_post_edit" id="backend_post_edit" value="1" /></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>###LABEL_92###</th>
-                                                    <td><input type="checkbox" disabled /></td>
-                                                    <td><input type="checkbox" name="backend_post_publish" id="backend_post_publish" value="1" /></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>###LABEL_93###</th>
-                                                    <td><input type="checkbox" name="frontend_post_comment" id="frontend_post_comment" value="1" /></td>
-                                                    <td><input type="checkbox" disabled /></td>
-                                                </tr>
+                                                    <tr>
+                                                        <th>###LABEL_110###</th>
+                                                        <td><input type="checkbox" disabled /></td>
+                                                        <td><input type="checkbox" name="backend_post_delete" id="backend_post_delete" value="1" /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>###LABEL_111###</th>
+                                                        <td><input type="checkbox" disabled /></td>
+                                                        <td><input type="checkbox" name="backend_post_edit" id="backend_post_edit" value="1" /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>###LABEL_92###</th>
+                                                        <td><input type="checkbox" disabled /></td>
+                                                        <td><input type="checkbox" name="backend_post_publish" id="backend_post_publish" value="1" /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>###LABEL_93###</th>
+                                                        <td><input type="checkbox" name="frontend_post_comment" id="frontend_post_comment" value="1" /></td>
+                                                        <td><input type="checkbox" disabled /></td>
+                                                    </tr>
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
@@ -304,7 +304,7 @@
                                             </table>
                                             <!-- ###POST### end-->
                                             <!-- ###CATEGORY### begin-->
-                                            <table class="restriction-table" >
+                                            <table class="restriction-table">
                                                 <thead>
                                                     <tr>
                                                         <td colspan="3" class="category-title">###name###</td>
@@ -313,68 +313,68 @@
                                                 <tbody>
                                                     <tr>
                                                         <th>&nbsp;</th>
-                                                        <th><div class="table-center">###LABEL_160###</div></th>
-                                                <th><div class="table-center">###LABEL_150###</div></th>
-                                                </tr>
-                                                <tr>
-                                                    <th>###LABEL_151###</th>
-                                                    <td><input type="checkbox" name="frontend_list" id="frontend_list" value="1" /></td>
-                                                    <td><input type="checkbox" name="backend_list" id="backend_list" value="1" /></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>###LABEL_94###</th>
-                                                    <td><input type="checkbox" name="frontend_browse" id="frontend_browse" value="1" /></td>
-                                                    <td><input type="checkbox" name="backend_browse" id="backend_browse" value="1" /></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>###LABEL_111###</th>
-                                                    <td><input type="checkbox" disabled /></td>
-                                                    <td><input type="checkbox" name="backend_edit" id="backend_edit" value="1" /></td>
-                                                </tr>
-                                                <tr class="premium">
-                                                    <td>
-                                                        <div class="table-left text-italic subposts"></div>
-                                                    </td>
-                                                    <td>
-                                                        <input type="checkbox" name="post_in_category" id="post_in_category" value="1" />
-                                                    </td>
-                                                    <td id="premium-ind"><span style="font-size: 10px; font-style: italic; font-weight: bold;">###LABEL_140###</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>###LABEL_151###</th>
-                                                    <td><input type="checkbox" name="frontend_post_list" id="frontend_post_list" class="frontend-browse incat-check" value="1" /></td>
-                                                    <td><input type="checkbox" name="backend_post_list" id="backend_post_list" class="backend-browse incat-check" value="1" /></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>###LABEL_108###</th>
-                                                    <td><input type="checkbox" name="frontend_post_read" id="frontend_post_read" class="frontend-browse incat-check" value="1" /></td>
-                                                    <td><input type="checkbox" disabled /></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>###LABEL_109###</th>
-                                                    <td><input type="checkbox" disabled /></td>
-                                                    <td><input type="checkbox" name="backend_post_trash" id="backend_post_trash" class="backend-browse incat-check" value="1" /></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>###LABEL_110###</th>
-                                                    <td><input type="checkbox" disabled /></td>
-                                                    <td><input type="checkbox" name="backend_post_delete" id="backend_post_delete" class="backend-browse incat-check" value="1" /></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>###LABEL_111###</th>
-                                                    <td><input type="checkbox" disabled /></td>
-                                                    <td><input type="checkbox" name="backend_post_edit" id="backend_post_edit" class="backend-browse incat-check" value="1" /></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>###LABEL_92###</th>
-                                                    <td><input type="checkbox" disabled /></td>
-                                                    <td><input type="checkbox" name="backend_post_publish" id="backend_post_publish" class="backend-browse incat-check" value="1" /></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>###LABEL_93###</th>
-                                                    <td><input type="checkbox" name="frontend_post_comment" id="frontend_post_comment" class="frontend-browse incat-check" value="1" /></td>
-                                                    <td><input type="checkbox" disabled /></td>
-                                                </tr>
+                                                        <th style="text-align: center;">###LABEL_160###</th>
+                                                        <th style="text-align: center;">###LABEL_150###</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>###LABEL_151###</th>
+                                                        <td><input type="checkbox" name="frontend_list" id="frontend_list" value="1" /></td>
+                                                        <td><input type="checkbox" name="backend_list" id="backend_list" value="1" /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>###LABEL_94###</th>
+                                                        <td><input type="checkbox" name="frontend_browse" id="frontend_browse" value="1" /></td>
+                                                        <td><input type="checkbox" name="backend_browse" id="backend_browse" value="1" /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>###LABEL_111###</th>
+                                                        <td><input type="checkbox" disabled /></td>
+                                                        <td><input type="checkbox" name="backend_edit" id="backend_edit" value="1" /></td>
+                                                    </tr>
+                                                    <tr class="premium">
+                                                        <td>
+                                                            <div class="table-left text-italic subposts"></div>
+                                                        </td>
+                                                        <td>
+                                                            <input type="checkbox" name="post_in_category" id="post_in_category" value="1" />
+                                                        </td>
+                                                        <td id="premium-ind"><span style="font-size: 10px; font-style: italic; font-weight: bold;">###LABEL_140###</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>###LABEL_151###</th>
+                                                        <td><input type="checkbox" name="frontend_post_list" id="frontend_post_list" class="frontend-browse incat-check" value="1" /></td>
+                                                        <td><input type="checkbox" name="backend_post_list" id="backend_post_list" class="backend-browse incat-check" value="1" /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>###LABEL_108###</th>
+                                                        <td><input type="checkbox" name="frontend_post_read" id="frontend_post_read" class="frontend-browse incat-check" value="1" /></td>
+                                                        <td><input type="checkbox" disabled /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>###LABEL_109###</th>
+                                                        <td><input type="checkbox" disabled /></td>
+                                                        <td><input type="checkbox" name="backend_post_trash" id="backend_post_trash" class="backend-browse incat-check" value="1" /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>###LABEL_110###</th>
+                                                        <td><input type="checkbox" disabled /></td>
+                                                        <td><input type="checkbox" name="backend_post_delete" id="backend_post_delete" class="backend-browse incat-check" value="1" /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>###LABEL_111###</th>
+                                                        <td><input type="checkbox" disabled /></td>
+                                                        <td><input type="checkbox" name="backend_post_edit" id="backend_post_edit" class="backend-browse incat-check" value="1" /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>###LABEL_92###</th>
+                                                        <td><input type="checkbox" disabled /></td>
+                                                        <td><input type="checkbox" name="backend_post_publish" id="backend_post_publish" class="backend-browse incat-check" value="1" /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>###LABEL_93###</th>
+                                                        <td><input type="checkbox" name="frontend_post_comment" id="frontend_post_comment" class="frontend-browse incat-check" value="1" /></td>
+                                                        <td><input type="checkbox" disabled /></td>
+                                                    </tr>
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
@@ -536,10 +536,10 @@
                                 <img title="logo" rel="logo" src="###site_url###/wp-content/plugins/advanced-access-manager/view/css/images/ahm.png" />
                             </div>
                             <div style="margin: 5px; float: left; width: 180px; text-align: justify;">
-                                <a href="http://wordpress.org/extend/plugins/wp-bug-tracker/" target="_blank">WordPress Bug Tracker</a> will help me to improve AAM and you to maintain your system.
+                                ###LABEL_96###
                             </div>
                             <div style="text-align: center">
-                                <a href="###install_link###" class="button button-primary button-large">Install Plugin</a>
+                                <a href="###install_link###" class="button button-primary button-large">###LABEL_90###</a>
                             </div>
                             <br class="clear" />
                         </div>

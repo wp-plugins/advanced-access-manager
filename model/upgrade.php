@@ -54,8 +54,10 @@ class mvb_Model_Upgrade {
                 $updated = self::upgradeTo165();
             } elseif ($db_v < '1.6.5.2') {
                 $updated = self::upgradeTo1652();
-            } else {
+            } elseif ($db_v < '1.6.6') {
                 $updated = self::upgradeTo166();
+            }else{
+                $updated = true;
             }
 
             self::setVersion($cr_v['Version']);
@@ -320,5 +322,3 @@ class mvb_Model_Upgrade {
     }
 
 }
-
-?>

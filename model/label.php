@@ -45,13 +45,6 @@ class mvb_Model_Label {
      */
     protected static $gui_flag = FALSE;
 
-    /**
-     * Indicator that Capability Lables already been initialized
-     *
-     * @access protected
-     * @var boolean
-     */
-    protected static $cap_flag = FALSE;
 
     /**
      * Initialize ALL Labels with current system language
@@ -61,7 +54,6 @@ class mvb_Model_Label {
     public static function initAllLabels() {
 
         self::initGUILabels();
-        self::initCapabilityLabels();
     }
 
     /**
@@ -101,26 +93,26 @@ class mvb_Model_Label {
         self::$labels['LABEL_25'] = __('Error', 'aam');
         self::$labels['LABEL_26'] = __('Add New Capability', 'aam');
         self::$labels['LABEL_27'] = __('Add New', 'aam');
-        self::$labels['LABEL_28'] = __('Give Administrator\'s List of Capabilities', 'aam');
+        self::$labels['LABEL_28'] = __("Role Administrator's List of Capabilities", 'aam');
         self::$labels['LABEL_29'] = __('Administrator', 'aam');
-        self::$labels['LABEL_30'] = __('Give Editor\'s List of Capabilities', 'aam');
+        self::$labels['LABEL_30'] = __("Role Editor's List of Capabilities", 'aam');
         self::$labels['LABEL_31'] = __('Editor', 'aam');
-        self::$labels['LABEL_32'] = __('Give Author\'s List of Capabilities', 'aam');
+        self::$labels['LABEL_32'] = __("Role Author's List of Capabilities", 'aam');
         self::$labels['LABEL_33'] = __('Author', 'aam');
-        self::$labels['LABEL_34'] = __('Give Contributor\'s List of Capabilities', 'aam');
+        self::$labels['LABEL_34'] = __("Role Contributor's List of Capabilities", 'aam');
         self::$labels['LABEL_35'] = __('Contributor', 'aam');
-        self::$labels['LABEL_36'] = __('Give Subscriber\'s List of Capabilities', 'aam');
+        self::$labels['LABEL_36'] = __('Role Subscriber\'s List of Capabilities', 'aam');
         self::$labels['LABEL_37'] = __('Subscriber', 'aam');
         self::$labels['LABEL_38'] = __('Clear all Capabilities', 'aam');
         self::$labels['LABEL_39'] = __('Clear All', 'aam');
         self::$labels['LABEL_40'] = __('Collapse All', 'aam');
         self::$labels['LABEL_41'] = __('Expand All', 'aam');
         self::$labels['LABEL_42'] = __('Error during saving', 'aam');
-        self::$labels['LABEL_59'] = __('Apply Restrictions Only for Current Role/User', 'aam');
+        self::$labels['LABEL_59'] = __('Apply Restrictions Only for Current Role or User', 'aam');
         self::$labels['LABEL_60'] = __('Apply', 'aam');
         self::$labels['LABEL_61'] = __('Apply Restrictions for All Roles', 'aam');
         self::$labels['LABEL_62'] = __('Apply for All', 'aam');
-        self::$labels['LABEL_71'] = __('Select Post, Page or Taxonomy.', 'aam');
+        self::$labels['LABEL_71'] = __('Select Post, Page or Taxonomy', 'aam');
         self::$labels['LABEL_72'] = __('Click to toggle', 'aam');
         self::$labels['LABEL_73'] = __('General', 'aam');
         self::$labels['LABEL_74'] = __('Current Role', 'aam');
@@ -148,8 +140,8 @@ class mvb_Model_Label {
         self::$labels['LABEL_103'] = __('Restore Default Settings?', 'aam');
         self::$labels['LABEL_104'] = __('All current settings will be lost. Are you sure?', 'aam');
         self::$labels['LABEL_105'] = __('Apply Setting for ALL Roles?', 'aam');
-        self::$labels['LABEL_106'] = __('Do you really want to apply these settings for <b>ALL</b> Roles?', 'aam');
-        self::$labels['LABEL_107'] = __('Do not show me this message again.', 'aam');
+        self::$labels['LABEL_106'] = __('Do you really want to apply these settings to <b>ALL</b> Roles?', 'aam');
+        self::$labels['LABEL_107'] = __('Do not show me this message again', 'aam');
         self::$labels['LABEL_112'] = __('Classname', 'aam');
         self::$labels['LABEL_113'] = __('Description', 'aam');
         self::$labels['LABEL_114'] = __('Upgrade functionality', 'aam');
@@ -223,17 +215,17 @@ class mvb_Model_Label {
         self::$labels['LABEL_109'] = __('Trash', 'aam');
         self::$labels['LABEL_110'] = __('Delete', 'aam');
         self::$labels['LABEL_111'] = __('Edit', 'aam');
+        self::$labels['LABEL_90'] = __('Install Plugin', 'aam');
         self::$labels['LABEL_92'] = __('Publish', 'aam');
         self::$labels['LABEL_93'] = __('Comment', 'aam');
         self::$labels['LABEL_94'] = __('Browse', 'aam');
         self::$labels['LABEL_95'] = __('Worth checking', 'aam');
-        self::$labels['LABEL_96'] = __('', 'aam');
+        self::$labels['LABEL_96'] = __('<a href="http://wordpress.org/extend/plugins/wp-bug-tracker/" target="_blank">WordPress Bug Tracker</a> will help us to improve AAM and you to maintain your system.', 'aam');
 
         /*
          * These labels where deleted in previous release so you can use them
          * to define new labels
 
-          self::$labels['LABEL_90'] = __('', 'aam');
           self::$labels['LABEL_63'] = __('', 'aam');
           self::$labels['LABEL_64'] = __('', 'aam');
           self::$labels['LABEL_65'] = __('', 'aam');
@@ -268,105 +260,6 @@ class mvb_Model_Label {
         self::$gui_flag = TRUE;
     }
 
-    /**
-     * Initialize labels for Capabilities Tooltips for the Tab
-     * Capabilities under Access Manager page in backend
-     *
-     * @access public
-     */
-    public static function initCapabilityLabels() {
-
-        if (self::$cap_flag) {
-            return FALSE;
-        }
-
-        self::$labels = array_merge(self::$labels, array(
-            'switch_themes' => __('Since 2.0 - Allows access to Administration Panel options: Appearance // Appearance > Themes', 'aam'),
-            'edit_themes' => __('Since 2.0 - Allows access to Appearance > Theme Editor to edit theme files.', 'aam'),
-            'edit_theme_options' => __('Since 3.0 - Allows access to Administration Panel options:  Appearance > Background // Appearance > Header // Appearance > Menus // Appearance > Widgets // Also allows access to Theme Options pages if they are included in the Theme', 'aam'),
-            'update_themes' => __('Since 2.0', 'aam'),
-            'edit_published_posts' => __('Since 2.0 - User can edit their published posts (off by default). The core checks the capability edit_posts, but on demand this check is changed to edit_published_posts. If you do not want a user to be able edit his published posts, remove this capability.', 'aam'),
-            'edit_others_posts' => __('Since 2.0 - Allows access to Administration Panel options:  Manage > Comments (Lets user delete and edit every comment, see edit_posts above) // User can edit other posts through function get_others_drafts()  // User can see other images in inline-uploading', 'aam'),
-            'manage_options' => __('Since 2.0 - Allows access to Administration Panel options:  Settings > General // Settings > Writing // Settings > Writing // Settings > Reading // Settings > Discussion // Settings > Permalinks // Settings > Miscellaneous', 'aam'),
-            'install_themes' => __('Since 2.0 - Allows access to Administration Panel option: Appearance > Add New Themes', 'aam'),
-            'activate_plugins' => __('Since 2.0 - Allows access to Administration Panel option: Plugins', 'aam'),
-            'edit_plugins' => __('Since 2.0 - Allows access to Administration Panel option:  Plugins > Plugin Editor', 'aam'),
-            'install_plugins' => __('Since 2.0 - Allows access to Administration Panel option: Plugins > Add New', 'aam'),
-            'edit_users' => __('Since 2.0 - Allows access to Administration Panel option:  Users', 'aam'),
-            'edit_files' => __('Since 2.0 - Note: No longer used.', 'aam'),
-            'moderate_comments' => __('Since 2.0 - Allows users to moderate comments from the Comments SubPanel (although a user needs the edit_posts Capability in order to access this)', 'aam'),
-            'reply_comment' => __('Since 2.0', 'aam'),
-            'quick_edit_comment' => __('Since 2.0', 'aam'),
-            'unapprove_comment' => __('Since 2.0', 'aam'),
-            'unspam_comment' => __('Since 2.0', 'aam'),
-            'untrash_comment' => __('Since 2.0', 'aam'),
-            'manage_categories' => __('Since 2.0 - Allows access to Administration Panel options: Posts > Categories // Links > Categories', 'aam'),
-            'manage_links' => __('Since 2.0 - Allows access to Administration Panel options:  Links // Links > Add New', 'aam'),
-            'upload_files' => __('Since 2.0 - Allows access to Administration Panel options: Media // Media > Add New', 'aam'),
-            'import' => __('Since 2.0 - Allows access to Administration Panel options:  Tools > Import // Tools > Export', 'aam'),
-            'unfiltered_html' => __('Since 2.0 - Allows user to post HTML markup or even JavaScript code in pages, posts, and comments. Note: Enabling this option for untrusted users may result in their posting malicious or poorly formatted code.', 'aam'),
-            'edit_posts' => __('Since 2.0 - Allows access to Administration Panel options:  Posts - Posts > Add New // Comments // Comments > Awaiting Moderation', 'aam'),
-            'publish_posts' => __('Since 2.0 - See and use the PUBLISH button when editing their post (otherwise they can only save drafts).  Can use XML-RPC to publish (otherwise they get a… Sorry, you can not post on this weblog or category.)', 'aam'),
-            'publish_pages' => __('Since 2.1', 'aam'),
-            'edit_pages' => __('Since 2.0 - Allows access to Administration Panel options: Pages - Pages > Add New', 'aam'),
-            'edit_permalink' => __('Since 2.1', 'aam'),
-            'read' => __('Since 2.0 - Allows access to Administration Panel options:  Dashboard - Users > Your Profile // Used only in menu.php', 'aam'),
-            'edit_others_pages' => __('Since 2.1', 'aam'),
-            'edit_published_pages' => __('Since 2.1', 'aam'),
-            'edit_published_pages_2' => __('Since 2.1', 'aam'),
-            'delete_pages' => __('Since 2.1', 'aam'),
-            'delete_others_pages' => __('Since 2.1', 'aam'),
-            'delete_published_pages' => __('Since 2.1', 'aam'),
-            'delete_posts' => __('Since 2.1', 'aam'),
-            'delete_others_posts' => __('Since 2.1', 'aam'),
-            'delete_published_posts' => __('Since 2.1', 'aam'),
-            'delete_private_posts' => __('Since 2.1', 'aam'),
-            'edit_private_posts' => __('Since 2.1', 'aam'),
-            'read_private_posts' => __('Since 2.1', 'aam'),
-            'delete_private_pages' => __('Since 2.1', 'aam'),
-            'edit_private_pages' => __('Since 2.1', 'aam'),
-            'read_private_pages' => __('Since 2.1', 'aam'),
-            'delete_users' => __('Since 2.1', 'aam'),
-            'create_users' => __('Since 2.1', 'aam'),
-            'unfiltered_upload' => __('Since 2.3', 'aam'),
-            'edit_dashboard' => __('Since 2.5', 'aam'),
-            'update_plugins' => __('Since 2.6', 'aam'),
-            'delete_plugins' => __('Since 2.6', 'aam'),
-            'update_core' => __('Since 3.0', 'aam'),
-            'list_users' => __('Since 3.0', 'aam'),
-            'remove_users' => __('Since 3.0', 'aam'),
-            'add_users' => __('Since 3.0', 'aam'),
-            'promote_users' => __('Since 3.0', 'aam'),
-            'delete_themes' => __('Since 3.0', 'aam'),
-            'export' => __('Since 3.0', 'aam'),
-            'edit_comment' => __('Since 3.1', 'aam'),
-            'manage_sites' => __('Since 3.0 - Multi-site only.  Allows access to Network Sites menu // Allows user to add, edit, delete, archive, unarchive, activate, deactivate, spam and unspam new site/blog in the network', 'aam'),
-            'manage_network_users' => __('Since 3.0 - Multi-site only. Allows access to Network Users menu', 'aam'),
-            'manage_network_themes' => __('Since 3.0 - Multi-site only. Allows access to Network Themes menu', 'aam'),
-            'manage_network_options' => __('Since 3.0 - Multi-site only
-				Allows access to Network Options menu', 'aam'),
-            'level_0' => __('User Level 0 converts to Subscriber', 'aam'),
-            'level_1' => __('User Level 1 converts to Contributor', 'aam'),
-            'level_2' => __('User Level 2 converts to Author', 'aam'),
-            'level_3' => __('User Level 3 converts to Author', 'aam'),
-            'level_4' => __('User Level 4 converts to Author', 'aam'),
-            'level_5' => __('User Level 5 converts to Editor', 'aam'),
-            'level_6' => __('User Level 6 converts to Editor', 'aam'),
-            'level_7' => __('User Level 7 converts to Editor', 'aam'),
-            'level_8' => __('User Level 8 converts to Administrator', 'aam'),
-            'level_9' => __('User Level 9 converts to Administrator', 'aam'),
-            'level_10' => __('User Level 10 converts to Administrator', 'aam'),
-            'publish_pages' => __('Description does not exist', 'aam'),
-            'administrator' => __('Description does not exist', 'aam'),
-            'update_themes' => __('Description does not exist', 'aam'),
-            'trash_comment' => __('Allow trash comment. Is available only for Premium Version.', 'aam'),
-            'approve_comment' => __('Allow approve comment. Is available only for Premium Version.', 'aam'),
-            'delete_comment' => __('Allow delete comment. Is available only for Premium Version.', 'aam'),
-            'spam_comment' => __('Allow mark comment as spam. Is available only for Premium Version.', 'aam'))
-        );
-
-        self::$cap_flag = TRUE;
-    }
 
     /**
      * Get list of labels for JavaScript

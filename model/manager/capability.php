@@ -144,16 +144,10 @@ class mvb_Model_Manager_Capability {
     }
 
     public static function renderRow($cap, $tmpl, $parent, $allow_delete) {
-
-        $desc = str_replace("\n", '<br/>', mvb_Model_Label::get($cap));
-        if (!$desc) {
-            $desc = mvb_Model_Label::get('LABEL_117');
-        }
         $title = mvb_Model_Helper::getHumanTitle($cap);
         $markers = array(
             '###title###' => $cap,
             '###premium###' => self::isPremium($cap),
-            '###description###' => $desc,
             '###checked###' => ($parent->getConfig()->hasCapability($cap) ? 'checked' : ''),
             '###cap_name###' => mvb_Model_Helper::cutStr($title, 22),
             '###cap_name_full###' => $title

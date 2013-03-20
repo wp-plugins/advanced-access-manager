@@ -4,7 +4,7 @@ Donate link: http://whimba.org/donation
 Tags: access manager, access control, comments, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role, access configuration
 Requires at least: 3.2
 Tested up to: 3.5.1
-Stable tag: 1.7
+Stable tag: 1.7.1
 
 Graphic interface to manage User Access to your Front-end and Back-end
 
@@ -83,6 +83,14 @@ just filter Main Menu.
 5. ConfigPress
 
 == Changelog ==
+
+= 1.7.1 =
+* Fixed issue with cache removal query
+* Silenced Upgrade for release 1.7 and higher
+* Removed Capabilities description
+* Added .POT file for multi-language support
+* Silenced issue in updateRestriction function
+* Silenced the issue with phpQuery and taxonomy rendering
 
 = 1.7 =
 * Removed Zend Caching mechanism
@@ -256,43 +264,3 @@ just filter Main Menu.
 = 1.0 =
 * Fixed issue with comment editing
 * Implemented JavaScript error catching
-
-= 0.9.8 =
-* Added ability to add or remove Capabilities
-* Fixed bug with network admin dashboard
-* Fixed bug with Metabox initialization
-* Fixed bug with whole branch checkbox if menu name has incompatible symbols for element's attribute ID
-* Changed metabox list view
-* Auto hide/show "Restore Default" link according to current User Role
-* Optimized JavaScript and CSS
-* Deleted Empty submenu holder. For example - Comments
-* Changed bothering tooltip behavior
-* Fixed bug with General metabox on Access Manager Option page
-* Changed some labels
-* Added auto-hide for message Options Updated after 10 sec
-
-= 0.9.7 =
-* Added Dashboard Widget Filtering functionality
-
-= 0.9.6 =
-* Fixed bug with Metabox initialization if installed plugin executes wp_remove_metabox function
-
-= 0.9.5 =
-* Added pre-defined set of capabilities - Administrator, Editor, Author, Contributor, Subscriber and Clear All
-* Fixed bug with submenu rendered as custom WP page, for example themes.php?page=theme_options
-* Fixed bug with Add New Post submenu. If it was selected then no edit.php page was accessible.
-
-= 0.9.0 =
-* Added Restore Default Settings functionality
-* Fixed bug with Whole Branch checkbox
-* Put tooltip on the center right position instead of center top
-* Added activation and deactivation hooks
-* Changed Tab Order on Role Manager Section
-* Implemented on unsaved page leaving notification
-
-= 0.8.1 =
-* Fixed issue with edit.php
-* Added to support box my twitter account
-
-= 0.8 =
-* First version

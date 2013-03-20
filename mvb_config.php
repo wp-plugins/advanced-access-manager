@@ -69,5 +69,3 @@ if (!class_exists('phpQuery')) {
 require_once('mvb_functions.php');
 
 load_plugin_textdomain('aam', false, WPACCESS_DIRNAME . '/langs');
-
-?>

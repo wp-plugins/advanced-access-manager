@@ -704,7 +704,14 @@ class mvb_Model_Ajax {
                 WPACCESS_PREFIX . 'restrict_limit', WPACCESS_RESTRICTION_LIMIT
         );
         $rests = $config->getRestrictions();
-        $count = ($info['type'] == 'post' ? @count($rests['post']) : @count($rests['taxonomy']));
+        if ($info['type'] == 'post' && isset($rests['posts'])){
+            $count = count($rests['post']);
+        }elseif(isset($rests['taxonomy'])){
+            $count = count($rests['taxonomy']);
+        }else{
+            $count = 0;
+        }
+        
         if (!$config->hasRestriction($info['type'], $info['id'])) {
             $count++;
         }
@@ -994,5 +1001,7 @@ class mvb_Model_Ajax {
             }
         }
     }
+
 }
+
 ?>

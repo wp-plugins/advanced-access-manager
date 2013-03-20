@@ -81,7 +81,9 @@ class mvb_Model_Cache
     {
         global $wpdb;
 
-        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '" . WPACCESS_PREFIX . 'user_%');
+        $query = "DELETE FROM {$wpdb->options} WHERE option_name LIKE '";
+        $query .= $wpdb->prefix . WPACCESS_PREFIX . "user_%'";
+        $wpdb->query($query);
         //TODO - there is some mess with cache. Should be fixed
         mvb_Model_API::clearCache();
     }
