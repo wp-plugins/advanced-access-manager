@@ -548,7 +548,7 @@ div.tree-holder #sidetreecontrol a {
 .aam-tabs ul.ui-tabs-nav li:hover { 
     top:1px;
     margin-bottom:0;
-    line-height: 14px; 
+    background-color: #BCBCBC;
 }
 
 .aam-tabs ul.ui-tabs-nav li.ui-state-default:hover a { 
@@ -624,14 +624,23 @@ span.help2 { margin: 0 10px;position: absolute;line-height: 120%; }
 
 input ~ label.tooltip {
     background-position: -254px -73px;
+    width:24px;height:24px;cursor:pointer;float:right;text-indent: -190px;
 }
 input:checked ~ label.tooltip {
     background-position: -294px -73px;
-    width:24px;height:24px;cursor:pointer;float:right;text-indent: -190px;
+    width:24px;
+    height:24px;
+    cursor:pointer;
+    float:right;
+    text-indent: -190px;
 }
 input ~ label.tooltip:hover, input:checked ~ label.tooltip:hover {
     background-position: -274px -73px;
-    width:24px;height:24px;cursor:pointer;float:right;text-indent: -190px;
+    width:24px;
+    height:24px;
+    cursor:pointer;
+    float:right;
+    text-indent: -190px;
 }
 
 .acctop { padding-top: 20px; }
