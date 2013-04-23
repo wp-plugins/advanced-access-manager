@@ -113,7 +113,17 @@ class mvb_Model_AccessControl {
                 }
             } else {
                 if (!$wp_query->is_home() && isset($post->ID)) {
-                    if (!$this->checkPostAccess($post->ID, WPACCESS_ACCESS_READ)) {
+                    if ($this->checkPostAccess($post->ID, WPACCESS_ACCESS_READ)) {
+                        if ($post->post_type == 'attachment') {
+                            $media = mvb_Model_ConfigPress::getOption('aam.media.access', 'page');
+                            if ($media == 'direct') {
+                                $file = $post->guid;
+                                header("Content-Type: {$post->post_mime_type}");
+                                header("Content-Disposition: attachment;filename=" . basename($file));
+                                echo file_get_contents($file);
+                            }
+                        }
+                    } else {
                         mvb_Model_Helper::doRedirect();
                     }
                 }
@@ -177,8 +187,8 @@ class mvb_Model_AccessControl {
 
         $access = apply_filters(WPACCESS_PREFIX . 'default_action', TRUE, $action, 'post');
         $data = $this->getUserConfig()->getRestriction('post', $post_id);
-        if (!empty($data)){
-             if (is_admin()) {
+        if (!empty($data)) {
+            if (is_admin()) {
                 if (isset($data['backend_post_' . $action])) {
                     $access = FALSE;
                 }

@@ -463,6 +463,9 @@ class mvb_Model_Manager {
         if (!isset($params['advance'])) {
             $params['advance'] = array();
         }
+        if (!isset($params['config_press'])){
+            $params['config_press'] = '';
+        }
 
         return $params;
     }

@@ -4,7 +4,7 @@ Donate link: http://whimba.org/donation
 Tags: access manager, access control, comments, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role, access configuration
 Requires at least: 3.2
 Tested up to: 3.5.1
-Stable tag: 1.7.2
+Stable tag: 1.7.3
 
 Graphic interface to manage User Access to your Front-end and Back-end
 
@@ -83,6 +83,11 @@ just filter Main Menu.
 5. ConfigPress
 
 == Changelog ==
+
+= 1.7.3 =
+* Fixed reported issue #8894 to PHPSnapshot
+* Added Media File access control
+* Extended ConfigPress Tutorial
 
 = 1.7.2 =
 * Fixed CSS issues
