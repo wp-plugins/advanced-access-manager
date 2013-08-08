@@ -1095,6 +1095,13 @@ aamObject.prototype.init = function(){
     if (jQuery('.plugin-notification p').length){
         jQuery('#aam_wrap').addClass('aam-warning');
     }
+    
+    //fix for 3.6.
+    jQuery('.ui-accordion-content').each(function(){
+        if (jQuery(this).css('height') == '0px'){
+            jQuery(this).css('height', 'auto');
+        }
+    })
 
     jQuery('#aam_wrap').show();
 }
@@ -1128,6 +1135,7 @@ aamObject.prototype.initAccordion = function(element, sortable){
         collapsible: true,
         header: 'h4',
         autoHeight: false,
+        heightStyleType : 'content',
         icons: {
             header: "ui-icon-circle-arrow-e",
             headerSelected: "ui-icon-circle-arrow-s"
