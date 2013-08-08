@@ -653,7 +653,7 @@ aamObject.prototype.initConfigPressTab = function(){
     this.editor = CodeMirror.fromTextArea(document.getElementById("access_config"), {
         mode: {
             name: "ini"
-         //   htmlMode: true
+        //   htmlMode: true
         },
         lineNumbers: true
     });
@@ -1096,13 +1096,6 @@ aamObject.prototype.init = function(){
         jQuery('#aam_wrap').addClass('aam-warning');
     }
     
-    //fix for 3.6.
-    jQuery('.ui-accordion-content').each(function(){
-        if (jQuery(this).css('height') == '0px'){
-            jQuery(this).css('height', 'auto');
-        }
-    })
-
     jQuery('#aam_wrap').show();
 }
 
@@ -1124,6 +1117,12 @@ aamObject.prototype.initMainMetabox = function(){
 
     this.triggerHooks();
 
+    //fix for 3.6.
+    jQuery('.ui-accordion-content').each(function(){
+        if (jQuery(this).css('height') == '0px'){
+            jQuery(this).css('height', 'auto');
+        }
+    });
 }
 
 aamObject.prototype.initAccordion = function(element, sortable){
