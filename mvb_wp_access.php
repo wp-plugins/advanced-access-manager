@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access to WordPress Backend and Frontend.
-  Version: 1.7.5
+  Version: 1.8
   Author: Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
   Author URI: http://www.whimba.org
  */
@@ -345,13 +345,17 @@ class mvb_WPAccess {
         }
 
         //get user's highest Level
-        $caps = $this->getAccessControl()->getUserConfig()->getUser()->getAllCaps();
-        $highest = mvb_Model_Helper::getHighestUserLevel($caps);
+        $user = $this->getAccessControl()->getUserConfig()->getUser();
+		
+        if (is_object($user)) {
+            $caps = $user->getAllCaps();
+            $highest = mvb_Model_Helper::getHighestUserLevel($caps);
 
-        if ($highest < WPACCESS_TOP_LEVEL && is_array($roles)) { //filter roles
-            foreach ($roles as $role => $data) {
-                if ($highest < mvb_Model_Helper::getHighestUserLevel($data['capabilities'])) {
-                    unset($roles[$role]);
+            if ($highest < WPACCESS_TOP_LEVEL && is_array($roles)) { //filter roles
+                foreach ($roles as $role => $data) {
+                    if ($highest < mvb_Model_Helper::getHighestUserLevel($data['capabilities'])) {
+                        unset($roles[$role]);
+                    }
                 }
             }
         }
@@ -748,6 +752,9 @@ class mvb_WPAccess {
     public function ajax() {
 
         check_ajax_referer(WPACCESS_PREFIX . 'ajax');
+        
+        //clean up the output buffer, just in case some other software made a poop
+        while (@ob_end_clean());
 
         if (mvb_Model_API::getBlogOption(WPACCESS_PREFIX . 'first_time', FALSE) !== FALSE) {
             $cap = ( mvb_Model_API::isSuperAdmin() ? WPACCESS_ADMIN_ROLE : 'aam_manage');
@@ -1044,8 +1051,16 @@ class mvb_WPAccess {
         $role = mvb_Model_Helper::getParam('role', 'POST');
         $user = mvb_Model_Helper::getParam('user', 'POST');
         $m = new mvb_Model_ManagerAjax($this, $role, $user);
+        
+        //clean up the output buffer, just in case some other software made a poop
+        while (@ob_end_clean());
+        
+        $return = $m->manage_ajax('option_list');
+        foreach ($return as $a => $b) {
+            $return[$a] = utf8_encode($b);
+        }
 
-        die(json_encode($m->manage_ajax('option_list')));
+        die(json_encode($return));
     }
 
     /*

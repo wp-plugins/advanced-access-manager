@@ -443,7 +443,8 @@ class mvb_Model_Manager {
                     $this->config->saveConfig();
                 }
             }
-
+            mvb_Model_Cache::clearCache();
+            
             mvb_Model_ConfigPress::saveConfig(stripslashes($params['config_press']));
         } else {
             $error_message = FALSE;

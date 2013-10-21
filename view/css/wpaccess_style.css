@@ -1006,3 +1006,46 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; }
 }
 .ui-dialog-titlebar-close:hover { border: 0; }
 input.capability-name { margin: 5px;display: none; }
+
+.important-notice{
+    padding: 4px;
+    margin: 8px;
+    border: 2px solid #0066CC;
+    text-align: justify;
+}
+
+.aam-actions{
+    display: table;
+    width: 100%;
+}
+
+.aam-actions .aam-action{
+    height: 44px;
+    min-width: 32px;
+    display: table-cell;
+    text-align: center;
+    vertical-align: bottom;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 9px;
+    font-weight: bold;
+    color: #333333;
+    background-repeat: no-repeat;
+    background-position: center top;
+}
+
+.aam-action-twitter{
+    background-image: url('images/twitter.png');
+}
+
+.aam-action-twitter:hover{
+    background-image: url('images/twitter-active.png');
+}
+
+.aam-action-link{
+    background-image: url('images/link.png');
+}
+
+.aam-action-link:hover{
+    background-image: url('images/link-active.png');
+}
