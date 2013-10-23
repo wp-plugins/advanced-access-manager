@@ -3,7 +3,7 @@
 /*
   Plugin Name: Advanced Access Manager
   Description: Manage Access to WordPress Backend and Frontend.
-  Version: 1.8
+  Version: 1.8.5
   Author: Vasyl Martyniuk <martyniuk.vasyl@gmail.com>
   Author URI: http://www.whimba.org
  */
@@ -101,6 +101,8 @@ class mvb_WPAccess {
             add_action('edit_user_profile_update', array($this, 'edit_user_profile_update'));
             //roles
             add_filter('editable_roles', array($this, 'editable_roles'), 999);
+            //event manager
+            add_action('post_updated', array($this, 'post_update'), 10, 3);
         } else {
             add_action('wp_before_admin_bar_render', array($this, 'wp_before_admin_bar_render'));
             add_action('wp', array($this, 'wp_front'));
@@ -123,6 +125,55 @@ class mvb_WPAccess {
 
     public function editCommentsBulk($actions){
         return $this->comment_row_actions($actions);
+    }
+    
+    /**
+     * Handle Post Update actions
+     * 
+     * @param type $post_ID
+     * @param type $post_after
+     * @param type $post_before
+     */
+    public function post_update($post_ID, $post_after, $post_before = null){
+        $events = mvb_Model_API::getUserAccessConfig(get_current_user_id())->getEvents();
+
+        foreach($events as $event){
+            if ($event['eventType'] == 'status_change'){
+                if ($event['statusChange'] == $post_after->post_status){
+                    $this->triggerAction($event, $post_ID, $post_after, $post_before);
+                }
+            } elseif ($post_before && $event['eventType'] == 'content_change'){
+                if ($post_before->post_content != $post_after->post_content){
+                    $this->triggerAction($event, $post_ID, $post_after, $post_before);
+                }
+            }
+        }        
+    }
+    
+    public function triggerAction($event, $post_ID, $post_after, $post_before){
+        global $wpdb, $wp_post_types;
+        
+        if ($event['eventAction'] == 'notify'){
+            $subject = $wp_post_types[$event['postType']]->labels->name . ' ';
+            $subject .= $post_ID . ' has been changed by ' . get_current_user();
+            $subject = apply_filters('aam_notification_subject', $subject);
+            
+            $message = 'Link to the ' . $wp_post_types[$event['postType']]->labels->name . ': ';
+            $message .= get_edit_post_link($post_ID);
+            $message = apply_filters('aam_notification_message', $message);
+            
+            wp_mail($event['eventEmail'], $subject, $message);
+        } else if ($event['eventAction'] == 'change_satus'){
+            $wpdb->update(
+                    $wpdb->posts, 
+                    array('post_status' => $event['statusChangeTo']), 
+                    array('ID' => $post_ID)
+            );
+        } else if ($event['eventAction'] == 'custom'){
+            if (is_callable($event['callback'])){
+                call_user_func($event['callback'], $post_ID, $post_after, $post_before);
+            }
+        }
     }
 
     /**
@@ -1056,8 +1107,10 @@ class mvb_WPAccess {
         while (@ob_end_clean());
         
         $return = $m->manage_ajax('option_list');
-        foreach ($return as $a => $b) {
-            $return[$a] = utf8_encode($b);
+        if (mvb_Model_ConfigPress::getOption('aam.encode', "false") == 'true'){
+            foreach ($return as $a => $b) {
+                    $return[$a] = utf8_encode($b);
+            }
         }
 
         die(json_encode($return));

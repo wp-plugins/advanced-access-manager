@@ -221,17 +221,17 @@ class mvb_Model_Label {
         self::$labels['LABEL_94'] = __('Browse', 'aam');
         self::$labels['LABEL_95'] = __('Worth checking', 'aam');
         self::$labels['LABEL_96'] = __('<a href="http://wordpress.org/extend/plugins/wp-bug-tracker/" target="_blank">WordPress Bug Tracker</a> will help us to improve AAM and you to maintain your system.', 'aam');
+        self::$labels['LABEL_63'] = __('Define your own actions on Post events.', 'aam');
+        self::$labels['LABEL_64'] = __('Add Event', 'aam');
+        self::$labels['LABEL_65'] = __('Event Manager', 'aam');
+        self::$labels['LABEL_66'] = __('Add New Event', 'aam');
+        self::$labels['LABEL_67'] = __('New Event Wizard', 'aam');
+        self::$labels['LABEL_68'] = __('Add Event', 'aam');
 
         /*
          * These labels where deleted in previous release so you can use them
          * to define new labels
 
-          self::$labels['LABEL_63'] = __('', 'aam');
-          self::$labels['LABEL_64'] = __('', 'aam');
-          self::$labels['LABEL_65'] = __('', 'aam');
-          self::$labels['LABEL_66'] = __('', 'aam');
-          self::$labels['LABEL_67'] = __('', 'aam');
-          self::$labels['LABEL_68'] = __('', 'aam');
           self::$labels['LABEL_69'] = __('', 'aam');
           self::$labels['LABEL_70'] = __('', 'aam');
           self::$labels['LABEL_43'] = __('', 'aam');
@@ -275,6 +275,7 @@ class mvb_Model_Label {
             'LABEL_12' => self::get('LABEL_12'),
             'LABEL_24' => self::get('LABEL_24'),
             'LABEL_25' => self::get('LABEL_25'),
+            'LABEL_68' => self::get('LABEL_68'),
             'LABEL_76' => self::get('LABEL_76'),
             'LABEL_77' => self::get('LABEL_77'),
             'LABEL_91' => self::get('LABEL_91'),

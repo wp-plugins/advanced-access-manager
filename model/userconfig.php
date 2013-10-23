@@ -64,6 +64,7 @@ class mvb_Model_UserConfig extends mvb_Model_Abstract_Config {
                     'capabilities' => $this->getCapabilities(),
                     'menu_order' => $this->getMenuOrder(),
                     'restrictions' => $this->getRestrictions(),
+                    'events' => $this->getEvents()
         );
 
         update_user_meta($this->getID(), WPACCESS_PREFIX . 'config', $options);
@@ -85,6 +86,7 @@ class mvb_Model_UserConfig extends mvb_Model_Abstract_Config {
             $this->setMetaboxes($config->metaboxes);
             $this->setRestrictions($config->restrictions);
             $this->setCapabilities($config->capabilities);
+            $this->setEvents($config->events);
         }else{
             $this->setCapabilities($this->user->getAllCaps());
         }

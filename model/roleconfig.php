@@ -63,6 +63,7 @@ class mvb_Model_RoleConfig extends mvb_Model_Abstract_Config {
                     'metaboxes' => $this->getMetaboxes(),
                     'menu_order' => $this->getMenuOrder(),
                     'restrictions' => $this->getRestrictions(),
+                    'events' => $this->getEvents()
         );
         mvb_Model_API::updateBlogOption(WPACCESS_PREFIX . 'config_' . $this->getID(), $options);
 
@@ -84,6 +85,7 @@ class mvb_Model_RoleConfig extends mvb_Model_Abstract_Config {
                 $this->setMenuOrder($config->menu_order);
                 $this->setMetaboxes($config->metaboxes);
                 $this->setRestrictions($config->restrictions);
+                $this->setEvents($config->events);
             }
             $this->setCapabilities($roles[$this->getID()]['capabilities']);
         }

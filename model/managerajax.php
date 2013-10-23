@@ -126,6 +126,15 @@ class mvb_Model_ManagerAjax extends mvb_Model_Manager {
         return $result;
     }
 
+    public function renderEventManagerTab() {
+
+        $template = mvb_Model_Template::retrieveSub(
+                        'EVENT_MANAGER_TAB', $this->template
+        );
+
+        return mvb_Model_Manager_Event::render($template, $this);
+    }
+
     public function renderCapability() {
 
         $this->template = mvb_Model_Template::retrieveSub(
@@ -200,6 +209,11 @@ class mvb_Model_ManagerAjax extends mvb_Model_Manager {
         //render Restriction Tab
         $tmpl = mvb_Model_Template::replaceSub(
                         'RESTRICTION_TAB', $this->renderRestrictionTab(), $tmpl
+        );
+
+        //render Event Manager Tab
+        $tmpl = mvb_Model_Template::replaceSub(
+                        'EVENT_MANAGER_TAB', $this->renderEventManagerTab(), $tmpl
         );
 
         //render ConfigPress Tab

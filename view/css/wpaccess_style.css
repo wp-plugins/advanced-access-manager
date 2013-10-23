@@ -1004,7 +1004,17 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; }
 .ui-icon-closethick:hover {
     background-color: #898989;border:0;
 }
-.ui-dialog-titlebar-close:hover { border: 0; }
+
+.ui-dialog-titlebar-close{
+    float: right;
+}
+.ui-dialog-titlebar-close .ui-button-text{
+    text-indent: -9999px;
+}
+
+.ui-dialog-titlebar-close:hover { 
+    border: 0; 
+}
 input.capability-name { margin: 5px;display: none; }
 
 .important-notice{
@@ -1048,4 +1058,36 @@ input.capability-name { margin: 5px;display: none; }
 
 .aam-action-link:hover{
     background-image: url('images/link-active.png');
+}
+
+.event-settings{
+    width: 100%;
+}
+
+.event-settings th{
+    text-align: right;
+    border: 1px solid #CCCCCC;
+    padding-right: 4px;
+}
+
+.event-settings td{
+    padding: 2px 5px;
+}
+
+.event-settings input, .event-settings select{
+    width: 100%;
+}
+
+.event-description p{
+    margin: 0.2em 0px;
+}
+
+.event-actions{
+    margin: 0;
+    text-align: right;
+    padding-right: 10px;
+}
+
+ .event-actions a.remove-event{
+    color: #FF0000;
 }

@@ -1113,6 +1113,7 @@ aamObject.prototype.initMainMetabox = function(){
     this.initMetaboxTab();
     this.initCapabilityTab();
     this.initPostTaxonomyTab();
+    this.initEventManagerTab();
     this.initConfigPressTab();
 
     this.triggerHooks();
@@ -1121,6 +1122,194 @@ aamObject.prototype.initMainMetabox = function(){
     jQuery('.ui-accordion-content').each(function(){
         if (jQuery(this).css('height') == '0px'){
             jQuery(this).css('height', 'auto');
+        }
+    });
+}
+
+aamObject.prototype.validEvent = function(){
+    var valid = true;
+    var eventType = jQuery('#event_type_select').val();
+    var eventStatus = jQuery('#event_status_change').val();
+    var postType = jQuery('#event_post_type').val();
+    var eventAction = jQuery('#event_action').val();
+    var eventEmail = jQuery.trim(jQuery('#event_email_address').val());
+    var eventStatusTo = jQuery('#event_change_status_to').val();
+    var eventCallback = jQuery.trim(jQuery('#event_callback_func').val());
+    
+    //check mandatory fields
+    if (!eventType || !postType || !eventAction){
+        valid = false;
+    }
+    
+    //check conditions
+    if (eventType == 'status_change' && !eventStatus){
+        valid = false;
+    }
+    if (eventAction == 'notify' && !eventEmail){
+        valid = false;
+    } else if (eventAction == 'change_satus' && !eventStatusTo){
+        valid = false;
+    } else if (eventAction == 'custom' && !eventCallback){
+        valid = false;
+    }
+    
+    return valid;
+}
+
+aamObject.prototype.initEventManagerTab = function(){
+    var _this = this;
+    this.initAccordion('.event-accordion', true);
+    
+    jQuery('#add_event').bind('click', function(event){
+        event.preventDefault();
+        var pa = {
+            resizable: false,
+            height: 'auto',
+            width: 500,
+            modal: false,
+            buttons: {}
+        }
+        pa.buttons[aamLocal.LABEL_68] = function() {
+            //validate first
+            if (_this.validEvent()){
+                var date = new Date();
+                var eventID = date.getTime();
+                var container = jQuery('<div/>', {
+                    id : eventID
+                });
+                //add title
+                var title = jQuery('#event_type_select option:selected').text();
+                if (jQuery('#event_type_select').val() == 'status_change'){
+                    title += ' to ' + jQuery('#event_status_change option:selected').text();
+                }
+                title += ' for ' + jQuery('#event_post_type option:selected').text();
+                jQuery(container).append(
+                    jQuery('<h4/>').append(jQuery('<a/>',  {
+                        href: "#"
+                    }).html(title)
+                        ));
+                //add content
+                var content = jQuery('<div/>', {
+                    'class' : 'event-description'
+                });
+                //insert the event data
+                jQuery(content).append(jQuery('<input/>',{
+                    type: 'hidden',
+                    name: 'wpaccess[event][' + eventID + '][eventType]',
+                    value: jQuery('#event_type_select').val()
+                }));
+                jQuery(content).append(jQuery('<input/>',{
+                    type: 'hidden',
+                    name: 'wpaccess[event][' + eventID + '][statusChange]',
+                    value: jQuery('#event_status_change').val()
+                }));
+                jQuery(content).append(jQuery('<input/>',{
+                    type: 'hidden',
+                    name: 'wpaccess[event][' + eventID + '][postType]',
+                    value: jQuery('#event_post_type').val()
+                }));
+                jQuery(content).append(jQuery('<input/>',{
+                    type: 'hidden',
+                    name: 'wpaccess[event][' + eventID + '][eventAction]',
+                    value: jQuery('#event_action').val()
+                }));
+                jQuery(content).append(jQuery('<input/>',{
+                    type: 'hidden',
+                    name: 'wpaccess[event][' + eventID + '][eventEmail]',
+                    value: jQuery('#event_email_address').val()
+                }));
+                jQuery(content).append(jQuery('<input/>',{
+                    type: 'hidden',
+                    name: 'wpaccess[event][' + eventID + '][statusChangeTo]',
+                    value: jQuery('#event_change_status_to').val()
+                }));
+                jQuery(content).append(jQuery('<input/>',{
+                    type: 'hidden',
+                    name: 'wpaccess[event][' + eventID + '][callback]',
+                    value: jQuery('#event_callback_func').val()
+                }));
+                
+                var desc = '<b>Action: </b>' + jQuery('#event_action option:selected').text();
+                if (jQuery('#event_action').val() == 'notify'){
+                    desc += ' to ' + jQuery('#event_email_address').val();
+                } else if (jQuery('#event_action').val() == 'change_satus'){
+                    desc += ' to ' + jQuery('#event_change_status_to option:selected').text();
+                } else if (jQuery('#event_action').val() == 'custom'){
+                    desc += ' callback function ' + jQuery('#event_callback_func').val()
+                }
+                jQuery(content).append(jQuery('<p/>').html(desc));
+                
+                //add remove button
+                var remove = jQuery('<a/>', {
+                    href : '#',
+                    'class' : 'remove-event'
+                }).html('remove').bind('click', function(event){
+                    event.preventDefault();
+                    jQuery('#' + eventID).remove();
+                    jQuery('.event-accordion').accordion('destroy');
+                    _this.initAccordion('.event-accordion', true);
+                });
+                jQuery(content).append(jQuery('<p/>', {
+                    'class' : 'event-actions'
+                }).append(remove));
+                
+                jQuery(container).append(content);
+            
+                //rebuild the accordion
+                jQuery('.event-accordion').accordion('destroy');
+                jQuery('.event-accordion').append(container);
+                _this.initAccordion('.event-accordion', true);
+                jQuery( this ).dialog( "close" );
+                //clean up the form
+                jQuery('select, input', '.event-settings').val('');
+                jQuery('#event_type_select').trigger('change');
+                jQuery('#event_action').trigger('change');
+            } else {
+                jQuery('.event-settings').effect('highlight',3000);
+            }
+        }
+        pa.buttons[aamLocal.LABEL_77] = function() {
+            jQuery( this ).dialog( "close" );
+        }
+        jQuery( "#dialog-add-event" ).dialog(pa);
+    });
+    
+    jQuery('.remove-event').each(function(){
+        jQuery(this).bind('click', {
+            id : jQuery(this).attr('event')
+        }, function(event){
+            event.preventDefault(); 
+            jQuery('#' + event.data.id).remove();
+            jQuery('.event-accordion').accordion('destroy');
+            _this.initAccordion('.event-accordion', true);
+        });
+    });
+    
+    jQuery('#event_type_select').bind('change', function(){
+        if (jQuery(this).val() == 'status_change'){
+            jQuery('#status_changed').show();
+        } else {
+            jQuery('#status_changed').hide();
+        }
+    });
+    
+    jQuery('#event_action').bind('change', function(){
+        jQuery('#event_callback, #event_status_to, #event_email').hide();
+        switch(jQuery(this).val()){
+            case 'notify':
+                jQuery('#event_email').show();
+                break;
+               
+            case 'change_satus':
+                jQuery('#event_status_to').show();
+                break;
+               
+            case 'custom':
+                jQuery('#event_callback').show();
+                break;
+           
+            default:
+                break;
         }
     });
 }

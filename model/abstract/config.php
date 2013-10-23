@@ -88,6 +88,15 @@ abstract class mvb_Model_Abstract_Config {
     protected $restrictions = array();
 
     /**
+     * System Event List
+     * 
+     * @var array
+     * 
+     * @access protected 
+     */
+    protected $events = array();
+
+    /**
      * Exclude Pages from Navigation
      *
      * @var array
@@ -409,9 +418,7 @@ abstract class mvb_Model_Abstract_Config {
 
         if (mvb_Model_Helper::isPremium()) {
             $result = mvb_Model_Pro::populateRestriction(
-                    $type,
-                    $this->getType(),
-                    $this->getID()
+                            $type, $this->getType(), $this->getID()
             );
         }
 
@@ -463,6 +470,14 @@ abstract class mvb_Model_Abstract_Config {
             unset($rests[$type][$id]);
             $this->setRestrictions($rests);
         }
+    }
+
+    public function setEvents($events) {
+        $this->events = $events;
+    }
+
+    public function getEvents() {
+        return $this->events;
     }
 
 }

@@ -192,6 +192,15 @@ class mvb_Model_Manager {
         return mvb_Model_Manager_Restriction::render($template, $this);
     }
 
+    public function renderEventManagerTab() {
+
+        $template = mvb_Model_Template::retrieveSub(
+                        'EVENT_MANAGER_TAB', $this->template
+        );
+
+        return mvb_Model_Manager_Event::render($template, $this);
+    }
+
     public function renderConfigPressTab() {
 
         $template = mvb_Model_Template::retrieveSub(
@@ -272,6 +281,11 @@ class mvb_Model_Manager {
         //render Restriction Tab
         $tmpl = mvb_Model_Template::replaceSub(
                         'RESTRICTION_TAB', $this->renderRestrictionTab(), $tmpl
+        );
+        
+        //render Event Manager Tab
+        $tmpl = mvb_Model_Template::replaceSub(
+                        'EVENT_MANAGER_TAB', $this->renderEventManagerTab(), $tmpl
         );
 
         //render ConfigPress Tab
@@ -400,6 +414,7 @@ class mvb_Model_Manager {
             $this->config->setMenu($params['menu']);
             $this->config->setMetaboxes($params['metabox']);
             $this->config->setCapabilities($params['advance']);
+            $this->config->setEvents($params['event']);
             $this->config->saveConfig();
             if (mvb_Model_Helper::multisiteApplyAll() && !$this->current_user) {
                 $config = clone $this->config;
@@ -437,6 +452,9 @@ class mvb_Model_Manager {
                     if (in_array('capabilities', $apply)) {
                         $this->config->setCapabilities($config->getCapabilities());
                     }
+                    if (in_array('events', $apply)) {
+                        $this->config->setEvents($config->getEvents());
+                    }
                     if (in_array('restrictions', $apply)) {
                         $this->config->setRestrictions($config->getRestrictions());
                     }
@@ -444,7 +462,7 @@ class mvb_Model_Manager {
                 }
             }
             mvb_Model_Cache::clearCache();
-            
+
             mvb_Model_ConfigPress::saveConfig(stripslashes($params['config_press']));
         } else {
             $error_message = FALSE;
@@ -464,7 +482,10 @@ class mvb_Model_Manager {
         if (!isset($params['advance'])) {
             $params['advance'] = array();
         }
-        if (!isset($params['config_press'])){
+        if (!isset($params['event'])) {
+            $params['event'] = array();
+        }
+        if (!isset($params['config_press'])) {
             $params['config_press'] = '';
         }
 
