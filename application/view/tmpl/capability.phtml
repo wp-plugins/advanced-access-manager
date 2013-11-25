@@ -1,0 +1,76 @@
+<?php
+/**
+ * ======================================================================
+ * LICENSE: This file is subject to the terms and conditions defined in *
+ * file 'license.txt', which is part of this source code package.       *
+ * ======================================================================
+ */
+?>
+<div class="feature-content-container" id="capability_content">
+    <table id="capability_list">
+        <thead>
+            <tr>
+                <th>Capability ID</th>
+                <th>Checked</th>
+                <th width="35%">Category</th>
+                <th width="50%">Capability</th>
+                <th>Control</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <div id="filter_capability_dialog" class="aam-dialog" title="<?php echo __('Filter Capability List', 'aam'); ?>">
+        <table id="capability_group_list">
+            <thead>
+                <tr>
+                    <th>Group Name</th>
+                    <th>Select</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($this->getGroupList() as $group) { ?>
+                    <tr>
+                        <td><?php echo $group; ?></td>
+                        <td>
+                            <div class="capability-actions">
+                                <a href="#" class="capability-action capability-action-select"></a>
+                            </div>
+                        </td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="copy_role_dialog" class="aam-dialog" title="Copy Capabilities from Role">
+        <table id="copy_role_list">
+            <thead>
+                <tr>
+                    <th>Role ID</th>
+                    <th>User Count</th>
+                    <th width="80%">Role Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="aam-metabox-loader"></div>
+    </div>
+
+    <div id="capability_form_dialog" class="aam-dialog" title="Add New Capability">
+        <table class="dataTable">
+            <tbody>
+                <tr>
+                    <th>Capability Name<span class="aam-asterix">*</span>:</th>
+                    <td><input type="text" id="capability_name" class="aam-input" /></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="aam-metabox-loader"></div>
+    </div>
+
+    <div id="delete_capability" class="aam-dialog" title="Delete Capability">
+        <p class="dialog-content"></p>
+    </div>
+</div>

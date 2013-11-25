@@ -1,0 +1,228 @@
+<?php
+/**
+ * ======================================================================
+ * LICENSE: This file is subject to the terms and conditions defined in *
+ * file 'license.txt', which is part of this source code package.       *
+ * ======================================================================
+ */
+?>
+<div class="feature-content-container" id="post_access_content">
+    <table id="post_list">
+        <thead>
+            <tr>
+                <th>Post ID</th>
+                <th>Post Status</th>
+                <th>Post Link</th>
+                <th width="60%">Name</th>
+                <th width="20%">Status</th>
+                <th>Control</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <div id="filter_post_dialog" class="aam-dialog" title="Filter Posts by Type">
+        <div class="tree-holder postbox">
+            <div id="sidetreecontrol"><a href="#">Collapse All</a>&nbsp;|&nbsp;<a href="#">Expand All</a>&nbsp;|&nbsp;<span>Refresh</span></div>
+            <br class="clear" />
+            <ul id="tree" class="filetree"></ul>
+        </div>
+        <div class="aam-main-loader"></div>
+    </div>
+
+    <div id="access_dialog" class="aam-dialog">
+        <div class="aam-lock-message">
+            <span><?php echo __('You riched the limit. Get <a href="http://wpaam.com" target="_blank">AAM Plus Package</a> to unlock the feature.'); ?></span>
+        </div>
+        <div class="post-access-inherited"></div>
+        <?php if ($this->getSubject()->getUID() != 'visitor') { ?>
+            <div class="post-access-area">
+                <input type="radio" id="post_area_frontend" value="frontend" checked="checked" name="access_area" /><label for="post_area_frontend">Frontend</label>
+                <input type="radio" id="post_area_backend" value="backend" name="access_area" /><label for="post_area_backend">Backend</label>
+            </div>
+        <?php } ?>
+
+        <div id="access_control_area">
+            <div id="term_access">
+                <table class="dataTable" id="term_access_frontend">
+                    <thead>
+                        <tr>
+                            <th colspan="2" class="term-access-title">Term Access</th>
+                        </tr>
+                        <tr>
+                            <th>Capability</th>
+                            <th>Restrict</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $term = $this->getSubject()->getObject(aam_Control_Object_Term::UID);
+                        foreach ($term->getAccessList('frontend') as $i => $action) {
+                            ?>
+                            <tr class="<?php echo ($i % 2 ? 'event' : 'odd'); ?>">
+                                <td>
+                                    <div class="post-access">
+                                        <?php echo __($action, 'aam'); ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="post-actions">
+                                        <div class="post-action">
+                                            <input type="checkbox" id="term_frontend_<?php echo $action ?>" object="term" area="frontend" action="<?php echo $action ?>" />
+                                            <label for="term_frontend_<?php echo $action ?>"><span></span></label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2" class="post-access-description">
+                                <span class="aam-post-access-notice">*</span>
+                                Control Frontend Term Access
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <table class="dataTable" id="term_access_backend">
+                    <thead>
+                        <tr>
+                            <th colspan="2" class="term-access-title">Term Access</th>
+                        </tr>
+                        <tr>
+                            <th>Capability</th>
+                            <th>Restrict</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        foreach ($term->getAccessList('backend') as $i => $action) {
+                            ?>
+                            <tr class="<?php echo ($i % 2 ? 'event' : 'odd'); ?>">
+                                <td>
+                                    <div class="post-access">
+                                        <?php echo __($action, 'aam'); ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="post-actions">
+                                        <div class="post-action">
+                                            <input type="checkbox" id="term_backend_<?php echo $action ?>" object="term" area="backend" action="<?php echo $action ?>" />
+                                            <label for="term_backend_<?php echo $action ?>"><span></span></label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2" class="post-access-description">
+                                <span class="aam-post-access-notice">*</span>
+                                Control Backend Term Access
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div id="post_access" class="post-access-list">
+                <table class="dataTable" id="post_access_frontend">
+                    <thead>
+                        <tr>
+                            <th colspan="2" class="post-access-title">All Posts in Term</th>
+                        </tr>
+                        <tr>
+                            <th>Capability</th>
+                            <th>Restrict</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $post = $this->getSubject()->getObject(aam_Control_Object_Post::UID);
+                        foreach ($post->getAccessList('frontend') as $i => $action) {
+                            ?>
+                            <tr class="<?php echo ($i % 2 ? 'event' : 'odd'); ?>">
+                                <td>
+                                    <div class="post-access">
+                                        <?php echo __($action, 'aam'); ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="post-actions">
+                                        <div class="post-action post-action-check">
+                                            <input type="checkbox" id="post_frontend_<?php echo $action ?>" object="post" area="frontend" action="<?php echo $action ?>" />
+                                            <label for="post_frontend_<?php echo $action ?>"><span></span></label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2" class="post-access-description">
+                                <span class="aam-post-access-notice">*</span>
+                                Control Frontend Post Access
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <table class="dataTable" id="post_access_backend">
+                    <thead>
+                        <tr>
+                            <th colspan="2" class="post-access-title">All Posts in Term</th>
+                        </tr>
+                        <tr>
+                            <th>Capability</th>
+                            <th>Restrict</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        foreach ($post->getAccessList('backend') as $i => $action) {
+                            ?>
+                            <tr class="<?php echo ($i % 2 ? 'event' : 'odd'); ?>">
+                                <td>
+                                    <div class="post-access">
+                                        <?php echo __($action, 'aam'); ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="post-actions">
+                                        <div class="post-action post-action-check">
+                                            <input type="checkbox" id="post_backend_<?php echo $action ?>" object="post" area="backend" action="<?php echo $action ?>" />
+                                            <label for="post_backend_<?php echo $action ?>"><span></span></label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2" class="post-access-description">
+                                <span class="aam-post-access-notice">*</span>
+                                Control Backend Post Access
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <div class="post-access-block">
+                    <a href="#" class="aam-lock-big"><span>Get <u>AAM Plus Package</u></span></a>
+                </div>
+            </div>
+        </div>
+        <div class="aam-main-loader"></div>
+    </div>
+</div>
