@@ -1,9 +1,9 @@
 === Advanced Access Manager ===
-Contributors: vasyl_m, haeckdesign
+Contributors: vasyl_m
 Donate link: http://whimba.org/donation
-Tags: access manager, access control, comments, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role, access configuration
+Tags: access manager, access control, comments, capability, dashboard widget, filter menu, page, post, metabox, role manager, user access, user control, user role, access
 Requires at least: 3.2
-Tested up to: 3.6.1
+Tested up to: 3.7.1
 Stable tag: 1.8.5
 
 Graphic interface to manage User Access to your Front-end and Back-end
@@ -76,23 +76,11 @@ just filter Main Menu.
 
 == Screenshots ==
 
-1. General view of Access Manager
-2. List of Metaboxes to Manage
-3. List of Capabilities
-4. Post/Page Tree View
-5. ConfigPress
-
 == Changelog ==
 
-= 1.8.5 =
-* Added Event Manager
-* Added ConfigPress parameter "aam.encoding"
-
 = 1.8 =
-* Fixed user caching issue
-* Fixed issue with encoding
-* Clear output buffer to avoid from third party plugins issues
-* Notification about new release 2.0
+* Change the UI Design to native UI Smoothness
+* Change the Metaboxes & Widgets UI
 
 = 1.7.5 =
 * Accordion Fix
