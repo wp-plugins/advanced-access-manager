@@ -3,16 +3,16 @@
 /**
   Plugin Name: Advanced Access Manager
   Description: Manage User and Role Access to WordPress Backend and Frontend.
-  Version: 2.0 alpha1
+  Version: 2.0 alpha2
   Author: Vasyl Martyniuk <support@wpaam.com>
   Author URI: http://www.wpaam.com
- */
-/**
+ * 
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
  * file 'license.txt', which is part of this source code package.       *
  * ======================================================================
  */
+
 require(dirname(__FILE__) . '/config.php');
 
 /**
@@ -61,6 +61,9 @@ class aam {
         $this->initializeUser();
 
         if (is_admin()) {
+            //check if system requires update
+            $this->checkUpdate();
+
             //download extensions if any
             $this->downloadExtensions();
 
@@ -78,10 +81,8 @@ class aam {
             add_action("do_meta_boxes", array($this, 'metaboxes'), 999, 3);
             add_action("add_meta_boxes", array($this, 'filterMetaboxes'), 999, 2);
             add_filter(
-                    'get_user_option_meta-box-order_dashboard',
-                    array($this, 'dashboardFilter'),
-                    999,
-                    3
+                    'get_user_option_meta-box-order_dashboard', 
+                    array($this, 'dashboardFilter'), 999, 3
             );
             //manager user search and authentication control
             add_filter('user_search_columns', array($this, 'searchColumns'));
@@ -109,6 +110,30 @@ class aam {
         $this->loadExtensions();
     }
 
+    /**
+     * Check if system requires update
+     * 
+     * @return void
+     * 
+     * @access public
+     */
+    public function checkUpdate() {
+        if (class_exists('aam_Core_Update')) {
+            $update = new aam_Core_Update($this);
+            $update->run();
+        }
+    }
+
+    /**
+     * Control Frontend commenting freature
+     * 
+     * @param boolean $open
+     * @param int $post_id
+     * 
+     * @return boolean
+     * 
+     * @access public
+     */
     public function commentOpen($open, $post_id) {
         $control = $this->getUser()->getObject(
                 aam_Control_Object_Post::UID, $post_id
@@ -437,8 +462,8 @@ class aam {
             wp_mail($event['action_specifier'], $subject, $message);
         } else if ($event['action'] == 'change_status') {
             $wpdb->update(
-                    $wpdb->posts,
-                    array('post_status' => $event['action_specifier']),
+                    $wpdb->posts, 
+                    array('post_status' => $event['action_specifier']), 
                     array('ID' => $post_ID)
             );
         } else if ($event['action'] == 'custom') {
@@ -478,8 +503,7 @@ class aam {
         if ($user->user_status == 1) {
             $user = new WP_Error();
             $user->add(
-                    'authentication_failed',
-                    '<strong>ERROR</strong>: User is blocked'
+                    'authentication_failed', '<strong>ERROR</strong>: User is blocked'
             );
         }
 
@@ -495,6 +519,17 @@ class aam {
      */
     public function isAAMScreen() {
         return (aam_Core_Request::get('page') == 'aam' ? true : false);
+    }
+
+    /**
+     * Make sure that AAM Extension UI Page is used
+     *
+     * @return boolean
+     *
+     * @access public
+     */
+    public function isAAMExtensionScreen() {
+        return (aam_Core_Request::get('page') == 'aam-ext' ? true : false);
     }
 
     /**
@@ -516,6 +551,14 @@ class aam {
             wp_enqueue_style(
                     'aam-treeview', AAM_MEDIA_URL . 'css/jquery.treeview.css'
             );
+        } elseif ($this->isAAMExtensionScreen()) {
+            wp_enqueue_style('dashboard');
+            wp_enqueue_style('global');
+            wp_enqueue_style('wp-admin');
+            wp_enqueue_style('aam-ui-style', AAM_MEDIA_URL . 'css/jquery-ui.css');
+            wp_enqueue_style('aam-style', AAM_MEDIA_URL . 'css/extension.css');
+            wp_enqueue_style('aam-datatables', AAM_MEDIA_URL . 'css/jquery.dt.css');
+            wp_enqueue_style('aam-fancybox', AAM_MEDIA_URL . 'css/jquery.fancybox.css');
         }
     }
 
@@ -559,6 +602,16 @@ class aam {
             );
 
             wp_localize_script('aam-admin', 'aamLocal', $localization);
+        } elseif ($this->isAAMExtensionScreen()) {
+            wp_enqueue_script('postbox');
+            wp_enqueue_script('dashboard');
+            wp_enqueue_script('jquery-ui-core');
+            wp_enqueue_script('jquery-ui-widget');
+            wp_enqueue_script('jquery-ui-dialog');
+            wp_enqueue_script('jquery-ui-button');
+            wp_enqueue_script('aam-admin', AAM_MEDIA_URL . 'js/extension.js');
+            wp_enqueue_script('aam-datatables', AAM_MEDIA_URL . 'js/jquery.dt.js');
+            wp_enqueue_script('aam-fancybox', AAM_MEDIA_URL . 'js/jquery.fancybox.js');
         }
     }
 
@@ -637,12 +690,29 @@ class aam {
     public function adminMenu() {
         //register the menu
         add_menu_page(
-                __('AAM', 'aam'),
-                __('AAM', 'aam'),
-                'administrator',
-                'aam',
-                array($this, 'content'),
+                __('AAM', 'aam'), 
+                __('AAM', 'aam'), 
+                'administrator', 
+                'aam', 
+                array($this, 'content'), 
                 AAM_BASE_URL . 'active-menu.png'
+        );
+        //register submenus
+        add_submenu_page(
+                'aam', 
+                __('Access Control', 'aam'), 
+                __('Access Control', 'aam'), 
+                'administrator', 
+                'aam', 
+                array($this, 'content')
+        );
+        add_submenu_page(
+                'aam', 
+                __('Extensions', 'aam'), 
+                __('Extensions', 'aam'), 
+                'administrator', 
+                'aam-ext', 
+                array($this, 'extensionContent')
         );
 
         //filter admin menu
@@ -658,6 +728,11 @@ class aam {
      */
     public function content() {
         $manager = new aam_View_Manager();
+        echo $manager->run();
+    }
+
+    public function extensionContent() {
+        $manager = new aam_View_Extension();
         echo $manager->run();
     }
 

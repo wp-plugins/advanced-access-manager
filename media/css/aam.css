@@ -903,6 +903,10 @@
     outline: 0;
 }
 
+a.capability-action{
+    outline: 0;
+}
+
 .capability-action input[type="checkbox"] {
     display:none;
 }

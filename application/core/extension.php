@@ -127,7 +127,6 @@ class aam_Core_Extension {
         $url = WPAAM_REST_API . '?method=extension&license=' . $license;
         $res = wp_remote_request($url, array('timeout' => 10));
         $response = false;
-
         if (!is_wp_error($res)) {
             //write zip archive to the filesystem first
             $zip = AAM_TEMP_DIR . '/' . uniqid();
@@ -167,7 +166,7 @@ class aam_Core_Extension {
      * @access protected
      */
     protected function bootstrapExtension($extension) {
-        $bootstrap = $this->_basedir . "/{$extension}/bootstrap.php";
+        $bootstrap = $this->_basedir . "/{$extension}/index.php";
         if (file_exists($bootstrap) && !$this->_cache[$extension]) {
             $this->_cache[$extension] = require_once($bootstrap);
         }

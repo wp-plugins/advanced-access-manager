@@ -95,11 +95,7 @@ class aam_View_Manager extends aam_View_Abstract {
                 'title' => __('Admin Menu', 'aam'),
                 'anonimus' => false,
                 'content' => array(new aam_View_Menu(), 'content'),
-                'help' => __('
-                    Control Access to Admin Menu. Restrict access to entire
-                    Menu or Submenu. <b>Notice</b>, the menu is rendered
-                    based on Role\'s or User\'s capabilities.
-                ', 'aam')
+                'help' => __('Control Access to Admin Menu. Restrict access to entire Menu or Submenu. <b>Notice</b>, the menu is rendered based on Role\'s or User\'s capabilities.', 'aam')
             ),
             'metabox' => array(
                 'id' => 'metabox',
@@ -107,14 +103,7 @@ class aam_View_Manager extends aam_View_Abstract {
                 'title' => __('Metabox & Widget', 'aam'),
                 'anonimus' => true,
                 'content' => array(new aam_View_Metabox(), 'content'),
-                'help' => __('
-                    Filter the list of Metaboxes or Widgets for
-                    selected Role or User. If metabox or widget is not listed,
-                    try to click <b>Refresh the List</b>
-                    button or Copy & Paste direct link to page where specific metabox
-                    or widget is shown and hit <b>Retrieve Metaboxes from Link</b>
-                    button.
-                ', 'aam')
+                'help' => __('Filter the list of Metaboxes or Widgets for selected Role or User. If metabox or widget is not listed, try to click <b>Refresh the List</b> button or Copy & Paste direct link to page where specific metabox or widget is shown and hit <b>Retrieve Metaboxes from Link</b> button.', 'aam')
             ),
             'capability' => array(
                 'id' => 'capability',
@@ -122,14 +111,7 @@ class aam_View_Manager extends aam_View_Abstract {
                 'title' => __('Capability', 'aam'),
                 'anonimus' => false,
                 'content' => array(new aam_View_Capability(), 'content'),
-                'help' => __('
-                    Manage the list of Capabilities for selected User or Role.
-                    <b>Notice</b>, list of user\'s capabilities are inherited
-                    from user\'s Role.<br/>
-                    <b>Warning!</b> Be very careful with capabilities. Deleting
-                    or unchecking any capability may cause temporary or permanent
-                    constrol lost over some features or WordPress dashboard.
-                 ', 'aam')
+                'help' => __('Manage the list of Capabilities for selected User or Role. <b>Notice</b>, list of user\'s capabilities are inherited from user\'s Role.<br/><b>Warning!</b> Be very careful with capabilities. Deleting or unchecking any capability may cause temporary or permanent constrol lost over some features or WordPress dashboard.', 'aam')
             ),
             'post_access' => array(
                 'id' => 'post_access',
@@ -137,11 +119,7 @@ class aam_View_Manager extends aam_View_Abstract {
                 'title' => __('Posts & Categories', 'aam'),
                 'anonimus' => true,
                 'content' => array(new aam_View_Post(), 'content'),
-                'help' => __('
-                    Manage access to individual <b>Post</b> or <b>Term</b>. Notice, under
-                    <b>Post</b>, we assume any post, page or custom post type. And under
-                    <b>Term</b> - any term like Post Categories.
-                ', 'aam')
+                'help' => __('Manage access to individual <b>Post</b> or <b>Term</b>. Notice, under <b>Post</b>, we assume any post, page or custom post type. And under <b>Term</b> - any term like Post Categories.', 'aam')
             ),
             'event_manager' => array(
                 'id' => 'event_manager',
@@ -149,13 +127,7 @@ class aam_View_Manager extends aam_View_Abstract {
                 'title' => __('Event Manager', 'aam'),
                 'anonimus' => false,
                 'content' => array(new aam_View_Event(), 'content'),
-                'help' => __('
-                    Define your own action when some event appeared in your WordPress
-                    blog. This sections allows you to trigger an action on
-                    event like post content change, or page status update. You can
-                    setup to send email notification, change the post status or write
-                    your own custom event handler.
-                ', 'aam')
+                'help' => __('Define your own action when some event appeared in your WordPress blog. This sections allows you to trigger an action on event like post content change, or page status update. You can setup to send email notification, change the post status or write your own custom event handler.', 'aam')
             ),
             'config_press' => array(
                 'id' => 'configpress',
@@ -163,10 +135,7 @@ class aam_View_Manager extends aam_View_Abstract {
                 'title' => __('ConfigPress', 'aam'),
                 'anonimus' => true,
                 'content' => array(new aam_View_ConfigPress(), 'content'),
-                'help' => __('
-                    Control <b>AAM</b> behavior with ConfigPress. For more details
-                    please check <b>ConfigPress tutorial</b>.
-                ', 'aam')
+                'help' => __('Control <b>AAM</b> behavior with ConfigPress. For more details please check <b>ConfigPress tutorial</b>.', 'aam')
             )
         );
     }
@@ -381,29 +350,18 @@ class aam_View_Manager extends aam_View_Abstract {
             'Clear' => __('Clear', 'aam'),
             'Add New Role' => __('Add New Role', 'aam'),
             'Save Changes' => __('Save Changes', 'aam'),
-            'Delete Role with Users Message' => __(
-                'System detected %d user(s) with this role. All Users with Role
-                <b>%s</b> will be deleted automatically!', 'aam'
-            ),
-            'Delete Role Message' => __(
-                'Are you sure that you want to delete role <b>%s</b>?', 'aam'
-            ),
+            'Delete Role with Users Message' => __('System detected %d user(s) with this role. All Users with Role <b>%s</b> will be deleted automatically!', 'aam'),
+            'Delete Role Message' => __('Are you sure that you want to delete role <b>%s</b>?', 'aam'),
             'Delete Role' => __('Delete Role', 'aam'),
             'Add User' => __('Add User', 'aam'),
             'Filter Users' => __('Filter Users', 'aam'),
             'Refresh List' => __('Refresh List', 'aam'),
             'Block' => __('Block', 'aam'),
-            'Delete User Message' => __(
-                'Are you sure you want to delete user <b>%s</b>?', 'aam'
-            ),
-            'Filter Capabilities by Category' => __(
-                'Filter Capabilities by Category', 'aam'
-            ),
+            'Delete User Message' => __('Are you sure you want to delete user <b>%s</b>?', 'aam'),
+            'Filter Capabilities by Category' => __('Filter Capabilities by Category', 'aam'),
             'Inherit Capabilities' => __('Inherit Capabilities', 'aam'),
             'Add New Capability' => __('Add New Capability', 'aam'),
-            'Delete Capability Message' => __(
-                'Are you sure that you want to delete capability <b>%s</b>?', 'aam'
-             ),
+            'Delete Capability Message' => __('Are you sure that you want to delete capability <b>%s</b>?', 'aam'),
             'Delete Capability' => __('Delete Capability', 'aam'),
             'Select Role' => __('Select Role', 'aam'),
             'Add Capability' => __('Add Capability', 'aam'),
@@ -418,9 +376,7 @@ class aam_View_Manager extends aam_View_Abstract {
             'Apply' => __('Apply', 'aam'),
             'Edit Term' => __('Edit Term', 'aam'),
             'Manager Access' => __('Manager Access', 'aam'),
-            'Unlock Default Accesss Control' => __(
-                'Unlock Default Accesss Control', 'aam'
-            ),
+            'Unlock Default Accesss Control' => __('Unlock Default Accesss Control', 'aam'),
             'Close' => __('Close', 'aam'),
             'Edit Role' => __('Edit Role', 'aam')
         );

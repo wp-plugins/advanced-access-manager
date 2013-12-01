@@ -182,7 +182,7 @@ class aam_View_Capability extends aam_View_Abstract {
         } elseif (in_array($capability, $this->_groups['backend'])) {
             $response = __('Backend Interface', 'aam');
         } else {
-            $response = __('Miscelaneous', 'aam');
+            $response = __('Miscellaneous', 'aam');
         }
 
         return apply_filters('aam_capability_group', $response, $capability);

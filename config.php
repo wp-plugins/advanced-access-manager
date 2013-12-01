@@ -53,3 +53,5 @@ if (!file_exists(AAM_TEMP_DIR)) {
         define('AAM_CONTENT_DIR_FAILURE', 1);
     }
 }
+
+load_plugin_textdomain('aam', false, AAM_BASE_DIR . 'lang');

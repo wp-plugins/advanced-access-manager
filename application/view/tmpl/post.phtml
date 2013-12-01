@@ -36,7 +36,7 @@
 
     <div id="access_dialog" class="aam-dialog">
         <div class="aam-lock-message">
-            <span><?php echo __('You riched the limit. Get <a href="http://wpaam.com" target="_blank">AAM Plus Package</a> to unlock the feature.'); ?></span>
+            <span><?php echo __('You riched the limit. Get <a href="' . admin_url('admin.php?page=aam-ext') . '" target="_blank">AAM Plus Package</a> to unlock the feature.'); ?></span>
         </div>
         <div class="post-access-inherited"></div>
         <?php if ($this->getSubject()->getUID() != 'visitor') { ?>
@@ -223,7 +223,7 @@
                 </table>
                 <div class="post-access-block">
                     <a href="#" class="aam-lock-big">
-                        <span><?php echo __('Get <u>AAM Plus Package</u>', 'aam'); ?></span>
+                        <span><?php echo __('Get AAM Plus Package', 'aam'); ?></span>
                     </a>
                 </div>
             </div>
