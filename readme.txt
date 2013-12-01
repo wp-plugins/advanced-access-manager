@@ -9,6 +9,8 @@ Graphic interface to manage User Access to your Front-end and Back-end
 
 == Description ==
 
+Check our <a href="http://downloads.wordpress.org/plugin/advanced-access-manager.zip">AAM 2.0 alpha 2</a> version.
+
 Advanced Access Manager is very powerful and flexible Access Control tool for
 your WordPress website. It supports Single WordPress installation and Multisite
 setup.
