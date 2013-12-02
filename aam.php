@@ -558,7 +558,6 @@ class aam {
             wp_enqueue_style('aam-ui-style', AAM_MEDIA_URL . 'css/jquery-ui.css');
             wp_enqueue_style('aam-style', AAM_MEDIA_URL . 'css/extension.css');
             wp_enqueue_style('aam-datatables', AAM_MEDIA_URL . 'css/jquery.dt.css');
-            wp_enqueue_style('aam-fancybox', AAM_MEDIA_URL . 'css/jquery.fancybox.css');
         }
     }
 
@@ -611,7 +610,6 @@ class aam {
             wp_enqueue_script('jquery-ui-button');
             wp_enqueue_script('aam-admin', AAM_MEDIA_URL . 'js/extension.js');
             wp_enqueue_script('aam-datatables', AAM_MEDIA_URL . 'js/jquery.dt.js');
-            wp_enqueue_script('aam-fancybox', AAM_MEDIA_URL . 'js/jquery.fancybox.js');
         }
     }
 

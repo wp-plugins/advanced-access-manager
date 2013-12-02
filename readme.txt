@@ -1,6 +1,7 @@
 === Advanced Access Manager ===
-Contributors: vasyl_m, haeckdesign
-Tags: access manager, access control, comments, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role, access configuration
+Contributors: vasyl_m
+Donate link: http://whimba.org/donation
+Tags: access manager, access control, comments, capability, dashboard widget, filter menu, page, post, metabox, role manager, user access, user control, user role, access
 Requires at least: 3.2
 Tested up to: 3.7.1
 Stable tag: 1.9
@@ -8,8 +9,6 @@ Stable tag: 1.9
 Graphic interface to manage User Access to your Front-end and Back-end
 
 == Description ==
-
-Check our <a href="http://downloads.wordpress.org/plugin/advanced-access-manager.zip">AAM 2.0 alpha 2</a> version.
 
 Advanced Access Manager is very powerful and flexible Access Control tool for
 your WordPress website. It supports Single WordPress installation and Multisite
@@ -77,26 +76,11 @@ just filter Main Menu.
 
 == Screenshots ==
 
-1. General view of Access Manager
-2. List of Metaboxes to Manage
-3. List of Capabilities
-4. Post/Page Tree View
-5. ConfigPress
-
 == Changelog ==
 
-= 1.9 =
-* AAM 2.0 alpha 1 Announcement 
-
-= 1.8.5 =
-* Added Event Manager
-* Added ConfigPress parameter "aam.encoding"
-
 = 1.8 =
-* Fixed user caching issue
-* Fixed issue with encoding
-* Clear output buffer to avoid from third party plugins issues
-* Notification about new release 2.0
+* Change the UI Design to native UI Smoothness
+* Change the Metaboxes & Widgets UI
 
 = 1.7.5 =
 * Accordion Fix
