@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
@@ -19,47 +20,68 @@ final class aam_Core_API {
      * Get current blog's option
      *
      * @param string $option
-     * @param mixed $default
+     * @param mixed  $default
+     * @param int    $blog_id;
      *
      * @return mixed
      *
      * @access public
      * @static
-     * @global object $wpdb
      */
-    public static function getBlogOption($option, $default = FALSE) {
-        return get_option($option, $default);
+    public static function getBlogOption($option, $default = FALSE, $blog_id = null) {
+        if (is_multisite()) {
+            $blog = (is_null($blog_id) ? get_current_blog_id() : $blog_id);
+            $response = get_blog_option($blog, $option, $default);
+        } else {
+            $response = get_option($option, $default);
+        }
+
+        return $response;
     }
 
     /**
      * Update Blog Option
      *
      * @param string $option
-     * @param mixed $data
+     * @param mixed  $data
+     * @param int    $blog_id
      *
      * @return bool
      *
      * @access public
      * @static
-     * @global object $wpdb
      */
-    public static function updateBlogOption($option, $data) {
-        return update_option($option, $data);
+    public static function updateBlogOption($option, $data, $blog_id = null) {
+        if (is_multisite()) {
+            $blog = (is_null($blog_id) ? get_current_blog_id() : $blog_id);
+            $response = update_blog_option($blog, $option, $data);
+        } else {
+            $response = update_option($option, $data);
+        }
+
+        return $response;
     }
 
     /**
      * Delete Blog Option
      *
      * @param string $option
-     *
+     * @param int    $blog_id
+     * 
      * @return bool
      *
      * @access public
      * @static
-     * @global object $wpdb
      */
-    public static function deleteBlogOption($option) {
-        return delete_option($option);
+    public static function deleteBlogOption($option, $blog_id = null) {
+         if (is_multisite()) {
+            $blog = (is_null($blog_id) ? get_current_blog_id() : $blog_id);
+            $response = delete_blog_option($blog, $option);
+        } else {
+            $response = delete_option($option);
+        }
+        
+        return $response;
     }
 
     /**
@@ -81,9 +103,9 @@ final class aam_Core_API {
                 //SKIP PHPSESSID - some servers does not like it for security reason
                 if ($key !== 'PHPSESSID') {
                     $cookies[] = new WP_Http_Cookie(array(
-                                'name' => $key,
-                                'value' => $value
-                            ));
+                        'name' => $key,
+                        'value' => $value
+                    ));
                 }
             }
         }
@@ -107,6 +129,17 @@ final class aam_Core_API {
         }
 
         return $result;
+    }
+
+    /**
+     * Check whether it is Multisite Network panel
+     * 
+     * @return boolean
+     * 
+     * @access public
+     */
+    public static function isNetworkPanel() {
+        return (is_multisite() && is_network_admin() ? TRUE : FALSE);
     }
 
 }

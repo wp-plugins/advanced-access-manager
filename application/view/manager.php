@@ -338,7 +338,7 @@ class aam_View_Manager extends aam_View_Abstract {
      * @return type
      */
     public static function uiLabels(){
-        return array(
+        return apply_filters('aam_localization_labels', array(
             'Rollback Settings' => __('Rollback Settings', 'aam'),
             'Cancel' => __('Cancel', 'aam'),
             'Send E-mail' => __('Send E-mail', 'aam'),
@@ -379,7 +379,7 @@ class aam_View_Manager extends aam_View_Abstract {
             'Unlock Default Accesss Control' => __('Unlock Default Accesss Control', 'aam'),
             'Close' => __('Close', 'aam'),
             'Edit Role' => __('Edit Role', 'aam')
-        );
+        ));
     }
 
 }

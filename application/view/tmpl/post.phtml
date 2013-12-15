@@ -72,8 +72,8 @@
                                 <td>
                                     <div class="post-actions">
                                         <div class="post-action">
-                                            <input type="checkbox" id="term_frontend_<?php echo $action ?>" object="term" area="frontend" action="<?php echo $action ?>" />
-                                            <label for="term_frontend_<?php echo $action ?>"><span></span></label>
+                                            <input type="checkbox" id="term_frontend_<?php echo $action; ?>" object="term" area="frontend" action="<?php echo $action; ?>" />
+                                            <label for="term_frontend_<?php echo $action; ?>"><span></span></label>
                                         </div>
                                     </div>
                                 </td>
@@ -94,7 +94,7 @@
                 <table class="dataTable" id="term_access_backend">
                     <thead>
                         <tr>
-                            <th colspan="2" class="term-access-title">Term Access', 'aam'); ?></th>
+                            <th colspan="2" class="term-access-title"><?php echo __('Term Access', 'aam'); ?></th>
                         </tr>
                         <tr>
                             <th><?php echo __('Capability', 'aam'); ?></th>

@@ -56,7 +56,7 @@ class aam_View_Capability extends aam_View_Abstract {
 
         $subject = $this->getSubject();
         $roles = new WP_Roles();
-        if ($subject::UID === aam_Control_Subject_Role::UID) {
+        if ($subject->getUID() === aam_Control_Subject_Role::UID) {
             //prepare list of all capabilities
             $caps = array();
             foreach ($roles->role_objects as $role) {

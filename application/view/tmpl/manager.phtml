@@ -15,6 +15,9 @@
                     <div class="postbox">
                         <div class="handlediv" title="<?php echo __('Click to toggle', 'aam'); ?>"></div>
                         <h3 class="hndle">
+                            <?php if (aam_Core_API::isNetworkPanel()) { ?>
+                                <span class="current-site"></span>
+                            <?php } ?>
                             <span class="current-subject"></span>
                         </h3>
                         <div class="inside main-inside">
@@ -90,5 +93,6 @@
                 </div>
             </div>
         </div>
+        <br class="clear" />
     </form>
 </div>

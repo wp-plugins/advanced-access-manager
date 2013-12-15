@@ -11,34 +11,6 @@
  * @returns {AAM}
  */
 function AAM() {
-    /**
-     * List of Table from Control Manager Metabox
-     *
-     * @type {Object}
-     *
-     * @access public
-     */
-    this.controlTables = {
-        blog: null,
-        role: null,
-        user: null
-    };
-
-    /**
-     * List of Tables from Main Metabox
-     *
-     * @type {Object}
-     *
-     * @access public
-     */
-    this.contentTables = {
-        post: null,
-        capability: null,
-        event: null,
-        roleFilter: null,
-        roleCopy: null,
-        capabilityGroup: null
-    };
 
     /**
      * Current Subject
@@ -49,7 +21,7 @@ function AAM() {
      */
     this.subject = {
         type: 'role',
-        id: 'administrator'
+        id: aamLocal.defaultSegment.role
     };
 
     /**
@@ -63,24 +35,12 @@ function AAM() {
 
     /**
      * User Role to filter
-     * 
+     *
      * @type String
-     * 
+     *
      * @access public
      */
-    this.userRoleFilter = 'administrator';
-
-    /**
-     * Used for User/Role Current highlighter
-     * 
-     * @type Object
-     * 
-     * @access public
-     */
-    this.current = {
-        role: null,
-        user: null
-    };
+    this.userRoleFilter = aamLocal.defaultSegment.role;
 
     /**
      * ConfigPress editor
@@ -101,6 +61,33 @@ function AAM() {
     //Let's init the UI
     this.initUI();
 }
+
+/**
+ * List of Blog Tables
+ *
+ * @type {Object}
+ *
+ * @access public
+ */
+AAM.prototype.blogTables = {
+    capabilities: null,
+    inheritRole: null,
+    postList: null,
+    eventList: null,
+    filterRoleList: null
+};
+
+/**
+ * List of Segment Tables
+ *
+ * @type {Object}
+ *
+ * @access public
+ */
+AAM.prototype.segmentTables = {
+    roleList: null,
+    userList: null
+};
 
 /**
  * Add Custom Action to queue
@@ -327,12 +314,12 @@ AAM.prototype.initControlPanel = function() {
         });
         if (_this.getSubject().type !== 'visitor') {
             //3. Collect Capabilities
-            var caps = _this.contentTables.capability.fnGetData();
+            var caps = _this.blogTables.capabilities.fnGetData();
             for (var i in caps) {
                 data['aam[capability][' + caps[i][0] + ']'] = caps[i][1];
             }
             //4. Collect Events
-            var events = _this.contentTables.event.fnGetData();
+            var events = _this.blogTables.eventList.fnGetData();
             for (i in events) {
                 data['aam[event][' + i + '][event]'] = events[i][0];
                 data['aam[event][' + i + '][event_specifier]'] = events[i][1];
@@ -399,12 +386,11 @@ AAM.prototype.initControlManager = function() {
             event.preventDefault();
             var segment = jQuery(this).attr('segment');
             _this.loadSegment(segment);
-            _this.launch(jQuery(this), 'manager-item-' + segment);
         });
     });
 
-    //make the first feature active
-    jQuery('.control-manager a:eq(0)').trigger('click');
+    //by default load the Role Segment
+    this.loadSegment('role');
 };
 
 /**
@@ -428,11 +414,8 @@ AAM.prototype.loadSegment = function(segment) {
 
     //hide all segment contents from control manager
     jQuery('.control-manager-content > div').hide();
-    switch (segment) {
-        case 'blog':
-            this.loadBlogSegment();
-            break;
 
+    switch (segment) {
         case 'role':
             this.loadRoleSegment();
             break;
@@ -446,8 +429,12 @@ AAM.prototype.loadSegment = function(segment) {
             break;
 
         default:
+            this.doAction('aam_load_segment');
             break;
     }
+
+    //activate segment icon
+    this.launch(jQuery('.manager-item-' + segment), 'manager-item-' + segment);
 };
 
 /**
@@ -461,14 +448,22 @@ AAM.prototype.loadRoleSegment = function() {
     var _this = this;
 
     jQuery('#role_manager_wrap').show();
-    if (this.controlTables.role === null) {
-        this.controlTables.role = jQuery('#role_list').dataTable({
+    if (this.segmentTables.roleList === null) {
+        this.segmentTables.roleList = jQuery('#role_list').dataTable({
             sDom: "<'top'f<'role-top-actions'><'clear'>>t<'footer'ip<'clear'>>",
             bServerSide: true,
             sPaginationType: "full_numbers",
             bAutoWidth: false,
             bSort: false,
-            sAjaxSource: aamLocal.ajaxurl,
+            fnServerData: function(sSource, aoData, fnCallback, oSettings) {
+                oSettings.jqXHR = jQuery.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": aamLocal.ajaxurl,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            },
             fnServerParams: function(aoData) {
                 aoData.push({
                     name: 'action',
@@ -500,7 +495,7 @@ AAM.prototype.loadRoleSegment = function() {
                 jQuery('#role_list_wrapper .clear-table-filter').bind('click', function(event) {
                     event.preventDefault();
                     jQuery('#role_list_filter input').val('');
-                    _this.controlTables.role.fnFilter('');
+                    _this.segmentTables.roleList.fnFilter('');
                 });
             },
             oLanguage: {
@@ -538,8 +533,8 @@ AAM.prototype.loadRoleSegment = function() {
                     _this.userRoleFilter = event.data.role;
                     _this.retrieveSettings();
                     _this.setCurrent('role', nRow, aData[2]);
-                    if (_this.controlTables.user !== null){
-                        _this.controlTables.user.fnDraw();
+                    if (_this.segmentTables.userList !== null) {
+                        _this.segmentTables.userList.fnDraw();
                     }
                 }));
 
@@ -577,10 +572,10 @@ AAM.prototype.loadRoleSegment = function() {
                         _this.launchDeleteRoleDialog(this, aData);
                     }
                 }));
-                
-                 //set active
-                if(_this.getSubject().type === 'role' 
-                        && _this.getSubject().id === aData[0]){
+
+                //set active
+                if (_this.getSubject().type === 'role'
+                        && _this.getSubject().id === aData[0]) {
                     _this.setCurrent('role', nRow, aData[2]);
                 }
 
@@ -595,13 +590,13 @@ AAM.prototype.loadRoleSegment = function() {
 
 /**
  * Highlight current subject
- * 
+ *
  * @param {String} subject
  * @param {Object} nRow
  * @param {String} name
- * 
+ *
  * @returns {void}
- * 
+ *
  * @access public
  */
 AAM.prototype.setCurrent = function(subject, nRow, name) {
@@ -617,11 +612,11 @@ AAM.prototype.setCurrent = function(subject, nRow, name) {
     jQuery('.aam-bold').each(function() {
         jQuery(this).removeClass('aam-bold');
     });
-    
+
     //highlight the row
     jQuery('td:eq(0)', nRow).addClass('aam-bold');
     _this.launch(
-            jQuery('.' + subject + '-action-manage', nRow), 
+            jQuery('.' + subject + '-action-manage', nRow),
             subject + '-action-manage'
     );
     jQuery('.current-subject').html(subject + ' ' + name);
@@ -670,7 +665,7 @@ AAM.prototype.launchAddRoleDialog = function(button) {
             data: data,
             success: function(response) {
                 if (response.status === 'success') {
-                    _this.controlTables.role.fnDraw();
+                    _this.segmentTables.roleList.fnDraw();
                 }
                 _this.highlight('#control_manager .inside', response.status);
             }
@@ -722,7 +717,7 @@ AAM.prototype.launchEditRoleDialog = function(button, aData) {
             data: data,
             success: function(response) {
                 if (response.status === 'success') {
-                    _this.controlTables.role.fnDraw();
+                    _this.segmentTables.roleList.fnDraw();
                 }
                 _this.highlight('#control_manager .inside', response.status);
             },
@@ -767,7 +762,7 @@ AAM.prototype.launchDeleteRoleDialog = function(button, aData) {
     if (aData[1]) {
         var message = aamLocal.labels['Delete Role with Users Message'].replace(
                 '%d', aData[1]
-                );
+        );
         message = message.replace('%s', aData[2]);
         jQuery('#delete_role_dialog .dialog-content').html(message);
     } else {
@@ -794,7 +789,7 @@ AAM.prototype.launchDeleteRoleDialog = function(button, aData) {
                     if (subject.type === 'role' && subject.id === aData[0]) {
                         _this.setSubject('role', null);
                     }
-                    _this.controlTables.role.fnDraw();
+                    _this.segmentTables.roleList.fnDraw();
                 }
                 _this.highlight('#control_manager .inside', response.status);
             },
@@ -833,14 +828,23 @@ AAM.prototype.launchDeleteRoleDialog = function(button, aData) {
 AAM.prototype.loadUserSegment = function() {
     var _this = this;
     jQuery('#user_manager_wrap').show();
-    if (this.controlTables.user === null) {
-        this.controlTables.user = jQuery('#user_list').dataTable({
+    if (this.segmentTables.userList === null) {
+        this.segmentTables.userList = jQuery('#user_list').dataTable({
             sDom: "<'top'f<'user-top-actions'><'clear'>>t<'footer'ip<'clear'>>",
             bServerSide: true,
             sPaginationType: "full_numbers",
             bAutoWidth: false,
             bSort: false,
-            sAjaxSource: aamLocal.ajaxurl,
+            sAjaxSource: true,
+            fnServerData: function(sSource, aoData, fnCallback, oSettings) {
+                oSettings.jqXHR = jQuery.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": aamLocal.ajaxurl,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            },
             fnServerParams: function(aoData) {
                 aoData.push({
                     name: 'action',
@@ -889,7 +893,7 @@ AAM.prototype.loadUserSegment = function() {
                     'tooltip': aamLocal.labels['Refresh List']
                 }).bind('click', function(event) {
                     event.preventDefault();
-                    _this.controlTables.user.fnDraw();
+                    _this.segmentTables.userList.fnDraw();
                 });
 
                 jQuery('#user_list_wrapper .user-top-actions').append(filter);
@@ -902,7 +906,7 @@ AAM.prototype.loadUserSegment = function() {
                     event.preventDefault();
                     jQuery('#user_list_filter input').val('');
                     _this.userRoleFilter = '';
-                    _this.controlTables.user.fnFilter('');
+                    _this.segmentTables.userList.fnFilter('');
                 });
             },
             oLanguage: {
@@ -958,10 +962,10 @@ AAM.prototype.loadUserSegment = function() {
                     _this.launch(jQuery(this), 'user-action-delete');
                     _this.deleteUser(this, aData);
                 }));
-                
+
                 //set active
-                if(_this.getSubject().type === 'user' 
-                        && _this.getSubject().id === aData[0]){
+                if (_this.getSubject().type === 'user'
+                        && _this.getSubject().id === aData[0]) {
                     _this.setCurrent('user', nRow, aData[2]);
                 }
 
@@ -1036,7 +1040,7 @@ AAM.prototype.deleteUser = function(button, aData) {
             data: data,
             success: function(response) {
                 if (response.status === 'success') {
-                    _this.controlTables.user.fnDraw();
+                    _this.segmentTables.userList.fnDraw();
                 }
                 _this.highlight('#control_manager .inside', response.status);
 
@@ -1077,14 +1081,23 @@ AAM.prototype.deleteUser = function(button, aData) {
  */
 AAM.prototype.launchFilterUserDialog = function(button) {
     var _this = this;
-    if (this.contentTables.roleFilter === null) {
-        this.contentTables.roleFilter = jQuery('#filter_role_list').dataTable({
+    if (this.blogTables.filterRoleList === null) {
+        this.blogTables.filterRoleList= jQuery('#filter_role_list').dataTable({
             sDom: "<'top'f<'clear'>>t<'footer'ip<'clear'>>",
             bServerSide: true,
             sPaginationType: "full_numbers",
             bAutoWidth: false,
             bSort: false,
-            sAjaxSource: aamLocal.ajaxurl,
+            sAjaxSource: true,
+            fnServerData: function(sSource, aoData, fnCallback, oSettings) {
+                oSettings.jqXHR = jQuery.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": aamLocal.ajaxurl,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            },
             fnServerParams: function(aoData) {
                 aoData.push({
                     name: 'action',
@@ -1103,7 +1116,7 @@ AAM.prototype.launchFilterUserDialog = function(button) {
                 jQuery('#filter_role_list_wrapper .clear-table-filter').bind('click', function(event) {
                     event.preventDefault();
                     jQuery('#filter_role_list_filter input').val('');
-                    _this.contentTables.roleFilter.fnFilter('');
+                    _this.blogTables.filterRoleList.fnFilter('');
                 });
                 _this.initTooltip('#filter_role_list_wrapper');
             },
@@ -1135,7 +1148,7 @@ AAM.prototype.launchFilterUserDialog = function(button) {
                 }).bind('click', function(event) {
                     event.preventDefault();
                     _this.userRoleFilter = aData[0];
-                    _this.controlTables.user.fnDraw();
+                    _this.segmentTables.userList.fnDraw();
                     jQuery('#filter_user_dialog').dialog('close');
                 }));
             },
@@ -1144,7 +1157,7 @@ AAM.prototype.launchFilterUserDialog = function(button) {
             }
         });
     } else {
-        this.contentTables.roleFilter.fnDraw();
+        this.blogTables.filterRoleList.fnDraw();
     }
     //show the dialog
     var buttons = {};
@@ -1190,7 +1203,7 @@ AAM.prototype.retrieveSettings = function() {
     jQuery('.aam-main-loader').show();
     jQuery('.aam-main-content').empty();
 
-    jQuery.ajax(aamLocal.dashboardURI, {
+    jQuery.ajax(aamLocal.siteURI, {
         type: 'POST',
         dataType: 'html',
         data: {
@@ -1251,7 +1264,7 @@ AAM.prototype.initSettings = function() {
         jQuery(this).bind('click', function() {
             jQuery('.feature-list .feature-item').removeClass(
                     'feature-item-active'
-                    );
+            );
             jQuery(this).addClass('feature-item-active');
             jQuery('.feature-content .feature-content-container').hide();
             jQuery('#' + jQuery(this).attr('feature') + '_content').show();
@@ -1259,7 +1272,7 @@ AAM.prototype.initSettings = function() {
             jQuery('.aam-help > span').hide();
             jQuery('#feature_help_' + jQuery(this).attr('feature')).css(
                     'display', 'table-cell'
-                    );
+            );
         });
     });
 
@@ -1283,9 +1296,7 @@ AAM.prototype.initSettings = function() {
  * @access public
  */
 AAM.prototype.initConfigPressTab = function() {
-    this.editor = CodeMirror.fromTextArea(
-            document.getElementById("configpress"), {}
-    );
+    this.editor = CodeMirror.fromTextArea(document.getElementById("configpress"), {});
     this.initTooltip('#configpress_content');
 };
 
@@ -1299,12 +1310,21 @@ AAM.prototype.initConfigPressTab = function() {
 AAM.prototype.initCapabilityTab = function() {
     var _this = this;
 
-    this.contentTables.capability = jQuery('#capability_list').dataTable({
+    this.blogTables.capabilities = jQuery('#capability_list').dataTable({
         sDom: "<'top'lf<'capability-top-actions'><'clear'>>t<'footer'ip<'clear'>>",
         sPaginationType: "full_numbers",
         bAutoWidth: false,
         bSort: false,
-        sAjaxSource: aamLocal.ajaxurl,
+        sAjaxSource: true,
+        fnServerData: function(sSource, aoData, fnCallback, oSettings) {
+                oSettings.jqXHR = jQuery.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": aamLocal.ajaxurl,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+        },
         fnServerParams: function(aoData) {
             aoData.push({
                 name: 'action',
@@ -1388,15 +1408,15 @@ AAM.prototype.initCapabilityTab = function() {
             jQuery('.capability-action', actions).append(jQuery('<input/>', {
                 type: 'checkbox',
                 id: aData[0],
-                checked: (aData[1] == '1' ? true : false),
+                checked: (parseInt(aData[1]) === 1 ? true : false),
                 name: 'aam[capability][' + aData[0] + ']'
             }).bind('change', function() {
                 aData[1] = (jQuery(this).prop('checked') == true ? 1 : 0);
-                _this.contentTables.capability.fnUpdate(aData, nRow);
+                _this.blogTables.capabilities.fnUpdate(aData, nRow, 1, false);
             }));
             jQuery('.capability-action', actions).append(
                     '<label for="' + aData[0] + '"><span></span></label>'
-                    );
+            );
             //add capability delete
             jQuery(actions).append(jQuery('<a/>', {
                 'href': '#',
@@ -1413,8 +1433,8 @@ AAM.prototype.initCapabilityTab = function() {
             jQuery('#capability_list_wrapper .clear-table-filter').bind('click', function(event) {
                 event.preventDefault();
                 jQuery('#capability_list_wrapper input').val('');
-                _this.contentTables.capability.fnFilter('');
-                _this.contentTables.capability.fnFilter('', 2);
+                _this.blogTables.capabilities.fnFilter('');
+                _this.blogTables.capabilities.fnFilter('', 2);
             });
         },
         fnInfoCallback: function(oSettings, iStart, iEnd, iMax, iTotal, sPre) {
@@ -1458,7 +1478,7 @@ AAM.prototype.launchDeleteCapabilityDialog = function(button, aData, nRow) {
             data: data,
             success: function(response) {
                 if (response.status === 'success') {
-                    _this.contentTables.capability.fnDeleteRow(nRow);
+                    _this.blogTables.capabilities.fnDeleteRow(nRow);
                 }
                 _this.highlight('#capability_content', response.status);
             },
@@ -1496,7 +1516,7 @@ AAM.prototype.launchDeleteCapabilityDialog = function(button, aData, nRow) {
 AAM.prototype.launchCapabilityFilterDialog = function(button) {
     var _this = this;
 
-    this.contentTables.capabilityGroup = jQuery('#capability_group_list').dataTable({
+    jQuery('#capability_group_list').dataTable({
         sDom: "t",
         sPaginationType: "full_numbers",
         bAutoWidth: false,
@@ -1505,9 +1525,9 @@ AAM.prototype.launchCapabilityFilterDialog = function(button) {
         fnRowCallback: function(nRow, aData) {
             jQuery('.capability-action-select', nRow).bind('click', function(event) {
                 event.preventDefault();
-                _this.contentTables.capability.fnFilter(
+                _this.blogTables.capabilities.fnFilter(
                         aData[0].replace('&amp;', '&'), 2
-                        );
+                );
                 jQuery('#filter_capability_dialog').dialog('close');
             });
         }
@@ -1540,14 +1560,23 @@ AAM.prototype.launchCapabilityFilterDialog = function(button) {
 AAM.prototype.launchRoleCopyDialog = function(button) {
     var _this = this;
 
-    this.contentTables.roleCopy = jQuery('#copy_role_list').dataTable({
+    this.blogTables.inheritRole = jQuery('#copy_role_list').dataTable({
         sDom: "<'top'f<'clear'>>t<'footer'ip<'clear'>>",
         bServerSide: true,
         sPaginationType: "full_numbers",
         bAutoWidth: false,
         bSort: false,
         bDestroy: true,
-        sAjaxSource: aamLocal.ajaxurl,
+        sAjaxSource: true,
+        fnServerData: function(sSource, aoData, fnCallback, oSettings) {
+                oSettings.jqXHR = jQuery.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": aamLocal.ajaxurl,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+        },
         fnServerParams: function(aoData) {
             aoData.push({
                 name: 'action',
@@ -1566,7 +1595,7 @@ AAM.prototype.launchRoleCopyDialog = function(button) {
             jQuery('#copy_role_list_wrapper .clear-table-filter').bind('click', function(event) {
                 event.preventDefault();
                 jQuery('#copy_role_list_filter input').val('');
-                _this.contentTables.roleCopy.fnFilter('');
+                _this.blogTables.inheritRole.fnFilter('');
             });
         },
         oLanguage: {
@@ -1607,14 +1636,14 @@ AAM.prototype.launchRoleCopyDialog = function(button) {
                     success: function(response) {
                         if (response.status === 'success') {
                             //reset the capability list
-                            var oSettings = _this.contentTables.capability.fnSettings();
+                            var oSettings = _this.blogTables.capabilities.fnSettings();
                             for (var i in oSettings.aoData) {
                                 var cap = oSettings.aoData[i]._aData[0];
                                 var ntr = oSettings.aoData[i].nTr;
                                 if (typeof response.capabilities[cap] !== 'undefined') {
-                                    _this.contentTables.capability.fnUpdate(1, ntr, 1);
+                                    _this.blogTables.capabilities.fnUpdate(1, ntr, 1, false);
                                 } else {
-                                    _this.contentTables.capability.fnUpdate(0, ntr, 1);
+                                    _this.blogTables.capabilities.fnUpdate(0, ntr, 1, false);
                                 }
                             }
                         }
@@ -1681,7 +1710,7 @@ AAM.prototype.launchAddCapabilityDialog = function(button) {
                 data: data,
                 success: function(response) {
                     if (response.status === 'success') {
-                        _this.contentTables.capability.fnAddData([
+                        _this.blogTables.capabilities.fnAddData([
                             response.capability,
                             1,
                             'Miscelaneous',
@@ -1731,22 +1760,6 @@ AAM.prototype.launchAddCapabilityDialog = function(button) {
 AAM.prototype.initMenuTab = function() {
     var _this = this;
     this.initMenuAccordion(false);
-    var sorting = false;
-
-    /**
-     jQuery('.menu-top-action-sort').bind('click', function(event) {
-     event.preventDefault();
-     sorting = !sorting;
-     _this.initMenuAccordion(sorting);
-     if (sorting) {
-     _this.launch(jQuery(this), 'menu-top-action-sort');
-     jQuery('.menu-top-action-sort-description').css('visibility', 'visible');
-     } else {
-     _this.terminate(jQuery(this), 'menu-top-action-sort');
-     jQuery('.menu-top-action-sort-description').css('visibility', 'hidden');
-     }
-     });
-     */
 
     jQuery('.menu-item-action-restrict').each(function() {
         jQuery(this).bind('click', function(event) {
@@ -1760,11 +1773,11 @@ AAM.prototype.initMenuTab = function() {
             if (jQuery(this).attr('checked')) {
                 jQuery('input[type="checkbox"]', '#submenu_' + jQuery(this).attr('id')).attr(
                         'checked', 'checked'
-                        );
+                );
             } else {
                 jQuery('input[type="checkbox"]', '#submenu_' + jQuery(this).attr('id')).removeAttr(
                         'checked'
-                        );
+                );
             }
         });
     });
@@ -1773,50 +1786,27 @@ AAM.prototype.initMenuTab = function() {
 /**
  * Init Main Menu Accordion
  *
- * @param {Boolean} sorting
- *
  * @returns {void}
  *
  * @access public
  */
-AAM.prototype.initMenuAccordion = function(sorting) {
+AAM.prototype.initMenuAccordion = function() {
     //destroy if already initialized
     if (jQuery('#main_menu_list').hasClass('ui-accordion')) {
         jQuery('#main_menu_list').accordion('destroy');
     }
-    if (jQuery('#main_menu_list').hasClass('ui-sortable')) {
-        jQuery('#main_menu_list').sortable('destroy');
-    }
+
     //initialize
-    if (sorting === false) {
-        jQuery('#main_menu_list').accordion({
-            collapsible: true,
-            header: 'h4',
-            heightStyle: 'content',
-            icons: {
-                header: "ui-icon-circle-arrow-e",
-                headerSelected: "ui-icon-circle-arrow-s"
-            },
-            active: false
-        });
-    } else {
-        jQuery('#main_menu_list').accordion({
-            collapsible: true,
-            header: 'h4',
-            heightStyle: 'content',
-            icons: {
-                header: "ui-icon-circle-arrow-e",
-                headerSelected: "ui-icon-circle-arrow-s"
-            },
-            active: false
-        }).sortable({
-            axis: "y",
-            handle: "h4",
-            stop: function(event, ui) {
-                ui.item.children("h4").triggerHandler("focusout");
-            }
-        });
-    }
+    jQuery('#main_menu_list').accordion({
+        collapsible: true,
+        header: 'h4',
+        heightStyle: 'content',
+        icons: {
+            header: "ui-icon-circle-arrow-e",
+            headerSelected: "ui-icon-circle-arrow-s"
+        },
+        active: false
+    });
 };
 
 /**
@@ -1939,13 +1929,22 @@ AAM.prototype.initEventTab = function() {
         jQuery('#event_specifier_' + jQuery(this).val() + '_holder').show();
     });
 
-    this.contentTables.event = jQuery('#event_list').dataTable({
+    this.blogTables.eventList = jQuery('#event_list').dataTable({
         sDom: "<'event-top-actions'><'clear'>t<'footer'p<'clear'>>",
         //bProcessing : false,
         sPaginationType: "full_numbers",
         bAutoWidth: false,
         bSort: false,
-        sAjaxSource: aamLocal.ajaxurl,
+        sAjaxSource: true,
+        fnServerData: function(sSource, aoData, fnCallback, oSettings) {
+                oSettings.jqXHR = jQuery.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": aamLocal.ajaxurl,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+        },
         fnServerParams: function(aoData) {
             aoData.push({
                 name: 'action',
@@ -1991,7 +1990,7 @@ AAM.prototype.initEventTab = function() {
             jQuery('#event_list_wrapper .clear-table-filter').bind('click', function(event) {
                 event.preventDefault();
                 jQuery('#event_list_filter input').val('');
-                _this.contentTables.event.fnFilter('');
+                _this.blogTables.eventList.fnFilter('');
             });
         },
         fnRowCallback: function(nRow, aData) {
@@ -2026,13 +2025,13 @@ AAM.prototype.initEventTab = function() {
             //decorate the data in row
             jQuery('td:eq(0)', nRow).html(
                     jQuery('#event_event option[value="' + aData[0] + '"]').text()
-                    );
+            );
             jQuery('td:eq(1)', nRow).html(
                     jQuery('#event_bind option[value="' + aData[2] + '"]').text()
-                    );
+            );
             jQuery('td:eq(2)', nRow).html(
                     jQuery('#event_action option[value="' + aData[3] + '"]').text()
-                    );
+            );
         },
         oLanguage: {
             sSearch: "",
@@ -2082,9 +2081,9 @@ AAM.prototype.launchManageEventDialog = function(button, aData, nRow) {
         var data = _this.validEvent();
         if (data !== null) {
             if (aData !== null) {
-                _this.contentTables.event.fnUpdate(data, nRow);
+                _this.blogTables.eventList.fnUpdate(data, nRow);
             } else {
-                _this.contentTables.event.fnAddData(data);
+                _this.blogTables.eventList.fnAddData(data);
             }
             jQuery('#manage_event_dialog').dialog("close");
         } else {
@@ -2104,7 +2103,7 @@ AAM.prototype.launchManageEventDialog = function(button, aData, nRow) {
             _this.terminate(
                     jQuery(button),
                     (aData ? 'event-action-edit' : 'event-top-action-add')
-                    );
+            );
         }
     });
 };
@@ -2145,7 +2144,7 @@ AAM.prototype.launchDeleteEventDialog = function(button, aData, nRow) {
     var _this = this;
     var buttons = {};
     aamLocal.labels['Delete Event'] = function() {
-        _this.contentTables.event.fnDeleteRow(nRow);
+        _this.blogTables.eventList.fnDeleteRow(nRow);
         jQuery('#delete_event').dialog("close");
     };
     aamLocal.labels['Cancel'] = function() {
@@ -2189,13 +2188,22 @@ AAM.prototype.initPostTab = function() {
         });
     });
 
-    this.contentTables.post = jQuery('#post_list').dataTable({
+    this.blogTables.postList = jQuery('#post_list').dataTable({
         sDom: "<'top'lf<'post-top-actions'><'clear'>><'post-breadcrumb'>t<'footer'ip<'clear'>>",
         sPaginationType: "full_numbers",
         bAutoWidth: false,
         bSort: false,
         bServerSide: true,
-        sAjaxSource: aamLocal.ajaxurl,
+        sAjaxSource: true,
+        fnServerData: function(sSource, aoData, fnCallback, oSettings) {
+                oSettings.jqXHR = jQuery.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": aamLocal.ajaxurl,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+        },
         fnServerParams: function(aoData) {
             aoData.push({
                 name: 'action',
@@ -2233,7 +2241,7 @@ AAM.prototype.initPostTab = function() {
                 'tooltip': aamLocal.labels['Refresh List']
             }).bind('click', function(event) {
                 event.preventDefault();
-                _this.contentTables.post.fnDraw();
+                _this.blogTables.postList.fnDraw();
             });
             jQuery(a).append(filter);
             jQuery(a).append(refresh);
@@ -2294,7 +2302,7 @@ AAM.prototype.initPostTab = function() {
             jQuery('#event_list_wrapper .clear-table-filter').bind('click', function(event) {
                 event.preventDefault();
                 jQuery('#event_list_filter input').val('');
-                _this.contentTables.post.fnFilter('');
+                _this.blogTables.postList.fnFilter('');
             });
         },
         fnInfoCallback: function(oSettings, iStart, iEnd, iMax, iTotal, sPre) {
@@ -2395,8 +2403,8 @@ AAM.prototype.launchManageAccessDialog = function(button, nRow, aData, type) {
                         element += '_' + action;
                         jQuery(element, '#access_dialog').attr(
                                 'checked',
-                                (response.settings[object][area][action] == '1' ? true : false)
-                                );
+                                (parseInt(response.settings[object][area][action]) === 1 ? true : false)
+                        );
                     }
                 }
             }
@@ -2473,7 +2481,7 @@ AAM.prototype.launchManageAccessDialog = function(button, nRow, aData, type) {
                 close: function() {
                     _this.terminate(
                             jQuery(button), 'post-breadcrumb-line-action-manage'
-                            );
+                    );
                 }
             });
         },
@@ -2509,7 +2517,7 @@ AAM.prototype.buildPostBreadcrumb = function(response) {
         }, function(event) {
             event.preventDefault();
             _this.postTerm = event.data.term;
-            _this.contentTables.post.fnDraw();
+            _this.blogTables.postList.fnDraw();
         }).html(response.breadcrumb[i][1])).append(jQuery('<span/>', {
             'class': 'aam-gt'
         }).html('&Gt;'));
@@ -2540,7 +2548,7 @@ AAM.prototype.buildPostBreadcrumb = function(response) {
                     this,
                     jQuery('.post-breadcrumb'),
                     new Array(response.breadcrumb[i][0]), 'term'
-                    );
+            );
         }));
     } else {
         jQuery('.post-breadcrumb-line-actions').append(jQuery('<a/>', {
@@ -2608,7 +2616,7 @@ AAM.prototype.initPostTree = function() {
                         }, function(event) {
                             event.preventDefault();
                             _this.postTerm = event.data.id;
-                            _this.contentTables.post.fnDraw();
+                            _this.blogTables.postList.fnDraw();
                             jQuery('#filter_post_dialog').dialog('close');
                         }));
                         jQuery(this).attr('active', true);
@@ -2707,7 +2715,7 @@ AAM.prototype.renderRoleSelectList = function(selector, selected) {
 
             jQuery(selector).removeClass('dialog-input-dynamic').addClass(
                     'dialog-input'
-                    );
+            );
         },
         error: function() {
             _this.highlight(selector, 'failure');

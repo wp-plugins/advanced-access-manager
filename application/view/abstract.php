@@ -29,11 +29,9 @@ abstract class aam_View_Abstract {
             $subject_class = 'aam_Control_Subject_' . ucfirst(
                 trim(aam_Core_Request::request('subject'), '')
             );
-
             if (class_exists($subject_class)){
                 $this->setSubject(new $subject_class(
-                    aam_Core_Request::request('subject_id'),
-                    intval(aam_Core_Request::request('blog', 1))
+                    aam_Core_Request::request('subject_id')
                 ));
             }
         }
@@ -64,7 +62,7 @@ abstract class aam_View_Abstract {
         ob_start();
         require_once($tmpl_path);
         $content = ob_get_contents();
-        ob_clean();
+        ob_end_clean();
 
         return $content;
     }

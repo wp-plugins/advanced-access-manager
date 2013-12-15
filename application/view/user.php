@@ -61,7 +61,7 @@ class aam_View_User extends aam_View_Abstract {
         }
         $args = array(
             'number' => '',
-            'blog_id' => aam_Core_Request::request('blog', 1),
+            'blog_id' => get_current_blog_id(),
             'role' => aam_Core_Request::request('role'),
             'fields' => 'all',
             'number' => aam_Core_Request::request('iDisplayLength'),

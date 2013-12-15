@@ -53,7 +53,7 @@ class aam_Control_Subject_Role extends aam_Control_Subject {
                     //delete users first
                     $users = new WP_User_Query(array(
                         'number' => '',
-                        'blog_id' => aam_Core_Request::post('blog'),
+                        'blog_id' => get_current_blog_id(),
                         'role' => aam_Core_Request::post('role')
                     ));
                     foreach ($users->get_results() as $user) {

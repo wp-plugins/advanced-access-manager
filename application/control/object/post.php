@@ -101,7 +101,7 @@ class aam_Control_Object_Post extends aam_Control_Object {
     protected function getOptionName() {
         $subject = $this->getSubject();
         //prepare option name
-        $meta_key = 'aam_' . self::UID . '_access_' . $subject::UID;
+        $meta_key = 'aam_' . self::UID . '_access_' . $subject->getUID();
         $meta_key .= ($subject->getId() ? $subject->getId() : '');
 
         return $meta_key;

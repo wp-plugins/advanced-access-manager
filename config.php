@@ -7,7 +7,13 @@
  * ======================================================================
  */
 define('AAM_BASE_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR);
-define('AAM_BASE_URL', WP_PLUGIN_URL . '/' . basename(AAM_BASE_DIR) . '/');
+
+//jean.yves.dumaine@gmail.com feedback - thank you
+$base_url = WP_PLUGIN_URL . '/' . basename(AAM_BASE_DIR) . '/';
+if (force_ssl_admin()){
+    $base_url = str_replace('http', 'https', $base_url);
+}
+define('AAM_BASE_URL', $base_url);
 
 define('AAM_TEMPLATE_DIR', AAM_BASE_DIR . 'view/html/');
 define('AAM_LIBRARY_DIR', AAM_BASE_DIR . 'library/');

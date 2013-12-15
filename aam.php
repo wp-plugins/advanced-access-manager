@@ -3,10 +3,11 @@
 /**
   Plugin Name: Advanced Access Manager
   Description: Manage User and Role Access to WordPress Backend and Frontend.
-  Version: 2.0 alpha2
+  Version: 2.0 alpha3
   Author: Vasyl Martyniuk <support@wpaam.com>
   Author URI: http://www.wpaam.com
- * 
+ 
+ *
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
  * file 'license.txt', which is part of this source code package.       *
@@ -72,7 +73,11 @@ class aam {
             add_action('admin_print_styles', array($this, 'printStyles'));
 
             //manager Admin Menu
-            add_action('admin_menu', array($this, 'adminMenu'), 999);
+            if (aam_Core_API::isNetworkPanel()) {
+                add_action('network_admin_menu', array($this, 'adminMenu'), 999);
+            } else {
+                add_action('admin_menu', array($this, 'adminMenu'), 999);
+            }
             //manager AAM Features Content rendering
             add_action('admin_action_features', array($this, 'features'));
             //manager AAM Ajax Requests
@@ -81,7 +86,7 @@ class aam {
             add_action("do_meta_boxes", array($this, 'metaboxes'), 999, 3);
             add_action("add_meta_boxes", array($this, 'filterMetaboxes'), 999, 2);
             add_filter(
-                    'get_user_option_meta-box-order_dashboard', 
+                    'get_user_option_meta-box-order_dashboard',
                     array($this, 'dashboardFilter'), 999, 3
             );
             //manager user search and authentication control
@@ -112,9 +117,9 @@ class aam {
 
     /**
      * Check if system requires update
-     * 
+     *
      * @return void
-     * 
+     *
      * @access public
      */
     public function checkUpdate() {
@@ -126,12 +131,12 @@ class aam {
 
     /**
      * Control Frontend commenting freature
-     * 
+     *
      * @param boolean $open
      * @param int $post_id
-     * 
+     *
      * @return boolean
-     * 
+     *
      * @access public
      */
     public function commentOpen($open, $post_id) {
@@ -258,6 +263,15 @@ class aam {
         }
     }
 
+    /**
+     * Take control over wp_die function
+     * 
+     * @param callback $function
+     * 
+     * @return void
+     * 
+     * @access public
+     */
     public function wpDie($function) {
         $cpress = $this->getUser()->getObject(aam_Control_Object_ConfigPress::UID);
         $redirect = $cpress->getParam('backend.access.deny.redirect');
@@ -462,8 +476,8 @@ class aam {
             wp_mail($event['action_specifier'], $subject, $message);
         } else if ($event['action'] == 'change_status') {
             $wpdb->update(
-                    $wpdb->posts, 
-                    array('post_status' => $event['action_specifier']), 
+                    $wpdb->posts,
+                    array('post_status' => $event['action_specifier']),
                     array('ID' => $post_ID)
             );
         } else if ($event['action'] == 'custom') {
@@ -593,10 +607,15 @@ class aam {
 
             $localization = array(
                 'nonce' => wp_create_nonce('aam_ajax'),
-                'dashboardURI' => admin_url('index.php'),
+                'siteURI' => admin_url('index.php'),
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'addUserURI' => admin_url('user-new.php'),
                 'editUserURI' => admin_url('user-edit.php'),
+                'defaultSegment' => array(
+                    'role' => 'administrator',
+                    'blog' => get_current_blog_id(),
+                    'user' => 0
+                ),
                 'labels' => aam_View_Manager::uiLabels()
             );
 
@@ -688,28 +707,28 @@ class aam {
     public function adminMenu() {
         //register the menu
         add_menu_page(
-                __('AAM', 'aam'), 
-                __('AAM', 'aam'), 
-                'administrator', 
-                'aam', 
-                array($this, 'content'), 
+                __('AAM', 'aam'),
+                __('AAM', 'aam'),
+                'administrator',
+                'aam',
+                array($this, 'content'),
                 AAM_BASE_URL . 'active-menu.png'
         );
         //register submenus
         add_submenu_page(
-                'aam', 
-                __('Access Control', 'aam'), 
-                __('Access Control', 'aam'), 
-                'administrator', 
-                'aam', 
+                'aam',
+                __('Access Control', 'aam'),
+                __('Access Control', 'aam'),
+                'administrator',
+                'aam',
                 array($this, 'content')
         );
         add_submenu_page(
-                'aam', 
-                __('Extensions', 'aam'), 
-                __('Extensions', 'aam'), 
-                'administrator', 
-                'aam-ext', 
+                'aam',
+                __('Extensions', 'aam'),
+                __('Extensions', 'aam'),
+                'administrator',
+                'aam-ext',
                 array($this, 'extensionContent')
         );
 

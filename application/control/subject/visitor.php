@@ -20,6 +20,20 @@ class aam_Control_Subject_Visitor extends aam_Control_Subject
      * Subject UID: VISITOR
      */
     const UID = 'visitor';
+    
+    /**
+     * Constructor
+     *
+     * @param string|int $id
+     *
+     * @return void
+     *
+     * @access public
+     */
+    public function __construct($id) {
+       //run parent constructor
+       parent::__construct('');
+    }
 
     /**
      * Retrieve Visitor Subject

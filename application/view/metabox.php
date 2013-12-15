@@ -170,7 +170,6 @@ class aam_View_Metabox extends aam_View_Abstract {
         } else {
             $list = $cache;
         }
-
         $content = '<div id="metabox_list">';
         foreach ($list as $screen => $metaboxes) {
             $content .= '<div class="group">';
@@ -199,8 +198,8 @@ class aam_View_Metabox extends aam_View_Abstract {
                     $content .= '<div class=metabox-row>';
                 }
                 //prepare title
-                if (strlen($metabox['title']) > 15) {
-                    $title = substr($metabox['title'], 0, 12) . '...';
+                if (strlen($metabox['title']) > 20) {
+                    $title = substr($metabox['title'], 0, 18) . '...';
                 } else {
                     $title = $metabox['title'];
                 }
@@ -251,7 +250,7 @@ class aam_View_Metabox extends aam_View_Abstract {
      * @return type
      */
     public function removeHTML($text) {
-        return preg_replace(array("'<span[^>]*?>.*?</span[^>]*?>'si"), '', $text);
+        return strip_tags($text);
     }
 
     /**

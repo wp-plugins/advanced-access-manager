@@ -28,15 +28,6 @@ abstract class aam_Control_Subject {
     private $_id;
 
     /**
-     * Current Blog ID
-     *
-     * @var int
-     *
-     * @access private
-     */
-    private $_blog_id;
-
-    /**
      * Subject itself
      *
      * It can be WP_User or WP_Role, based on what class has been used
@@ -62,16 +53,14 @@ abstract class aam_Control_Subject {
      * Constructor
      *
      * @param string|int $id
-     * @param int        $blog_id
      *
      * @return void
      *
      * @access public
      */
-    public function __construct($id, $blog_id) {
-        //set subject & blog ID
+    public function __construct($id) {
+        //set subject
         $this->setId($id);
-        $this->setBlogId($blog_id);
         //retrieve and set subject itself
         $this->setSubject($this->retrieveSubject());
     }
@@ -151,28 +140,6 @@ abstract class aam_Control_Subject {
      */
     public function getId() {
         return $this->_id;
-    }
-
-    /**
-     * Set Blog ID
-     *
-     * @param int $blog_id
-     *
-     * @access public
-     */
-    public function setBlogId($blog_id) {
-        $this->_blog_id = $blog_id;
-    }
-
-    /**
-     * Get Blog ID
-     *
-     * @return int
-     *
-     * @access public
-     */
-    public function getBlogId() {
-        return $this->_blog_id;
     }
 
     /**
