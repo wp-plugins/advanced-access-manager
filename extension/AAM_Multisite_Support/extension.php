@@ -125,7 +125,7 @@ class AAM_Extension_Multisite {
      */
     public function content() {
         ob_start();
-        require_once __DIR__ . '/ui.phtml';
+        require_once dirname(__FILE__) . '/ui.phtml';
         $content = ob_get_contents();
         ob_clean();
 
