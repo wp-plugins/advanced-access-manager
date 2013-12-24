@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: access manager, access control, comments, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role, access configuration
 Requires at least: 3.2
 Tested up to: 3.8
-Stable tag: 1.9.1
+Stable tag: 1.9.1.1
 
 Graphic interface to manage User Access to your Front-end and Back-end
 
@@ -84,6 +84,9 @@ just filter Main Menu.
 5. ConfigPress
 
 == Changelog ==
+
+= 1.9.1.1 =
+* Clean up the HTML
 
 = 1.9.1 =
 * Fixed bug with empty event list

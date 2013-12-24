@@ -16,13 +16,13 @@
  * @package    Zend_Config
  * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Exception.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Array.php 23775 2011-03-01 17:25:24Z ralph $
  */
 
 /**
- * @see Zend_Exception
+ * @see Zend_Config_Writer
  */
-require_once 'Zend/Exception.php';
+require_once 'Zend/Config/Writer/FileAbstract.php';
 
 /**
  * @category   Zend
@@ -30,4 +30,26 @@ require_once 'Zend/Exception.php';
  * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Config_Exception extends Zend_Exception {}
+class Zend_Config_Writer_Array extends Zend_Config_Writer_FileAbstract
+{
+    /**
+     * Render a Zend_Config into a PHP Array config string.
+     *
+     * @since 1.10
+     * @return string
+     */
+    public function render()
+    {
+        $data        = $this->_config->toArray();
+        $sectionName = $this->_config->getSectionName();
+
+        if (is_string($sectionName)) {
+            $data = array($sectionName => $data);
+        }
+
+        $arrayString = "<?php\n"
+                     . "return " . var_export($data, true) . ";\n";
+
+        return $arrayString;
+    }
+}
