@@ -1,9 +1,9 @@
 === Advanced Access Manager ===
 Contributors: vasyl_m
-Tags: access manager, access control, comments, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role, access configuration
+Tags: access manager, access control, comments, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role
 Requires at least: 3.2
 Tested up to: 3.8
-Stable tag: 1.9.1.1
+Stable tag: 2.0 Beta
 
 Graphic interface to manage User Access to your Front-end and Back-end
 
@@ -17,22 +17,19 @@ setup.
 This is the basic list of features you can perform this AAM:
 
 * Filter Admin Menu
-* Filter Admin Panel
 * Filter Dashboard Widgets
 * Filter Metaboxes
+* Filter Frontend Widgets
 * Manage Comments
 * Manage Capabilities (Create, Delete)
 * Manage User Roles (Create, Edit, Delete)
 * Manage Access to your Posts, Pages or even Custom Post Types
-* Give possibility to promote Users
-* Manage Admin Menu Order
-* Manage other Administrators
-* Exclude Front-end Pages from Navigation
 
 And many-many other features.
 
-If you have any problems with current plugin, please send me an email or leave a
-message on Forums Posts.
+The AAM support also next languages:
+ - English;
+ - German (special thanks to Kolja www.Reggae-Party.de)
 
 == Installation ==
 
@@ -42,17 +39,6 @@ message on Forums Posts.
 
 == Frequently Asked Questions ==
 
-= How can I give access for other Administrators to Advanced Access Manager? =
-
-If you are Super Admin, you can manage the Administrator's Role as other User
-Roles. To give an access to Access Manager's Option Page, just create a new
-capability <b>AAM Manage</b> and check it for Administrator's User Role.
-
-= My users are not able to edit permalink. What should I do? =
-
-Release 1.6.5 introduced a custom Capability "Edit Permalink". Make sure that
-User or User Role has this Capability checked under Capabilities Tab.
-
 = What is "Initiate URL" button, under "Metaboxes & Widgets" Tab? =
 
 Sometimes list of additional metaboxes is conditional on edit post page. Like e.g.
@@ -60,20 +46,6 @@ display custom metabox "Photos" only if Post Status is Published. Access Manager
 initiates the list of metaboxes for each post in default status ("auto-draft").
 That is why you have to manually initialize the URL to the edit post page where
 the list of additional metaboxes can be picked by AAM.
-
-= How can I delete created Capability? =
-
-You have to configure Advanced Access Manager behavior with ConfigPress. For more
-information please follow the <a href="http://whimba.org/forum/viewtopic.php?f=4&t=2#p2">link</a>
-
-= I unchecked some Menus on "Main Menu" Tab but they are still not shown. Why? =
-
-The reason is that "Main Menu" Tab is not directly related to list of Capabilities.
-It means, if you selected/deselected some Menu or Submenu it will not add or delete
-correct capabilities for current User Role. In such way if you want to give somebody
-access to backend I recommend to use predefined set of options "Editor" and then
-just filter Main Menu.
-
 
 == Screenshots ==
 
@@ -85,8 +57,8 @@ just filter Main Menu.
 
 == Changelog ==
 
-= 1.9.1.1 =
-* Clean up the HTML
+= 2.0 Beta =
+* Completely new UI and functionality
 
 = 1.9.1 =
 * Fixed bug with empty event list
@@ -95,7 +67,7 @@ just filter Main Menu.
 * Last release of 1.x AAM Branch
 
 = 1.9 =
-* AAM 2.0 alpha 1 Announcement 
+* AAM 2.0 alpha 1 Announcement
 
 = 1.8.5 =
 * Added Event Manager

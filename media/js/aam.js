@@ -320,12 +320,12 @@ AAM.prototype.initControlPanel = function() {
             }
             //4. Collect Events
             var events = _this.blogTables.eventList.fnGetData();
-            for (i in events) {
-                data['aam[event][' + i + '][event]'] = events[i][0];
-                data['aam[event][' + i + '][event_specifier]'] = events[i][1];
-                data['aam[event][' + i + '][post_type]'] = events[i][2];
-                data['aam[event][' + i + '][action]'] = events[i][3];
-                data['aam[event][' + i + '][action_specifier]'] = events[i][4];
+            for (var j in events) {
+                data['aam[event][' + j + '][event]'] = events[j][0];
+                data['aam[event][' + j + '][event_specifier]'] = events[j][1];
+                data['aam[event][' + j + '][post_type]'] = events[j][2];
+                data['aam[event][' + j + '][action]'] = events[j][3];
+                data['aam[event][' + j + '][action_specifier]'] = events[j][4];
             }
         }
 
@@ -1411,8 +1411,8 @@ AAM.prototype.initCapabilityTab = function() {
                 checked: (parseInt(aData[1]) === 1 ? true : false),
                 name: 'aam[capability][' + aData[0] + ']'
             }).bind('change', function() {
-                aData[1] = (jQuery(this).prop('checked') == true ? 1 : 0);
-                _this.blogTables.capabilities.fnUpdate(aData, nRow, 1, false);
+                var status =  (jQuery(this).prop('checked') === true ? 1 : 0);
+                _this.blogTables.capabilities.fnUpdate(status, nRow, 1, false);
             }));
             jQuery('.capability-action', actions).append(
                     '<label for="' + aData[0] + '"><span></span></label>'
@@ -2143,11 +2143,11 @@ AAM.prototype.validEvent = function() {
 AAM.prototype.launchDeleteEventDialog = function(button, aData, nRow) {
     var _this = this;
     var buttons = {};
-    aamLocal.labels['Delete Event'] = function() {
+    buttons[aamLocal.labels['Delete Event']] = function() {
         _this.blogTables.eventList.fnDeleteRow(nRow);
         jQuery('#delete_event').dialog("close");
     };
-    aamLocal.labels['Cancel'] = function() {
+    buttons[aamLocal.labels['Cancel']] = function() {
         jQuery('#delete_event').dialog("close");
     };
     jQuery('#delete_event').dialog({

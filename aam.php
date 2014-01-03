@@ -3,10 +3,10 @@
 /**
   Plugin Name: Advanced Access Manager
   Description: Manage User and Role Access to WordPress Backend and Frontend.
-  Version: 2.0 alpha3
+  Version: 2.0 Beta
   Author: Vasyl Martyniuk <support@wpaam.com>
   Author URI: http://www.wpaam.com
- 
+
  *
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
@@ -64,9 +64,6 @@ class aam {
         if (is_admin()) {
             //check if system requires update
             $this->checkUpdate();
-
-            //download extensions if any
-            $this->downloadExtensions();
 
             //print required JS & CSS
             add_action('admin_print_scripts', array($this, 'printScripts'));
@@ -265,11 +262,11 @@ class aam {
 
     /**
      * Take control over wp_die function
-     * 
+     *
      * @param callback $function
-     * 
+     *
      * @return void
-     * 
+     *
      * @access public
      */
     public function wpDie($function) {
@@ -573,6 +570,11 @@ class aam {
             wp_enqueue_style('aam-style', AAM_MEDIA_URL . 'css/extension.css');
             wp_enqueue_style('aam-datatables', AAM_MEDIA_URL . 'css/jquery.dt.css');
         }
+
+        //migration functionality. TODO - remove in July 15 2014
+        if (class_exists('aam_Core_Migrate')){
+            wp_enqueue_style('aam-migrate', AAM_MEDIA_URL . 'css/migrate.css');
+        }
     }
 
     /**
@@ -618,17 +620,35 @@ class aam {
                 ),
                 'labels' => aam_View_Manager::uiLabels()
             );
-
             wp_localize_script('aam-admin', 'aamLocal', $localization);
         } elseif ($this->isAAMExtensionScreen()) {
             wp_enqueue_script('postbox');
             wp_enqueue_script('dashboard');
             wp_enqueue_script('jquery-ui-core');
+            wp_enqueue_script('jquery-effects-core');
             wp_enqueue_script('jquery-ui-widget');
             wp_enqueue_script('jquery-ui-dialog');
             wp_enqueue_script('jquery-ui-button');
+            wp_enqueue_script('jquery-effects-highlight');
             wp_enqueue_script('aam-admin', AAM_MEDIA_URL . 'js/extension.js');
             wp_enqueue_script('aam-datatables', AAM_MEDIA_URL . 'js/jquery.dt.js');
+
+            $localization = array(
+                'nonce' => wp_create_nonce('aam_ajax'),
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'labels' => aam_View_Manager::uiLabels()
+            );
+            wp_localize_script('aam-admin', 'aamLocal', $localization);
+        }
+
+        //migration functionality. TODO - remove in July 15 2014
+        if (class_exists('aam_Core_Migrate')){
+            wp_enqueue_script('aam-migrate', AAM_MEDIA_URL . 'js/migrate.js');
+            $localization = array(
+                'nonce' => wp_create_nonce('aam_ajax'),
+                'ajaxurl' => admin_url('admin-ajax.php'),
+            );
+            wp_localize_script('aam-migrate', 'aamMigrateLocal', $localization);
         }
     }
 
@@ -748,6 +768,13 @@ class aam {
         echo $manager->run();
     }
 
+    /**
+     * Extension content page
+     *
+     * @return void
+     *
+     * @access public
+     */
     public function extensionContent() {
         $manager = new aam_View_Extension();
         echo $manager->run();
@@ -778,13 +805,9 @@ class aam {
      */
     public function initializeUser() {
         if ($user_id = get_current_user_id()) {
-            $this->setUser(new aam_Control_Subject_User(
-                    $user_id, get_current_blog_id()
-            ));
+            $this->setUser(new aam_Control_Subject_User($user_id));
         } else {
-            $this->setUser(new aam_Control_Subject_Visitor(
-                    '', get_current_blog_id()
-            ));
+            $this->setUser(new aam_Control_Subject_Visitor(''));
         }
     }
 
@@ -798,14 +821,11 @@ class aam {
      * @access public
      */
     public static function uninstall() {
+        global $wp_filesystem;
+
         //remove the content directory
-        if (!defined(AAM_CONTENT_DIR_FAILURE)) {
-            foreach (scandir(AAM_TEMP_DIR) as $file) {
-                if (!in_array($file, array('.', '..'))) {
-                    @unlink(AAM_TEMP_DIR . '/' . $file);
-                }
-            }
-            @rmdir(AAM_TEMP_DIR);
+        if (!defined(AAM_CONTENT_DIR_FAILURE) && WP_Filesystem()) {
+            $wp_filesystem->rmdir(AAM_TEMP_DIR, true);
         }
     }
 
@@ -843,22 +863,6 @@ class aam {
     protected function loadExtensions() {
         $model = new aam_Core_Extension($this);
         $model->load();
-    }
-
-    /**
-     * Download Extensions
-     *
-     * Download Extenions from the external server.
-     * The reason to keep this function seperate from loadExtensions is that it is
-     * triggered during backend/dashboard usage. Loan Extensions is used all the time
-     *
-     * @return void
-     *
-     * @access protected
-     */
-    protected function downloadExtensions() {
-        $model = new aam_Core_Extension($this);
-        $model->download();
     }
 
 }

@@ -44,8 +44,13 @@ abstract class aam_Control_Object {
     }
 
     /**
+     * Initialize object
      *
-     * @param type $object_id
+     * @param string|int $object_id
+     *
+     * @return void
+     *
+     * @access public
      */
     public function init($object_id) {
         if (empty($this->_option)) {
@@ -56,23 +61,37 @@ abstract class aam_Control_Object {
     }
 
     /**
+     * Set current subject
+     *
+     * Either it is User or Role
      *
      * @param aam_Control_Subject $subject
+     *
+     * @return void
+     *
+     * @access public
      */
     public function setSubject(aam_Control_Subject $subject) {
         $this->_subject = $subject;
     }
 
     /**
+     * Get Subject
      *
-     * @return type
+     * @return aam_Control_Subject
+     *
+     * @access public
      */
     public function getSubject() {
         return $this->_subject;
     }
 
     /**
+     * Get current object UID
      *
+     * @return string
+     *
+     * @access public
      */
     abstract public function getUID();
 
@@ -87,7 +106,7 @@ abstract class aam_Control_Object {
     abstract public function getOption();
 
     /**
-     * 
+     *
      */
     abstract public function save($params = array());
 

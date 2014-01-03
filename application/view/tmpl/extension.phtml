@@ -20,33 +20,44 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php if (!defined('AAM_PLUS_PACKAGE_EXTENSION')) { ?>
-                                    <tr>
-                                        <td>
-                                            <span class="extension-name">AAM Plus Package</span>
-                                        </td>
-                                        <td class="extension-description">
-                                            This Extension extends default AAM basic features and unlock some limitations. 
-                                            Add custom taxonomy <b>Page Category</b> to ground pages into categories;
-                                            Unlock the limitation for Post Access control;
-                                            Add additional Capability Group <b>Comments</b> with the set of capabilities to control default comment 
-                                            actions like <b>Reply</b>, <b>Mark Spam</b>, <b>Trash</b>, <b>Delete</b> etc;
-                                            Add possibility to setup default post or page access.
-                                            For more details, please visit our forum.
-                                        </td>
-                                        <td class="extension-price payed">$30.00</td>
-                                        <td>
-                                            <div class="extension-actions">
-                                                <a href="http://wpaam.com/support#viewtopic.php?f=7&t=10" target="_blank" class="extension-action extension-action-forum" tooltip="Visit Our Forum"></a>
-                                                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UEM8U65HFEG4Q" class="extension-action extension-action-purchase" tooltip="Buy it Today" target="_blank"></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php } ?>
+                                <tr>
+                                    <td>
+                                        <span class="extension-name">AAM Plus Package</span>
+                                    </td>
+                                    <td class="extension-description">
+                                        This Extension extends default AAM basic features and unlock some limitations.
+                                        Add custom taxonomy <b>Page Category</b> to ground pages into categories;
+                                        Unlock the limitation for Post Access control;
+                                        Add additional Capability Group <b>Comments</b> with the set of capabilities to control default comment
+                                        actions like <b>Reply</b>, <b>Mark Spam</b>, <b>Trash</b>, <b>Delete</b> etc;
+                                        Add possibility to setup default post or page access.
+                                        For more details, please visit our forum.
+                                    </td>
+                                    <td class="extension-price payed">$30.00</td>
+                                    <td>
+                                        <div class="extension-actions">
+                                            <a href="http://wpaam.com/support#viewtopic.php?f=7&t=10" target="_blank" class="extension-action extension-action-forum" tooltip="Visit Our Forum"></a>
+                                            <?php if ($this->hasExtension('AAM Plus Package')) { ?>
+                                                <a href="#" extension="AAM Plus Package" license="<?php echo $this->getExtension('AAM Plus Package')->license; ?>" class="extension-action extension-action-ok" tooltip="Installed Successfully"></a>
+                                            <?php } else { ?>
+                                                <a href="#" extension="AAM Plus Package" link="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UEM8U65HFEG4Q" class="extension-action extension-action-purchase" tooltip="Get it Today"></a>
+                                            <?php } ?>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
-                        <div id="under_dev" class="aam-dialog" title="<?php echo __('Extension Status', 'aam'); ?>">
-                            <p class="dialog-content"><?php echo __('Current Extension is under development. Please follow us on <a href="https://twitter.com/wpaam" target="blank">Twitter</a> to know the latest updates.', 'aam'); ?></p>
+                        <div id="install_extension" class="aam-dialog" title="<?php echo __('Install Extension', 'aam'); ?>">
+                            <p class="dialog-content">
+                                <?php echo __('If you already have license key for current extension, please enter it below. Othewise click <b>Purchase</b> button to checkout your order.', 'aam'); ?>
+                                <input type="text" class="license-input" id="license_key" placeholder="License Key" />
+                            </p>
+                        </div>
+                         <div id="update_extension" class="aam-dialog" title="<?php echo __('Update Extension', 'aam'); ?>">
+                            <p class="dialog-content" style="text-align: center;">
+                                <?php echo __('Extension has been installed. Your license key: ', 'aam'); ?><br/>
+                                <b><span id="installed_license_key"></span></b>
+                            </p>
                         </div>
                     </div>
                 </div>

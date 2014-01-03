@@ -123,6 +123,19 @@ class aam_View_Ajax extends aam_View_Abstract{
                 $response = $this->roleback();
                 break;
 
+            case 'install_extension':
+                $response = $this->installExtension();
+                break;
+
+            case 'remove_extension':
+                $response = $this->removeExtension();
+                break;
+
+            //TODO - Remove in 07/15/2014
+            case 'migrate':
+                $response = $this->migrate();
+                break;
+
             default:
                 $response = apply_filters(
                         'aam_ajax_call', -1, $this->getSubject()
@@ -445,6 +458,46 @@ class aam_View_Ajax extends aam_View_Abstract{
         $model = new aam_View_Manager;
 
         return $model->checkRoleback();
+    }
+
+    /**
+     * Install extension
+     *
+     * @return string
+     *
+     * @access protected
+     */
+    protected function installExtension() {
+        $model = new aam_View_Extension();
+
+        return $model->install();
+    }
+
+    /**
+     * Remove extension
+     *
+     * @return string
+     *
+     * @access protected
+     */
+    protected function removeExtension() {
+        $model = new aam_View_Extension();
+
+        return $model->remove();
+    }
+
+    /**
+     * Migrate
+     *
+     * @return string
+     *
+     * @access protected
+     * @todo Remove in 07/15/2014
+     */
+    protected function migrate() {
+        $model = new aam_Core_Migrate();
+
+        return $model->run();
     }
 
 }

@@ -228,12 +228,6 @@ class aam_View_Manager extends aam_View_Abstract {
      */
     public function retrieveFeatures() {
         ?>
-        <div class="alpha-notice">
-            <span>This is alpha version. Do not use it for live website!</span><br/>
-            <span>We appreciate any feedback. Please visit our <a href="http://wpaam.com/support" target="_blank">FORUM</a> or send an <a href="mailto:support@wpaam.com">E-MAIL</a>.</span><br/>
-            <span>Follow us on <a href="https://twitter.com/wpaam" target="_blank">Twitter</a> to know the latest changes.</span>
-        </div>
-
         <div class="aam-help">
             <?php
             foreach ($this->getFeatures() as $feature) {

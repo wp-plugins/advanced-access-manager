@@ -17,12 +17,17 @@
 class aam_Core_Extension {
 
     /**
-     *
+     * Extensions download Failed
      */
     const STATUS_FAILED = 'failed';
 
     /**
-     *
+     * Extensions status pending
+     */
+    const STATUS_PENDING = 'pending';
+
+    /**
+     * Extensions installed successfully
      */
     const STATUS_INSTALLED = 'installed';
 
@@ -42,16 +47,13 @@ class aam_Core_Extension {
     private $_cache = array();
 
     /**
+     * Main AAM class
      *
-     * @var type
-     */
-    private $_parent = null;
-
-    /**
+     * @var aam
      *
-     * @var type
+     * @access private
      */
-    private $_repository = array();
+    private $_parent;
 
     /**
      * Consturctor
@@ -60,7 +62,7 @@ class aam_Core_Extension {
      *
      * @access public
      */
-    public function __construct(aam $parent) {
+    public function __construct(aam $parent = null) {
         $this->setParent($parent);
         $this->_basedir = AAM_BASE_DIR . 'extension';
     }
@@ -86,40 +88,104 @@ class aam_Core_Extension {
      *
      */
     public function download() {
-        require_once ABSPATH . 'wp-admin/includes/file.php';
+        $this->initFilesystem();
+        $repository = aam_Core_API::getBlogOption('aam_extensions', array(), 1);
 
-        //initialize Filesystem
-        WP_Filesystem();
-
-        //check is extension config is specified
-        $config_press = $this->_parent->getUser()->getObject(
-                aam_Control_Object_ConfigPress::UID
-        );
-        $extensions = $config_press->getParam(
-                'aam.extension'
-        );
-
-        if ($extensions instanceof Zend_Config) {
-            //get the list of downloaded extensions
-            $this->_repository = aam_Core_API::getBlogOption('aam_repository', array());
-            foreach ($extensions as $license) {
-                if (!isset($this->_repository[$license]) || $this->_repository[$license] == self::STATUS_FAILED) {
-                    if ($this->retrieve($license)) {
-                        $this->_repository[$license] = self::STATUS_INSTALLED;
-                    } else {
-                        $this->_repository[$license] = self::STATUS_FAILED;
-                    }
+        if (is_array($repository)) {
+            //get the list of extensions
+            foreach ($repository as $extension => $data) {
+                if ($this->retrieve($data->license)) {
+                    $repository[$extension]->status = self::STATUS_INSTALLED;
+                } else {
+                    $repository[$extension]->status = self::STATUS_FAILED;
                 }
             }
-            aam_Core_API::updateBlogOption('aam_repository', $this->_repository);
+            aam_Core_API::updateBlogOption('aam_extensions', $repository, 1);
         }
     }
 
     /**
+     * Add new extension to repository
      *
-     * @global type $wp_filesystem
-     * @param type $license
-     * @return type
+     * @param string $extension
+     * @param string $license
+     *
+     * @return boolean
+     *
+     * @access public
+     */
+    public function add($extension, $license){
+        $this->initFilesystem();
+        $repository = aam_Core_API::getBlogOption('aam_extensions', array(), 1);
+
+        if ($this->retrieve($license)){
+            $repository[$extension] = (object) array(
+                'status' => self::STATUS_INSTALLED,
+                'license' => $license,
+                //ugly way but quick
+                'basedir' => $this->_basedir . '/' . str_replace(' ', '_', $extension)
+            );
+            aam_Core_API::updateBlogOption('aam_extensions', $repository, 1);
+            $response = true;
+        } else {
+            $response = false;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Remove Extension from the repository
+     *
+     * @param string $extension
+     * @param string $license
+     *
+     * @return boolean
+     *
+     * @access public
+     */
+    public function remove($extension, $license){
+        global $wp_filesystem;
+
+        $this->initFilesystem();
+        $repository = aam_Core_API::getBlogOption('aam_extensions', array(), 1);
+        $response = false;
+
+        if (isset($repository[$extension])){
+            $basedir = $repository[$extension]->basedir;
+            if ($wp_filesystem->rmdir($basedir, true)){
+                $response = true;
+                unset($repository[$extension]);
+                aam_Core_API::updateBlogOption('aam_extensions', $repository, 1);
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * Initialize WordPress filesystem
+     *
+     * @return void
+     *
+     * @access protected
+     */
+    protected function initFilesystem(){
+         require_once ABSPATH . 'wp-admin/includes/file.php';
+
+        //initialize Filesystem
+        WP_Filesystem();
+    }
+
+    /**
+     * Retrieve extension based on license key
+     *
+     * @global WP_Filesystem $wp_filesystem
+     * @param string $license
+     *
+     * @return boolean
+     *
+     * @access protected
      */
     protected function retrieve($license) {
         global $wp_filesystem;
@@ -130,7 +196,8 @@ class aam_Core_Extension {
         if (!is_wp_error($res)) {
             //write zip archive to the filesystem first
             $zip = AAM_TEMP_DIR . '/' . uniqid();
-            if ($wp_filesystem->put_contents($zip, base64_decode($res['body']))) {
+            $content = base64_decode($res['body']);
+            if ($content && $wp_filesystem->put_contents($zip, $content)) {
                 $response = $this->insert($zip);
                 $wp_filesystem->delete($zip);
             }
@@ -173,18 +240,26 @@ class aam_Core_Extension {
     }
 
     /**
+     * Set Parent class
      *
      * @param aam $parent
+     *
+     * @return void
+     *
+     * @access public
      */
-    public function setParent(aam $parent) {
+    public function setParent($parent){
         $this->_parent = $parent;
     }
 
     /**
+     * Get Parent class
      *
      * @return aam
+     *
+     * @access public
      */
-    public function getParent() {
+    public function getParent(){
         return $this->_parent;
     }
 

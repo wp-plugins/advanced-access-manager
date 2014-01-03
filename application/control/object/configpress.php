@@ -90,10 +90,12 @@ class aam_Control_Object_ConfigPress extends aam_Control_Object {
      */
     protected function parseConfig($filename) {
         //include third party library
-        require_once(AAM_LIBRARY_DIR . 'Zend/Exception.php');
-        require_once(AAM_LIBRARY_DIR . 'Zend/Config/Exception.php');
-        require_once(AAM_LIBRARY_DIR . 'Zend/Config.php');
-        require_once(AAM_LIBRARY_DIR . 'Zend/Config/Ini.php');
+        if (!class_exists('Zend_Config')){
+            require_once(AAM_LIBRARY_DIR . 'Zend/Exception.php');
+            require_once(AAM_LIBRARY_DIR . 'Zend/Config/Exception.php');
+            require_once(AAM_LIBRARY_DIR . 'Zend/Config.php');
+            require_once(AAM_LIBRARY_DIR . 'Zend/Config/Ini.php');
+        }
         //parse ini file
         try {
             $this->setTree(new Zend_Config_Ini($filename));

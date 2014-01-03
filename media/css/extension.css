@@ -112,11 +112,19 @@ a.extension-action{
 }
 
 .extension-action-purchase{
-    background-image: url('images/extension/purchase.png');
+    background-image: url('images/extension/plus.png');
 }
 
 .extension-action-purchase:hover{
-    background-image: url('images/extension/purchase-active.png');
+    background-image: url('images/extension/plus-active.png');
+}
+
+.extension-action-ok{
+    background-image: url('images/extension/ok.png');
+}
+
+.extension-action-ok:hover{
+    background-image: url('images/extension/ok-active.png');
 }
 
 .extension-action-download{
@@ -158,4 +166,14 @@ a.extension-action{
     text-decoration: none;
     color: #257DA6;
     outline: 0;
+}
+
+input.license-input{
+    width: 100%;
+    border: 1px solid #CCCCCC;
+    border-radius: 0px;
+    margin-top: 5px;
+    padding: 2px;
+    font-size: 12px;
+    line-height: 16px;
 }
