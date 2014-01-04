@@ -26,6 +26,7 @@ final class aam_Core_Migrate {
      */
     public function run() {
         @set_time_limit(300);
+
         ob_start(); //prevent from any kind of notice, warning printout
         switch (aam_Core_Request::post('step')) {
             case 'collect':
@@ -53,6 +54,12 @@ final class aam_Core_Migrate {
         return json_encode($response);
     }
 
+    /**
+     * Collect the list of all setting for migration
+     *
+     * @global type $wpdb
+     * @return string
+     */
     protected function collect() {
         global $wpdb;
 
@@ -79,7 +86,9 @@ final class aam_Core_Migrate {
             $blog_list = $wpdb->get_results($query);
             if (is_array($blog_list)) {
                 foreach ($blog_list as $blog) {
-                    $collection['roles'][$blog->blog_id] = $this->getRoleSet($blog->blog_id);
+                    $collection['roles'][$blog->blog_id] = $this->getRoleSet(
+                        $blog->blog_id
+                    );
                 }
             }
         } else {
@@ -92,7 +101,7 @@ final class aam_Core_Migrate {
         } else {
             $response = array('status' => 'failure');
         }
-        
+
         return $response;
     }
 
@@ -319,7 +328,15 @@ final class aam_Core_Migrate {
     }
 
     protected function migrateRole($role, $data) {
-        return $this->saveSettings('Role', $role, $this->migrateSettings($data));
+        if ($role !== 'administrator'){ //skip admin role. We do not have super admin anymore
+            $settings = $this->migrateSettings($data);
+        } elseif (isset($data['events'])) { //transfer only events
+            $settings = array('events' => $data['events']);
+        } else {
+            $settings = array();
+        }
+        
+        return $this->saveSettings('Role', $role, $settings);
     }
 
     protected function saveSettings($type, $id, $settings) {
@@ -394,6 +411,7 @@ final class aam_Core_Migrate {
 
     protected function removeSuperAdmin() {
         global $wp_user_roles, $wpdb;
+
         if (is_multisite()) {
             //get all sites first and iterate through each
             $query = 'SELECT blog_id FROM ' . $wpdb->blogs;
@@ -420,8 +438,8 @@ final class aam_Core_Migrate {
                     unset($caps['super_admin']);
                     $caps['administrator'] = 1;
                     $wpdb->update(
-                            $wpdb->usermeta, 
-                            array('meta_value' => serialize($caps)), 
+                            $wpdb->usermeta,
+                            array('meta_value' => serialize($caps)),
                             array('umeta_id' => $metadata->umeta_id)
                     );
                 }

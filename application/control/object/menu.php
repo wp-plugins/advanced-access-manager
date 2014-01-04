@@ -39,6 +39,7 @@ class aam_Control_Object_Menu extends aam_Control_Object {
         //let's go and iterate menu & submenu
         foreach ($menu as $id => $item) {
             if ($this->has($item[2])) {
+                unset($menu[$id]); // also remove the menu from the list
                 $menu[$id][1] = $random;
             }
             //go to submenu

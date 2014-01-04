@@ -51,6 +51,11 @@ jQuery(document).ready(function() {
                                     );
 
                                     if (license) {
+                                        //add loader
+                                        jQuery('#install_extension').append(jQuery('<div/>', {
+                                            'class' : 'loading-extension'
+                                        }));
+
                                         jQuery.ajax(aamLocal.ajaxurl, {
                                             type: 'POST',
                                             dataType: 'json',
@@ -70,6 +75,9 @@ jQuery(document).ready(function() {
                                             },
                                             error: function() {
                                                 jQuery('#license_key').effect('highlight', 2000);
+                                            },
+                                            complete: function(){
+                                                jQuery('.loading-extension', '#install_extension').remove();
                                             }
                                         });
                                     } else {

@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: access manager, access control, comments, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role
 Requires at least: 3.2
 Tested up to: 3.8
-Stable tag: 2.0 Beta
+Stable tag: 2.0 Beta 2
 
 Graphic interface to manage User Access to your Front-end and Back-end
 
@@ -27,10 +27,10 @@ And many-many other features.
 
 The AAM support also next languages:
 
- - English;
- 
- - German (special thanks to Kolja www.Reggae-Party.de)
- 
+ * English
+ * German (by Kolja www.Reggae-Party.de)
+ * Spanish (by Etruel www.netmdp.com)
+
 
 == Installation ==
 
@@ -57,6 +57,10 @@ the list of additional metaboxes can be picked by AAM.
 5. ConfigPress
 
 == Changelog ==
+
+= 2.0 Beta 2 =
+* Few bug fixed with UI and functionality
+* Spanish translation file
 
 = 2.0 Beta =
 * Completely new UI and functionality

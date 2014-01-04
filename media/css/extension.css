@@ -177,3 +177,17 @@ input.license-input{
     font-size: 12px;
     line-height: 16px;
 }
+
+#install_extension{
+    position: relative;
+}
+
+.loading-extension{
+    width: 100%;
+    height: 100%;
+    background: #CCCCCC url('images/main-loader.gif') no-repeat center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.8;
+}

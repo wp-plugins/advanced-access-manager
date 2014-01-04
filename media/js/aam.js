@@ -1642,8 +1642,10 @@ AAM.prototype.launchRoleCopyDialog = function(button) {
                                 var ntr = oSettings.aoData[i].nTr;
                                 if (typeof response.capabilities[cap] !== 'undefined') {
                                     _this.blogTables.capabilities.fnUpdate(1, ntr, 1, false);
+                                    jQuery('#' + cap).attr('checked', 'checked');
                                 } else {
                                     _this.blogTables.capabilities.fnUpdate(0, ntr, 1, false);
+                                    jQuery('#' + cap).removeAttr('checked');
                                 }
                             }
                         }
@@ -1781,6 +1783,8 @@ AAM.prototype.initMenuTab = function() {
             }
         });
     });
+
+    this.initTooltip('#main_menu_list');
 };
 
 /**

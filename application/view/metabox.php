@@ -52,10 +52,12 @@ class aam_View_Metabox extends aam_View_Abstract {
                         foreach ($levels as $boxes) {
                             if (is_array($boxes)) {
                                 foreach ($boxes as $data) {
-                                    $this->_cache[$this->_post_type][$data['id']] = array(
-                                        'id' => $data['id'],
-                                        'title' => $this->removeHTML($data['title'])
-                                    );
+                                    if (trim($data['id'])){ //exclude any junk
+                                        $this->_cache[$this->_post_type][$data['id']] = array(
+                                            'id' => $data['id'],
+                                            'title' => $this->removeHTML($data['title'])
+                                        );
+                                    }
                                 }
                             }
                         }
@@ -80,12 +82,16 @@ class aam_View_Metabox extends aam_View_Abstract {
                     $callback = get_class($data['callback'][0]);
                 } elseif (is_string($data['callback'][0])) {
                     $callback = $data['callback'][0];
+                } else {
+                    $callback = null;
                 }
 
-                $list[$callback] = array(
-                    'title' => $this->removeHTML($data['name']),
-                    'id' => $callback
-                );
+                if (!is_null($callback)){ //exclude any junk
+                    $list[$callback] = array(
+                        'title' => $this->removeHTML($data['name']),
+                        'id' => $callback
+                    );
+                }
             }
         }
 
@@ -198,8 +204,8 @@ class aam_View_Metabox extends aam_View_Abstract {
                     $content .= '<div class=metabox-row>';
                 }
                 //prepare title
-                if (strlen($metabox['title']) > 20) {
-                    $title = substr($metabox['title'], 0, 18) . '...';
+                if (strlen($metabox['title']) > 18) {
+                    $title = substr($metabox['title'], 0, 15) . '...';
                 } else {
                     $title = $metabox['title'];
                 }

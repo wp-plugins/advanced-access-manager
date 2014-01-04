@@ -73,7 +73,7 @@ if (!file_exists(AAM_TEMP_DIR)) {
     }
 }
 
-load_plugin_textdomain('aam', false, AAM_BASE_DIR . 'lang');
+load_plugin_textdomain('aam', false, basename(AAM_BASE_DIR) . '/lang');
 
 //set migration admin notice. TODO - remove in July 15 2014
 function aam_migration_note() {
