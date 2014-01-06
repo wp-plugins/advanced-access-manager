@@ -25,6 +25,11 @@ class aam_Control_Object_Term extends aam_Control_Object {
      *
      */
     const ACTION_BROWSE = 'browse';
+    
+    /**
+     * 
+     */
+    const ACTION_EXCLUDE = 'exclude';
 
     /**
      *
@@ -62,7 +67,7 @@ class aam_Control_Object_Term extends aam_Control_Object {
      */
     public function getAccessList($area) {
         if ($area == 'frontend') {
-            $response = array(self::ACTION_BROWSE);
+            $response = array(self::ACTION_BROWSE, self::ACTION_EXCLUDE);
         } elseif ($area == 'backend') {
             $response = array(self::ACTION_BROWSE, self::ACTION_EDIT);
         } else {
@@ -85,7 +90,7 @@ class aam_Control_Object_Term extends aam_Control_Object {
      * @param type $object_id
      */
     public function init($object_id) {
-        if ($object_id && empty($this->_option)) {
+        if ($object_id) {
             //initialize term first
             $this->setTerm(get_term($object_id, $this->getTaxonomy($object_id)));
             if ($this->getTerm()) {

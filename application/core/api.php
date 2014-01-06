@@ -141,5 +141,27 @@ final class aam_Core_API {
     public static function isNetworkPanel() {
         return (is_multisite() && is_network_admin() ? TRUE : FALSE);
     }
+    
+    /**
+     * Check if SSL is used
+     * 
+     * @return boolean
+     * 
+     * @access public
+     * @static
+     */
+    public static function isSSL(){
+       if (force_ssl_admin()){
+           $response = true;
+       } elseif (aam_Core_Request::server('HTTPS')){
+           $response = true;
+       } elseif (aam_Core_Request::server('REQUEST_SCHEME') == 'https'){
+           $response = true;
+       } else {
+           $response = false;
+       }
+
+       return $response;
+   }
 
 }

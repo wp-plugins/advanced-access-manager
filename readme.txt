@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: access manager, access control, comments, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role
 Requires at least: 3.2
 Tested up to: 3.8
-Stable tag: 2.0 Beta 2
+Stable tag: 2.0 Beta 3
 
 Graphic interface to manage User Access to your Front-end and Back-end
 
@@ -57,6 +57,14 @@ the list of additional metaboxes can be picked by AAM.
 5. ConfigPress
 
 == Changelog ==
+
+= 2.0 Beta 3 =
+* Fixed issue with Admin over SSL
+* Fixed issue with Update script
+* Added Exclude Page from Frontend Navigation
+* Regenerated the .pot file
+* Fixed issue with Term Access saving
+* Fixed issue with hiding Screen Options for Dashboard and Post Edit Page
 
 = 2.0 Beta 2 =
 * Few bug fixed with UI and functionality

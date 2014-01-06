@@ -3,7 +3,7 @@
 /**
   Plugin Name: Advanced Access Manager
   Description: Manage User and Role Access to WordPress Backend and Frontend.
-  Version: 2.0 Beta 2
+  Version: 2.0 Beta 3
   Author: Vasyl Martyniuk <support@wpaam.com>
   Author URI: http://www.wpaam.com
 
@@ -81,11 +81,11 @@ class aam {
             add_action('wp_ajax_aam', array($this, 'ajax'));
             //manager WordPress metaboxes
             add_action("do_meta_boxes", array($this, 'metaboxes'), 999, 3);
-            add_action("add_meta_boxes", array($this, 'filterMetaboxes'), 999, 2);
-            add_filter(
-                    'get_user_option_meta-box-order_dashboard',
-                    array($this, 'dashboardFilter'), 999, 3
-            );
+            //add_action("add_meta_boxes", array($this, 'filterMetaboxes'), 999, 2);
+            //add_filter(
+            //        'get_user_option_meta-box-order_dashboard',
+            //        array($this, 'dashboardFilter'), 999, 3
+            //);
             //manager user search and authentication control
             add_filter('user_search_columns', array($this, 'searchColumns'));
             //terms & post restriction handlers
@@ -100,6 +100,9 @@ class aam {
         } else {
             //control WordPress frontend
             add_action('wp', array($this, 'wp'), 999);
+            //filter navigation pages & taxonomies
+            add_filter('get_pages', array($this, 'getPages'));
+            add_filter('wp_get_nav_menu_items', array($this, 'getNavigationMenu'));
             //widget filters
             add_filter('sidebars_widgets', array($this, 'widgetFilter'), 999);
             //get control over commenting stuff
@@ -120,7 +123,7 @@ class aam {
      * @access public
      */
     public function checkUpdate() {
-        if (class_exists('aam_Core_Update')) {
+        if (class_exists('aam_Core_Update') && (AAM_APPL_ENV != 'development')) {
             $update = new aam_Core_Update($this);
             $update->run();
         }
@@ -169,6 +172,62 @@ class aam {
 
         return $post;
     }
+    
+    /**
+     * Filter Pages that should be excluded in frontend
+     * 
+     * @param array $pages
+     * 
+     * @return array
+     * 
+     * @access public
+     * @todo Cache this process
+     */
+    public function getPages($pages){
+        $object = $this->getUser()->getObject(aam_Control_Object_Post::UID);
+        if (is_array($pages)){
+            foreach($pages as $i => $page){
+                $object->init($page);
+                if ($object->has('frontend', aam_Control_Object_Post::ACTION_EXCLUDE)){
+                    unset($pages[$i]);
+                }
+            }
+        }
+        
+        return $pages;
+    }
+    
+    /**
+     * Filter Navigation menu 
+     * 
+     * @param array $pages
+     * 
+     * @return array
+     * 
+     * @access public
+     */
+    public function getNavigationMenu($pages){
+        if (is_array($pages)){
+            $post = $this->getUser()->getObject(aam_Control_Object_Post::UID);
+            $term = $this->getUser()->getObject(aam_Control_Object_Term::UID);
+            foreach($pages as $i => $page){
+                if ($page->type === 'taxonomy'){
+                    $object = $term;
+                    $exclude = aam_Control_Object_Term::ACTION_EXCLUDE;
+                } else {
+                    $object = $post;
+                    $exclude = aam_Control_Object_Post::ACTION_EXCLUDE;
+                }
+                $object->init($page->object_id);
+                
+                if ($object->has('frontend', $exclude)){
+                    unset($pages[$i]);
+                }
+            }
+        }
+        
+        return $pages;
+    }
 
     /**
      * Filter Frontend widgets
@@ -182,22 +241,6 @@ class aam {
     public function widgetFilter($widgets) {
         return $this->getUser()->getObject(
                         aam_Control_Object_Metabox::UID)->filterFrontend($widgets);
-    }
-
-    /**
-     * Filter Dashboard Widgets & Metaboxes
-     *
-     * @param array $result
-     * @param mixed $option
-     * @param mixed $user
-     *
-     * @return void
-     *
-     * @access public
-     */
-    public function dashboardFilter($result, $option, $user) {
-        $this->getUser()->getObject(
-                aam_Control_Object_Metabox::UID)->filterBackend('dashboard');
     }
 
     /**
@@ -698,7 +741,28 @@ class aam {
         if (aam_Core_Request::get('aam_meta_init')) {
             $model = new aam_View_Metabox;
             $model->run($post_type);
+        } else { 
+             $this->getUser()->getObject(aam_Control_Object_Metabox::UID)->filterBackend(
+                $post_type, 'dashboard'
+        );
         }
+    }
+    
+    /**
+     * Filter Dashboard Widgets & Metaboxes
+     *
+     * @param array $result
+     * @param mixed $option
+     * @param mixed $user
+     *
+     * @return void
+     *
+     * @access public
+     * @deprecated since 2.0 Beta 3
+     */
+    public function dashboardFilter($result, $option, $user) {
+        $this->getUser()->getObject(
+                aam_Control_Object_Metabox::UID)->filterBackend('dashboard');
     }
 
     /**
@@ -710,6 +774,7 @@ class aam {
      * @return void
      *
      * @access public
+     * @deprecated since 2.0 Beta 3
      */
     public function filterMetaboxes($post_type, $post) {
         $this->getUser()->getObject(aam_Control_Object_Metabox::UID)->filterBackend(

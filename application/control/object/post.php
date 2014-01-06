@@ -29,6 +29,11 @@ class aam_Control_Object_Post extends aam_Control_Object {
      *
      */
     const ACTION_READ = 'read';
+    
+    /**
+     * 
+     */
+    const ACTION_EXCLUDE = 'exclude';
 
     /**
      *
@@ -74,7 +79,9 @@ class aam_Control_Object_Post extends aam_Control_Object {
      */
     public function getAccessList($area) {
         if ($area == 'frontend') {
-            $response = array(self::ACTION_READ, self::ACTION_COMMENT);
+            $response = array(
+                self::ACTION_READ, self::ACTION_EXCLUDE, self::ACTION_COMMENT
+            );
         } elseif ($area == 'backend') {
             $response = array(
                 self::ACTION_TRASH, self::ACTION_DELETE, self::ACTION_EDIT
@@ -109,11 +116,17 @@ class aam_Control_Object_Post extends aam_Control_Object {
 
     /**
      *
-     * @param type $object_id
+     * @param type $object
      */
-    public function init($object_id) {
-        if ($object_id && empty($this->_option)) {
-            $this->setPost(get_post($object_id));
+    public function init($object) {
+        //make sure that we are dealing with WP_Post object
+        if ($object instanceof WP_Post){
+            $this->setPost($object);
+        } elseif (intval($object)) {
+            $this->setPost(get_post($object));
+        }
+        //read options
+        if ($this->getPost()->ID) {
             $this->read();
         }
     }
@@ -189,16 +202,28 @@ class aam_Control_Object_Post extends aam_Control_Object {
     }
 
     /**
-     *
+     * Set Post. Cover all unexpectd wierd issues with WP Core
+     * 
      * @param WP_Post $post
+     * 
+     * @return void
+     * 
+     * @access public
      */
-    public function setPost(WP_Post $post) {
-        $this->_post = $post;
+    public function setPost($post) {
+        if ($post instanceof WP_Post){
+            $this->_post = $post;
+        } else {
+            $this->_post = (object) array('ID' => 0);
+        }
     }
 
     /**
-     *
-     * @return type
+     * Get Post
+     * 
+     * @return WP_Post|stdClass
+     * 
+     * @access public
      */
     public function getPost() {
         return $this->_post;

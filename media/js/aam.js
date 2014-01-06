@@ -2355,7 +2355,6 @@ AAM.prototype.launchFilterPostDialog = function(button) {
  */
 AAM.prototype.launchManageAccessDialog = function(button, nRow, aData, type) {
     var _this = this;
-
     //prepare form for view
     jQuery('.dataTable', '#access_dialog').hide();
 
@@ -2545,13 +2544,13 @@ AAM.prototype.buildPostBreadcrumb = function(response) {
             'href': '#',
             'class': 'post-breadcrumb-line-action post-breadcrumb-line-action-manage',
             'tooltip': aamLocal.labels['Manager Access']
-        }).bind('click', function(event) {
+        }).bind('click', {id: response.breadcrumb[i][0]}, function(event) {
             event.preventDefault();
             _this.launch(this, 'post-breadcrumb-line-action-manage');
+            var aData = new Array();
+            aData[0] = event.data.id;    
             _this.launchManageAccessDialog(
-                    this,
-                    jQuery('.post-breadcrumb'),
-                    new Array(response.breadcrumb[i][0]), 'term'
+                    this, jQuery('.post-breadcrumb'), aData, 'term'
             );
         }));
     } else {

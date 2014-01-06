@@ -1043,12 +1043,20 @@ a.capability-action{
     background-image: url('images/post/settings.png');
 }
 
+.post-action-manage:hover{
+    background-image: url('images/post/settings-active.png');
+}
+
 .post-action-manage-active{
     background-image: url('images/post/settings-active.png');
 }
 
 .post-action-edit{
     background-image: url('images/post/edit.png');
+}
+
+.post-action-edit:hover{
+    background-image: url('images/post/edit-active.png');
 }
 
 .post-action-edit-active{
