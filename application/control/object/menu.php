@@ -23,41 +23,44 @@ class aam_Control_Object_Menu extends aam_Control_Object {
 
     /**
      * List of options
-     * 
+     *
      * @var array
-     * 
+     *
      * @access private
      */
     private $_option = array();
 
     /**
      * Filter Menu List
-     * 
+     *
      * @global array $menu
      * @global array $submenu
-     * 
+     *
      * @return void
-     * 
+     *
      * @access public
      */
     public function filter() {
         global $menu;
-        
+
         //filter menu & submenu first
         $capability = uniqid('aam_'); //random capability means NO access
         //let's go and iterate menu & submenu
         foreach ($menu as $id => $item) {
             if ($this->has($item[2])) {
                 $menu[$id][1] = $capability;
+                $denied = true;
+            } else {
+                $denied = false;
             }
             //filter submenu
-            $submenu = $this->filterSubmenu($item[2], $capability);
+            $submenu = $this->filterSubmenu($item[2], $denied);
             //a trick to whether remove the Root Menu or replace link with the first
             //available submenu
-            if (($menu[$id][1] == $capability) && ($submenu)){
+            if ($denied && $submenu){
                 $menu[$id][2] = $submenu[1];
                 $menu[$id][1] = $submenu[0];
-            } elseif ($menu[$id][1] == $capability){
+            } elseif ($denied){ //ok, no available submenus, remove it completely
                 unset($menu[$id]);
             }
         }
@@ -65,19 +68,19 @@ class aam_Control_Object_Menu extends aam_Control_Object {
 
     /**
      * Filter submenu
-     * 
+     *
      * @global array $submenu
-     * 
+     *
      * @param array  $menu
-     * @param string $capability
-     * 
+     * @param boolean $denied
+     *
      * @return string|null
-     * 
+     *
      * @access public
      */
-    public function filterSubmenu($menu, $capability) {
+    public function filterSubmenu($menu, $denied) {
         global $submenu;
-        
+
         //go to submenu
         $available = null;
         if (isset($submenu[$menu])) {
@@ -91,13 +94,13 @@ class aam_Control_Object_Menu extends aam_Control_Object {
                 }
             }
         }
-        
+
         //replace submenu with available new if found
-        if (!is_null($available) && ($available[1] != $menu) ){
+        if ($denied && !is_null($available) && ($available[1] != $menu) ){
             $submenu[$available[1]] = $submenu[$menu];
             unset($submenu[$menu]);
         }
-        
+
         return $available;
     }
 

@@ -29,9 +29,9 @@ class aam_Control_Object_Post extends aam_Control_Object {
      *
      */
     const ACTION_READ = 'read';
-    
+
     /**
-     * 
+     *
      */
     const ACTION_EXCLUDE = 'exclude';
 
@@ -192,7 +192,7 @@ class aam_Control_Object_Post extends aam_Control_Object {
         $access = $term->getOption();
         if (isset($access['post']) && $access['post']) {
             $result = array('post' => $access['post']);
-        } elseif ($term->getTerm()->parent) {
+        } elseif (is_object($term->getTerm()) && $term->getTerm()->parent) {
             $result = $this->inheritAccess($term->getTerm()->parent);
         } else {
             $result = array();
@@ -203,11 +203,11 @@ class aam_Control_Object_Post extends aam_Control_Object {
 
     /**
      * Set Post. Cover all unexpectd wierd issues with WP Core
-     * 
+     *
      * @param WP_Post $post
-     * 
+     *
      * @return void
-     * 
+     *
      * @access public
      */
     public function setPost($post) {
@@ -220,9 +220,9 @@ class aam_Control_Object_Post extends aam_Control_Object {
 
     /**
      * Get Post
-     * 
+     *
      * @return WP_Post|stdClass
-     * 
+     *
      * @access public
      */
     public function getPost() {

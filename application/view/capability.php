@@ -74,7 +74,8 @@ class aam_View_Capability extends aam_View_Abstract {
                 );
             }
         } else {
-            $role = $roles->get_role(array_shift($subject->roles));
+            $role_list = $subject->roles;
+            $role = $roles->get_role(array_shift($role_list));
             foreach ($role->capabilities as $capability => $grant) {
                 $response['aaData'][] = array(
                     $capability,

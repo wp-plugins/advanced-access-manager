@@ -762,11 +762,11 @@ AAM.prototype.launchDeleteRoleDialog = function(button, aData) {
     if (aData[1]) {
         var message = aamLocal.labels['Delete Role with Users Message'].replace(
                 '%d', aData[1]
-                );
+        );
         message = message.replace('%s', aData[2]);
         jQuery('#delete_role_dialog .dialog-content').html(message);
     } else {
-        message = aamLocal.labels['Delete Role Message'].replace('%s', aData[1]);
+        message = aamLocal.labels['Delete Role Message'].replace('%s', aData[2]);
         jQuery('#delete_role_dialog .dialog-content').html(message);
     }
 

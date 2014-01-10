@@ -176,16 +176,16 @@ class aam {
 
         return $post;
     }
-    
+
     /**
      * Filter backend term list
-     * 
+     *
      * @param array $terms
      * @param array $taxonomies
      * @param array $args
-     * 
+     *
      * @return array
-     * 
+     *
      * @access public
      */
     public function getBackendTerms($terms, $taxonomies, $args) {
@@ -194,13 +194,13 @@ class aam {
 
     /**
      * Filter frontend term list
-     * 
+     *
      * @param array $terms
      * @param array $taxonomies
      * @param array $args
-     * 
+     *
      * @return array
-     * 
+     *
      * @access public
      */
     public function getFrontendTerms($terms, $taxonomies, $args) {
@@ -209,12 +209,12 @@ class aam {
 
     /**
      * Filter terms based on area
-     * 
+     *
      * @param string $area
      * @param array $terms
-     * 
+     *
      * @return array
-     * 
+     *
      * @access public
      */
     public function getTerms($area, $terms) {
@@ -235,11 +235,11 @@ class aam {
 
     /**
      * Filter Pages that should be excluded in frontend
-     * 
+     *
      * @param array $pages
-     * 
+     *
      * @return array
-     * 
+     *
      * @access public
      * @todo Cache this process
      */
@@ -253,17 +253,17 @@ class aam {
                 }
             }
         }
-        
+
         return $pages;
     }
-    
+
     /**
-     * Filter Navigation menu 
-     * 
+     * Filter Navigation menu
+     *
      * @param array $pages
-     * 
+     *
      * @return array
-     * 
+     *
      * @access public
      */
     public function getNavigationMenu($pages){
@@ -279,13 +279,13 @@ class aam {
                     $exclude = aam_Control_Object_Post::ACTION_EXCLUDE;
                 }
                 $object->init($page->object_id);
-                
+
                 if ($object->has('frontend', $exclude)){
                     unset($pages[$i]);
                 }
             }
         }
-        
+
         return $pages;
     }
 
@@ -797,18 +797,18 @@ class aam {
      */
     public function metaboxes() {
         global $post;
-        
+
         $post_type = ($post instanceof WP_Post ? $post->post_type : '');
-        
+
         if (aam_Core_Request::get('aam_meta_init')) {
             $model = new aam_View_Metabox;
             $model->run($post_type);
-        } else { 
+        } else {
              $this->getUser()->getObject(aam_Control_Object_Metabox::UID)
                                             ->filterBackend($post_type, 'dashboard');
         }
     }
-    
+
     /**
      * Filter Dashboard Widgets & Metaboxes
      *
