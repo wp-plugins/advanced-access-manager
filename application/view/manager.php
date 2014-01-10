@@ -288,7 +288,7 @@ class aam_View_Manager extends aam_View_Abstract {
         if (!isset($options[aam_Control_Object_Event::UID])) {
             $options[aam_Control_Object_Event::UID] = array();
         }
-
+        
         return apply_filters('aam_prepare_option_list', $options);
     }
 
@@ -372,7 +372,8 @@ class aam_View_Manager extends aam_View_Abstract {
             'Manager Access' => __('Manager Access', 'aam'),
             'Unlock Default Accesss Control' => __('Unlock Default Accesss Control', 'aam'),
             'Close' => __('Close', 'aam'),
-            'Edit Role' => __('Edit Role', 'aam')
+            'Edit Role' => __('Edit Role', 'aam'),
+            'Restore Default Capabilities' => __('Restore Default Capabilities', 'aam')
         ));
     }
 

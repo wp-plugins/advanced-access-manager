@@ -51,7 +51,8 @@ class aam_View_Capability extends aam_View_Abstract {
      */
     public function retrieveList() {
         $response = array(
-            'aaData' => array()
+            'aaData' => array(),
+            'aaDefault' => 1 //Default set of Capabilities indicator
         );
 
         $subject = $this->getSubject();
@@ -73,7 +74,6 @@ class aam_View_Capability extends aam_View_Abstract {
                 );
             }
         } else {
-            //
             $role = $roles->get_role(array_shift($subject->roles));
             foreach ($role->capabilities as $capability => $grant) {
                 $response['aaData'][] = array(
@@ -83,6 +83,7 @@ class aam_View_Capability extends aam_View_Abstract {
                     $this->getHumanText($capability),
                     ''
                 );
+                $response['aaDefault'] = ($subject->defaultCapabilitySet() ? 1 : 0);
             }
         }
 
@@ -150,6 +151,28 @@ class aam_View_Capability extends aam_View_Abstract {
             $response = array('status' => 'failure');
         }
 
+        return json_encode($response);
+    }
+    
+    /**
+     * Restore default user capabilities
+     * 
+     * @return string
+     * 
+     * @access public
+     */
+    public function restoreCapability(){
+        $subject = $this->getSubject();
+        $response = array('status' => 'failure');
+        if ($subject->getUID() == aam_Control_Subject_User::UID){
+            foreach($subject->caps as $capability => $grant){
+                if (!in_array($capability, $subject->roles)){
+                    $subject->remove_cap($capability);
+                }
+            }
+            $response = array('status' => 'success');
+        }
+        
         return json_encode($response);
     }
 

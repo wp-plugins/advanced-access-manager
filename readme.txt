@@ -1,9 +1,9 @@
 === Advanced Access Manager ===
 Contributors: vasyl_m
-Tags: access manager, access control, comments, capability, dashboard widget, expire, expire link, filter menu, page, post, metabox, role manager, user access, user control, user role
-Requires at least: 3.2
+Tags: access manager, access, access control, comments, capability, widget, filter menu, role manager, user access, user control, user
+Requires at least: 3.4.2
 Tested up to: 3.8
-Stable tag: 2.0 Beta 3
+Stable tag: 2.0 Beta 4
 
 Graphic interface to manage User Access to your Front-end and Back-end
 
@@ -57,6 +57,15 @@ the list of additional metaboxes can be picked by AAM.
 5. ConfigPress
 
 == Changelog ==
+
+= 2.0 Beta 4 =
+* Fixed issue with Menu (special thanks to spacecookie)
+* Fixed issue with displaying custom metaboxes
+* Fixed issue with AAM Plus Package
+* Added LIST Restriction to Terms
+* Improved Users & Roles Capability handling (special thanks to Gustaw Lasek)
+* Added Restore User's Default Capabilities
+* Fixed bug related to Extensions Repository
 
 = 2.0 Beta 3 =
 * Fixed issue with Admin over SSL

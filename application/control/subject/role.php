@@ -34,6 +34,10 @@ class aam_Control_Subject_Role extends aam_Control_Subject {
 
         if (is_null($role)) {
             aam_Core_Console::write('Role ' . $this->getId() . ' does not exist');
+        } elseif (isset($role->capabilities)){
+            //add role capability as role id, weird WordPress behavior
+            //example is administrator capability
+            $role->capabilities[$this->getId()] = true;
         }
 
         return $role;

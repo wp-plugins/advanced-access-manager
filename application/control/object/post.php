@@ -126,7 +126,7 @@ class aam_Control_Object_Post extends aam_Control_Object {
             $this->setPost(get_post($object));
         }
         //read options
-        if ($this->getPost()->ID) {
+        if ($this->getPost()) {
             $this->read();
         }
     }

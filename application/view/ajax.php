@@ -78,6 +78,10 @@ class aam_View_Ajax extends aam_View_Abstract{
             case 'delete_capability':
                 $response = $this->deleteCapability();
                 break;
+            
+             case 'restore_capability':
+                $response = $this->restoreCapability();
+                break;
 
             case 'post_type_list':
                 $response = $this->getPostTypeList();
@@ -313,6 +317,19 @@ class aam_View_Ajax extends aam_View_Abstract{
         $model = new aam_View_Capability;
 
         return $model->deleteCapability();
+    }
+    
+    /**
+     * Restore Capabilities
+     *
+     * @return string
+     *
+     * @access protected
+     */
+    protected function restoreCapability() {
+        $model = new aam_View_Capability;
+
+        return $model->restoreCapability();
     }
 
     /**

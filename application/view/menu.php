@@ -30,51 +30,86 @@ class aam_View_Menu extends aam_View_Abstract {
      * @return type
      */
     public function getMenu() {
-        global $menu, $submenu;
-
+        global $menu;
+        
         $response = array();
-        $capability = $this->getSubject()->getObject(aam_Control_Object_Capability::UID);
+        
         //let's create menu list with submenus
         foreach ($menu as $menu_item) {
-            if (!preg_match('/^separator/', $menu_item[2])
-                                            && $capability->has($menu_item[1])) {
-                //prepare title
-                $menu_title = $this->removeHTML($menu_item[0]);
-                if (strlen($menu_title) > 18) {
-                    $menu_short = substr($menu_title, 0, 15) . '...';
-                } else {
-                    $menu_short = $menu_title;
+            if (!preg_match('/^separator/', $menu_item[2])) {
+                $submenu = $this->getSubmenu($menu_item[2]);
+                $remove = !$this->getSubject()->hasCapability($menu_item[1]);
+                if (($remove === false) || (count($submenu) !== 0)) {
+                    $item = array(
+                        'name' => $this->removeHTML($menu_item[0]),
+                        'id' => $menu_item[2],
+                        'submenu' => $submenu
+                    );
+                    $response[] = $item;
                 }
-
-                $item = array(
-                    'name' => $menu_title,
-                    'short' => $menu_short,
-                    'id' => $menu_item[2]
-                );
-                if (isset($submenu[$menu_item[2]])) {
-                    $item['submenu'] = array();
-                    foreach ($submenu[$menu_item[2]] as $submenu_item) {
-                        if ($capability->has($submenu_item[1])) {
-                            //prepare title
-                            $submenu_title = $this->removeHTML($submenu_item[0]);
-                            if (strlen($submenu_title) > 18) {
-                                $submenu_short = substr($submenu_title, 0, 15) . '..';
-                            } else {
-                                $submenu_short = $submenu_title;
-                            }
-
-                            $item['submenu'][] = array(
-                                'name' => $submenu_title,
-                                'short' => $submenu_short,
-                                'id' => $submenu_item[2]
-                            );
-                        }
-                    }
-                }
-                $response[] = $item;
             }
         }
+        
+        return $response;
+    }
+    
+    /**
+     * Prepare filtered submenu
+     * 
+     * @global array $submenu
+     * @param string $menu
+     * 
+     * @return array
+     * 
+     * @access public
+     */
+    public function getSubmenu($menu) {
+        global $submenu;
 
+        $filtered_submenu = array();
+        if (isset($submenu[$menu])) {
+            foreach ($submenu[$menu] as $submenu_item) {
+                if ($this->getSubject()->hasCapability($submenu_item[1]) !== false) {
+                    //prepare title
+                    $submenu_title = $this->removeHTML($submenu_item[0]);
+                    if (strlen($submenu_title) > 18) {
+                        $submenu_short = substr($submenu_title, 0, 15) . '..';
+                    } else {
+                        $submenu_short = $submenu_title;
+                    }
+
+                    $filtered_submenu[] = array(
+                        'name' => $submenu_title,
+                        'short' => $submenu_short,
+                        'id' => $submenu_item[2]
+                    );
+                }
+            }
+        }
+        
+        return $filtered_submenu;
+    }
+    
+    /**
+     * Check if the entire branch is restricted
+     * 
+     * @param array $menu
+     * 
+     * @return boolean
+     * 
+     * @access public
+     */
+    public function hasRestrictedAll($menu){
+        $menuControl = $this->getSubject()->getObject(aam_Control_Object_Menu::UID);
+        $response = $menuControl->has($menu['id']);
+        
+        foreach($menu['submenu'] as $submenu){
+            if ($menuControl->has($submenu['id']) === false){
+                $response = false;
+                break;
+            }
+        }
+        
         return $response;
     }
 

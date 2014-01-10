@@ -434,15 +434,20 @@ class aam_View_Post extends aam_View_Abstract {
         $object_id = aam_Core_Request::post('id');
 
         if ($type === 'term') {
-            $object = $this->getSubject()->getObject(aam_Control_Object_Term::UID, $object_id);
+            $object = $this->getSubject()->getObject(
+                    aam_Control_Object_Term::UID, $object_id
+            );
         } else {
-            $object = $this->getSubject()->getObject(aam_Control_Object_Post::UID, $object_id);
+            $object = $this->getSubject()->getObject(
+                    aam_Control_Object_Post::UID, $object_id
+            );
         }
 
         return json_encode(array(
             'settings' => $object->getOption(),
             'counter' => apply_filters(
-                    'wpaccess_restrict_limit', aam_Core_API::getBlogOption('aam_access_limit', 0)
+                    'wpaccess_restrict_limit', 
+                    aam_Core_API::getBlogOption('aam_access_limit', 0)
             )
         ));
     }
@@ -456,9 +461,13 @@ class aam_View_Post extends aam_View_Abstract {
         $object_id = aam_Core_Request::post('id');
 
         if ($type === 'term') {
-            $object = $this->getSubject()->getObject(aam_Control_Object_Term::UID, $object_id);
+            $object = $this->getSubject()->getObject(
+                    aam_Control_Object_Term::UID, $object_id
+            );
         } else {
-            $object = $this->getSubject()->getObject(aam_Control_Object_Post::UID, $object_id);
+            $object = $this->getSubject()->getObject(
+                    aam_Control_Object_Post::UID, $object_id
+            );
         }
 
         return json_encode(array(

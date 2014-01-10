@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
@@ -16,41 +17,88 @@
 class aam_Control_Object_Menu extends aam_Control_Object {
 
     /**
-     *
+     * Object Unique ID
      */
     const UID = 'menu';
 
     /**
-     *
-     * @var type
+     * List of options
+     * 
+     * @var array
+     * 
+     * @access private
      */
     private $_option = array();
 
     /**
-     *
-     * @global type $menu
-     * @global type $submenu
+     * Filter Menu List
+     * 
+     * @global array $menu
+     * @global array $submenu
+     * 
+     * @return void
+     * 
+     * @access public
      */
     public function filter() {
-        global $menu, $submenu;
-
+        global $menu;
+        
         //filter menu & submenu first
-        $random = uniqid('aam_'); //oopsie, random capability - no access
+        $capability = uniqid('aam_'); //random capability means NO access
         //let's go and iterate menu & submenu
         foreach ($menu as $id => $item) {
             if ($this->has($item[2])) {
-                unset($menu[$id]); // also remove the menu from the list
-                $menu[$id][1] = $random;
+                $menu[$id][1] = $capability;
             }
-            //go to submenu
-            if (isset($submenu[$item[2]])) {
-                foreach ($submenu[$item[2]] as $sid => $sub_item) {
-                    if ($this->has($sub_item[2])) {
-                        $submenu[$item[2]][$sid][1] = $random;
-                    }
+            //filter submenu
+            $submenu = $this->filterSubmenu($item[2], $capability);
+            //a trick to whether remove the Root Menu or replace link with the first
+            //available submenu
+            if (($menu[$id][1] == $capability) && ($submenu)){
+                $menu[$id][2] = $submenu[1];
+                $menu[$id][1] = $submenu[0];
+            } elseif ($menu[$id][1] == $capability){
+                unset($menu[$id]);
+            }
+        }
+    }
+
+    /**
+     * Filter submenu
+     * 
+     * @global array $submenu
+     * 
+     * @param array  $menu
+     * @param string $capability
+     * 
+     * @return string|null
+     * 
+     * @access public
+     */
+    public function filterSubmenu($menu, $capability) {
+        global $submenu;
+        
+        //go to submenu
+        $available = null;
+        if (isset($submenu[$menu])) {
+            foreach ($submenu[$menu] as $sid => $sub_item) {
+                if ($this->has($sub_item[2])) {
+                    //weird WordPress behavior, it gets the first submenu link
+                    //$submenu[$menu][$sid][1] = $capability;
+                    unset($submenu[$menu][$sid]);
+                } elseif (is_null($available)){ //find first available submenu
+                    $available = array($sub_item[1], $sub_item[2]);
                 }
             }
         }
+        
+        //replace submenu with available new if found
+        if (!is_null($available) && ($available[1] != $menu) ){
+            $submenu[$available[1]] = $submenu[$menu];
+            unset($submenu[$menu]);
+        }
+        
+        return $available;
     }
 
     /**

@@ -917,6 +917,18 @@
     background-image: url('images/capability/filter-active.png');
 }
 
+.capability-top-action-restore{
+    background-image: url('images/capability/restore.png');
+}
+
+.capability-top-action-restore:hover{
+    background-image: url('images/capability/restore-active.png');
+}
+
+.capability-top-action-restore-running{
+    background-image: url('images/capability/ajax-loader.gif');
+}
+
 .capability-actions{
     display: table;
     width: 100%;

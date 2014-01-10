@@ -35,6 +35,11 @@ class aam_Control_Object_Term extends aam_Control_Object {
      *
      */
     const ACTION_EDIT = 'edit';
+    
+    /**
+     * 
+     */
+    const ACTION_LIST = 'list';
 
     /**
      *
@@ -67,9 +72,13 @@ class aam_Control_Object_Term extends aam_Control_Object {
      */
     public function getAccessList($area) {
         if ($area == 'frontend') {
-            $response = array(self::ACTION_BROWSE, self::ACTION_EXCLUDE);
+            $response = array(
+                self::ACTION_BROWSE, self::ACTION_EXCLUDE, self::ACTION_LIST
+            );
         } elseif ($area == 'backend') {
-            $response = array(self::ACTION_BROWSE, self::ACTION_EDIT);
+            $response = array(
+                self::ACTION_BROWSE, self::ACTION_EDIT, self::ACTION_LIST
+            );
         } else {
             $response = array();
         }

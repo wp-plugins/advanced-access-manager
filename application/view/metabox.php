@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
@@ -16,10 +17,11 @@
 class aam_View_Metabox extends aam_View_Abstract {
 
     /**
-     *
-     * @var type
+     * Metabox Group - WIDGETS
+     * 
+     * Is used to retrieve the list of all wigets on the frontend
      */
-    private $_post_type = null;
+    const GROUP_WIDGETS = 'widgets';
 
     /**
      *
@@ -33,37 +35,14 @@ class aam_View_Metabox extends aam_View_Abstract {
      * @param type $post_type
      */
     public function run($post_type) {
-        global $wp_meta_boxes;
-
-        $this->_post_type = $post_type;
         $this->_cache = aam_Core_API::getBlogOption(
                         'aam_metabox_cache', array()
         );
-        if (!isset($this->_cache[$post_type])) {
-            $this->_cache[$post_type] = array();
-        }
 
-        if (aam_Core_Request::get('widget')) {
-            $this->_cache['widgets'] = $this->getWidgetList();
+        if ($post_type === '') {
+            $this->collectWidgets();
         } else {
-            if (is_array($wp_meta_boxes[$this->_post_type])) {
-                foreach ($wp_meta_boxes[$this->_post_type] as $levels) {
-                    if (is_array($levels)) {
-                        foreach ($levels as $boxes) {
-                            if (is_array($boxes)) {
-                                foreach ($boxes as $data) {
-                                    if (trim($data['id'])){ //exclude any junk
-                                        $this->_cache[$this->_post_type][$data['id']] = array(
-                                            'id' => $data['id'],
-                                            'title' => $this->removeHTML($data['title'])
-                                        );
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            $this->collectMetaboxes($post_type);
         }
         aam_Core_API::updateBlogOption('aam_metabox_cache', $this->_cache);
     }
@@ -71,11 +50,15 @@ class aam_View_Metabox extends aam_View_Abstract {
     /**
      *
      * @global type $wp_registered_widgets
-     * @return type
      */
-    protected function getWidgetList() {
+    protected function collectWidgets() {
         global $wp_registered_widgets;
-        $list = array();
+        
+        if (!isset($this->_cache['widgets'])) {
+            $this->_cache['widgets'] = array();
+        }
+
+        //get frontend widgets
         if (is_array($wp_registered_widgets)) {
             foreach ($wp_registered_widgets as $id => $data) {
                 if (is_object($data['callback'][0])) {
@@ -86,8 +69,8 @@ class aam_View_Metabox extends aam_View_Abstract {
                     $callback = null;
                 }
 
-                if (!is_null($callback)){ //exclude any junk
-                    $list[$callback] = array(
+                if (!is_null($callback)) { //exclude any junk
+                    $this->_cache['widgets'][$callback] = array(
                         'title' => $this->removeHTML($data['name']),
                         'id' => $callback
                     );
@@ -95,7 +78,35 @@ class aam_View_Metabox extends aam_View_Abstract {
             }
         }
 
-        return $list;
+        //now collect Admin Dashboard Widgets
+        $this->collectMetaboxes('dashboard');
+    }
+
+    protected function collectMetaboxes($post_type) {
+        global $wp_meta_boxes;
+        
+        if (!isset($this->_cache[$post_type])) {
+            $this->_cache[$post_type] = array();
+        }
+
+        if (isset($wp_meta_boxes[$post_type]) && is_array($wp_meta_boxes[$post_type])) {
+            foreach ($wp_meta_boxes[$post_type] as $levels) {
+                if (is_array($levels)) {
+                    foreach ($levels as $boxes) {
+                        if (is_array($boxes)) {
+                            foreach ($boxes as $data) {
+                                if (trim($data['id'])) { //exclude any junk
+                                    $this->_cache[$post_type][$data['id']] = array(
+                                        'id' => $data['id'],
+                                        'title' => $this->removeHTML($data['title'])
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -126,31 +137,21 @@ class aam_View_Metabox extends aam_View_Abstract {
         if (aam_Core_Request::post('refresh') == 1) {
             aam_Core_API::deleteBlogOption('aam_metabox_cache');
             $type_list = array_keys($wp_post_types);
-            array_unshift($type_list, 'widgets');
-            array_unshift($type_list, 'dashboard');
+            array_unshift($type_list, self::GROUP_WIDGETS);
 
             foreach ($type_list as $type) {
-                switch ($type) {
-                    case 'dashboard':
-                        $url = add_query_arg(
-                            'aam_meta_init', 1, admin_url('index.php')
-                        );
-                        break;
-
-                    case 'widgets':
-                        $url = add_query_arg(
-                            array('aam_meta_init' => 1, 'widget' => 1),
-                            admin_url('index.php')
-                        );
-                        break;
-
-                    default:
-                        $url = add_query_arg(
-                            'aam_meta_init',
+                if ($type == 'widgets') {
+                    $url = add_query_arg(
+                            'aam_meta_init', 
                             1,
+                            admin_url('index.php')
+                    );
+                } else {
+                    $url = add_query_arg(
+                            'aam_meta_init', 
+                            1, 
                             admin_url('post-new.php?post_type=' . $type)
-                        );
-                        break;
+                    );
                 }
                 //grab metaboxes
                 aam_Core_API::cURL($url);
@@ -197,7 +198,7 @@ class aam_View_Metabox extends aam_View_Abstract {
             $content .= '<div class="metabox-group">';
             $i = 1;
             $metaboxControl = $this->getSubject()->getObject(
-                aam_Control_Object_Metabox::UID
+                    aam_Control_Object_Metabox::UID
             );
             foreach ($metaboxes as $metabox) {
                 if ($i++ == 1) {
@@ -210,9 +211,9 @@ class aam_View_Metabox extends aam_View_Abstract {
                     $title = $metabox['title'];
                 }
                 //prepare selected
-                if ($metaboxControl->has($screen, $metabox['id'])){
+                if ($metaboxControl->has($screen, $metabox['id'])) {
                     $checked = 'checked="checked"';
-                } else{
+                } else {
                     $checked = '';
                 }
 
@@ -220,18 +221,18 @@ class aam_View_Metabox extends aam_View_Abstract {
 
                 $content .= '<div class="metabox-item">';
                 $content .= sprintf(
-                    '<label for="%s" tooltip="%s">%s</label>',
-                    $metabox_id,
-                    esc_js($metabox['title']),
-                    $title
+                        '<label for="%s" tooltip="%s">%s</label>', 
+                        $metabox_id, 
+                        esc_js($metabox['title']), 
+                        $title
                 );
                 $content .= sprintf(
-                    '<input type="checkbox" id="%s" name="aam[%s][%s][%s]" %s />',
-                    $metabox_id,
-                    aam_Control_Object_Metabox::UID,
-                    $screen,
-                    $metabox['id'],
-                    $checked
+                        '<input type="checkbox" id="%s" name="aam[%s][%s][%s]" %s />', 
+                        $metabox_id, 
+                        aam_Control_Object_Metabox::UID, 
+                        $screen, 
+                        $metabox['id'], 
+                        $checked
                 );
                 $content .= '<label for="' . $metabox_id . '"><span></span></label>';
                 $content .= '</div>';

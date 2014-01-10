@@ -3,7 +3,7 @@
 /**
   Plugin Name: Advanced Access Manager
   Description: Manage User and Role Access to WordPress Backend and Frontend.
-  Version: 2.0 Beta 3
+  Version: 2.0 Beta 4
   Author: Vasyl Martyniuk <support@wpaam.com>
   Author URI: http://www.wpaam.com
 
@@ -80,7 +80,8 @@ class aam {
             //manager AAM Ajax Requests
             add_action('wp_ajax_aam', array($this, 'ajax'));
             //manager WordPress metaboxes
-            add_action("do_meta_boxes", array($this, 'metaboxes'), 999, 3);
+            //add_action("do_meta_boxes", array($this, 'metaboxes'), 1, 3);
+            add_action("in_admin_header", array($this, 'metaboxes'), 999);
             //add_action("add_meta_boxes", array($this, 'filterMetaboxes'), 999, 2);
             //add_filter(
             //        'get_user_option_meta-box-order_dashboard',
@@ -89,7 +90,8 @@ class aam {
             //manager user search and authentication control
             add_filter('user_search_columns', array($this, 'searchColumns'));
             //terms & post restriction handlers
-            //add_action('edited_term', array($this, 'editedTerm'), 999, 3);
+            add_filter('get_terms', array($this, 'getBackendTerms'), 10, 3);
+            //post restrictions
             add_action('post_updated', array($this, 'postUpdate'), 10, 3);
             add_filter('page_row_actions', array($this, 'postRowActions'), 10, 2);
             add_filter('post_row_actions', array($this, 'postRowActions'), 10, 2);
@@ -109,6 +111,8 @@ class aam {
             add_filter('comments_open', array($this, 'commentOpen'), 10, 2);
             //user login control
             add_filter('wp_authenticate_user', array($this, 'authenticate'), 1, 2);
+            //terms & post restriction handlers
+            add_filter('get_terms', array($this, 'getFrontendTerms'), 10, 3);
         }
 
         //load extensions only when admin
@@ -173,6 +177,62 @@ class aam {
         return $post;
     }
     
+    /**
+     * Filter backend term list
+     * 
+     * @param array $terms
+     * @param array $taxonomies
+     * @param array $args
+     * 
+     * @return array
+     * 
+     * @access public
+     */
+    public function getBackendTerms($terms, $taxonomies, $args) {
+        return $this->getTerms('backend', $terms);
+    }
+
+    /**
+     * Filter frontend term list
+     * 
+     * @param array $terms
+     * @param array $taxonomies
+     * @param array $args
+     * 
+     * @return array
+     * 
+     * @access public
+     */
+    public function getFrontendTerms($terms, $taxonomies, $args) {
+        return $this->getTerms('frontend', $terms);
+    }
+
+    /**
+     * Filter terms based on area
+     * 
+     * @param string $area
+     * @param array $terms
+     * 
+     * @return array
+     * 
+     * @access public
+     */
+    public function getTerms($area, $terms) {
+        if (is_array($terms)) {
+            $object = $this->getUser()->getObject(aam_Control_Object_Term::UID);
+            foreach ($terms as $i => $term) {
+                if (is_object($term)) {
+                    $object->init($term->term_id);
+                    if ($object->has($area, aam_Control_Object_Term::ACTION_LIST)) {
+                        unset($terms[$i]);
+                    }
+                }
+            }
+        }
+
+        return $terms;
+    }
+
     /**
      * Filter Pages that should be excluded in frontend
      * 
@@ -731,20 +791,21 @@ class aam {
     /**
      * Hanlde Metabox initialization process
      *
-     * @param string $post_type
-     *
      * @return void
      *
      * @access public
      */
-    public function metaboxes($post_type) {
+    public function metaboxes() {
+        global $post;
+        
+        $post_type = ($post instanceof WP_Post ? $post->post_type : '');
+        
         if (aam_Core_Request::get('aam_meta_init')) {
             $model = new aam_View_Metabox;
             $model->run($post_type);
         } else { 
-             $this->getUser()->getObject(aam_Control_Object_Metabox::UID)->filterBackend(
-                $post_type, 'dashboard'
-        );
+             $this->getUser()->getObject(aam_Control_Object_Metabox::UID)
+                                            ->filterBackend($post_type, 'dashboard');
         }
     }
     

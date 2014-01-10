@@ -618,7 +618,7 @@ AAM.prototype.setCurrent = function(subject, nRow, name) {
     _this.launch(
             jQuery('.' + subject + '-action-manage', nRow),
             subject + '-action-manage'
-    );
+            );
     jQuery('.current-subject').html(subject + ' ' + name);
 };
 
@@ -762,7 +762,7 @@ AAM.prototype.launchDeleteRoleDialog = function(button, aData) {
     if (aData[1]) {
         var message = aamLocal.labels['Delete Role with Users Message'].replace(
                 '%d', aData[1]
-        );
+                );
         message = message.replace('%s', aData[2]);
         jQuery('#delete_role_dialog .dialog-content').html(message);
     } else {
@@ -1082,7 +1082,7 @@ AAM.prototype.deleteUser = function(button, aData) {
 AAM.prototype.launchFilterUserDialog = function(button) {
     var _this = this;
     if (this.blogTables.filterRoleList === null) {
-        this.blogTables.filterRoleList= jQuery('#filter_role_list').dataTable({
+        this.blogTables.filterRoleList = jQuery('#filter_role_list').dataTable({
             sDom: "<'top'f<'clear'>>t<'footer'ip<'clear'>>",
             bServerSide: true,
             sPaginationType: "full_numbers",
@@ -1264,7 +1264,7 @@ AAM.prototype.initSettings = function() {
         jQuery(this).bind('click', function() {
             jQuery('.feature-list .feature-item').removeClass(
                     'feature-item-active'
-            );
+                    );
             jQuery(this).addClass('feature-item-active');
             jQuery('.feature-content .feature-content-container').hide();
             jQuery('#' + jQuery(this).attr('feature') + '_content').show();
@@ -1272,7 +1272,7 @@ AAM.prototype.initSettings = function() {
             jQuery('.aam-help > span').hide();
             jQuery('#feature_help_' + jQuery(this).attr('feature')).css(
                     'display', 'table-cell'
-            );
+                    );
         });
     });
 
@@ -1310,20 +1310,33 @@ AAM.prototype.initConfigPressTab = function() {
 AAM.prototype.initCapabilityTab = function() {
     var _this = this;
 
+    //indicator that current user has default capability set. In case he does
+    //not, it will show additional top action - Restore Default Capabilities
+    var userDefault = true;
+
     this.blogTables.capabilities = jQuery('#capability_list').dataTable({
         sDom: "<'top'lf<'capability-top-actions'><'clear'>>t<'footer'ip<'clear'>>",
         sPaginationType: "full_numbers",
         bAutoWidth: false,
         bSort: false,
+        bDestroy: true,
         sAjaxSource: true,
-        fnServerData: function(sSource, aoData, fnCallback, oSettings) {
-                oSettings.jqXHR = jQuery.ajax({
-                    "dataType": 'json',
-                    "type": "POST",
-                    "url": aamLocal.ajaxurl,
-                    "data": aoData,
-                    "success": fnCallback
-                });
+        fnServerData: function(sSource, aoData, fnCallback) {
+            jQuery.ajax({
+                dataType: 'json',
+                type: "POST",
+                url: aamLocal.ajaxurl,
+                data: aoData,
+                success: function(data) {
+                    //set Default Capability set indicator
+                    userDefault = parseInt(data.aaDefault);
+                    //populate oTable
+                    fnCallback(data);
+                },
+                error: function() {
+                    _this.parent.failure();
+                }
+            });
         },
         fnServerParams: function(aoData) {
             aoData.push({
@@ -1386,6 +1399,35 @@ AAM.prototype.initCapabilityTab = function() {
 
                 jQuery(a).append(copy);
                 jQuery(a).append(add);
+            } else if (userDefault === 0) {
+                //add Restore Default Capability button
+                var restore = jQuery('<a/>', {
+                    'href': '#',
+                    'class': 'capability-top-action capability-top-action-restore',
+                    'tooltip': aamLocal.labels['Restore Default Capabilities']
+                }).bind('click', function(event) {
+                    event.preventDefault();
+                    var data = _this.compileAjaxPackage('restore_capability', true);
+                    //show indicator that is running
+                    jQuery(this).addClass('capability-top-action-restore-running');
+                    jQuery.ajax(aamLocal.ajaxurl, {
+                        type: 'POST',
+                        dataType: 'json',
+                        data: data,
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                _this.retrieveSettings();
+                            } else {
+                                _this.highlight('#capability_content', 'failure');
+                            }
+                        },
+                        error: function() {
+                            _this.highlight('#capability_content', 'failure');
+                        }
+                    });
+                });
+
+                jQuery(a).append(restore);
             }
 
             _this.initTooltip(a);
@@ -1411,12 +1453,12 @@ AAM.prototype.initCapabilityTab = function() {
                 checked: (parseInt(aData[1]) === 1 ? true : false),
                 name: 'aam[capability][' + aData[0] + ']'
             }).bind('change', function() {
-                var status =  (jQuery(this).prop('checked') === true ? 1 : 0);
+                var status = (jQuery(this).prop('checked') === true ? 1 : 0);
                 _this.blogTables.capabilities.fnUpdate(status, nRow, 1, false);
             }));
             jQuery('.capability-action', actions).append(
                     '<label for="' + aData[0] + '"><span></span></label>'
-            );
+                    );
             //add capability delete
             jQuery(actions).append(jQuery('<a/>', {
                 'href': '#',
@@ -1527,7 +1569,7 @@ AAM.prototype.launchCapabilityFilterDialog = function(button) {
                 event.preventDefault();
                 _this.blogTables.capabilities.fnFilter(
                         aData[0].replace('&amp;', '&'), 2
-                );
+                        );
                 jQuery('#filter_capability_dialog').dialog('close');
             });
         }
@@ -1569,13 +1611,13 @@ AAM.prototype.launchRoleCopyDialog = function(button) {
         bDestroy: true,
         sAjaxSource: true,
         fnServerData: function(sSource, aoData, fnCallback, oSettings) {
-                oSettings.jqXHR = jQuery.ajax({
-                    "dataType": 'json',
-                    "type": "POST",
-                    "url": aamLocal.ajaxurl,
-                    "data": aoData,
-                    "success": fnCallback
-                });
+            oSettings.jqXHR = jQuery.ajax({
+                "dataType": 'json',
+                "type": "POST",
+                "url": aamLocal.ajaxurl,
+                "data": aoData,
+                "success": fnCallback
+            });
         },
         fnServerParams: function(aoData) {
             aoData.push({
@@ -1775,11 +1817,11 @@ AAM.prototype.initMenuTab = function() {
             if (jQuery(this).attr('checked')) {
                 jQuery('input[type="checkbox"]', '#submenu_' + jQuery(this).attr('id')).attr(
                         'checked', 'checked'
-                );
+                        );
             } else {
                 jQuery('input[type="checkbox"]', '#submenu_' + jQuery(this).attr('id')).removeAttr(
                         'checked'
-                );
+                        );
             }
         });
     });
@@ -1941,13 +1983,13 @@ AAM.prototype.initEventTab = function() {
         bSort: false,
         sAjaxSource: true,
         fnServerData: function(sSource, aoData, fnCallback, oSettings) {
-                oSettings.jqXHR = jQuery.ajax({
-                    "dataType": 'json',
-                    "type": "POST",
-                    "url": aamLocal.ajaxurl,
-                    "data": aoData,
-                    "success": fnCallback
-                });
+            oSettings.jqXHR = jQuery.ajax({
+                "dataType": 'json',
+                "type": "POST",
+                "url": aamLocal.ajaxurl,
+                "data": aoData,
+                "success": fnCallback
+            });
         },
         fnServerParams: function(aoData) {
             aoData.push({
@@ -2029,13 +2071,13 @@ AAM.prototype.initEventTab = function() {
             //decorate the data in row
             jQuery('td:eq(0)', nRow).html(
                     jQuery('#event_event option[value="' + aData[0] + '"]').text()
-            );
+                    );
             jQuery('td:eq(1)', nRow).html(
                     jQuery('#event_bind option[value="' + aData[2] + '"]').text()
-            );
+                    );
             jQuery('td:eq(2)', nRow).html(
                     jQuery('#event_action option[value="' + aData[3] + '"]').text()
-            );
+                    );
         },
         oLanguage: {
             sSearch: "",
@@ -2107,7 +2149,7 @@ AAM.prototype.launchManageEventDialog = function(button, aData, nRow) {
             _this.terminate(
                     jQuery(button),
                     (aData ? 'event-action-edit' : 'event-top-action-add')
-            );
+                    );
         }
     });
 };
@@ -2200,13 +2242,13 @@ AAM.prototype.initPostTab = function() {
         bServerSide: true,
         sAjaxSource: true,
         fnServerData: function(sSource, aoData, fnCallback, oSettings) {
-                oSettings.jqXHR = jQuery.ajax({
-                    "dataType": 'json',
-                    "type": "POST",
-                    "url": aamLocal.ajaxurl,
-                    "data": aoData,
-                    "success": fnCallback
-                });
+            oSettings.jqXHR = jQuery.ajax({
+                "dataType": 'json',
+                "type": "POST",
+                "url": aamLocal.ajaxurl,
+                "data": aoData,
+                "success": fnCallback
+            });
         },
         fnServerParams: function(aoData) {
             aoData.push({
@@ -2407,7 +2449,7 @@ AAM.prototype.launchManageAccessDialog = function(button, nRow, aData, type) {
                         jQuery(element, '#access_dialog').attr(
                                 'checked',
                                 (parseInt(response.settings[object][area][action]) === 1 ? true : false)
-                        );
+                                );
                     }
                 }
             }
@@ -2484,7 +2526,7 @@ AAM.prototype.launchManageAccessDialog = function(button, nRow, aData, type) {
                 close: function() {
                     _this.terminate(
                             jQuery(button), 'post-breadcrumb-line-action-manage'
-                    );
+                            );
                 }
             });
         },
@@ -2548,10 +2590,10 @@ AAM.prototype.buildPostBreadcrumb = function(response) {
             event.preventDefault();
             _this.launch(this, 'post-breadcrumb-line-action-manage');
             var aData = new Array();
-            aData[0] = event.data.id;    
+            aData[0] = event.data.id;
             _this.launchManageAccessDialog(
                     this, jQuery('.post-breadcrumb'), aData, 'term'
-            );
+                    );
         }));
     } else {
         jQuery('.post-breadcrumb-line-actions').append(jQuery('<a/>', {
@@ -2718,7 +2760,7 @@ AAM.prototype.renderRoleSelectList = function(selector, selected) {
 
             jQuery(selector).removeClass('dialog-input-dynamic').addClass(
                     'dialog-input'
-            );
+                    );
         },
         error: function() {
             _this.highlight(selector, 'failure');

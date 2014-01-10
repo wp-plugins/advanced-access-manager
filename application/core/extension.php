@@ -234,7 +234,7 @@ class aam_Core_Extension {
      */
     protected function bootstrapExtension($extension) {
         $bootstrap = $this->_basedir . "/{$extension}/index.php";
-        if (file_exists($bootstrap) && !$this->_cache[$extension]) {
+        if (file_exists($bootstrap) && !isset($this->_cache[$extension])) {
             $this->_cache[$extension] = require_once($bootstrap);
         }
     }
