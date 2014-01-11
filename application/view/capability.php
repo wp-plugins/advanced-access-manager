@@ -84,7 +84,7 @@ class aam_View_Capability extends aam_View_Abstract {
                     $this->getHumanText($capability),
                     ''
                 );
-                $response['aaDefault'] = ($subject->defaultCapabilitySet() ? 1 : 0);
+                $response['aaDefault'] = ($subject->isDefaultCapSet() ? 1 : 0);
             }
         }
 
@@ -165,13 +165,9 @@ class aam_View_Capability extends aam_View_Abstract {
     public function restoreCapability(){
         $subject = $this->getSubject();
         $response = array('status' => 'failure');
-        if ($subject->getUID() == aam_Control_Subject_User::UID){
-            foreach($subject->caps as $capability => $grant){
-                if (!in_array($capability, $subject->roles)){
-                    $subject->remove_cap($capability);
-                }
-            }
-            $response = array('status' => 'success');
+        if (($subject->getUID() == aam_Control_Subject_User::UID) 
+                                                    && $subject->resetCapability()){
+            $response['status'] = 'success';
         }
         
         return json_encode($response);

@@ -42,7 +42,7 @@ abstract class aam_View_Abstract {
      * @return type
      */
     public function getSubject() {
-        return $this->_subject;
+        return self::$_subject;
     }
 
     /**
@@ -50,7 +50,7 @@ abstract class aam_View_Abstract {
      * @param aam_Control_Subject $subject
      */
     public function setSubject(aam_Control_Subject $subject) {
-        $this->_subject = $subject;
+        self::$_subject = $subject;
     }
 
     /**

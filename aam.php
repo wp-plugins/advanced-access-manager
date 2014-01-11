@@ -782,7 +782,11 @@ class aam {
      */
     public function ajax() {
         check_ajax_referer('aam_ajax');
-
+        
+        //clean buffer to make sure that nothing messing around with system
+        while (@ob_end_clean());
+        
+        //process ajax request
         $model = new aam_View_Ajax;
         echo $model->run();
         die();

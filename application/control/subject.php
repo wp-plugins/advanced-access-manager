@@ -242,21 +242,6 @@ abstract class aam_Control_Subject {
     }
 
     /**
-     * Check if Subject has capability
-     *
-     * Keep compatible with WordPress core
-     *
-     * @param string $capability
-     *
-     * @return boolean
-     *
-     * @access public
-     */
-    public function addCapability($capability) {
-        return $this->getSubject()->add_cap($capability, 1);
-    }
-
-    /**
      * Retrieve list of subject's capabilities
      *
      * @return array

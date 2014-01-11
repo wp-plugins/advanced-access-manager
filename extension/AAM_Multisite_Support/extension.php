@@ -74,30 +74,43 @@ class AAM_Extension_Multisite {
      * @return type
      */
     protected function getSiteList() {
-        $list = _get_list_table('WP_MS_Sites_List_Table');
-        $list->prepare_items();
-
+        //retrieve site list first
+        $blog_list = $this->retrieveSiteList();
+        
         $response = array(
-            'iTotalRecords' => $list->get_pagination_arg('total_items'),
-            'iTotalDisplayRecords' => $list->get_pagination_arg('total_items'),
+            'iTotalRecords' => count($blog_list),
+            'iTotalDisplayRecords' => count($blog_list),
             'sEcho' => aam_Core_Request::request('sEcho'),
             'aaData' => array(),
         );
         $default = aam_Core_API::getBlogOption('aam_default_site', 0, 1);
 
-        foreach ($list->items as $site) {
-            $blog = get_blog_details($site['blog_id']);
+        foreach ($blog_list as $site) {
+            $blog = get_blog_details($site->blog_id);
             $response['aaData'][] = array(
-                $site['blog_id'],
-                get_admin_url($site['blog_id'], 'admin.php'),
-                get_admin_url($site['blog_id'], 'admin-ajax.php'),
+                $site->blog_id,
+                get_admin_url($site->blog_id, 'admin.php'),
+                get_admin_url($site->blog_id, 'admin-ajax.php'),
                 $blog->blogname,
                 '',
-                ($site['blog_id'] == $default ? 1 : 0)
+                ($site->blog_id == $default ? 1 : 0)
             );
         }
 
         return json_encode($response);
+    }
+    
+    /**
+     * Retieve the list of sites
+     * 
+     * @return array
+     * 
+     * @access public
+     */
+    public function retrieveSiteList(){
+        global $wpdb;
+        
+        return $wpdb->get_results('SELECT blog_id FROM ' . $wpdb->blogs);
     }
 
     /**

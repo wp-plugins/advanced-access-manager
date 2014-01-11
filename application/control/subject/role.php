@@ -111,6 +111,21 @@ class aam_Control_Subject_Role extends aam_Control_Subject {
     public function removeCapability($capability) {
         return $this->getSubject()->remove_cap($capability);
     }
+    
+    /**
+     * Check if Subject has capability
+     *
+     * Keep compatible with WordPress core
+     *
+     * @param string $capability
+     *
+     * @return boolean
+     *
+     * @access public
+     */
+    public function addCapability($capability) {
+        return $this->getSubject()->add_cap($capability, 1);
+    }
 
     /**
      *
