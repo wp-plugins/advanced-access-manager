@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: access manager, access, access control, comments, capability, widget, filter menu, role manager, user access, user control, user
 Requires at least: 3.4.2
 Tested up to: 3.8
-Stable tag: 2.0 Beta 4
+Stable tag: 2.0
 
 Graphic interface to manage User Access to your Front-end and Back-end
 
@@ -58,29 +58,10 @@ the list of additional metaboxes can be picked by AAM.
 
 == Changelog ==
 
-= 2.0 Beta 4 =
-* Fixed issue with Menu (special thanks to spacecookie)
-* Fixed issue with displaying custom metaboxes
-* Fixed issue with AAM Plus Package
-* Added LIST Restriction to Terms
-* Improved Users & Roles Capability handling (special thanks to Gustaw Lasek)
-* Added Restore User's Default Capabilities
-* Fixed bug related to Extensions Repository
-
-= 2.0 Beta 3 =
-* Fixed issue with Admin over SSL
-* Fixed issue with Update script
-* Added Exclude Page from Frontend Navigation
-* Regenerated the .pot file
-* Fixed issue with Term Access saving
-* Fixed issue with hiding Screen Options for Dashboard and Post Edit Page
-
-= 2.0 Beta 2 =
-* Few bug fixed with UI and functionality
-* Spanish translation file
-
-= 2.0 Beta =
-* Completely new UI and functionality
+= 2.0 =
+* New UI
+* Robust and completely new core functionality
+* Over 3 dozen of bug fixed and improvement during 3 alpha & beta versions
 
 = 1.9.1 =
 * Fixed bug with empty event list
