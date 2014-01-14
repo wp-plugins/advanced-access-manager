@@ -83,10 +83,10 @@ class aam {
             //add_action("do_meta_boxes", array($this, 'metaboxes'), 1, 3);
             add_action("in_admin_header", array($this, 'metaboxes'), 999);
             //add_action("add_meta_boxes", array($this, 'filterMetaboxes'), 999, 2);
-            //add_filter(
-            //        'get_user_option_meta-box-order_dashboard',
-            //        array($this, 'dashboardFilter'), 999, 3
-            //);
+            add_filter(
+                    'get_user_option_meta-box-order_dashboard',
+                    array($this, 'dashboardFilter'), 999, 3
+            );
             //manager user search and authentication control
             add_filter('user_search_columns', array($this, 'searchColumns'));
             //terms & post restriction handlers

@@ -447,7 +447,7 @@ class aam_View_Ajax extends aam_View_Abstract{
      */
     protected function save() {
         $model = new aam_View_Manager;
-
+        
         return $model->save();
     }
 

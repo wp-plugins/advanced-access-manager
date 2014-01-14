@@ -79,7 +79,7 @@ load_plugin_textdomain('aam', false, basename(AAM_BASE_DIR) . '/lang');
 function aam_migration_note() {
     if (class_exists('aam_Core_Migrate') && !aam_Core_API::getBlogOption('aam_migrated')) {
         echo "<div class='update-nag'>";
-        echo __('Migrate your setting to new AAM platform. ', 'aam');
+        echo __('Migrate your old AAM settings to the new AAM platform. ', 'aam');
         echo '<a href="#" id="aam_migrate">' . __('Click to Migrate', 'aam') . '</a>';
         echo '</div>';
     }

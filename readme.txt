@@ -30,6 +30,7 @@ The AAM support also next languages:
  * English
  * German (by Kolja www.Reggae-Party.de)
  * Spanish (by Etruel www.netmdp.com)
+ * Polish (by Gustaw Lasek www.servitium.pl)
 
 
 == Installation ==
@@ -57,6 +58,11 @@ the list of additional metaboxes can be picked by AAM.
 5. ConfigPress
 
 == Changelog ==
+
+= 2.1 (under development) =
+* Fixed issue with Admin Menu restrictions (thanks to MikeB2B)
+* Added Polish Translation
+* Fixed issue with Widgets restriction
 
 = 2.0 =
 * New UI

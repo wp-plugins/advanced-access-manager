@@ -100,7 +100,7 @@ class aam_Control_Object_Menu extends aam_Control_Object {
             $submenu[$available[1]] = $submenu[$menu];
             unset($submenu[$menu]);
         }
-
+        
         return $available;
     }
 
@@ -153,8 +153,11 @@ class aam_Control_Object_Menu extends aam_Control_Object {
      */
     public function has($menu) {
         $response = false;
-        if (isset($this->_option[$menu])) {
-            $response = (intval($this->_option[$menu]) ? true : false);
+        //decode URL in case of any special characters like &amp;
+        $menu_decoded = htmlspecialchars_decode($menu);
+        //check if menu is restricted
+        if (isset($this->_option[$menu_decoded])) {
+            $response = (intval($this->_option[$menu_decoded]) ? true : false);
         }
 
         return $response;
