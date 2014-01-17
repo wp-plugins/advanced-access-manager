@@ -25,9 +25,9 @@ class aam_Control_Object_Term extends aam_Control_Object {
      *
      */
     const ACTION_BROWSE = 'browse';
-    
+
     /**
-     * 
+     *
      */
     const ACTION_EXCLUDE = 'exclude';
 
@@ -35,9 +35,9 @@ class aam_Control_Object_Term extends aam_Control_Object {
      *
      */
     const ACTION_EDIT = 'edit';
-    
+
     /**
-     * 
+     *
      */
     const ACTION_LIST = 'list';
 
@@ -52,6 +52,13 @@ class aam_Control_Object_Term extends aam_Control_Object {
      * @var type
      */
     private $_option = array();
+
+    /**
+     * @inheritdoc
+     */
+    public function __sleep(){
+        return array('_term', '_option');
+    }
 
     /**
      *
@@ -114,8 +121,6 @@ class aam_Control_Object_Term extends aam_Control_Object {
                 $this->setOption(
                         apply_filters('aam_term_access_option', $access, $this->getSubject())
                 );
-            } else {
-                aam_Core_Console::write("Term {$object_id} does not exist");
             }
         }
     }
@@ -196,6 +201,13 @@ class aam_Control_Object_Term extends aam_Control_Object {
      */
     public function getOption() {
         return $this->_option;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function cacheObject(){
+        return true;
     }
 
     /**

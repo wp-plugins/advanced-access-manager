@@ -111,7 +111,7 @@ class aam_Control_Subject_Role extends aam_Control_Subject {
     public function removeCapability($capability) {
         return $this->getSubject()->remove_cap($capability);
     }
-    
+
     /**
      * Check if Subject has capability
      *
@@ -192,6 +192,46 @@ class aam_Control_Subject_Role extends aam_Control_Subject {
      */
     public function getUID() {
         return self::UID;
+    }
+
+    /**
+     * Get Role Cache
+     *
+     * AAM does not store individual Role cache that is why this function returns
+     * always empty array
+     *
+     * @return array
+     *
+     * @access public
+     */
+    public function readCache(){
+        return array();
+    }
+
+    /**
+     * Update Role Cache
+     *
+     * This function does nothing because AAM does not store Role's cache
+     *
+     * @return boolean
+     *
+     * @access public
+     */
+    public function updateCache(){
+        return true;
+    }
+
+    /**
+     * Clear Role Cache
+     *
+     * This function does nothing because AAM does not store Role's cache
+     *
+     * @return boolean
+     *
+     * @access public
+     */
+    public function clearCache(){
+        return true;
     }
 
 }

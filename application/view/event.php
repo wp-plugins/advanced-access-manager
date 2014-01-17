@@ -21,7 +21,8 @@ class aam_View_Event extends aam_View_Abstract {
      */
     public function retrieveEventList() {
         $response = array('aaData' => array());
-        foreach ($this->getSubject()->getObject(aam_Control_Object_Event::UID)->getOption() as $event) {
+        $events = $this->getSubject()->getObject(aam_Control_Object_Event::UID);
+        foreach ($events->getOption() as $event) {
             $response['aaData'][] = array(
                 $event['event'],
                 $event['event_specifier'],

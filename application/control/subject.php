@@ -28,7 +28,7 @@ abstract class aam_Control_Subject {
     private $_id;
 
     /**
-     * Subject itself
+     * WordPres Subject
      *
      * It can be WP_User or WP_Role, based on what class has been used
      *
@@ -50,6 +50,17 @@ abstract class aam_Control_Subject {
     private $_objects = array();
 
     /**
+     * Update Cache flag
+     *
+     * If there is any new object instantiated, update cache too
+     *
+     * @var boolean
+     *
+     * @access private
+     */
+    private $_updateCache = false;
+
+    /**
      * Constructor
      *
      * @param string|int $id
@@ -63,6 +74,44 @@ abstract class aam_Control_Subject {
         $this->setId($id);
         //retrieve and set subject itself
         $this->setSubject($this->retrieveSubject());
+        //retrieve cache if there is any
+        $this->initCache();
+    }
+
+    /**
+     * Initialize cache
+     *
+     * @return void
+     *
+     * @access public
+     */
+    public function initCache(){
+        $cpress = $this->getObject(aam_Control_Object_ConfigPress::UID);
+        if ($cpress->getParam('aam.caching', 'false') === "true"){
+            $this->setObjects($this->readCache());
+            foreach($this->_objects as $objects){
+                foreach($objects as $object){
+                    $object->setSubject($this);
+                }
+            }
+        }
+    }
+
+    /**
+     * Desctruct the subject
+     *
+     * Execute extra actions during application shutdown
+     *
+     * @return void
+     *
+     * @access public
+     */
+    public function saveCache(){
+        $cpress = $this->getObject(aam_Control_Object_ConfigPress::UID);
+        if (($this->_updateCache === true)
+                          && ($cpress->getParam('aam.caching', 'false') === "true")){
+            $this->updateCache();
+        }
     }
 
     /**
@@ -167,6 +216,19 @@ abstract class aam_Control_Subject {
     }
 
     /**
+     * Set Objects
+     *
+     * If there is any cache, set the complete set of objects
+     *
+     * @return void
+     *
+     * @access public
+     */
+    public function setObjects($objects) {
+        $this->_objects = $objects;
+    }
+
+    /**
      * Get Access Objects
      *
      * @return array
@@ -188,23 +250,36 @@ abstract class aam_Control_Subject {
      * @access public
      */
     public function getObject($object, $object_id = 0) {
-        if (!isset($this->_objects[$object])) {
+        //make sure that object group is defined
+        if (!isset($this->_objects[$object])){
+            $this->_objects[$object] = array();
+        }
+        //check if there is an object with specified ID
+        if (!isset($this->_objects[$object][$object_id])) {
             $class_name = 'aam_Control_Object_' . ucfirst($object);
             if (class_exists($class_name)) {
-                $this->_objects[$object] = new $class_name($this, $object_id);
-            } else {
-                $this->_objects[$object] = apply_filters(
-                        'aam_object', null, $this, $object_id
+                $this->_objects[$object][$object_id] = new $class_name(
+                    $this, $object_id
                 );
+            } else {
+                $this->_objects[$object][$object_id] = apply_filters(
+                        'aam_object', $this, $object, $object_id
+                );
+            }
+
+            //optimize the memory. make sure that the number of objects is not longer
+            //than 50, othewise remove first one (most likely it is not used)
+            if (count($this->_objects[$object]) > 50){
+                array_shift($this->_objects[$object]); //remove the first
+            }
+
+            //set update cache flag to true if object can be cached
+            if ($this->_objects[$object][$object_id]->cacheObject() === true){
+                $this->_updateCache = true;
             }
         }
 
-        //make sure that object exists, otherwise log it
-        if (is_null($this->_objects[$object])) {
-            aam_Core_Console::write("Object {$object} does not exist");
-        }
-
-        return $this->_objects[$object];
+        return $this->_objects[$object][$object_id];
     }
 
     /**
@@ -251,6 +326,37 @@ abstract class aam_Control_Subject {
     abstract public function getCapabilities();
 
     /**
+     * Read Cache
+     *
+     * Cache all settings to speed-up the AAM execution
+     *
+     * @return void
+     *
+     * @access public
+     */
+    abstract public function readCache();
+
+    /**
+     * Update Cache
+     *
+     * If there is any change to cache, update it and save to database
+     *
+     * @return boolean
+     *
+     * @access public
+     */
+    abstract public function updateCache();
+
+    /**
+     * Clear the Subject Cache
+     *
+     * @return boolean
+     *
+     * @access public
+     */
+    abstract public function clearCache();
+
+    /**
      * Save Access Parameters
      *
      * @param array $params
@@ -263,10 +369,10 @@ abstract class aam_Control_Subject {
         //initialize the backup first
         $backup = array();
 
-        foreach ($params as $object_id => $dump) {
-            if ($object = $this->getObject($object_id)) {
+        foreach ($params as $object_type => $dump) {
+            if ($object = $this->getObject($object_type)) {
                 if (method_exists($object, 'backup')) {
-                    $backup[$object_id] = $object->backup();
+                    $backup[$object_type] = $object->backup();
                 }
                 $object->save($dump);
             }
@@ -274,6 +380,9 @@ abstract class aam_Control_Subject {
 
         //store backup
         $this->getObject(aam_Control_Object_Backup::UID)->save($backup);
+
+        //clear cache
+        $this->clearCache();
     }
 
     /**

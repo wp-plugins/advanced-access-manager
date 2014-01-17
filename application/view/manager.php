@@ -288,7 +288,7 @@ class aam_View_Manager extends aam_View_Abstract {
         if (!isset($options[aam_Control_Object_Event::UID])) {
             $options[aam_Control_Object_Event::UID] = array();
         }
-        
+
         return apply_filters('aam_prepare_option_list', $options);
     }
 
@@ -301,6 +301,9 @@ class aam_View_Manager extends aam_View_Abstract {
                         aam_Control_Object_Backup::UID)->roleback();
 
         $this->getSubject()->save($this->prepareSaveOptions($params));
+
+        //clear cache
+        $this->getSubject()->clearCache();
 
         return json_encode(
                 array(

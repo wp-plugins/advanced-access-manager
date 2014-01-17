@@ -43,6 +43,13 @@ class aam_Control_Object_Capability extends aam_Control_Object {
     }
 
     /**
+     * @inheritdoc
+     */
+    public function cacheObject(){
+        return false;
+    }
+
+    /**
      *
      * @param type $object_id
      */

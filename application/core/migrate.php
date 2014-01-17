@@ -335,7 +335,7 @@ final class aam_Core_Migrate {
         } else {
             $settings = array();
         }
-        
+
         return $this->saveSettings('Role', $role, $settings);
     }
 
@@ -371,20 +371,21 @@ final class aam_Core_Migrate {
                 if (count($settings['restrictions']['post'])) {
                     $post = $subject->getObject(aam_Control_Object_Post::UID);
                     foreach ($settings['restrictions']['post'] as $post_id => $data) {
-                        $post->setOption(null); //clean up for next iteration
-                        $post->init($post_id);
-                        if (@$post->getPost()->ID) {
+                        $post = $subject->getObject(
+                            aam_Control_Object_Post::UID, $post_id
+                        );
+                        if ($post->getPost() instanceof WP_Post) {
                             $post->save(array('post' => $data));
                         }
                     }
                 }
 
                 if (count($settings['restrictions']['taxonomy'])) {
-                    $term = $subject->getObject(aam_Control_Object_Term::UID);
                     foreach ($settings['restrictions']['taxonomy'] as $term_id => $data) {
-                        $term->setOption(null);
-                        $term->init($term_id);
-                        if (@$term->getTerm()->term_id) {
+                        $term = $subject->getObject(
+                            aam_Control_Object_Term::UID, $term_id
+                        );
+                        if (is_object($term->getTerm())) {
                             $term->save(array('term' => $data));
                         }
                     }

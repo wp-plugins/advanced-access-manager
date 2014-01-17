@@ -44,6 +44,28 @@ abstract class aam_Control_Object {
     }
 
     /**
+     * Sleep method
+     *
+     * Used for caching mechanism
+     *
+     * @return array
+     *
+     * @access public
+     */
+    public function __sleep(){
+        return array('_option');
+    }
+
+     /**
+     * Indicate either object can be cached on not
+     *
+     * @return boolean
+     *
+     * @access public
+     */
+    abstract public function cacheObject();
+
+    /**
      * Initialize object
      *
      * @param string|int $object_id

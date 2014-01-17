@@ -37,6 +37,13 @@ class aam_Control_Object_Event extends aam_Control_Object {
     }
 
     /**
+     * @inheritdoc
+     */
+    public function cacheObject(){
+        return true;
+    }
+
+    /**
      *
      * @return type
      */

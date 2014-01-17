@@ -31,7 +31,7 @@ The AAM support also next languages:
  * German (by Kolja www.Reggae-Party.de)
  * Spanish (by Etruel www.netmdp.com)
  * Polish (by Gustaw Lasek www.servitium.pl)
-
+ * French (by Moskito7)
 
 == Installation ==
 
@@ -63,11 +63,18 @@ the list of additional metaboxes can be picked by AAM.
 * Fixed issue with Admin Menu restrictions (thanks to MikeB2B)
 * Added Polish Translation
 * Fixed issue with Widgets restriction
+* Improved internal User & Role handling
+* Implemented caching mechanism
+* Extended Update mechanism (remove the AAM cache after update)
+* Added New ConfigPress setting aam.caching (by default is FALSE)
+* Improved Metabox & Widgets filtering mechanism
+* Added French Translation (by Moskito7)
 
 = 2.0 =
 * New UI
 * Robust and completely new core functionality
 * Over 3 dozen of bug fixed and improvement during 3 alpha & beta versions
+* Improved Update mechanism
 
 = 1.9.1 =
 * Fixed bug with empty event list

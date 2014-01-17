@@ -1,11 +1,14 @@
 <?php
-
 /**
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
  * file 'license.txt', which is part of this source code package.       *
  * ======================================================================
  */
+
+//AAM Version for Update purpose
+define('AAM_VERSION', '2.0');
+
 define('AAM_BASE_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 
 //jean.yves.dumaine@gmail.com feedback - thank you

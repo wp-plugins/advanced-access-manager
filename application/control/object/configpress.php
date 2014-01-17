@@ -39,6 +39,20 @@ class aam_Control_Object_ConfigPress extends aam_Control_Object {
     private $_tree = null;
 
     /**
+     * @inheritdoc
+     */
+    public function __sleep(){
+        return array('_option', '_config', '_tree');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function cacheObject(){
+        return false;
+    }
+
+    /**
      *
      * @param type $config_press
      * @return boolean
@@ -74,13 +88,11 @@ class aam_Control_Object_ConfigPress extends aam_Control_Object {
      * @param type $object_id
      */
     public function init($object_id) {
-        if (empty($this->_option)) {
-            $filename = aam_Core_API::getBlogOption('aam_' . self::UID, '');
-            if ($filename && file_exists(AAM_TEMP_DIR . $filename)) {
-                $this->setOption($filename);
-                $this->setConfig(file_get_contents(AAM_TEMP_DIR . $filename));
-                $this->parseConfig(AAM_TEMP_DIR . $filename);
-            }
+        $filename = aam_Core_API::getBlogOption('aam_' . self::UID, '');
+        if ($filename && file_exists(AAM_TEMP_DIR . $filename)) {
+            $this->setOption($filename);
+            $this->setConfig(file_get_contents(AAM_TEMP_DIR . $filename));
+            $this->parseConfig(AAM_TEMP_DIR . $filename);
         }
     }
 

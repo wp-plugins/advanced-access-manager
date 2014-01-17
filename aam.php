@@ -1,5 +1,4 @@
 <?php
-
 /**
   Plugin Name: Advanced Access Manager
   Description: Manage User and Role Access to WordPress Backend and Frontend.
@@ -80,13 +79,7 @@ class aam {
             //manager AAM Ajax Requests
             add_action('wp_ajax_aam', array($this, 'ajax'));
             //manager WordPress metaboxes
-            //add_action("do_meta_boxes", array($this, 'metaboxes'), 1, 3);
             add_action("in_admin_header", array($this, 'metaboxes'), 999);
-            //add_action("add_meta_boxes", array($this, 'filterMetaboxes'), 999, 2);
-            add_filter(
-                    'get_user_option_meta-box-order_dashboard',
-                    array($this, 'dashboardFilter'), 999, 3
-            );
             //manager user search and authentication control
             add_filter('user_search_columns', array($this, 'searchColumns'));
             //terms & post restriction handlers
@@ -117,6 +110,9 @@ class aam {
 
         //load extensions only when admin
         $this->loadExtensions();
+
+        //add shutdown action
+        add_action('shutdown', array($this, 'shutdown'), 1);
     }
 
     /**
@@ -127,7 +123,7 @@ class aam {
      * @access public
      */
     public function checkUpdate() {
-        if (class_exists('aam_Core_Update') && (AAM_APPL_ENV != 'development')) {
+        if (aam_Core_API::getBlogOption('aam_updated', '', 1) != AAM_VERSION) {
             $update = new aam_Core_Update($this);
             $update->run();
         }
@@ -219,10 +215,11 @@ class aam {
      */
     public function getTerms($area, $terms) {
         if (is_array($terms)) {
-            $object = $this->getUser()->getObject(aam_Control_Object_Term::UID);
             foreach ($terms as $i => $term) {
                 if (is_object($term)) {
-                    $object->init($term->term_id);
+                    $object = $this->getUser()->getObject(
+                        aam_Control_Object_Term::UID, $term->term_id
+                    );
                     if ($object->has($area, aam_Control_Object_Term::ACTION_LIST)) {
                         unset($terms[$i]);
                     }
@@ -244,10 +241,12 @@ class aam {
      * @todo Cache this process
      */
     public function getPages($pages){
-        $object = $this->getUser()->getObject(aam_Control_Object_Post::UID);
+
         if (is_array($pages)){
             foreach($pages as $i => $page){
-                $object->init($page);
+                $object = $this->getUser()->getObject(
+                    aam_Control_Object_Post::UID, $page->ID
+                );
                 if ($object->has('frontend', aam_Control_Object_Post::ACTION_EXCLUDE)){
                     unset($pages[$i]);
                 }
@@ -268,17 +267,18 @@ class aam {
      */
     public function getNavigationMenu($pages){
         if (is_array($pages)){
-            $post = $this->getUser()->getObject(aam_Control_Object_Post::UID);
-            $term = $this->getUser()->getObject(aam_Control_Object_Term::UID);
             foreach($pages as $i => $page){
                 if ($page->type === 'taxonomy'){
-                    $object = $term;
+                    $object = $this->getUser()->getObject(
+                        aam_Control_Object_Term::UID, $page->object_id
+                    );
                     $exclude = aam_Control_Object_Term::ACTION_EXCLUDE;
                 } else {
-                    $object = $post;
+                    $object = $this->getUser()->getObject(
+                        aam_Control_Object_Post::UID, $page->object_id
+                    );
                     $exclude = aam_Control_Object_Post::ACTION_EXCLUDE;
                 }
-                $object->init($page->object_id);
 
                 if ($object->has('frontend', $exclude)){
                     unset($pages[$i]);
@@ -782,10 +782,10 @@ class aam {
      */
     public function ajax() {
         check_ajax_referer('aam_ajax');
-        
+
         //clean buffer to make sure that nothing messing around with system
         while (@ob_end_clean());
-        
+
         //process ajax request
         $model = new aam_View_Ajax;
         echo $model->run();
@@ -802,49 +802,22 @@ class aam {
     public function metaboxes() {
         global $post;
 
-        $post_type = ($post instanceof WP_Post ? $post->post_type : '');
+        //make sure that nobody is playing with screen options
+        if ($post instanceof WP_Post){
+            $screen = $post->post_type;
+        } elseif($screen_object = get_current_screen()) {
+            $screen = $screen_object->id;
+        } else {
+            $screen = '';
+        }
 
         if (aam_Core_Request::get('aam_meta_init')) {
             $model = new aam_View_Metabox;
-            $model->run($post_type);
+            $model->run($screen);
         } else {
              $this->getUser()->getObject(aam_Control_Object_Metabox::UID)
-                                            ->filterBackend($post_type, 'dashboard');
+                                            ->filterBackend($screen);
         }
-    }
-
-    /**
-     * Filter Dashboard Widgets & Metaboxes
-     *
-     * @param array $result
-     * @param mixed $option
-     * @param mixed $user
-     *
-     * @return void
-     *
-     * @access public
-     * @deprecated since 2.0 Beta 3
-     */
-    public function dashboardFilter($result, $option, $user) {
-        $this->getUser()->getObject(
-                aam_Control_Object_Metabox::UID)->filterBackend('dashboard');
-    }
-
-    /**
-     * Filter Screen Metaboxes
-     *
-     * @param string $post_type
-     * @param WP_Post $post
-     *
-     * @return void
-     *
-     * @access public
-     * @deprecated since 2.0 Beta 3
-     */
-    public function filterMetaboxes($post_type, $post) {
-        $this->getUser()->getObject(aam_Control_Object_Metabox::UID)->filterBackend(
-                $post_type, $post
-        );
     }
 
     /**
@@ -981,6 +954,17 @@ class aam {
      */
     public function setUser(aam_Control_Subject $user) {
         $this->_user = $user;
+    }
+
+    /**
+     * Execute before shutdown actions
+     *
+     * @return void
+     *
+     * @access public
+     */
+    public function shutdown(){
+        $this->getUser()->saveCache();
     }
 
     /**

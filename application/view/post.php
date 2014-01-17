@@ -413,6 +413,9 @@ class aam_View_Post extends aam_View_Abstract {
             $object->save($access);
             aam_Core_API::updateBlogOption('aam_access_limit', $limit_counter + 1);
 
+            //clear cache
+            $this->getSubject()->clearCache();
+
             $response = array('status' => 'success');
         } else {
             $response = array(
@@ -446,7 +449,7 @@ class aam_View_Post extends aam_View_Abstract {
         return json_encode(array(
             'settings' => $object->getOption(),
             'counter' => apply_filters(
-                    'wpaccess_restrict_limit', 
+                    'wpaccess_restrict_limit',
                     aam_Core_API::getBlogOption('aam_access_limit', 0)
             )
         ));

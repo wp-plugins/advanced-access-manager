@@ -18,33 +18,34 @@ final class aam_Core_Update {
 
     /**
      * List of stages
-     * 
+     *
      * @var array
-     * 
+     *
      * @access private
      */
     private $_stages = array();
 
     /**
      * Constructoor
-     * 
+     *
      * @return void
-     * 
+     *
      * @access public
      */
     public function __construct() {
         //register update stages
         $this->_stages = apply_filters('aam_update_stages', array(
             array($this, 'downloadRepository'),
-            array($this, 'removeUpdate')
+            array($this, 'flashCache'),
+            array($this, 'updateFlag')
         ));
     }
 
     /**
      * Run the update if necessary
-     * 
+     *
      * @return void
-     * 
+     *
      * @access public
      */
     public function run() {
@@ -58,12 +59,12 @@ final class aam_Core_Update {
 
     /**
      * Download the Extension Repository
-     * 
-     * This forces the system to retrieve the new set of extensions based on 
+     *
+     * This forces the system to retrieve the new set of extensions based on
      * license key
-     * 
+     *
      * @return boolean
-     * 
+     *
      * @access public
      */
     public function downloadRepository() {
@@ -79,16 +80,52 @@ final class aam_Core_Update {
     }
 
     /**
-     * Remove the update file
-     * 
-     * This will stop to run the update again
-     * 
+     * Flash all cache
+     *
      * @return boolean
-     * 
+     *
      * @access public
      */
-    public function removeUpdate() {
-        return rename(__FILE__, dirname(__FILE__) . '/__' . basename(__FILE__));
+    public function flashCache(){
+        global $wpdb;
+
+        //clear visitor's cache first
+        if (is_multisite()) {
+            //get all sites first and iterate through each
+            $query = 'SELECT blog_id FROM ' . $wpdb->blogs;
+            $blog_list = $wpdb->get_results($query);
+            if (is_array($blog_list)) {
+                foreach ($blog_list as $blog) {
+                    $query = 'DELETE FROM ' . $wpdb->get_blog_prefix($blog) . 'options ';
+                    $query .= 'WHERE `option_name` = "aam_visitor_cache"';
+                    $wpdb->query($query);
+                }
+            }
+        } else {
+            $query = 'DELETE FROM ' . $wpdb->options . ' ';
+            $query .= 'WHERE `option_name` = "aam_visitor_cache"';
+            $wpdb->query($query);
+        }
+
+        //clear users cache
+        $query = 'DELETE FROM ' . $wpdb->usermeta . ' ';
+        $query .= 'WHERE `meta_key` = "aam_cache"';
+        $wpdb->query($query);
+
+        return true;
+    }
+
+    /**
+     * Change the Update flag
+     *
+     * This will stop to run the update again
+     *
+     * @return boolean
+     *
+     * @access public
+     */
+    public function updateFlag() {
+        return aam_Core_API::updateBlogOption('aam_updated', AAM_VERSION, 1);
     }
 
 }

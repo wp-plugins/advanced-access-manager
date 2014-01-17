@@ -100,7 +100,7 @@ class aam_Control_Object_Menu extends aam_Control_Object {
             $submenu[$available[1]] = $submenu[$menu];
             unset($submenu[$menu]);
         }
-        
+
         return $available;
     }
 
@@ -112,6 +112,13 @@ class aam_Control_Object_Menu extends aam_Control_Object {
         if (is_array($menu)) {
             $this->getSubject()->updateOption($menu, self::UID);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function cacheObject(){
+        return true;
     }
 
     /**

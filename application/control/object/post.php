@@ -63,6 +63,20 @@ class aam_Control_Object_Post extends aam_Control_Object {
     private $_option = array();
 
     /**
+     * @inheritdoc
+     */
+    public function __sleep(){
+        return array('_post', '_option');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function cacheObject(){
+        return true;
+    }
+
+    /**
      *
      * @param type $params
      */
@@ -115,8 +129,13 @@ class aam_Control_Object_Post extends aam_Control_Object {
     }
 
     /**
+     * Init Post Object
      *
-     * @param type $object
+     * @param WP_Post|Int $object
+     *
+     * @return void
+     *
+     * @access public
      */
     public function init($object) {
         //make sure that we are dealing with WP_Post object
@@ -132,7 +151,13 @@ class aam_Control_Object_Post extends aam_Control_Object {
     }
 
     /**
+     * Read the Post AAM Metadata
      *
+     * Get all settings related to specified post
+     *
+     * @return void
+     *
+     * @access public
      */
     public function read() {
         $option = get_post_meta($this->getPost()->ID, $this->getOptionName(), true);

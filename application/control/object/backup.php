@@ -68,6 +68,13 @@ class aam_Control_Object_Backup extends aam_Control_Object {
     }
 
     /**
+     * @inheritdoc
+     */
+    public function cacheObject(){
+        return false;
+    }
+
+    /**
      *
      * @param type $option
      */
