@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: access manager, access, access control, comments, capability, widget, filter menu, role manager, user access, user control, user
 Requires at least: 3.4.2
 Tested up to: 3.8
-Stable tag: 2.0
+Stable tag: 2.1
 
 Graphic interface to manage User Access to your Front-end and Back-end
 
@@ -59,7 +59,7 @@ the list of additional metaboxes can be picked by AAM.
 
 == Changelog ==
 
-= 2.1 (under development) =
+= 2.1 =
 * Fixed issue with Admin Menu restrictions (thanks to MikeB2B)
 * Added Polish Translation
 * Fixed issue with Widgets restriction
@@ -69,6 +69,8 @@ the list of additional metaboxes can be picked by AAM.
 * Added New ConfigPress setting aam.caching (by default is FALSE)
 * Improved Metabox & Widgets filtering mechanism
 * Added French Translation (by Moskito7)
+* Added "My Feature" Tab
+* Regenerated .pot file
 
 = 2.0 =
 * New UI

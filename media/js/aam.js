@@ -1264,7 +1264,7 @@ AAM.prototype.initSettings = function() {
         jQuery(this).bind('click', function() {
             jQuery('.feature-list .feature-item').removeClass(
                     'feature-item-active'
-                    );
+            );
             jQuery(this).addClass('feature-item-active');
             jQuery('.feature-content .feature-content-container').hide();
             jQuery('#' + jQuery(this).attr('feature') + '_content').show();
@@ -1272,7 +1272,7 @@ AAM.prototype.initSettings = function() {
             jQuery('.aam-help > span').hide();
             jQuery('#feature_help_' + jQuery(this).attr('feature')).css(
                     'display', 'table-cell'
-                    );
+            );
         });
     });
 
