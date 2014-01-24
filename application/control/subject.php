@@ -274,7 +274,9 @@ abstract class aam_Control_Subject {
             }
 
             //set update cache flag to true if object can be cached
-            if ($this->_objects[$object][$object_id]->cacheObject() === true){
+            $object = $this->_objects[$object][$object_id];
+            if (($object instanceof aam_Control_Object) 
+                                    && ($object->cacheObject() === true)){
                 $this->_updateCache = true;
             }
         }
