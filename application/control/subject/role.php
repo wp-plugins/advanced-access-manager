@@ -142,7 +142,7 @@ class aam_Control_Subject_Role extends aam_Control_Subject {
      * @param type $object_id
      * @return type
      */
-    public function updateOption($value, $object, $object_id = '') {
+    public function updateOption($value, $object, $object_id = 0) {
         return aam_Core_API::updateBlogOption(
                         $this->getOptionName($object, $object_id), $value
         );
@@ -155,7 +155,7 @@ class aam_Control_Subject_Role extends aam_Control_Subject {
      * @param type $default
      * @return type
      */
-    public function readOption($object, $object_id = '', $default = null) {
+    public function readOption($object, $object_id = 0, $default = null) {
         return aam_Core_API::getBlogOption(
                         $this->getOptionName($object, $object_id), $default
         );
@@ -167,7 +167,7 @@ class aam_Control_Subject_Role extends aam_Control_Subject {
      * @param type $object_id
      * @return type
      */
-    public function deleteOption($object, $object_id = '') {
+    public function deleteOption($object, $object_id = 0) {
         return aam_Core_API::deleteBlogOption(
                         $this->getOptionName($object, $object_id)
         );

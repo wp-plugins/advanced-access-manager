@@ -266,17 +266,9 @@ abstract class aam_Control_Subject {
                         'aam_object', $this, $object, $object_id
                 );
             }
-
-            //optimize the memory. make sure that the number of objects is not longer
-            //than 50, othewise remove first one (most likely it is not used)
-            if (count($this->_objects[$object]) > 50){
-                array_shift($this->_objects[$object]); //remove the first
-            }
-
+           
             //set update cache flag to true if object can be cached
-            $_object = $this->_objects[$object][$object_id];
-            if (($_object instanceof aam_Control_Object) 
-                                    && ($_object->cacheObject() === true)){
+            if ($this->_objects[$object][$object_id]->cacheObject() === true){
                 $this->_updateCache = true;
             }
         }
