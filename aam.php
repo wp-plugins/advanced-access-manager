@@ -2,7 +2,7 @@
 /**
   Plugin Name: Advanced Access Manager
   Description: Manage User and Role Access to WordPress Backend and Frontend.
-  Version: 2.1
+  Version: 2.1.1
   Author: Vasyl Martyniuk <support@wpaam.com>
   Author URI: http://www.wpaam.com
 
@@ -92,6 +92,8 @@ class aam {
             add_action('admin_action_edit', array($this, 'adminActionEdit'), 10);
             //wp die hook
             add_filter('wp_die_handler', array($this, 'wpDie'), 10);
+            //***For UI purposes***
+            add_action('parse_tax_query', array($this, 'parseTaxQuery'), 10, 1);
         } else {
             //control WordPress frontend
             add_action('wp', array($this, 'wp'), 999);
@@ -241,7 +243,6 @@ class aam {
      * @todo Cache this process
      */
     public function getPages($pages){
-
         if (is_array($pages)){
             foreach($pages as $i => $page){
                 $object = $this->getUser()->getObject(
@@ -857,6 +858,29 @@ class aam {
 
         //filter admin menu
         $this->getUser()->getObject(aam_Control_Object_Menu::UID)->filter();
+    }
+    
+    /**
+     * Take control over Tax Query parser
+     * 
+     * By default WordPress consider non-empty term & category pair as search by
+     * slug. This is weird assumption and there is no other way to force core to
+     * search posts within custom taxonomy rather than take control over it with
+     * action parse_tax_query.
+     * 
+     * @param WP_Query $query
+     * 
+     * @return void
+     * 
+     * @access public
+     */
+    public function parseTaxQuery($query){
+        if (!empty($query->query['term']) && !empty($query->query['taxonomy'])){
+            foreach($query->tax_query->queries as $id => $dump){
+                $query->tax_query->queries[$id]['field'] = 'term_id';
+            }
+        }
+        
     }
 
     /**

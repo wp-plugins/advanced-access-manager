@@ -72,23 +72,33 @@ class aam_View_Post extends aam_View_Abstract {
      * @return type
      */
     public function retrievePostList() {
-        global $wp_post_statuses, $wp_post_types;
+        global $wp_post_statuses, $wp_post_types, $wp_taxonomies;
 
         $term = trim(aam_Core_Request::request('term'));
-
+        
+        //default behavior
         if (empty($term)) {
             $post_type = 'post';
+        //root for each Post Type
         } elseif (isset($wp_post_types[$term])) {
             $post_type = $term;
             $term = '';
         } else {
-            $post_type = '';
+            $taxonomy = $this->getTaxonomy($term);
+            if (isset($wp_taxonomies[$taxonomy])){
+                //take in consideration only first object type
+                $post_type = $wp_taxonomies[$taxonomy]->object_type[0];
+            } else {
+                $post_type = 'post';
+            }
         }
-
+        
         $args = array(
             'numberposts' => aam_Core_Request::request('iDisplayLength'),
             'offset' => aam_Core_Request::request('iDisplayStart'),
-            'category' => $term,
+            //'category' => $term,
+            'term' => $term,
+            'taxonomy' => (!empty($taxonomy) ? $taxonomy : ''),
             'post_type' => $post_type,
             's' => aam_Core_Request::request('sSearch'),
             'post_status' => array()
@@ -97,7 +107,9 @@ class aam_View_Post extends aam_View_Abstract {
         $argsAll = array(
             'numberposts' => '999999',
             'fields' => 'ids',
-            'category' => $term,
+            //'category' => $term,
+            'term' => $term,
+            'taxonomy' => (!empty($taxonomy) ? $taxonomy : ''),
             'post_type' => $post_type,
             's' => aam_Core_Request::request('sSearch'),
             'post_status' => array()
@@ -116,7 +128,7 @@ class aam_View_Post extends aam_View_Abstract {
                 $total += $number;
             }
         }
-
+        
         //get displayed total
         $displayTotal = count(get_posts($argsAll));
 
@@ -139,6 +151,22 @@ class aam_View_Post extends aam_View_Abstract {
         }
 
         return json_encode($response);
+    }
+    
+    /**
+     * Get Taxonomy by Term ID
+     * 
+     * @global type $wpdb
+     * @param type $object_id
+     * @return type
+     */
+    private function getTaxonomy($object_id) {
+        global $wpdb;
+
+        $query = "SELECT taxonomy FROM {$wpdb->term_taxonomy} ";
+        $query .= "WHERE term_id = {$object_id}";
+
+        return $wpdb->get_var($query);
     }
 
     /**

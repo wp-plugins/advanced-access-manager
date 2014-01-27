@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: access manager, access, access control, comments, capability, widget, filter menu, role manager, user access, user control, user
 Requires at least: 3.4.2
 Tested up to: 3.8
-Stable tag: 2.1
+Stable tag: 2.1.1
 
 Graphic interface to manage User Access to your Front-end and Back-end
 
@@ -41,6 +41,12 @@ The AAM support also next languages:
 
 == Frequently Asked Questions ==
 
+= I do not see User & Role lists. What should I do? =
+
+Please try to deactivate all activated plugins and switch to default theme. There
+is some plugin that printout the redundant javascript code to the header and this
+breaks the AAM.
+
 = What is "Initiate URL" button, under "Metaboxes & Widgets" Tab? =
 
 Sometimes list of additional metaboxes is conditional on edit post page. Like e.g.
@@ -58,6 +64,13 @@ the list of additional metaboxes can be picked by AAM.
 5. ConfigPress
 
 == Changelog ==
+
+= 2.1.1 =
+* Fixed fatal error in caching mechanism
+* Extended ConfigPress tutorial
+* Fixed error for AAM Plus Package for PHP earlier versions
+* Improved Admin over SSL check
+* Improved Taxonomy Query handling mechanism
 
 = 2.1 =
 * Fixed issue with Admin Menu restrictions (thanks to MikeB2B)
