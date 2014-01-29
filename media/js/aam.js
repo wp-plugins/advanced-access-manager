@@ -176,16 +176,16 @@ AAM.prototype.initUI = function() {
  * @access public
  */
 AAM.prototype.initTooltip = function(selector) {
-    jQuery('[tooltip]', selector).hover(function() {
+    jQuery('[aam-tooltip]', selector).hover(function() {
         // Hover over code
-        var title = jQuery(this).attr('tooltip');
-        jQuery(this).data('tipText', title).removeAttr('tooltip');
+        var title = jQuery(this).attr('aam-tooltip');
+        jQuery(this).data('tipText', title).removeAttr('aam-tooltip');
         jQuery('<div/>', {
             'class': 'aam-tooltip'
         }).text(title).appendTo('body').fadeIn('slow');
     }, function() {
         //Hover out code
-        jQuery(this).attr('tooltip', jQuery(this).data('tipText'));
+        jQuery(this).attr('aam-tooltip', jQuery(this).data('tipText'));
         jQuery('.aam-tooltip').remove();
     }).mousemove(function(e) {
         jQuery('.aam-tooltip').css({
@@ -482,7 +482,7 @@ AAM.prototype.loadRoleSegment = function() {
                 var add = jQuery('<a/>', {
                     'href': '#',
                     'class': 'role-top-action role-top-action-add',
-                    'tooltip': aamLocal.labels['Add New Role']
+                    'aam-tooltip': aamLocal.labels['Add New Role']
                 }).bind('click', function(event) {
                     event.preventDefault();
                     _this.launch(jQuery(this), 'role-top-action-add');
@@ -524,7 +524,7 @@ AAM.prototype.loadRoleSegment = function() {
                 jQuery('.role-actions', nRow).append(jQuery('<a/>', {
                     'href': '#',
                     'class': 'role-action role-action-manage',
-                    'tooltip': aamLocal.labels['Manage']
+                    'aam-tooltip': aamLocal.labels['Manage']
                 }).bind('click', {
                     role: aData[0]
                 }, function(event) {
@@ -541,7 +541,7 @@ AAM.prototype.loadRoleSegment = function() {
                 jQuery('.role-actions', nRow).append(jQuery('<a/>', {
                     'href': '#',
                     'class': 'role-action role-action-edit',
-                    'tooltip': aamLocal.labels['Edit']
+                    'aam-tooltip': aamLocal.labels['Edit']
                 }).bind('click', function(event) {
                     event.preventDefault();
                     _this.launch(jQuery(this), 'role-action-edit');
@@ -551,7 +551,7 @@ AAM.prototype.loadRoleSegment = function() {
                 jQuery('.role-actions', nRow).append(jQuery('<a/>', {
                     'href': '#',
                     'class': 'role-action role-action-delete',
-                    'tooltip': aamLocal.labels['Delete']
+                    'aam-tooltip': aamLocal.labels['Delete']
                 }).bind('click', function(event) {
                     event.preventDefault();
                     if ((aData[0] === 'administrator')) {
@@ -874,13 +874,13 @@ AAM.prototype.loadUserSegment = function() {
                     'href': aamLocal.addUserURI,
                     'target': '_blank',
                     'class': 'user-top-action user-top-action-add',
-                    'tooltip': aamLocal.labels['Add User']
+                    'aam-tooltip': aamLocal.labels['Add User']
                 });
 
                 var filter = jQuery('<a/>', {
                     'href': '#',
                     'class': 'user-top-action user-top-action-filter',
-                    'tooltip': aamLocal.labels['Filter Users']
+                    'aam-tooltip': aamLocal.labels['Filter Users']
                 }).bind('click', function(event) {
                     event.preventDefault();
                     _this.launch(jQuery(this), 'user-top-action-filter');
@@ -890,7 +890,7 @@ AAM.prototype.loadUserSegment = function() {
                 var refresh = jQuery('<a/>', {
                     'href': '#',
                     'class': 'user-top-action user-top-action-refresh',
-                    'tooltip': aamLocal.labels['Refresh List']
+                    'aam-tooltip': aamLocal.labels['Refresh List']
                 }).bind('click', function(event) {
                     event.preventDefault();
                     _this.segmentTables.userList.fnDraw();
@@ -928,7 +928,7 @@ AAM.prototype.loadUserSegment = function() {
                 jQuery('.user-actions', nRow).append(jQuery('<a/>', {
                     'href': '#',
                     'class': 'user-action user-action-manage',
-                    'tooltip': aamLocal.labels['Manager']
+                    'aam-tooltip': aamLocal.labels['Manager']
                 }).bind('click', function(event) {
                     event.preventDefault();
                     _this.setSubject('user', aData[0]);
@@ -940,14 +940,14 @@ AAM.prototype.loadUserSegment = function() {
                     'href': aamLocal.editUserURI + '?user_id=' + aData[0],
                     'target': '_blank',
                     'class': 'user-action user-action-edit',
-                    'tooltip': aamLocal.labels['Edit']
+                    'aam-tooltip': aamLocal.labels['Edit']
                 }));
 
                 var status = (aData[4] === '1' ? 'user-action-block-active' : 'user-action-block');
                 jQuery('.user-actions', nRow).append(jQuery('<a/>', {
                     'href': '#',
                     'class': 'user-action ' + status,
-                    'tooltip': aamLocal.labels['Block']
+                    'aam-tooltip': aamLocal.labels['Block']
                 }).bind('click', function(event) {
                     event.preventDefault();
                     _this.blockUser(this, aData);
@@ -956,7 +956,7 @@ AAM.prototype.loadUserSegment = function() {
                 jQuery('.user-actions', nRow).append(jQuery('<a/>', {
                     'href': '#',
                     'class': 'user-action user-action-delete',
-                    'tooltip': aamLocal.labels['Delete']
+                    'aam-tooltip': aamLocal.labels['Delete']
                 }).bind('click', function(event) {
                     event.preventDefault();
                     _this.launch(jQuery(this), 'user-action-delete');
@@ -1144,7 +1144,7 @@ AAM.prototype.launchFilterUserDialog = function(button) {
                 jQuery('.user-actions', nRow).append(jQuery('<a/>', {
                     'href': '#',
                     'class': 'user-action user-action-select',
-                    'tooltip': 'Select Role'
+                    'aam-tooltip': aamLocal.labels['Select Role']
                 }).bind('click', function(event) {
                     event.preventDefault();
                     _this.userRoleFilter = aData[0];
@@ -1366,7 +1366,7 @@ AAM.prototype.initCapabilityTab = function() {
             var filter = jQuery('<a/>', {
                 'href': '#',
                 'class': 'capability-top-action capability-top-action-filter',
-                'tooltip': aamLocal.labels['Filter Capabilities by Category']
+                'aam-tooltip': aamLocal.labels['Filter Capabilities by Category']
             }).bind('click', function(event) {
                 event.preventDefault();
                 _this.launch(jQuery(this), 'capability-top-action-filter');
@@ -1380,7 +1380,7 @@ AAM.prototype.initCapabilityTab = function() {
                 var copy = jQuery('<a/>', {
                     'href': '#',
                     'class': 'capability-top-action capability-top-action-copy',
-                    'tooltip': aamLocal.labels['Inherit Capabilities']
+                    'aam-tooltip': aamLocal.labels['Inherit Capabilities']
                 }).bind('click', function(event) {
                     event.preventDefault();
                     _this.launch(jQuery(this), 'capability-top-action-copy');
@@ -1390,7 +1390,7 @@ AAM.prototype.initCapabilityTab = function() {
                 var add = jQuery('<a/>', {
                     'href': '#',
                     'class': 'capability-top-action capability-top-action-add',
-                    'tooltip': aamLocal.labels['Add New Capability']
+                    'aam-tooltip': aamLocal.labels['Add New Capability']
                 }).bind('click', function(event) {
                     event.preventDefault();
                     _this.launch(jQuery(this), 'capability-top-action-add');
@@ -1404,7 +1404,7 @@ AAM.prototype.initCapabilityTab = function() {
                 var restore = jQuery('<a/>', {
                     'href': '#',
                     'class': 'capability-top-action capability-top-action-restore',
-                    'tooltip': aamLocal.labels['Restore Default Capabilities']
+                    'aam-tooltip': aamLocal.labels['Restore Default Capabilities']
                 }).bind('click', function(event) {
                     event.preventDefault();
                     var data = _this.compileAjaxPackage('restore_capability', true);
@@ -1463,7 +1463,7 @@ AAM.prototype.initCapabilityTab = function() {
             jQuery(actions).append(jQuery('<a/>', {
                 'href': '#',
                 'class': 'capability-action capability-action-delete',
-                'tooltip': aamLocal.labels['Delete']
+                'aam-tooltip': aamLocal.labels['Delete']
             }).bind('click', function(event) {
                 event.preventDefault();
                 _this.launch(jQuery(this), 'capability-action-delete');
@@ -2023,7 +2023,7 @@ AAM.prototype.initEventTab = function() {
             var filter = jQuery('<a/>', {
                 'href': '#',
                 'class': 'event-top-action event-top-action-add',
-                'tooltip': aamLocal.labels['Add Event']
+                'aam-tooltip': aamLocal.labels['Add Event']
             }).bind('click', function(event) {
                 event.preventDefault();
                 _this.launch(jQuery(this), 'event-top-action-add');
@@ -2050,7 +2050,7 @@ AAM.prototype.initEventTab = function() {
             jQuery('.event-actions', nRow).append(jQuery('<a/>', {
                 'href': '#',
                 'class': 'event-action event-action-edit',
-                'tooltip': aamLocal.labels['Edit Event']
+                'aam-tooltip': aamLocal.labels['Edit Event']
             }).bind('click', function(event) {
                 event.preventDefault();
                 _this.launch(jQuery(this), 'event-action-edit');
@@ -2059,7 +2059,7 @@ AAM.prototype.initEventTab = function() {
             jQuery('.event-actions', nRow).append(jQuery('<a/>', {
                 'href': '#',
                 'class': 'event-action event-action-delete',
-                'tooltip': aamLocal.labels['Delete Event']
+                'aam-tooltip': aamLocal.labels['Delete Event']
             }).bind('click', function(event) {
                 event.preventDefault();
                 _this.launch(jQuery(this), 'event-action-delete');
@@ -2274,7 +2274,7 @@ AAM.prototype.initPostTab = function() {
             var filter = jQuery('<a/>', {
                 'href': '#',
                 'class': 'post-top-action post-top-action-filter',
-                'tooltip': aamLocal.labels['Filter Posts by Post Type']
+                'aam-tooltip': aamLocal.labels['Filter Posts by Post Type']
             }).bind('click', function(event) {
                 event.preventDefault();
                 _this.launch(jQuery(this), 'post-top-action-filter');
@@ -2284,7 +2284,7 @@ AAM.prototype.initPostTab = function() {
             var refresh = jQuery('<a/>', {
                 'href': '#',
                 'class': 'post-top-action post-top-action-refresh',
-                'tooltip': aamLocal.labels['Refresh List']
+                'aam-tooltip': aamLocal.labels['Refresh List']
             }).bind('click', function(event) {
                 event.preventDefault();
                 _this.blogTables.postList.fnDraw();
@@ -2327,13 +2327,13 @@ AAM.prototype.initPostTab = function() {
                 'href': aData[2].replace('&amp;', '&'),
                 'class': 'post-action post-action-edit',
                 'target': '_blank',
-                'tooltip': aamLocal.labels['Edit']
+                'aam-tooltip': aamLocal.labels['Edit']
             }));
 
             jQuery('.post-actions', nRow).append(jQuery('<a/>', {
                 'href': '#',
                 'class': 'post-action post-action-manage',
-                'tooltip': aamLocal.labels['Manage Access']
+                'aam-tooltip': aamLocal.labels['Manage Access']
             }).bind('click', function(event) {
                 event.preventDefault();
                 _this.launch(jQuery(this), 'post-action-manage');
@@ -2580,12 +2580,12 @@ AAM.prototype.buildPostBreadcrumb = function(response) {
             'href': response.link,
             'target': '_blank',
             'class': 'post-breadcrumb-line-action post-breadcrumb-line-action-edit',
-            'tooltip': aamLocal.labels['Edit Term']
+            'aam-tooltip': aamLocal.labels['Edit Term']
         }));
         jQuery('.post-breadcrumb-line-actions').append(jQuery('<a/>', {
             'href': '#',
             'class': 'post-breadcrumb-line-action post-breadcrumb-line-action-manage',
-            'tooltip': aamLocal.labels['Manager Access']
+            'aam-tooltip': aamLocal.labels['Manager Access']
         }).bind('click', {id: response.breadcrumb[i][0]}, function(event) {
             event.preventDefault();
             _this.launch(this, 'post-breadcrumb-line-action-manage');
@@ -2600,7 +2600,7 @@ AAM.prototype.buildPostBreadcrumb = function(response) {
             'href': 'http://wpaam.com',
             'target': '_blank',
             'class': 'post-breadcrumb-line-action post-breadcrumb-line-action-lock',
-            'tooltip': aamLocal.labels['Unlock Default Accesss Control']
+            'aam-tooltip': aamLocal.labels['Unlock Default Accesss Control']
         }));
         this.doAction('aam_breadcrumb_action', response);
     }

@@ -70,14 +70,14 @@ AAM.prototype.loadMultisiteSegment = function() {
                     'href': aamMultisiteLocal.addSiteURI,
                     'target': '_blank',
                     'class': 'multisite-top-action multisite-top-action-add',
-                    'tooltip': aamLocal.labels['Add New Site']
+                    'aam-tooltip': aamLocal.labels['Add New Site']
                 });
                 jQuery('#site_list_wrapper .multisite-top-actions').append(add);
 
                 var refresh = jQuery('<a/>', {
                     'href': '#',
                     'class': 'multisite-top-action multisite-top-action-refresh',
-                    'tooltip': aamLocal.labels['Refresh']
+                    'aam-tooltip': aamLocal.labels['Refresh']
                 }).bind('click', function(event) {
                     event.preventDefault();
                     _this.siteList.fnDraw();
@@ -127,7 +127,7 @@ AAM.prototype.loadMultisiteSegment = function() {
                 jQuery('.multisite-actions', nRow).append(jQuery('<a/>', {
                     'href': '#',
                     'class': 'multisite-action multisite-action-manage' + (current ? '-active' : ''),
-                    'tooltip': aamLocal.labels['Manage']
+                    'aam-tooltip': aamLocal.labels['Manage']
                 }).bind('click', function(event) {
                     event.preventDefault();
                     //change title
@@ -140,7 +140,7 @@ AAM.prototype.loadMultisiteSegment = function() {
                 jQuery('.multisite-actions', nRow).append(jQuery('<a/>', {
                     'href': '#',
                     'class': 'multisite-action multisite-action-pin' + (def_site ? '-active' : ''),
-                    'tooltip': (def_site ? aamLocal.labels['Unset Default'] : aamLocal.labels['Set as Default'])
+                    'aam-tooltip': (def_site ? aamLocal.labels['Unset Default'] : aamLocal.labels['Set as Default'])
                 }).bind('click', function(event) {
                     event.preventDefault();
                     var button = this;
@@ -205,7 +205,7 @@ AAM.prototype.loadMultisiteSegment = function() {
                     'href': aamMultisiteLocal.editSiteURI + '?id=' + aData[0],
                     'class': 'multisite-action multisite-action-edit',
                     'target': '_blank',
-                    'tooltip': aamLocal.labels['Edit']
+                    'aam-tooltip': aamLocal.labels['Edit']
                 }));
 
                 _this.initTooltip(nRow);

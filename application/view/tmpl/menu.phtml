@@ -43,7 +43,7 @@ $menu = $this->getMenu();
                                     }
                                     ?>
                                     <div class="menu-submenu-item">
-                                        <label for="m<?php echo $menu_id . $j; ?>" tooltip="<?php echo $submenu['name']; ?>" ><?php echo $submenu['short']; ?></label>
+                                        <label for="m<?php echo $menu_id . $j; ?>" aam-tooltip="<?php echo $submenu['name']; ?>" ><?php echo $submenu['short']; ?></label>
                                         <input type="checkbox" id="m<?php echo $menu_id . $j; ?>" name="aam[<?php echo aam_Control_Object_Menu::UID; ?>][<?php echo $submenu['id']; ?>]" <?php echo ($menuControl->has($submenu['id']) ? 'checked="checked"' : ''); ?> />
                                         <label for="m<?php echo $menu_id . $j; ?>"><span></span></label>
                                     </div>
