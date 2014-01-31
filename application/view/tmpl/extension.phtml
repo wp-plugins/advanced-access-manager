@@ -53,7 +53,7 @@
                                 <input type="text" class="license-input" id="license_key" placeholder="License Key" />
                             </p>
                         </div>
-                         <div id="update_extension" class="aam-dialog" title="<?php echo __('Update Extension', 'aam'); ?>">
+                        <div id="update_extension" class="aam-dialog" title="<?php echo __('Update Extension', 'aam'); ?>">
                             <p class="dialog-content" style="text-align: center;">
                                 <?php echo __('Extension has been installed. Your license key: ', 'aam'); ?><br/>
                                 <b><span id="installed_license_key"></span></b>
@@ -64,6 +64,27 @@
             </div>
         </div>
     </div>
+
+    <?php if ($this->checkWarnings()) { ?>
+        <div class="postbox-container" style="width:25%; margin-left: 2%;">
+            <div class="metabox-holder">
+                <div class="meta-box-sortables">
+                    <div class="postbox">
+                        <div class="handlediv" title="<?php echo __('Click to toggle', 'aam'); ?>"></div>
+                        <h3 class="hndle">
+                            <span><?php echo __('AAM Warnings', 'aam'); ?></span>
+                        </h3>
+                        <div class="inside">
+                            <?php foreach ($this->getWarnings() as $warning) { ?>
+                                <div class="aam-warning"><span><?php echo $warning; ?></span></div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
+
     <div class="postbox-container" style="width:25%; margin-left: 2%;">
         <div class="metabox-holder">
             <div class="meta-box-sortables">

@@ -86,8 +86,7 @@ abstract class aam_Control_Subject {
      * @access public
      */
     public function initCache(){
-        $cpress = $this->getObject(aam_Control_Object_ConfigPress::UID);
-        if ($cpress->getParam('aam.caching', 'false') === "true"){
+        if (aam_Core_ConfigPress::getParam('aam.caching', 'false') === "true"){
             $this->setObjects($this->readCache());
             foreach($this->_objects as $objects){
                 foreach($objects as $object){
@@ -107,9 +106,8 @@ abstract class aam_Control_Subject {
      * @access public
      */
     public function saveCache(){
-        $cpress = $this->getObject(aam_Control_Object_ConfigPress::UID);
-        if (($this->_updateCache === true)
-                          && ($cpress->getParam('aam.caching', 'false') === "true")){
+        $caching = aam_Core_ConfigPress::getParam('aam.caching', 'false');
+        if (($this->_updateCache === true) && ($caching === "true")){
             $this->updateCache();
         }
     }

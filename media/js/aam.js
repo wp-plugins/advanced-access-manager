@@ -329,9 +329,6 @@ AAM.prototype.initControlPanel = function() {
             }
         }
 
-        //5. Collect ConfigPress
-        data['aam[configpress]'] = _this.editor.getValue();
-
         //send the Ajax request to save the data
         jQuery.ajax(aamLocal.ajaxurl, {
             type: 'POST',
@@ -1202,6 +1199,11 @@ AAM.prototype.retrieveSettings = function() {
 
     jQuery('.aam-main-loader').show();
     jQuery('.aam-main-content').empty();
+    
+    //reset blog Tables first
+    for(var i in this.blogTables){
+        this.blogTables[i] = null;
+    }
 
     jQuery.ajax(aamLocal.siteURI, {
         type: 'POST',
@@ -1256,12 +1258,20 @@ AAM.prototype.checkRoleback = function() {
  * @access public
  */
 AAM.prototype.initSettings = function() {
+    var _this = this;
+    
     //remove all dialogs to make sure that there are no confusions
     jQuery('.ui-dialog').remove();
 
     //init Settings Menu
     jQuery('.feature-list .feature-item').each(function() {
         jQuery(this).bind('click', function() {
+            //feature activation hook
+            _this.doAction(
+                    'aam_feature_activation', 
+                    {'feature' : jQuery(this).attr('feature')}
+            );
+            
             jQuery('.feature-list .feature-item').removeClass(
                     'feature-item-active'
             );
@@ -1281,23 +1291,10 @@ AAM.prototype.initSettings = function() {
     this.initCapabilityTab();
     this.initPostTab();
     this.initEventTab();
-    this.initConfigPressTab();
 
     this.doAction('aam_init_features');
 
     jQuery('.feature-list .feature-item:eq(0)').trigger('click');
-};
-
-/**
- * Initialize ConfigPress Feature
- *
- * @returns {void}
- *
- * @access public
- */
-AAM.prototype.initConfigPressTab = function() {
-    this.editor = CodeMirror.fromTextArea(document.getElementById("configpress"), {});
-    this.initTooltip('#configpress_content');
 };
 
 /**
@@ -2449,7 +2446,7 @@ AAM.prototype.launchManageAccessDialog = function(button, nRow, aData, type) {
                         jQuery(element, '#access_dialog').attr(
                                 'checked',
                                 (parseInt(response.settings[object][area][action]) === 1 ? true : false)
-                                );
+                        );
                     }
                 }
             }

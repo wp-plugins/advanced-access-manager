@@ -46,7 +46,7 @@ class AAM_Extension_MyFeature {
         //add feature
         $features['my_feature'] = array(
             'id' => 'my_feature',
-            'position' => 35,
+            'position' => 100,
             'title' => __('My Feature', 'aam'),
             'anonimus' => true,
             'content' => array($this, 'content'),

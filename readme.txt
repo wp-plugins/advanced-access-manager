@@ -65,6 +65,12 @@ the list of additional metaboxes can be picked by AAM.
 
 == Changelog ==
 
+= 2.2 =
+* Fixed issue with jQuery UI Tooltip Widget
+* Added AAM Warning Panel
+* Added Event Log Feature
+* Moved ConfigPress to separate Page (refactored internal handling)
+
 = 2.1.1 =
 * Fixed fatal error in caching mechanism
 * Extended ConfigPress tutorial

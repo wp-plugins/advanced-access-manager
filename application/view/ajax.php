@@ -134,6 +134,10 @@ class aam_View_Ajax extends aam_View_Abstract{
             case 'remove_extension':
                 $response = $this->removeExtension();
                 break;
+            
+            case 'save_configpress':
+                $response = $this->saveConfigPress();
+                break;
 
             //TODO - Remove in 07/15/2014
             case 'migrate':
@@ -501,6 +505,20 @@ class aam_View_Ajax extends aam_View_Abstract{
         $model = new aam_View_Extension();
 
         return $model->remove();
+    }
+    
+    /**
+     * Save ConfigPress
+     * 
+     * @return string
+     * 
+     * @access protected
+     */
+    protected function saveConfigPress(){
+        $result = aam_Core_ConfigPress::write(aam_Core_Request::post('config'));
+        return json_encode(array(
+            'status' => ($result === false ? 'failure' : 'success')
+        ));
     }
 
     /**

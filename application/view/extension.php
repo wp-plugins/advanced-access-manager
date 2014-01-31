@@ -23,7 +23,7 @@ class aam_View_Extension extends aam_View_Abstract {
      * @access private
      */
     private $_repository = array();
-
+    
     /**
      * Constructor
      *
@@ -95,7 +95,7 @@ class aam_View_Extension extends aam_View_Abstract {
     public function run() {
         return $this->loadTemplate(dirname(__FILE__) . '/tmpl/extension.phtml');
     }
-
+    
     /**
      * Check if extensions exists
      *

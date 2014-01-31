@@ -7,11 +7,15 @@
  */
 
 /**
- *
+ * ConfigPress Legacy
+ * 
+ * Keep this object for compatibility reasons
+ * 
  * @package AAM
  * @author Vasyl Martyniuk <support@wpaam.com>
  * @copyright Copyright C 2013 Vasyl Martyniuk
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
+ * @todo Remove in 4/30/2014
  */
 class aam_Control_Object_ConfigPress extends aam_Control_Object {
 

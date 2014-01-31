@@ -128,14 +128,6 @@ class aam_View_Manager extends aam_View_Abstract {
                 'anonimus' => false,
                 'content' => array(new aam_View_Event(), 'content'),
                 'help' => __('Define your own action when some event appeared in your WordPress blog. This sections allows you to trigger an action on event like post content change, or page status update. You can setup to send email notification, change the post status or write your own custom event handler.', 'aam')
-            ),
-            'config_press' => array(
-                'id' => 'configpress',
-                'position' => 30,
-                'title' => __('ConfigPress', 'aam'),
-                'anonimus' => true,
-                'content' => array(new aam_View_ConfigPress(), 'content'),
-                'help' => __('Control <b>AAM</b> behavior with ConfigPress. For more details please check <b>ConfigPress tutorial</b>.', 'aam')
             )
         );
     }
