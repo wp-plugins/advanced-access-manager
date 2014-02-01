@@ -11,18 +11,10 @@ define('AAM_VERSION', '2.1.1');
 
 define('AAM_BASE_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 
-//jean.yves.dumaine@gmail.com feedback - thank you
 $base_url = WP_PLUGIN_URL . '/' . basename(AAM_BASE_DIR) . '/';
-//if (force_ssl_admin()){
-//   $base_url = str_replace('http', 'https', $base_url);
-//} else
-if (!empty($_SERVER['HTTPS'])){
-    $base_url = str_replace('http', 'https', $base_url);
-} elseif (isset($_SERVER['REQUEST_SCHEME']) 
-            && ($_SERVER['REQUEST_SCHEME'] == 'https')){
+if (force_ssl_admin()) {
     $base_url = str_replace('http', 'https', $base_url);
 }
-
 define('AAM_BASE_URL', $base_url);
 
 define('AAM_TEMPLATE_DIR', AAM_BASE_DIR . 'view/html/');
