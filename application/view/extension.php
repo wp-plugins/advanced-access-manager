@@ -93,6 +93,13 @@ class aam_View_Extension extends aam_View_Abstract {
      * @access public
      */
     public function run() {
+        //check if plugins/advanced-access-manager/extension is writable
+        if (!is_writable(AAM_BASE_DIR . 'extension')){
+            aam_Core_Console::add(__(
+                    'Folder advanced-access-manager/extension is not writable', 'aam'
+            ));
+        }
+        
         return $this->loadTemplate(dirname(__FILE__) . '/tmpl/extension.phtml');
     }
     

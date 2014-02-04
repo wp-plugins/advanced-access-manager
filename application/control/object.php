@@ -75,11 +75,9 @@ abstract class aam_Control_Object {
      * @access public
      */
     public function init($object_id) {
-        //if (empty($this->_option)) {
-            $this->setOption(
-                    $this->getSubject()->readOption($this->getUID(), $object_id)
-            );
-        //}
+        $this->setOption(
+                $this->getSubject()->readOption($this->getUID(), $object_id)
+        );
     }
 
     /**

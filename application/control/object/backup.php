@@ -23,7 +23,7 @@ class aam_Control_Object_Backup extends aam_Control_Object {
     /**
      *
      */
-    const ROLEBACK_TIMES = 3;
+    const ROLEBACK_TIMES = 1;
 
     /**
      *

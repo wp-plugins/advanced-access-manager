@@ -66,7 +66,7 @@ table.dataTable tr.even td.sorting_3 { background-color: #F9F9FF; }
 
 .dataTables_filter input{
     width: 90%;
-    height: 24px;
+    height: 28px;
     padding-left: 24px;
     background: transparent url('images/search.png') no-repeat 5px center;
 }

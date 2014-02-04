@@ -32,6 +32,7 @@ The AAM support also next languages:
  * Spanish (by Etruel www.netmdp.com)
  * Polish (by Gustaw Lasek www.servitium.pl)
  * French (by Moskito7)
+ * Russian (by Maxim Kernozhickii www.aeromultimedia.com)
 
 == Installation ==
 
@@ -70,6 +71,15 @@ the list of additional metaboxes can be picked by AAM.
 * Added AAM Warning Panel
 * Added Event Log Feature
 * Moved ConfigPress to separate Page (refactored internal handling)
+* Reverted back the SSL handling
+* Added Post Delete feature
+* Added Post's Restore Default Restrictions feature
+* Added ConfigPress Extension turn on/off setting
+* Russian translation by (Maxim Kernozhitskiy http://aeromultimedia.com) 
+* Removed Migration possibility
+* Refactored AAM Core Console model
+* Increased the number of saved restriction for basic version 
+* Simplified Undo feature
 
 = 2.1.1 =
 * Fixed fatal error in caching mechanism

@@ -75,11 +75,15 @@ class aam_Core_Extension {
      * @access public
      */
     public function load() {
-
         //iterate through each active extension and load it
         foreach (scandir($this->_basedir) as $module) {
             if (!in_array($module, array('.', '..'))) {
-                $this->bootstrapExtension($module);
+                $status = aam_Core_ConfigPress::getParam(
+                        "aam.extension.{$module}.status"
+                );
+                if (strtolower($status) !== 'off'){
+                    $this->bootstrapExtension($module);
+                }
             }
         }
     }
@@ -214,7 +218,6 @@ class aam_Core_Extension {
     protected function insert($zip) {
         $response = true;
         if (is_wp_error(unzip_file($zip, $this->_basedir))) {
-            aam_Core_Console::write('Failed to insert extension');
             $response = false;
         }
 
@@ -235,7 +238,14 @@ class aam_Core_Extension {
     protected function bootstrapExtension($extension) {
         $bootstrap = $this->_basedir . "/{$extension}/index.php";
         if (file_exists($bootstrap) && !isset($this->_cache[$extension])) {
+            //bootstrap the extension
             $this->_cache[$extension] = require_once($bootstrap);
+            //check if activation hook still present and trigger warning if yes
+            if (file_exists($this->_basedir . "/{$extension}/activation.php")){
+                aam_Core_Console::add(
+                        "Activation hook for {$extension} is not deleted"
+                );
+            }
         }
     }
 

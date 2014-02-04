@@ -110,6 +110,10 @@ class aam_View_Ajax extends aam_View_Abstract{
             case 'clear_access':
                 $response = $this->clearAccess();
                 break;
+            
+            case 'delete_post':
+                $response = $this->deletePost();
+                break;
 
             case 'event_list':
                 $response = $this->getEventList();
@@ -414,6 +418,19 @@ class aam_View_Ajax extends aam_View_Abstract{
         $model = new aam_View_Post();
 
         return $model->clearAccess();
+    }
+    
+    /**
+     * Delete Post
+     * 
+     * @return string
+     * 
+     * @access protected
+     */
+    protected function deletePost(){
+        $model = new aam_View_Post();
+        
+        return $model->deletePost();
     }
 
     /**

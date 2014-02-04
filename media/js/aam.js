@@ -759,7 +759,7 @@ AAM.prototype.launchDeleteRoleDialog = function(button, aData) {
     if (aData[1]) {
         var message = aamLocal.labels['Delete Role with Users Message'].replace(
                 '%d', aData[1]
-        );
+                );
         message = message.replace('%s', aData[2]);
         jQuery('#delete_role_dialog .dialog-content').html(message);
     } else {
@@ -949,7 +949,15 @@ AAM.prototype.loadUserSegment = function() {
                     event.preventDefault();
                     _this.blockUser(this, aData);
                 }));
-
+                /**
+                 jQuery('.user-actions', nRow).append(jQuery('<a/>', {
+                 'href': '#',
+                 'class': 'user-action user-action-restore',
+                 'aam-tooltip': aamLocal.labels['Restore Default']
+                 }).bind('click', function(event) {
+                 event.preventDefault();
+                 }));
+                 */
                 jQuery('.user-actions', nRow).append(jQuery('<a/>', {
                     'href': '#',
                     'class': 'user-action user-action-delete',
@@ -1199,9 +1207,9 @@ AAM.prototype.retrieveSettings = function() {
 
     jQuery('.aam-main-loader').show();
     jQuery('.aam-main-content').empty();
-    
+
     //reset blog Tables first
-    for(var i in this.blogTables){
+    for (var i in this.blogTables) {
         this.blogTables[i] = null;
     }
 
@@ -1259,7 +1267,7 @@ AAM.prototype.checkRoleback = function() {
  */
 AAM.prototype.initSettings = function() {
     var _this = this;
-    
+
     //remove all dialogs to make sure that there are no confusions
     jQuery('.ui-dialog').remove();
 
@@ -1268,13 +1276,13 @@ AAM.prototype.initSettings = function() {
         jQuery(this).bind('click', function() {
             //feature activation hook
             _this.doAction(
-                    'aam_feature_activation', 
-                    {'feature' : jQuery(this).attr('feature')}
+                    'aam_feature_activation',
+                    {'feature': jQuery(this).attr('feature')}
             );
-            
+
             jQuery('.feature-list .feature-item').removeClass(
                     'feature-item-active'
-            );
+                    );
             jQuery(this).addClass('feature-item-active');
             jQuery('.feature-content .feature-content-container').hide();
             jQuery('#' + jQuery(this).attr('feature') + '_content').show();
@@ -1282,7 +1290,7 @@ AAM.prototype.initSettings = function() {
             jQuery('.aam-help > span').hide();
             jQuery('#feature_help_' + jQuery(this).attr('feature')).css(
                     'display', 'table-cell'
-            );
+                    );
         });
     });
 
@@ -2261,6 +2269,14 @@ AAM.prototype.initPostTab = function() {
                 value: aamLocal.nonce
             });
             aoData.push({
+                name: 'subject',
+                value: _this.getSubject().type
+            });
+            aoData.push({
+                name: 'subject_id',
+                value: _this.getSubject().id
+            });
+            aoData.push({
                 name: 'term',
                 value: _this.postTerm
             });
@@ -2303,7 +2319,7 @@ AAM.prototype.initPostTab = function() {
         aoColumnDefs: [
             {
                 bVisible: false,
-                aTargets: [0, 1, 2]
+                aTargets: [0, 1, 2, 6]
             }
         ],
         fnRowCallback: function(nRow, aData, iDisplayIndex) { //format data
@@ -2316,15 +2332,9 @@ AAM.prototype.initPostTab = function() {
                 _this.launch(button, 'post-action-manage');
                 _this.launchManageAccessDialog(button, nRow, aData, 'post');
             }).text(aData[3]));
+
             jQuery('td:eq(2)', nRow).append(jQuery('<div/>', {
                 'class': 'post-actions'
-            }));
-
-            jQuery('.post-actions', nRow).append(jQuery('<a/>', {
-                'href': aData[2].replace('&amp;', '&'),
-                'class': 'post-action post-action-edit',
-                'target': '_blank',
-                'aam-tooltip': aamLocal.labels['Edit']
             }));
 
             jQuery('.post-actions', nRow).append(jQuery('<a/>', {
@@ -2336,6 +2346,48 @@ AAM.prototype.initPostTab = function() {
                 _this.launch(jQuery(this), 'post-action-manage');
                 _this.launchManageAccessDialog(this, nRow, aData, 'post');
             }));
+
+            jQuery('.post-actions', nRow).append(jQuery('<a/>', {
+                'href': aData[2].replace('&amp;', '&'),
+                'class': 'post-action post-action-edit',
+                'target': '_blank',
+                'aam-tooltip': aamLocal.labels['Edit']
+            }));
+
+            if (aData[1] == 'trash') {
+                jQuery('.post-actions', nRow).append(jQuery('<a/>', {
+                    'href': '#',
+                    'class': 'post-action post-action-delete',
+                    'aam-tooltip': aamLocal.labels['Delete Post']
+                }).bind('click', function(event) {
+                    event.preventDefault();
+                    _this.launch(jQuery(this), 'post-action-delete');
+                    _this.launchDeletePostDialog(this, nRow, aData, true);
+                }));
+            } else {
+                jQuery('.post-actions', nRow).append(jQuery('<a/>', {
+                    'href': '#',
+                    'class': 'post-action post-action-trash',
+                    'aam-tooltip': aamLocal.labels['Move to Trash']
+                }).bind('click', function(event) {
+                    event.preventDefault();
+                    _this.launch(jQuery(this), 'post-action-trash');
+                    _this.launchDeletePostDialog(this, nRow, aData, false);
+                }));
+            }
+
+            if (parseInt(aData[6]) === 1) {
+                jQuery('.post-actions', nRow).append(jQuery('<a/>', {
+                    'href': '#',
+                    'class': 'post-action post-action-restore',
+                    'aam-tooltip': aamLocal.labels['Restore Default Access']
+                }).bind('click', function(event) {
+                    event.preventDefault();
+                    _this.restorePostAccess(aData[0], 'post', nRow);
+                    jQuery(this).remove();
+                }));
+            }
+
 
             _this.initTooltip(nRow);
         },
@@ -2446,33 +2498,18 @@ AAM.prototype.launchManageAccessDialog = function(button, nRow, aData, type) {
                         jQuery(element, '#access_dialog').attr(
                                 'checked',
                                 (parseInt(response.settings[object][area][action]) === 1 ? true : false)
-                        );
+                                );
                     }
                 }
             }
 
             var buttons = {};
             buttons[aamLocal.labels['Restore Default']] = function() {
-                //retrieve settings and display the dialog
-                var data = _this.compileAjaxPackage('clear_access', true);
-                data.id = aData[0];
-                data.type = type;
-
-                jQuery.ajax(aamLocal.ajaxurl, {
-                    type: 'POST',
-                    dataType: 'json',
-                    data: data,
-                    success: function(response) {
-                        _this.highlight(nRow, response.status);
-                    },
-                    error: function() {
-                        _this.highlight(nRow, 'failure');
-                    }
-                });
+                _this.restorePostAccess(aData[0], type, nRow);
                 jQuery('#access_dialog').dialog("close");
             };
 
-            if (response.counter <= 5) {
+            if (response.counter <= 10) {
                 buttons[aamLocal.labels['Apply']] = function() {
                     _this.showMetaboxLoader('#access_dialog');
                     var data = _this.compileAjaxPackage('save_access', true);
@@ -2531,6 +2568,114 @@ AAM.prototype.launchManageAccessDialog = function(button, nRow, aData, type) {
             _this.highlight(nRow, 'failure');
         }
     });
+};
+
+/**
+ * Restore Default Post/Term Access
+ * 
+ * @param {type} id
+ * @param {type} type
+ * @param {type} nRow
+ * 
+ * @returns {void}
+ */
+AAM.prototype.restorePostAccess = function(id, type, nRow) {
+    var _this = this;
+    
+    //retrieve settings and display the dialog
+    var data = this.compileAjaxPackage('clear_access', true);
+    data.id = id;
+    data.type = type;
+    
+    jQuery.ajax(aamLocal.ajaxurl, {
+        type: 'POST',
+        dataType: 'json',
+        data: data,
+        success: function(response) {
+            _this.highlight(nRow, response.status);
+        },
+        error: function() {
+            _this.highlight(nRow, 'failure');
+        }
+    });
+};
+
+/**
+ * Launch the Delete Post Dialog
+ *
+ * @param {Object} button
+ * @param {Object} aRow
+ * @param {Object} aData
+ * @param {Boolean} force
+ *
+ * @returns {void}
+ *
+ * @access public
+ */
+AAM.prototype.launchDeletePostDialog = function(button, nRow, aData, force) {
+    var _this = this;
+    
+    jQuery('#delete_post_dialog .dialog-content').html(
+            aamLocal.labels[(force ? 'Delete' : 'Trash') + ' Post Message'].replace('%s', aData[3])
+    );
+    var buttons = {};
+    
+    if (force === false) {
+        buttons[aamLocal.labels['Delete Permanently']] = function() {
+        _this.deletePost(aData[0], true, nRow);
+    };
+    }
+    
+    buttons[aamLocal.labels[(force ? 'Delete' : 'Trash') + ' Post']] = function() {
+        _this.deletePost(aData[0], force, nRow);
+    };
+    buttons[aamLocal.labels['Cancel']] = function() {
+        jQuery('#delete_post_dialog').dialog("close");
+    };
+
+    jQuery('#delete_post_dialog').dialog({
+        resizable: false,
+        height: 'auto',
+        width: '30%',
+        modal: true,
+        title: aamLocal.labels[(force ? 'Delete' : 'Trash') + ' Post'],
+        buttons: buttons,
+        close: function() {
+            _this.terminate(jQuery(button), 'post-action-' + (force ? 'delete' : 'trash'));
+        }
+    });
+};
+
+/**
+ * Delete or Trash the Post
+ * 
+ * @param {type} id
+ * @param {type} force
+ * @param {type} nRow
+ * 
+ * @returns {void}
+ */
+AAM.prototype.deletePost = function(id, force, nRow) {
+    var _this = this;
+    
+    var data = _this.compileAjaxPackage('delete_post');
+    data.post = id;
+    data.force = (force ? 1 : 0);
+    jQuery.ajax(aamLocal.ajaxurl, {
+        type: 'POST',
+        dataType: 'json',
+        data: data,
+        success: function(response) {
+            if (response.status === 'success') {
+                _this.blogTables.postList.fnDeleteRow(nRow);
+            }
+            _this.highlight('#post_list_wrapper', response.status);
+        },
+        error: function() {
+            _this.highlight('#post_list_wrapper', 'failure');
+        }
+    });
+    jQuery('#delete_post_dialog').dialog("close");
 };
 
 /**

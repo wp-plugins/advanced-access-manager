@@ -128,9 +128,6 @@ abstract class aam_Control_Subject {
         if (method_exists($subject, $name)) {
             $response = call_user_func_array(array($subject, $name), $arguments);
         } else {
-            aam_Core_Console::write(
-                    "Method {$name} does not exist in " . get_class($subject)
-            );
             $response = null;
         }
 
@@ -261,7 +258,7 @@ abstract class aam_Control_Subject {
                 );
             } else {
                 $this->_objects[$object][$object_id] = apply_filters(
-                        'aam_object', $this, $object, $object_id
+                        'aam_object', null, $object, $object_id
                 );
             }
            

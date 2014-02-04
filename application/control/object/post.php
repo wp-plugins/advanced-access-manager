@@ -61,12 +61,21 @@ class aam_Control_Object_Post extends aam_Control_Object {
      * @var type
      */
     private $_option = array();
+    
+    /**
+     * Indicator that settings where inherited
+     * 
+     * @var boolean
+     * 
+     * @access private 
+     */
+    private $_inherited = false;
 
     /**
      * @inheritdoc
      */
     public function __sleep(){
-        return array('_post', '_option');
+        return array('_post', '_option', '_inherited');
     }
 
     /**
@@ -82,6 +91,7 @@ class aam_Control_Object_Post extends aam_Control_Object {
      */
     public function save($params = null) {
         if (is_array($params)) {
+            $this->setInherited(false);
             update_post_meta($this->getPost()->ID, $this->getOptionName(), $params);
         }
     }
@@ -217,6 +227,7 @@ class aam_Control_Object_Post extends aam_Control_Object {
         $access = $term->getOption();
         if (isset($access['post']) && $access['post']) {
             $result = array('post' => $access['post']);
+            $this->setInherited(true);
         } elseif (is_object($term->getTerm()) && $term->getTerm()->parent) {
             $result = $this->inheritAccess($term->getTerm()->parent);
         } else {
@@ -268,6 +279,22 @@ class aam_Control_Object_Post extends aam_Control_Object {
      */
     public function getOption() {
         return $this->_option;
+    }
+    
+    /**
+     * 
+     * @param type $flag
+     */
+    public function setInherited($flag){
+        $this->_inherited = $flag;
+    }
+    
+    /**
+     * 
+     * @return type
+     */
+    public function getInherited(){
+        return $this->_inherited;
     }
 
     /**

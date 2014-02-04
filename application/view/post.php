@@ -96,7 +96,7 @@ class aam_View_Post extends aam_View_Abstract {
         $args = array(
             'numberposts' => aam_Core_Request::request('iDisplayLength'),
             'offset' => aam_Core_Request::request('iDisplayStart'),
-            //'category' => $term,
+            'fields' => 'ids',
             'term' => $term,
             'taxonomy' => (!empty($taxonomy) ? $taxonomy : ''),
             'post_type' => $post_type,
@@ -139,14 +139,18 @@ class aam_View_Post extends aam_View_Abstract {
             'aaData' => array(),
         );
 
-        foreach (get_posts($args) as $post) {
+        foreach (get_posts($args) as $post_id) {
+            $post = $this->getSubject()->getObject(
+                    aam_Control_Object_Post::UID, $post_id
+            );
             $response['aaData'][] = array(
-                $post->ID,
-                $post->post_status,
-                get_edit_post_link($post->ID),
-                $post->post_title,
-                $wp_post_statuses[$post->post_status]->label,
-                ''
+                $post->getPost()->ID,
+                $post->getPost()->post_status,
+                get_edit_post_link($post->getPost()->ID),
+                $post->getPost()->post_title,
+                $wp_post_statuses[$post->getPost()->post_status]->label,
+                '',
+                ($post->getOption() && !$post->getInherited() ? 1 : 0)
             );
         }
 
@@ -214,6 +218,25 @@ class aam_View_Post extends aam_View_Abstract {
         }
 
         return json_encode($tree);
+    }
+    
+    /**
+     * Delete Post
+     * 
+     * @return string
+     * 
+     * @access public
+     */
+    public function deletePost(){
+        $post_id = aam_Core_Request::post('post');
+        
+        if (aam_Core_Request::post('force')){
+            $result = wp_delete_post($post_id, true);
+        } else {
+            $result = wp_trash_post($post_id);
+        }
+        
+        return json_encode(array('status' => ($result ? 'success' : 'failure')));
     }
 
     /**
@@ -424,7 +447,7 @@ class aam_View_Post extends aam_View_Abstract {
                 aam_Core_API::getBlogOption('aam_access_limit', 0)
         );
 
-        if ($limit_counter == -1 || $limit_counter <= 5) {
+        if ($limit_counter == -1 || $limit_counter <= 10) {
             $access = aam_Core_Request::post('access');
             if (aam_Core_Request::post('type') == 'term') {
                 $object = $this->getSubject()->getObject(

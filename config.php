@@ -7,7 +7,7 @@
  */
 
 //AAM Version for Update purpose
-define('AAM_VERSION', '2.1.1');
+define('AAM_VERSION', '2.1.9');
 
 define('AAM_BASE_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 
@@ -57,23 +57,11 @@ if (!file_exists(AAM_TEMP_DIR)) {
     if (@mkdir(AAM_TEMP_DIR)) {
         //silence the directory
         file_put_contents(AAM_TEMP_DIR . '/index.php', '');
-    } 
+    }  else {
+        aam_Core_Console::add(__('Failed to create wp-content/aam folder', 'aam'));
+    }
+} elseif(!is_writable(AAM_TEMP_DIR)){
+    aam_Core_Console::add(__('Folder wp-content/aam is not writable', 'aam'));
 }
 
 load_plugin_textdomain('aam', false, basename(AAM_BASE_DIR) . '/lang');
-
-//set migration admin notice. TODO - remove in July 15 2014
-function aam_migration_note() {
-    if (class_exists('aam_Core_Migrate') && !aam_Core_API::getBlogOption('aam_migrated')) {
-        echo "<div class='update-nag'>";
-        echo __('Migrate your old AAM settings to the new AAM platform. ', 'aam');
-        echo '<a href="#" id="aam_migrate">' . __('Click to Migrate', 'aam') . '</a>';
-        echo '</div>';
-    }
-}
-
-if (is_multisite()) {
-    add_action('network_admin_notices', 'aam_migration_note');
-} else {
-    add_action('admin_notices', 'aam_migration_note');
-}

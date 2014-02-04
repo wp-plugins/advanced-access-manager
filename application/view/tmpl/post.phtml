@@ -16,11 +16,16 @@
                 <th width="60%"><?php echo __('Name', 'aam'); ?></th>
                 <th width="20%"><?php echo __('Status', 'aam'); ?></th>
                 <th><?php echo __('Control', 'aam'); ?></th>
+                <th>Restriction Status</th>
             </tr>
         </thead>
         <tbody>
         </tbody>
     </table>
+    
+    <div id="delete_post_dialog" class="aam-dialog" title="<?php echo __('Delete Post', 'aam'); ?>">
+        <p class="dialog-content"></p>
+    </div>
 
     <div id="filter_post_dialog" class="aam-dialog" title="<?php echo __('Filter Posts by Type', 'aam'); ?>">
         <div class="tree-holder postbox">

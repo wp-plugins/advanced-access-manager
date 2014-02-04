@@ -22,15 +22,6 @@ abstract class aam_View_Abstract {
     static private $_subject = null;
     
     /**
-     * List of all Warnings
-     * 
-     * @var array
-     * 
-     * @access private 
-     */
-    private $_warnings = array();
-
-    /**
      *
      */
     public function __construct() {
@@ -76,40 +67,4 @@ abstract class aam_View_Abstract {
         return $content;
     }
     
-    /**
-     * Check if there is any AAM Warning
-     * 
-     * @return boolean
-     * 
-     * @access public
-     */
-    public function checkWarnings(){
-        //check if wp-content/aam folder exists & is writable
-        if (!file_exists(AAM_TEMP_DIR)){
-            $this->_warnings[] = __('Folder wp-content/aam does not exist');
-        } elseif(!is_writable(AAM_TEMP_DIR)){
-            $this->_warnings[] = __('Folder wp-content/aam is not writable');
-        }
-        
-        //check if plugins/advanced-access-manager/extension is writable
-        if (!is_writable(AAM_BASE_DIR . 'extension')){
-            $this->_warnings[] = __(
-                    'Folder advanced-access-manager/extension is not writable'
-            );
-        }
-        
-        return (count($this->_warnings) ? true : false);
-    }
-    
-    /**
-     * Return warnings
-     * 
-     * @return array
-     * 
-     * @access public
-     */
-    public function getWarnings(){
-        return $this->_warnings;
-    }
-
 }

@@ -73,7 +73,6 @@ class aam_Control_Object_ConfigPress extends aam_Control_Object {
             );
         } else {
             $response = false;
-            aam_Core_Console::write('Temp directory is not writable');
         }
 
         return $response;
@@ -116,7 +115,7 @@ class aam_Control_Object_ConfigPress extends aam_Control_Object {
         try {
             $this->setTree(new Zend_Config_Ini($filename));
         } catch (Zend_Config_Exception $e) {
-            aam_Core_Console::write($e->getMessage());
+            aam_Core_Console::add('ConfigPress parsing error');
         }
     }
 
@@ -132,7 +131,6 @@ class aam_Control_Object_ConfigPress extends aam_Control_Object {
             if (is_string($func) && is_callable($func)) {
                 $response = call_user_func($func);
             } else {
-                aam_Core_Console::write("ConfigPress userFunc {$func} failure");
                 $response = $default;
             }
         } else {

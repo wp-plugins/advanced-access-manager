@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <?php if ($this->checkWarnings()) { ?>
+        <?php if (aam_Core_Console::hasIssues()) { ?>
             <div class="postbox-container" style="width:25%; margin-left: 2%;">
                 <div class="metabox-holder">
                     <div class="meta-box-sortables">
@@ -39,7 +39,7 @@
                                 <span><?php echo __('AAM Warnings', 'aam'); ?></span>
                             </h3>
                             <div class="inside">
-                                <?php foreach ($this->getWarnings() as $warning) { ?>
+                                <?php foreach (aam_Core_Console::getWarnings() as $warning) { ?>
                                     <div class="aam-warning"><span><?php echo $warning; ?></span></div>
                                 <?php } ?>
                             </div>

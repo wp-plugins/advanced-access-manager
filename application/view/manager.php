@@ -368,7 +368,14 @@ class aam_View_Manager extends aam_View_Abstract {
             'Unlock Default Accesss Control' => __('Unlock Default Accesss Control', 'aam'),
             'Close' => __('Close', 'aam'),
             'Edit Role' => __('Edit Role', 'aam'),
-            'Restore Default Capabilities' => __('Restore Default Capabilities', 'aam')
+            'Restore Default Capabilities' => __('Restore Default Capabilities', 'aam'),
+            'Delete Post Message' => __('Are you sure you want to delete <b>%s</b>?', 'aam'),
+            'Trash Post Message' => __('Are you sure you want to move <b>%s</b> to trash?', 'aam'),
+            'Delete Post' => __('Delete Post', 'aam'),
+            'Delete Permanently' => __('Delete Permanently', 'aam'),
+            'Trash Post' => __('Trash Post', 'aam'),
+            'Restore Default Access' => __('Restore Default Access', 'aam')
+            
         ));
     }
 

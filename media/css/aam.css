@@ -532,6 +532,14 @@
     background-image: url('images/cmanager/block-user-active.png');
 }
 
+.user-action-restore{
+    background-image: url('images/cmanager/restore.png');
+}
+
+.user-action-restore:hover{
+    background-image: url('images/cmanager/restore-active.png');
+}
+
 .user-action-delete{
     background-image: url('images/cmanager/delete.png');
 }
@@ -1044,7 +1052,6 @@ a.capability-action{
     width: 16px;
     height: 16px;
     display: table-cell;
-    cursor: pointer;
     padding: 2px 0;
     background-repeat: no-repeat;
     background-position: center;
@@ -1074,6 +1081,39 @@ a.capability-action{
 .post-action-edit-active{
     background-image: url('images/post/edit-active.png');
 }
+
+.post-action-restore{
+    background-image: url('images/post/restore.png');
+}
+
+.post-action-restore:hover{
+    background-image: url('images/post/restore-active.png');
+}
+
+.post-action-delete{
+    background-image: url('images/post/delete.png');
+}
+
+.post-action-delete:hover{
+    background-image: url('images/post/delete-active.png');
+}
+
+.post-action-delete-active{
+    background-image: url('images/post/delete-active.png');
+}
+
+.post-action-trash{
+    background-image: url('images/post/trash.png');
+}
+
+.post-action-trash:hover{
+    background-image: url('images/post/trash-active.png');
+}
+
+.post-action-trash-active{
+    background-image: url('images/post/trash-active.png');
+}
+
 
 .post-action-lock{
     background-image: url('images/lock.png');
