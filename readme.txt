@@ -93,6 +93,9 @@ the list of additional metaboxes can be picked by AAM.
 
 == Changelog ==
 
+= 2.2.1 =
+* Fixed the issue with Activity include
+
 = 2.2 =
 * Fixed issue with jQuery UI Tooltip Widget
 * Added AAM Warning Panel

@@ -36,7 +36,7 @@ class AAM_Extension_ActivityLog {
         $this->setParent($parent);
 
         //include activity object
-        require_once(__DIR__ . '/activity.php');
+        require_once(dirname(__FILE__) . '/activity.php');
 
         if (is_admin()) {
             add_action('admin_print_scripts', array($this, 'printScripts'));
