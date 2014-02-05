@@ -3,29 +3,55 @@ Contributors: vasyl_m
 Tags: access manager, access, access control, comments, capability, widget, filter menu, role manager, user access, user control, user
 Requires at least: 3.4.2
 Tested up to: 3.8.1
-Stable tag: 2.1.1
+Stable tag: 2.2
 
-Graphic interface to manage User Access to your Front-end and Back-end
+Graphic interface to manage Access control to your Front-end and Back-end
 
 == Description ==
 
-Advanced Access Manager is very powerful and flexible Access Control tool for
-your WordPress website. It supports Single WordPress installation and Multisite
-setup.
-This is the basic list of features you can perform this AAM:
+Are you looking for free and powerful plugin for WordPress Access Control?
 
-* Filter Admin Menu
-* Filter Dashboard Widgets
-* Filter Metaboxes
-* Filter Frontend Widgets
-* Manage Comments
-* Manage Capabilities (Create, Delete)
-* Manage User Roles (Create, Edit, Delete)
-* Manage Access to your Posts, Pages or even Custom Post Types
+Nowadays AAM is one of the most popular access control plugins. It is easy-to-use but
+at the same time very powerful tool that gives you a flexible control over your either
+single WordPress site or Multisite Network. With AAM you are allowed to configure access
+to different parts of your website for any Role or individual User.
 
-And many-many other features.
+In Current version you are allowed to do next:
 
-The AAM support also next languages:
+**Control Access to Admin Menu (including submenu)**
+As example you can restrict access for Role Editor to Menu "Pages" or does not allow
+ individual User to manage Post's Categories.
+
+**Filter Widgets & Metaboxes**
+Filter the list of metaboxes that User can see during Post/Page editing. At the same
+time you can filter the list of Dashboard and Frontend widgets.
+
+**Manage Role's or User's Capabilities**
+AAM, with simple interface, allows you to grand or remove capabilities from Role or User.
+You can also create new capabilities or remove existing.
+
+**Control Access to Posts, Pages, CPTs or Terms**
+You can restrict access to individual page or post for any user or role as well as
+restrict access to entire Term and all posts inside it. You can also restrict
+page commenting for individual pages or exclude them from Frontend menu. We are
+extending the list of possible restrictions with each new version.
+
+**Create custom actions for system events**
+As example your system can trigger email to you if some user published Post/Page or
+modified content. You are also allowed to develop your own custom action for event.
+
+**Track User Activities**
+With AAM you can track user activities within your website. So you can easily find out
+when user was logged in or modified some Post/Page. There are many activities that can
+be tracked. We constantly adding more and more.
+
+**Manage Role List**
+AAM allows you to create new Roles or Delete existing.
+
+There are a lot of small and hidden features included in AAM that we are not listing
+here but you can find more about them on our [Forum](http://wpaam.com/forum).
+
+The AAM support also these languages:
 
  * English
  * German (by Kolja www.Reggae-Party.de)
@@ -41,12 +67,6 @@ The AAM support also next languages:
 3. Find Access Manager under AWM Group Menu
 
 == Frequently Asked Questions ==
-
-= I do not see User & Role lists. What should I do? =
-
-Please try to deactivate all activated plugins and switch to default theme. There
-is some plugin that printout the redundant javascript code to the header and this
-breaks the AAM.
 
 = What is "Initiate URL" button, under "Metaboxes & Widgets" Tab? =
 
@@ -75,10 +95,10 @@ the list of additional metaboxes can be picked by AAM.
 * Added Post Delete feature
 * Added Post's Restore Default Restrictions feature
 * Added ConfigPress Extension turn on/off setting
-* Russian translation by (Maxim Kernozhitskiy http://aeromultimedia.com) 
+* Russian translation by (Maxim Kernozhitskiy http://aeromultimedia.com)
 * Removed Migration possibility
 * Refactored AAM Core Console model
-* Increased the number of saved restriction for basic version 
+* Increased the number of saved restriction for basic version
 * Simplified Undo feature
 
 = 2.1.1 =

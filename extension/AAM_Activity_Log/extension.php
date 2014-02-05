@@ -18,13 +18,13 @@ class AAM_Extension_ActivityLog {
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $_parent = null;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $_subject = null;
 
@@ -54,24 +54,41 @@ class AAM_Extension_ActivityLog {
         add_action('wp_logout', array($this, 'logout'));
     }
 
+    /**
+     *
+     * @param type $username
+     * @param type $user
+     */
     public function login($username, $user) {
         $subject = new aam_Control_Subject_User($user->ID);
         $subject->getObject(aam_Control_Object_Activity::UID)->add(
-                time(), array(
-            'action' => aam_Control_Object_Activity::ACTIVITY_LOGIN
+                time(),
+                array(
+                    'action' => aam_Control_Object_Activity::ACTIVITY_LOGIN
                 )
         );
     }
 
+    /**
+     *
+     */
     public function logout() {
         $user = $this->getParent()->getUser();
         $user->getObject(aam_Control_Object_Activity::UID)->add(
-                time(), array(
-            'action' => aam_Control_Object_Activity::ACTIVITY_LOGOUT
+                time(),
+                array(
+                    'action' => aam_Control_Object_Activity::ACTIVITY_LOGOUT
                 )
         );
     }
 
+    /**
+     *
+     * @param aam_Control_Object_Activity $object
+     * @param type $object_uid
+     * @param type $object_id
+     * @return \aam_Control_Object_Activity
+     */
     public function activityObject($object, $object_uid, $object_id) {
         if ($object_uid === aam_Control_Object_Activity::UID) {
             $object = new aam_Control_Object_Activity(
@@ -82,6 +99,11 @@ class AAM_Extension_ActivityLog {
         return $object;
     }
 
+    /**
+     *
+     * @param type $features
+     * @return string
+     */
     public function feature($features) {
         //add feature
         $features['activity_log'] = array(
@@ -90,14 +112,18 @@ class AAM_Extension_ActivityLog {
             'title' => __('Activity Log', 'aam'),
             'anonimus' => false,
             'content' => array($this, 'content'),
-            'help' => __('User Activity log', 'aam')
+            'help' => __(
+                    'Tracks User Activities like user login/logout or post changes. '
+                    . 'Check <b>AAM Activities</b> Extension to get advanced list of possible '
+                    . 'activities.', 'aam'
+            )
         );
 
         return $features;
     }
 
     /**
-     * 
+     *
      * @return type
      */
     public function content() {
@@ -119,29 +145,32 @@ class AAM_Extension_ActivityLog {
     public function printScripts() {
         if ($this->getParent()->isAAMScreen()) {
             wp_enqueue_script(
-                    'aam-activity-log-admin', AAM_ACTIVITY_LOG_BASE_URL . '/activity.js', array('aam-admin')
+                    'aam-activity-log-admin',
+                    AAM_ACTIVITY_LOG_BASE_URL . '/activity.js',
+                    array('aam-admin')
             );
         }
     }
 
     /**
-     * 
+     *
      */
     public function printStyles() {
         if ($this->getParent()->isAAMScreen()) {
             wp_enqueue_style(
-                    'aam-activity-log-admin', AAM_ACTIVITY_LOG_BASE_URL . '/activity.css'
+                    'aam-activity-log-admin',
+                    AAM_ACTIVITY_LOG_BASE_URL . '/activity.css'
             );
         }
     }
-    
+
     /**
      * Add extra UI labels
-     * 
+     *
      * @param array $labels
-     * 
+     *
      * @return array
-     * 
+     *
      * @access public
      */
     public function localizationLabels($labels) {
@@ -153,12 +182,12 @@ class AAM_Extension_ActivityLog {
 
     /**
      * Hanlde Ajax call
-     * 
+     *
      * @param mixed $default
      * @param aam_Control_Subject $subject
-     * 
+     *
      * @return mixed
-     * 
+     *
      * @access public
      */
     public function ajax($default, aam_Control_Subject $subject = null) {
@@ -182,7 +211,7 @@ class AAM_Extension_ActivityLog {
     }
 
     /**
-     * 
+     *
      * @return type
      */
     protected function getActivityList() {
@@ -215,11 +244,11 @@ class AAM_Extension_ActivityLog {
 
     /**
      * Clear the activities
-     * 
+     *
      * @global wpdb $wpdb
-     * 
+     *
      * @return string
-     * 
+     *
      * @access public
      */
     protected function clearActivities() {
@@ -232,7 +261,7 @@ class AAM_Extension_ActivityLog {
     }
 
     /**
-     * 
+     *
      * @param aam $parent
      */
     public function setParent(aam $parent) {
@@ -248,7 +277,7 @@ class AAM_Extension_ActivityLog {
     }
 
     /**
-     * 
+     *
      * @param type $subject
      */
     public function setSubject($subject) {
@@ -256,7 +285,7 @@ class AAM_Extension_ActivityLog {
     }
 
     /**
-     * 
+     *
      * @return type
      */
     public function getSubject() {

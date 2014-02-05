@@ -17,35 +17,38 @@
 class aam_Control_Object_Activity extends aam_Control_Object {
 
     /**
-     *
+     * Control Object UID
      */
     const UID = 'activity';
-    
+
     /**
-     * 
+     * Activity User Login
      */
     const ACTIVITY_LOGIN = 'login';
-    
+
     /**
-     * 
+     * Activity User Logout
      */
     const ACTIVITY_LOGOUT = 'logout';
 
     /**
+     * Set of Activities
      *
-     * @var type
+     * @var array
+     *
+     * @access private
      */
     private $_option = array();
 
     /**
      * Initialize the Activity list
-     * 
+     *
      * Based on subject type, load the list of activities
-     * 
+     *
      * @param int $object_id
-     * 
+     *
      * @return void
-     * 
+     *
      * @access public
      */
     public function init($object_id) {
@@ -82,11 +85,11 @@ class aam_Control_Object_Activity extends aam_Control_Object {
 
     /**
      * Decorate Activity description
-     * 
+     *
      * @param array $activity
-     * 
+     *
      * @return string
-     * 
+     *
      * @access public
      */
     public function decorate($activity) {
@@ -101,7 +104,9 @@ class aam_Control_Object_Activity extends aam_Control_Object {
 
             default:
                 $response = apply_filters(
-                        'aam_activity_decorator', __('Unknown Activity', 'aam'), $activity
+                        'aam_activity_decorator',
+                        __('Unknown Activity', 'aam'),
+                        $activity
                 );
                 break;
         }
@@ -111,15 +116,14 @@ class aam_Control_Object_Activity extends aam_Control_Object {
 
     /**
      * Add User's Activity
-     * 
+     *
      * This method can be used only for Subject User
-     * 
-     * @param type $user_id
-     * @param type $timestamp
-     * @param type $activity
-     * 
+     *
+     * @param int   $timestamp
+     * @param array $activity
+     *
      * @return void
-     * 
+     *
      * @access public
      */
     public function add($timestamp, array $activity) {
@@ -136,7 +140,13 @@ class aam_Control_Object_Activity extends aam_Control_Object {
     }
 
     /**
-     * 
+     * Filter old activities
+     *
+     * Based on aam.extension.AAM_Activity_Log.date config, filter old activities
+     *
+     * @return void
+     *
+     * @access public
      */
     public function filter() {
         $date = strtotime(
@@ -156,8 +166,13 @@ class aam_Control_Object_Activity extends aam_Control_Object {
     }
 
     /**
+     * Save Activities
      *
-     * @param type $events
+     * @param array $events
+     *
+     * @return void
+     *
+     * @access public
      */
     public function save($activities = null) {
         if (is_array($activities)) {

@@ -45,6 +45,27 @@
                                         </div>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td>
+                                        <span class="extension-name">AAM Activities</span>
+                                    </td>
+                                    <td class="extension-description">
+                                        Extend the list of activities that AAM can track. By default AAM logs only user <i>login</i> and <i>logout</i>.
+                                        By purchasing this extension you can also track activities like post trash, delete, update etc.
+                                        As well as we can implement any additional activity on demand. Read our <a href="http://wpaam.com/forum/viewtopic.php?f=7&t=91#p243" traget="_blank">Forum</a> for more details.
+                                    </td>
+                                    <td class="extension-price payed">$20.00</td>
+                                    <td>
+                                        <div class="extension-actions">
+                                            <a href="http://wpaam.com/forum/viewtopic.php?f=7&t=91#p243" target="_blank" class="extension-action extension-action-forum" aam-tooltip="Visit Our Forum"></a>
+                                            <?php if ($this->hasExtension('AAM Activities')) { ?>
+                                                <a href="#" extension="AAM Activities" license="<?php echo $this->getExtension('AAM Activities')->license; ?>" class="extension-action extension-action-ok" aam-tooltip="Installed Successfully"></a>
+                                            <?php } else { ?>
+                                                <a href="#" extension="AAM Activities" link="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HME9DTSFSJH4W" class="extension-action extension-action-purchase" aam-tooltip="Get it Today"></a>
+                                            <?php } ?>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                         <div id="install_extension" class="aam-dialog" title="<?php echo __('Install Extension', 'aam'); ?>">

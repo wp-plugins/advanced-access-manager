@@ -7,14 +7,14 @@
 
 /**
  * Activity List
- * 
+ *
  * @type object
  */
 AAM.prototype.blogTables.activityList = null;
 
 /**
  * Initialize and load activity tab
- * 
+ *
  * @returns void
  */
 AAM.prototype.loadActivityTab = function() {
@@ -100,6 +100,13 @@ AAM.prototype.loadActivityTab = function() {
     }
 };
 
+/**
+ * Show Clear Activity Log Confirmation dialog
+ *
+ * @returns {void}
+ *
+ * @access public
+ */
 AAM.prototype.launchClearActivityLog = function() {
     var _this = this;
 
@@ -128,7 +135,7 @@ AAM.prototype.launchClearActivityLog = function() {
         buttons: buttons,
         close: function() {
             _this.terminate(
-                    jQuery('.activity-top-action-clear'), 
+                    jQuery('.activity-top-action-clear'),
                     'activity-top-action-clear'
             );
             //refresh the table
@@ -138,6 +145,13 @@ AAM.prototype.launchClearActivityLog = function() {
     });
 };
 
+/**
+ * Show Activation Log Information Dialog
+ *
+ * @returns {void}
+ *
+ * @access public
+ */
 AAM.prototype.launchActivityLogInfo = function() {
     var _this = this;
 
@@ -155,13 +169,12 @@ AAM.prototype.launchActivityLogInfo = function() {
         buttons: buttons,
         close: function() {
             _this.terminate(
-                    jQuery('.activity-top-action-info'), 
+                    jQuery('.activity-top-action-info'),
                     'activity-top-action-info'
             );
         }
     });
 };
-
 
 jQuery(document).ready(function() {
     aamInterface.addAction('aam_feature_activation', function(params) {
