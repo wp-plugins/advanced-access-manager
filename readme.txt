@@ -19,33 +19,40 @@ to different parts of your website for any Role or individual User.
 In Current version you are allowed to do next:
 
 **Control Access to Admin Menu (including submenu)**
+
 As example you can restrict access for Role Editor to Menu "Pages" or does not allow
  individual User to manage Post's Categories.
 
 **Filter Widgets & Metaboxes**
+
 Filter the list of metaboxes that User can see during Post/Page editing. At the same
 time you can filter the list of Dashboard and Frontend widgets.
 
 **Manage Role's or User's Capabilities**
+
 AAM, with simple interface, allows you to grand or remove capabilities from Role or User.
 You can also create new capabilities or remove existing.
 
 **Control Access to Posts, Pages, CPTs or Terms**
+
 You can restrict access to individual page or post for any user or role as well as
 restrict access to entire Term and all posts inside it. You can also restrict
 page commenting for individual pages or exclude them from Frontend menu. We are
 extending the list of possible restrictions with each new version.
 
 **Create custom actions for system events**
+
 As example your system can trigger email to you if some user published Post/Page or
 modified content. You are also allowed to develop your own custom action for event.
 
 **Track User Activities**
+
 With AAM you can track user activities within your website. So you can easily find out
 when user was logged in or modified some Post/Page. There are many activities that can
 be tracked. We constantly adding more and more.
 
 **Manage Role List**
+
 AAM allows you to create new Roles or Delete existing.
 
 There are a lot of small and hidden features included in AAM that we are not listing
