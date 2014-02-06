@@ -62,8 +62,15 @@
         <table class="dataTable">
             <tbody>
                 <tr>
-                    <th><?php echo __('Capability Name', 'aam'); ?><span class="aam-asterix">*</span>:</th>
+                    <th class="aam-align-right"><?php echo __('Capability Name', 'aam'); ?><span class="aam-asterix">*</span>:</th>
                     <td><input type="text" id="capability_name" class="aam-input" /></td>
+                </tr>
+                <tr>
+                    <th class="aam-align-right"><?php echo __('Keep Unfiltered', 'aam'); ?>:</th>
+                    <td>
+                        <input type="checkbox" id="capability_unfiltered" />
+                        <label for="capability_unfiltered"><span></span></label>
+                    </td>
                 </tr>
             </tbody>
         </table>

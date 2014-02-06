@@ -988,14 +988,36 @@ a.capability-action{
 .capability-action-select{
     background: transparent url('images/capability/select.png') no-repeat center;
 }
+
 .capability-action-select:hover{
     background: transparent url('images/capability/select-active.png') no-repeat center;
 }
 
-
 .capability-action-select-active{
     background: transparent url('images/capability/select-active.png') no-repeat center;
 }
+
+#capability_unfiltered {
+    display:none;
+}
+
+#capability_unfiltered + label span {
+    display:inline-block;
+    width:16px;
+    height:16px;
+    background:url(images/capability/unchecked.png) no-repeat center;
+    cursor:pointer;
+    margin-top: 4px;
+}
+
+#capability_unfiltered:checked + label span {
+    background:url(images/capability/checked.png) no-repeat center;
+}
+
+.aam-align-right{
+    text-align: right;
+}
+
 
 /** POSTS & CATEGORIES STYLES */
 .post-top-actions{

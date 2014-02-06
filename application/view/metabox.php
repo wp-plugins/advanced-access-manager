@@ -82,6 +82,11 @@ class aam_View_Metabox extends aam_View_Abstract {
         $this->collectMetaboxes('dashboard');
     }
 
+    /**
+     * 
+     * @global type $wp_meta_boxes
+     * @param type $post_type
+     */
     protected function collectMetaboxes($post_type) {
         global $wp_meta_boxes;
         
@@ -205,8 +210,8 @@ class aam_View_Metabox extends aam_View_Abstract {
                     $content .= '<div class=metabox-row>';
                 }
                 //prepare title
-                if (strlen($metabox['title']) > 18) {
-                    $title = substr($metabox['title'], 0, 15) . '...';
+                if (mb_strlen($metabox['title']) > 18) {
+                    $title = mb_substr($metabox['title'], 0, 15) . '...';
                 } else {
                     $title = $metabox['title'];
                 }
@@ -221,7 +226,7 @@ class aam_View_Metabox extends aam_View_Abstract {
 
                 $content .= '<div class="metabox-item">';
                 $content .= sprintf(
-                        '<label for="%s" tooltip="%s">%s</label>', 
+                        '<label for="%s" aam-tooltip="%s">%s</label>', 
                         $metabox_id, 
                         esc_js($metabox['title']), 
                         $title
@@ -247,8 +252,8 @@ class aam_View_Metabox extends aam_View_Abstract {
             $content .= '</div></div></div>';
         }
         $content .= '</div>';
-
-        return json_encode(array('content' => $content));
+        
+        return $content;
     }
 
     /**

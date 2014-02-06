@@ -42,9 +42,13 @@ class aam_Control_Subject_Role extends aam_Control_Subject {
     }
 
     /**
-     *
-     * @param type $delete_users
+     * Delete User Role and all User's in role if requested
+     * 
+     * @param boolean $delete_users
+     * 
      * @return boolean
+     * 
+     * @access public
      */
     public function delete($delete_users = false) {
         $role = new WP_Roles;
@@ -56,12 +60,13 @@ class aam_Control_Subject_Role extends aam_Control_Subject {
                     $users = new WP_User_Query(array(
                         'number' => '',
                         'blog_id' => get_current_blog_id(),
-                        'role' => aam_Core_Request::post('role')
+                        'role' => $this->getId()
                     ));
                     foreach ($users->get_results() as $user) {
                         //user can not delete himself
-                        if ($user->data->ID !== get_current_user_id()) {
-                            wp_delete_user($user->data->ID);
+                        if (($user instanceof WP_User) 
+                                && ($user->ID != get_current_user_id())) {
+                            wp_delete_user($user->ID);
                         }
                     }
                     $role->remove_role($this->getId());

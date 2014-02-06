@@ -759,7 +759,7 @@ AAM.prototype.launchDeleteRoleDialog = function(button, aData) {
     if (aData[1]) {
         var message = aamLocal.labels['Delete Role with Users Message'].replace(
                 '%d', aData[1]
-                );
+        );
         message = message.replace('%s', aData[2]);
         jQuery('#delete_role_dialog .dialog-content').html(message);
     } else {
@@ -773,7 +773,7 @@ AAM.prototype.launchDeleteRoleDialog = function(button, aData) {
         var data = _this.compileAjaxPackage('delete_role');
         data.subject = 'role';
         data.subject_id = aData[0];
-        data.delete_users = aData[1];
+        data.delete_users = parseInt(aData[1]);
         //send the request
         jQuery.ajax(aamLocal.ajaxurl, {
             type: 'POST',
@@ -1753,6 +1753,8 @@ AAM.prototype.launchAddCapabilityDialog = function(button) {
             _this.showMetaboxLoader('#capability_form_dialog');
             var data = _this.compileAjaxPackage('add_capability');
             data.capability = capability;
+            data.unfiltered = (jQuery('#capability_unfiltered').attr('checked') ? 1 : 0);
+            
             jQuery.ajax(aamLocal.ajaxurl, {
                 type: 'POST',
                 dataType: 'json',
@@ -1790,7 +1792,7 @@ AAM.prototype.launchAddCapabilityDialog = function(button) {
     jQuery('#capability_form_dialog').dialog({
         resizable: false,
         height: 'auto',
-        width: '30%',
+        width: 'auto',
         modal: true,
         buttons: buttons,
         close: function() {
@@ -1931,10 +1933,10 @@ AAM.prototype.loadMetaboxes = function(refresh) {
     //send the request
     jQuery.ajax(aamLocal.ajaxurl, {
         type: 'POST',
-        dataType: 'json',
+        dataType: 'html',
         data: data,
         success: function(response) {
-            jQuery('#metabox_list_container').html(response.content);
+            jQuery('#metabox_list_container').html(response);
             jQuery('#metabox_list').accordion({
                 collapsible: true,
                 header: 'h4',

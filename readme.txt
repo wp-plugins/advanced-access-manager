@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: access manager, access, access control, comments, capability, widget, filter menu, role manager, user access, user control, user
 Requires at least: 3.4.2
 Tested up to: 3.8.1
-Stable tag: 2.2.1
+Stable tag: 2.2.2
 
 Graphic interface to manage Access control to your Front-end and Back-end
 
@@ -16,43 +16,41 @@ at the same time very powerful tool that gives you a flexible control over your 
 single WordPress site or Multisite Network. With AAM you are allowed to configure access
 to different parts of your website for any Role or individual User.
 
+**Please Notice!**
+If you have any issues with AAM or you have any questions related to it, we offer
+free and fast support. You can either send us an email or leave a message on WordPress
+Forum. We always ready to help you and to improve your experience with AAM.
+
 In Current version you are allowed to do next:
 
 **Control Access to Admin Menu (including submenu)**
-
 As example you can restrict access for Role Editor to Menu "Pages" or does not allow
  individual User to manage Post's Categories.
 
 **Filter Widgets & Metaboxes**
-
 Filter the list of metaboxes that User can see during Post/Page editing. At the same
 time you can filter the list of Dashboard and Frontend widgets.
 
 **Manage Role's or User's Capabilities**
-
 AAM, with simple interface, allows you to grand or remove capabilities from Role or User.
 You can also create new capabilities or remove existing.
 
 **Control Access to Posts, Pages, CPTs or Terms**
-
 You can restrict access to individual page or post for any user or role as well as
 restrict access to entire Term and all posts inside it. You can also restrict
 page commenting for individual pages or exclude them from Frontend menu. We are
 extending the list of possible restrictions with each new version.
 
 **Create custom actions for system events**
-
 As example your system can trigger email to you if some user published Post/Page or
 modified content. You are also allowed to develop your own custom action for event.
 
 **Track User Activities**
-
 With AAM you can track user activities within your website. So you can easily find out
 when user was logged in or modified some Post/Page. There are many activities that can
 be tracked. We constantly adding more and more.
 
 **Manage Role List**
-
 AAM allows you to create new Roles or Delete existing.
 
 There are a lot of small and hidden features included in AAM that we are not listing
@@ -92,6 +90,13 @@ the list of additional metaboxes can be picked by AAM.
 5. ConfigPress
 
 == Changelog ==
+
+= 2.2.2 =
+* Fixed very significant issue with Role deletion
+* Added Unfiltered Capability checkbox
+* Regenerated language file
+* Fixed issue with language encoding
+* Fixed issue with Metaboxes tooltips
 
 = 2.2.1 =
 * Fixed the issue with Activity include

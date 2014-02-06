@@ -122,9 +122,14 @@ class aam_View_Capability extends aam_View_Abstract {
     public function addCapability() {
         $roles = new WP_Roles();
         $capability = trim(aam_Core_Request::post('capability'));
+        $unfiltered = intval(aam_Core_Request::post('unfiltered'));
 
         if ($capability) {
-            $normalized = str_replace(' ', '_', strtolower($capability));
+            if ($unfiltered){
+                $normalized = $capability;
+            } else {
+                $normalized = str_replace(' ', '_', strtolower($capability));
+            }
             //add the capability to administrator's role as default behavior
             $roles->add_cap('administrator', $normalized);
             $response = array('status' => 'success', 'capability' => $normalized);

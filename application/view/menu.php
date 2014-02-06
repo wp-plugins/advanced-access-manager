@@ -72,8 +72,8 @@ class aam_View_Menu extends aam_View_Abstract {
                 if ($this->getSubject()->hasCapability($submenu_item[1]) !== false) {
                     //prepare title
                     $submenu_title = $this->removeHTML($submenu_item[0]);
-                    if (strlen($submenu_title) > 18) {
-                        $submenu_short = substr($submenu_title, 0, 15) . '..';
+                    if (mb_strlen($submenu_title) > 18) {
+                        $submenu_short = mb_substr($submenu_title, 0, 15) . '..';
                     } else {
                         $submenu_short = $submenu_title;
                     }
