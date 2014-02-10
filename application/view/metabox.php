@@ -38,8 +38,8 @@ class aam_View_Metabox extends aam_View_Abstract {
         $this->_cache = aam_Core_API::getBlogOption(
                         'aam_metabox_cache', array()
         );
-
-        if ($post_type === '') {
+        
+        if ($post_type === 'dashboard') {
             $this->collectWidgets();
         } else {
             $this->collectMetaboxes($post_type);
@@ -57,7 +57,7 @@ class aam_View_Metabox extends aam_View_Abstract {
         if (!isset($this->_cache['widgets'])) {
             $this->_cache['widgets'] = array();
         }
-
+        
         //get frontend widgets
         if (is_array($wp_registered_widgets)) {
             foreach ($wp_registered_widgets as $id => $data) {
@@ -145,7 +145,7 @@ class aam_View_Metabox extends aam_View_Abstract {
             array_unshift($type_list, self::GROUP_WIDGETS);
 
             foreach ($type_list as $type) {
-                if ($type == 'widgets') {
+                if ($type == self::GROUP_WIDGETS) {
                     $url = add_query_arg(
                             'aam_meta_init', 
                             1,

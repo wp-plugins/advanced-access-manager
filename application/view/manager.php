@@ -116,7 +116,7 @@ class aam_View_Manager extends aam_View_Abstract {
             'post_access' => array(
                 'id' => 'post_access',
                 'position' => 20,
-                'title' => __('Posts & Categories', 'aam'),
+                'title' => __('Posts & Pages', 'aam'),
                 'anonimus' => true,
                 'content' => array(new aam_View_Post(), 'content'),
                 'help' => __('Manage access to individual <b>Post</b> or <b>Term</b>. Notice, under <b>Post</b>, we assume any post, page or custom post type. And under <b>Term</b> - any term like Post Categories.', 'aam')

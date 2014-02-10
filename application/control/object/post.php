@@ -86,14 +86,21 @@ class aam_Control_Object_Post extends aam_Control_Object {
     }
 
     /**
-     *
-     * @param type $params
+     * Save Post Options
+     * 
+     * @param array $params
+     * 
+     * @return void
+     * 
+     * @access public
      */
     public function save($params = null) {
         if (is_array($params)) {
             $this->setInherited(false);
             update_post_meta($this->getPost()->ID, $this->getOptionName(), $params);
         }
+        //fire internal hook
+        do_action_ref_array('aam_object_saved', $this, $params);
     }
 
     /**

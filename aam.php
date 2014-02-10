@@ -94,6 +94,8 @@ class aam {
             add_filter('wp_die_handler', array($this, 'wpDie'), 10);
             //***For UI purposes***
             add_action('parse_tax_query', array($this, 'parseTaxQuery'), 10, 1);
+            //control Admin area
+            add_action('admin_init', array($this, 'adminInit'));
         } else {
             //control WordPress frontend
             add_action('wp', array($this, 'wp'), 999);
@@ -115,6 +117,29 @@ class aam {
 
         //add shutdown action
         add_action('shutdown', array($this, 'shutdown'), 1);
+    }
+    
+    /**
+     * Control Admin Area access
+     * 
+     * @return void
+     * 
+     * @access public
+     */
+    public function adminInit() {
+        //compile menu 
+        $menu = basename(aam_Core_Request::server('SCRIPT_NAME'));
+        if ($query = trim(aam_Core_Request::server('QUERY_STRING'))) {
+            $menu .= '?' . $query;
+        }
+        
+        $has = $this->getUser()->getObject(aam_Control_Object_Menu::UID)->has($menu);
+        if ($has === true){
+            $this->reject();
+        } elseif(is_null($has) 
+                && aam_Core_ConfigPress::getParam('aam.menu.undefined') == 'deny'){
+            $this->reject();
+        }
     }
 
     /**
@@ -838,17 +863,37 @@ class aam {
     public function adminMenu() {
         //register the menu
         add_menu_page(
-                __('AAM', 'aam'), __('AAM', 'aam'), 'administrator', 'aam', array($this, 'content'), AAM_BASE_URL . 'active-menu.png'
+                __('AAM', 'aam'), 
+                __('AAM', 'aam'), 
+                'administrator', 
+                'aam', 
+                array($this, 'content'), 
+                AAM_BASE_URL . 'active-menu.png'
         );
         //register submenus
         add_submenu_page(
-                'aam', __('Access Control', 'aam'), __('Access Control', 'aam'), 'administrator', 'aam', array($this, 'content')
+                'aam', 
+                __('Access Control', 'aam'), 
+                __('Access Control', 'aam'), 
+                'administrator', 
+                'aam', 
+                array($this, 'content')
         );
         add_submenu_page(
-                'aam', __('ConfigPress', 'aam'), __('ConfigPress', 'aam'), 'administrator', 'aam-configpress', array($this, 'configPressContent')
+                'aam', 
+                __('ConfigPress', 'aam'), 
+                __('ConfigPress', 'aam'), 
+                'administrator', 
+                'aam-configpress', 
+                array($this, 'configPressContent')
         );
         add_submenu_page(
-                'aam', __('Extensions', 'aam'), __('Extensions', 'aam'), 'administrator', 'aam-ext', array($this, 'extensionContent')
+                'aam', 
+                __('Extensions', 'aam'), 
+                __('Extensions', 'aam'), 
+                'administrator', 
+                'aam-ext', 
+                array($this, 'extensionContent')
         );
 
         //filter admin menu
@@ -1011,7 +1056,7 @@ class aam {
 
 }
 
-add_action('init', 'aam::initialize');
+add_action('init', 'aam::initialize', 0); //the highest priority
 
 //register_activation_hook(__FILE__, array('aam', 'activate'));
 register_uninstall_hook(__FILE__, array('aam', 'uninstall'));

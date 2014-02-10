@@ -159,7 +159,7 @@ class aam_Control_Object_Menu extends aam_Control_Object {
      * @return type
      */
     public function has($menu) {
-        $response = false;
+        $response = null;
         //decode URL in case of any special characters like &amp;
         $menu_decoded = htmlspecialchars_decode($menu);
         //check if menu is restricted
