@@ -119,7 +119,7 @@ class aam_Control_Object_Term extends aam_Control_Object {
                 }
 
                 $this->setOption(
-                        apply_filters('aam_term_access_option', $access, $this->getSubject())
+                        apply_filters('aam_term_access_option', $access, $this)
                 );
             }
         }

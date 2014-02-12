@@ -188,7 +188,7 @@ class aam_Control_Object_Post extends aam_Control_Object {
         }
 
         $this->setOption(
-                apply_filters('aam_post_access_option', $option, $this->getSubject())
+                apply_filters('aam_post_access_option', $option, $this)
         );
     }
 

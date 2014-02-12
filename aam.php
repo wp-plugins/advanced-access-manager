@@ -74,6 +74,7 @@ class aam {
             } else {
                 add_action('admin_menu', array($this, 'adminMenu'), 999);
             }
+            add_filter('parent_file', array($this, 'filterMenu'), 999, 1);
             //manager AAM Features Content rendering
             add_action('admin_action_features', array($this, 'features'));
             //manager AAM Ajax Requests
@@ -114,7 +115,7 @@ class aam {
 
         //load extensions only when admin
         $this->loadExtensions();
-
+        
         //add shutdown action
         add_action('shutdown', array($this, 'shutdown'), 1);
     }
@@ -127,12 +128,18 @@ class aam {
      * @access public
      */
     public function adminInit() {
-        //compile menu 
-        $menu = basename(aam_Core_Request::server('SCRIPT_NAME'));
-        if ($query = trim(aam_Core_Request::server('QUERY_STRING'))) {
-            $menu .= '?' . $query;
-        }
+        global $plugin_page;
         
+        //compile menu
+        if (empty($plugin_page)){
+            $menu = basename(aam_Core_Request::server('SCRIPT_NAME'));
+            if ($query = trim(aam_Core_Request::server('QUERY_STRING'))) {
+                $menu .= '?' . $query;
+            }
+        } else {
+            $menu = $plugin_page;
+        }
+
         $has = $this->getUser()->getObject(aam_Control_Object_Menu::UID)->has($menu);
         if ($has === true){
             $this->reject();
@@ -800,7 +807,7 @@ class aam {
      */
     public function features() {
         check_ajax_referer('aam_ajax');
-
+        
         $model = new aam_View_Manager;
         $model->retrieveFeatures();
         die();
@@ -895,9 +902,23 @@ class aam {
                 'aam-ext', 
                 array($this, 'extensionContent')
         );
-
+        
+    }
+    
+    /**
+     * Filter the Admin Menu
+     * 
+     * @param string $parent_file
+     * 
+     * @return string
+     * 
+     * @access public
+     */
+    public function filterMenu($parent_file){
         //filter admin menu
         $this->getUser()->getObject(aam_Control_Object_Menu::UID)->filter();
+        
+        return $parent_file;
     }
 
     /**
@@ -1056,7 +1077,8 @@ class aam {
 
 }
 
-add_action('init', 'aam::initialize', 0); //the highest priority
+//the highest priority
+add_action('init', 'aam::initialize', 0); 
 
 //register_activation_hook(__FILE__, array('aam', 'activate'));
 register_uninstall_hook(__FILE__, array('aam', 'uninstall'));
