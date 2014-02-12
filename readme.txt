@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: access manager, access, access control, comments, capability, widget, filter menu, role manager, user access, user control, user
 Requires at least: 3.4.2
 Tested up to: 3.8.1
-Stable tag: 2.2.2
+Stable tag: 2.2.3
 
 Graphic interface to manage Access control to your Front-end and Back-end
 
@@ -91,7 +91,7 @@ the list of additional metaboxes can be picked by AAM.
 
 == Changelog ==
 
-= 2.3 =
+= 2.2.3 =
 * Improved Admin Menu access control
 * Extended ConfigPress with aam.menu.undefined setting
 * Fixed issue with Frontend Widget
