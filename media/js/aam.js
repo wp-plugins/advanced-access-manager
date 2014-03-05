@@ -483,6 +483,32 @@ AAM.prototype.loadRoleSegment = function() {
                 }).bind('click', function(event) {
                     event.preventDefault();
                     _this.launch(jQuery(this), 'role-top-action-add');
+                    //retrieve list of roles dynamically
+                    jQuery('#parent_cap_role').addClass('input-dynamic');
+                    jQuery('#parent_cap_role_holder').show();
+                    //send the request
+                    jQuery.ajax(aamLocal.ajaxurl, {
+                        type: 'POST',
+                        dataType: 'json',
+                        data: _this.compileAjaxPackage('pure_role_list'),
+                        success: function(response) {
+                            //reset selector
+                            jQuery('#parent_cap_role').empty();
+                            jQuery('#parent_cap_role').append(
+                                        jQuery('<option/>', {value : ''})
+                            );
+                            for(var i in response){
+                                jQuery('#parent_cap_role').append(
+                                        jQuery('<option/>', {
+                                            'value' : i
+                                        }).html(response[i].name)
+                                );
+                            }
+                        },
+                        complete: function(){
+                            jQuery('#parent_cap_role').removeClass('input-dynamic');
+                        }
+                    });
                     _this.launchAddRoleDialog(this);
                 });
                 jQuery('#role_list_wrapper .role-top-actions').append(add);
@@ -544,6 +570,18 @@ AAM.prototype.loadRoleSegment = function() {
                     _this.launch(jQuery(this), 'role-action-edit');
                     _this.launchEditRoleDialog(this, aData);
                 }));
+                
+                /**
+                jQuery('.role-actions', nRow).append(jQuery('<a/>', {
+                    'href': '#',
+                    'class': 'role-action role-action-duplicate',
+                    'aam-tooltip': aamLocal.labels['Duplicate']
+                }).bind('click', function(event) {
+                    event.preventDefault();
+                    _this.launch(jQuery(this), 'role-action-duplicate');
+                    _this.launchDuplicateRoleDialog(this, aData);
+                }));
+                */
 
                 jQuery('.role-actions', nRow).append(jQuery('<a/>', {
                     'href': '#',
@@ -654,6 +692,7 @@ AAM.prototype.launchAddRoleDialog = function(button) {
         //prepare ajax package
         var data = _this.compileAjaxPackage('add_role');
         data.name = jQuery('#role_name').val();
+        data.inherit = jQuery('#parent_cap_role').val()
 
         //send the request
         jQuery.ajax(aamLocal.ajaxurl, {
@@ -687,6 +726,58 @@ AAM.prototype.launchAddRoleDialog = function(button) {
 };
 
 /**
+ * Launch Duplicate Role Dialog
+ *
+ * @param {Object} button
+ *
+ * @returns {void}
+ *
+ * @access public
+ */
+AAM.prototype.launchDuplicateRoleDialog = function(button, aData) {
+    var _this = this;
+    //clean-up the form first
+    jQuery('#duplicate_role_name').val('');
+    jQuery('#duplicate_role_name').html(aData[2]);
+    //open the dialog
+    var buttons = {};
+    buttons[aamLocal.labels['Add New Role']] = function() {
+        //prepare ajax package
+        var data = _this.compileAjaxPackage('duplicate_role');
+        data.name = jQuery('#duplicate_role_name').val();
+        data.duplicate = aData[0];
+
+        //send the request
+        jQuery.ajax(aamLocal.ajaxurl, {
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            success: function(response) {
+                if (response.status === 'success') {
+                    _this.segmentTables.roleList.fnDraw();
+                }
+                _this.highlight('#control_manager .inside', response.status);
+            }
+        });
+        jQuery('#duplicate_role_dialog').dialog("close");
+    };
+    buttons[aamLocal.labels['Cancel']] = function() {
+        jQuery('#duplicate_role_dialog').dialog("close");
+    };
+
+    jQuery('#duplicate_role_dialog').dialog({
+        resizable: false,
+        height: 'auto',
+        width: '30%',
+        modal: true,
+        buttons: buttons,
+        close: function() {
+            _this.terminate(jQuery(button), 'role-action-duplicate');
+        }
+    });
+};
+
+/**
  * Launch Edit Role Dialog
  *
  * @param {Object} button
@@ -700,6 +791,7 @@ AAM.prototype.launchEditRoleDialog = function(button, aData) {
     var _this = this;
     //populate the form with data
     jQuery('#role_name').val(aData[2]);
+    jQuery('#parent_cap_role_holder').hide();
     //launch the dialog
     var buttons = {};
     buttons[aamLocal.labels['Save Changes']] = function() {
@@ -759,7 +851,7 @@ AAM.prototype.launchDeleteRoleDialog = function(button, aData) {
     if (aData[1]) {
         var message = aamLocal.labels['Delete Role with Users Message'].replace(
                 '%d', aData[1]
-        );
+                );
         message = message.replace('%s', aData[2]);
         jQuery('#delete_role_dialog .dialog-content').html(message);
     } else {
@@ -1754,7 +1846,7 @@ AAM.prototype.launchAddCapabilityDialog = function(button) {
             var data = _this.compileAjaxPackage('add_capability');
             data.capability = capability;
             data.unfiltered = (jQuery('#capability_unfiltered').attr('checked') ? 1 : 0);
-            
+
             jQuery.ajax(aamLocal.ajaxurl, {
                 type: 'POST',
                 dataType: 'json',
@@ -2583,12 +2675,12 @@ AAM.prototype.launchManageAccessDialog = function(button, nRow, aData, type) {
  */
 AAM.prototype.restorePostAccess = function(id, type, nRow) {
     var _this = this;
-    
+
     //retrieve settings and display the dialog
     var data = this.compileAjaxPackage('clear_access', true);
     data.id = id;
     data.type = type;
-    
+
     jQuery.ajax(aamLocal.ajaxurl, {
         type: 'POST',
         dataType: 'json',
@@ -2616,18 +2708,18 @@ AAM.prototype.restorePostAccess = function(id, type, nRow) {
  */
 AAM.prototype.launchDeletePostDialog = function(button, nRow, aData, force) {
     var _this = this;
-    
+
     jQuery('#delete_post_dialog .dialog-content').html(
             aamLocal.labels[(force ? 'Delete' : 'Trash') + ' Post Message'].replace('%s', aData[3])
-    );
+            );
     var buttons = {};
-    
+
     if (force === false) {
         buttons[aamLocal.labels['Delete Permanently']] = function() {
-        _this.deletePost(aData[0], true, nRow);
-    };
+            _this.deletePost(aData[0], true, nRow);
+        };
     }
-    
+
     buttons[aamLocal.labels[(force ? 'Delete' : 'Trash') + ' Post']] = function() {
         _this.deletePost(aData[0], force, nRow);
     };
@@ -2659,7 +2751,7 @@ AAM.prototype.launchDeletePostDialog = function(button, nRow, aData, force) {
  */
 AAM.prototype.deletePost = function(id, force, nRow) {
     var _this = this;
-    
+
     var data = _this.compileAjaxPackage('delete_post');
     data.post = id;
     data.force = (force ? 1 : 0);

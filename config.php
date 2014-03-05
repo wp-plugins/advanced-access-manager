@@ -7,7 +7,7 @@
  */
 
 //AAM Version for Update purpose
-define('AAM_VERSION', '2.2');
+define('AAM_VERSION', '2.3');
 
 define('AAM_BASE_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 
@@ -25,7 +25,7 @@ define('AAM_MEDIA_URL', AAM_BASE_URL . 'media/');
 define('AAM_APPL_ENV', (getenv('APPL_ENV') ? getenv('APPL_ENV') : 'production'));
 //Rest API
 if (AAM_APPL_ENV === 'production') {
-    define('WPAAM_REST_API', 'http://wpaam.com/rest');
+    define('WPAAM_REST_API', 'http://rest.wpaam.com');
 } else {
     define('WPAAM_REST_API', 'http://wpaam.localhost/rest');
 }

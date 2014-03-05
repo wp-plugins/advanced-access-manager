@@ -5,10 +5,6 @@
  * ======================================================================
 */
 
-#aam{
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-}
-
 .alpha-notice{
     margin: 15px 10px;
     border: 1px solid #FF8888;
@@ -72,6 +68,10 @@
 .dialog-input-dynamic{
     width: 55%;
     margin-left: 5%;
+    background: transparent url('images/cmanager/field-loader.gif') no-repeat center;
+}
+
+.input-dynamic{
     background: transparent url('images/cmanager/field-loader.gif') no-repeat center;
 }
 
@@ -438,6 +438,18 @@
 
 .role-action-manage:hover{
     background-image: url('images/cmanager/settings-active.png');
+}
+
+.role-action-duplicate{
+    background-image: url('images/cmanager/duplicate.png');
+}
+
+.role-action-duplicate-active{
+    background-image: url('images/cmanager/duplicate-active.png');
+}
+
+.role-action-duplicate:hover{
+    background-image: url('images/cmanager/duplicate-active.png');
 }
 
 /** USER MANAGER STYLES */

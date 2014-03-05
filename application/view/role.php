@@ -61,6 +61,15 @@ class aam_View_Role extends aam_View_Abstract {
 
         return json_encode($response);
     }
+    
+    /**
+     * Retrieve Pure Role List
+     * 
+     * @return string
+     */
+    public function retrievePureList(){
+        return json_encode(get_editable_roles());
+    }
 
     /**
      *
@@ -70,8 +79,16 @@ class aam_View_Role extends aam_View_Abstract {
         $name = trim(aam_Core_Request::post('name'));
         $roles = new WP_Roles;
         $role_id = 'aamrole_' . uniqid();
+        
+        //if inherited role is set get capabilities from it
+        $parent = trim(aam_Core_Request::post('inherit'));
+        if ($parent && $roles->get_role($parent)){
+            $caps = $roles->get_role($parent)->capabilities;
+        } else {
+            $caps = array();
+        }
 
-        if ($roles->add_role($role_id, $name)) {
+        if ($roles->add_role($role_id, $name, $caps)) {
             $response = array(
                 'status' => 'success',
                 'role' => $role_id

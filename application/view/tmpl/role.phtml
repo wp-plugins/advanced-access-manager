@@ -26,6 +26,25 @@
                     <th><?php echo __('Role Name', 'aam'); ?><span class="aam-asterix">*</span>:</th>
                     <td><input type="text" id="role_name" class="aam-input" /></td>
                 </tr>
+                <tr id="parent_cap_role_holder">
+                    <th><?php echo __('Inherit Caps', 'aam'); ?>:</th>
+                    <td><select class="aam-input" id="parent_cap_role"></select></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+     <div id="duplicate_role_dialog" class="aam-dialog" title="<?php echo __('Duplicate Role', 'aam'); ?>">
+        <table class="dataTable">
+            <tbody>
+                 <tr>
+                    <th><?php echo __('Duplicate Role', 'aam'); ?>:</th>
+                    <td><span style="font-weight: bold;" id="duplicate_role_name"></span></td>
+                </tr>
+                <tr>
+                    <th><?php echo __('Role Name', 'aam'); ?><span class="aam-asterix">*</span>:</th>
+                    <td><input type="text" id="duplicate_role_name" class="aam-input" /></td>
+                </tr>
             </tbody>
         </table>
     </div>

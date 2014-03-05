@@ -30,6 +30,10 @@ class aam_View_Ajax extends aam_View_Abstract{
             case 'role_list':
                 $response = $this->retrieveRoleList();
                 break;
+            
+            case 'pure_role_list':
+                $response = $this->retrievePureRoleList();
+                break;
 
             case 'user_list':
                 $response = $this->retrieveUserList();
@@ -169,6 +173,19 @@ class aam_View_Ajax extends aam_View_Abstract{
         $model = new aam_View_Role;
 
         return $model->retrieveList();
+    }
+    
+    /**
+     * Retrieve Pure Role List
+     * 
+     * @return string
+     * 
+     * @access protected
+     */
+    protected function retrievePureRoleList(){
+        $model = new aam_View_Role;
+
+        return $model->retrievePureList();
     }
 
     /**

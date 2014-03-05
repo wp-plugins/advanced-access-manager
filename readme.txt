@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: access manager, access, access control, comments, capability, widget, filter menu, role manager, user access, user control, user
 Requires at least: 3.4.2
 Tested up to: 3.8.1
-Stable tag: 2.2.3
+Stable tag: 2.3
 
 Graphic interface to manage Access control to your Front-end and Back-end
 
@@ -64,6 +64,7 @@ The AAM support also these languages:
  * Polish (by Gustaw Lasek www.servitium.pl)
  * French (by Moskito7)
  * Russian (by Maxim Kernozhickii www.aeromultimedia.com)
+ * Persian (by Ghaem Omidi www.forum.wp-parsi.com) 
 
 == Installation ==
 
@@ -90,6 +91,11 @@ the list of additional metaboxes can be picked by AAM.
 5. ConfigPress
 
 == Changelog ==
+
+= 2.3 =
+* Added Persian translation by Ghaem Omidi
+* Added Inherit Capabilities From Role drop-down on Add New Role Dialog
+* Small Cosmetic CSS changes 
 
 = 2.2.3 =
 * Improved Admin Menu access control

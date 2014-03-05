@@ -374,8 +374,8 @@ class aam_View_Manager extends aam_View_Abstract {
             'Delete Post' => __('Delete Post', 'aam'),
             'Delete Permanently' => __('Delete Permanently', 'aam'),
             'Trash Post' => __('Trash Post', 'aam'),
-            'Restore Default Access' => __('Restore Default Access', 'aam')
-            
+            'Restore Default Access' => __('Restore Default Access', 'aam'),
+            'Duplicate' => __('Duplicate', 'aam')
         ));
     }
 
