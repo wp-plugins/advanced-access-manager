@@ -14,13 +14,7 @@
  * @copyright Copyright C 2013 Vasyl Martyniuk
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
-class AAM_Extension_ActivityLog {
-
-    /**
-     *
-     * @var type
-     */
-    private $_parent = null;
+class AAM_Extension_ActivityLog extends AAM_Core_Extension {
 
     /**
      *
@@ -33,7 +27,7 @@ class AAM_Extension_ActivityLog {
      * @param aam|aam_View_Connector $parent
      */
     public function __construct(aam $parent) {
-        $this->setParent($parent);
+        parent::__construct($parent);
 
         //include activity object
         require_once(dirname(__FILE__) . '/activity.php');
@@ -258,22 +252,6 @@ class AAM_Extension_ActivityLog {
         }
 
         return json_encode(array('status' => 'success'));
-    }
-
-    /**
-     *
-     * @param aam $parent
-     */
-    public function setParent(aam $parent) {
-        $this->_parent = $parent;
-    }
-
-    /**
-     *
-     * @return aam
-     */
-    public function getParent() {
-        return $this->_parent;
     }
 
     /**

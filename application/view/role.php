@@ -54,7 +54,7 @@ class aam_View_Role extends aam_View_Abstract {
             $response['aaData'][] = array(
                 $role,
                 $users,
-                $data['name'],
+                translate_user_role($data['name']),
                 ''
             );
         }

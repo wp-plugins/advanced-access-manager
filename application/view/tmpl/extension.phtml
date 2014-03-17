@@ -66,6 +66,49 @@
                                         </div>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td>
+                                        <span class="extension-name">AAM Media Manager</span>
+                                    </td>
+                                    <td class="extension-description">
+                                        It is the first official prototype that allows you to group your media files in Categories.
+                                        Visit our <a href="http://wpaam.com/aam-extensions/aam-media-manager/" target="_blank">website</a>
+                                        to find out more about current functionality and future development plans.
+                                    </td>
+                                    <td class="extension-price payed">$10.00</td>
+                                    <td>
+                                        <div class="extension-actions">
+                                            <a href="http://wpaam.com/aam-extensions/aam-media-manager/" target="_blank" class="extension-action extension-action-forum" aam-tooltip="Visit Our Website"></a>
+                                            <?php if ($this->hasExtension('AAM Media Manager')) { ?>
+                                                <a href="#" extension="AAM Media Manager" license="<?php echo $this->getExtension('AAM Media Manager')->license; ?>" class="extension-action extension-action-ok" aam-tooltip="Installed Successfully"></a>
+                                            <?php } else { ?>
+                                                <a href="#" extension="AAM Media Manager" link="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WJ48A7Z6EFZJ4" class="extension-action extension-action-purchase" aam-tooltip="Get it Today"></a>
+                                            <?php } ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="extension-name">AAM Content Filter</span>
+                                    </td>
+                                    <td class="extension-description">
+                                        The first version of AAM Content Filter Extension allows you to filter content for your Posts or Pages or Custom Post Types.
+                                        The content (or part of the content) can be filtered based on currently logged in user or visitor.
+                                        Check our <a href="http://wpaam.com/aam-extensions/aam-content-filter/" target="_blank">website</a> for more information.
+                                    </td>
+                                    <td class="extension-price payed">$15.00</td>
+                                    <td>
+                                        
+                                        <div class="extension-actions">
+                                            <a href="http://wpaam.com/aam-extensions/aam-content-filter/" target="_blank" class="extension-action extension-action-forum" aam-tooltip="Visit Our Website"></a>
+                                            <?php if ($this->hasExtension('AAM Content Filter')) { ?>
+                                                <a href="#" extension="AAM Content Filter" license="<?php echo $this->getExtension('AAM Content Filter')->license; ?>" class="extension-action extension-action-ok" aam-tooltip="Installed Successfully"></a>
+                                            <?php } else { ?>
+                                                <a href="#" extension="AAM Content Filter" link="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=X7NZ7QF8A9CVS" class="extension-action extension-action-purchase" aam-tooltip="Get it Today"></a>
+                                            <?php } ?>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                         <div id="install_extension" class="aam-dialog" title="<?php echo __('Install Extension', 'aam'); ?>">

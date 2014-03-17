@@ -115,10 +115,12 @@ class aam_View_Post extends aam_View_Abstract {
             'post_status' => array()
         );
 
-        foreach ($wp_post_statuses as $status => $data) {
-            if ($data->show_in_admin_status_list) {
-                $args['post_status'][] = $status;
-                $argsAll['post_status'][] = $status;
+        if ($post_type != 'attachment'){ //attachment has only inherit status
+            foreach ($wp_post_statuses as $status => $data) {
+                if ($data->show_in_admin_status_list) {
+                    $args['post_status'][] = $status;
+                    $argsAll['post_status'][] = $status;
+                }
             }
         }
 
@@ -138,7 +140,7 @@ class aam_View_Post extends aam_View_Abstract {
             'sEcho' => aam_Core_Request::request('sEcho'),
             'aaData' => array(),
         );
-
+        
         foreach (get_posts($args) as $post_id) {
             $post = $this->getSubject()->getObject(
                     aam_Control_Object_Post::UID, $post_id

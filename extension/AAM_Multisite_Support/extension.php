@@ -8,19 +8,14 @@
  */
 
 /**
- *
+ * AAM Multisite Support Extension
+ * 
  * @package AAM
  * @author Vasyl Martyniuk <support@wpaam.com>
- * @copyright Copyright C 2013 Vasyl Martyniuk
+ * @copyright Copyright C 2014 Vasyl Martyniuk
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
-class AAM_Extension_Multisite {
-
-    /**
-     *
-     * @var type 
-     */
-    private $_parent = null;
+class AAM_Extension_Multisite extends AAM_Core_Extension {
 
     /**
      *
@@ -33,7 +28,7 @@ class AAM_Extension_Multisite {
      * @param aam|aam_View_Connector $parent
      */
     public function __construct(aam $parent) {
-        $this->setParent($parent);
+        parent::__construct($parent);
         if (aam_Core_API::isNetworkPanel()) {
             add_action('admin_print_scripts', array($this, 'printScripts'));
             add_action('admin_print_styles', array($this, 'printStyles'));
@@ -155,7 +150,9 @@ class AAM_Extension_Multisite {
     public function printScripts() {
         if ($this->getParent()->isAAMScreen()) {
             wp_enqueue_script(
-                    'aam-multisite-admin', AAM_MULTISITE_BASE_URL . '/multisite.js', array('aam-admin')
+                    'aam-multisite-admin', 
+                    AAM_MULTISITE_BASE_URL . '/multisite.js', 
+                    array('aam-admin')
             );
             $localization = array(
                 'nonce' => wp_create_nonce('aam_ajax'),
@@ -235,22 +232,6 @@ class AAM_Extension_Multisite {
         return json_encode(array(
             'status' => aam_Core_API::deleteBlogOption('aam_default_site', 1) ? 'success' : 'failure'
         ));
-    }
-
-    /**
-     * 
-     * @param aam $parent
-     */
-    public function setParent(aam $parent) {
-        $this->_parent = $parent;
-    }
-
-    /**
-     *
-     * @return aam
-     */
-    public function getParent() {
-        return $this->_parent;
     }
 
     /**

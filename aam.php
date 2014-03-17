@@ -3,7 +3,7 @@
 /**
   Plugin Name: Advanced Access Manager
   Description: Manage User and Role Access to WordPress Backend and Frontend.
-  Version: 2.3
+  Version: 2.4
   Author: Vasyl Martyniuk <support@wpaam.com>
   Author URI: http://www.wpaam.com
 
@@ -1071,7 +1071,7 @@ class aam {
      * @access protected
      */
     protected function loadExtensions() {
-        $model = new aam_Core_Extension($this);
+        $model = new aam_Core_Repository($this);
         $model->load();
     }
 

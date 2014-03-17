@@ -51,11 +51,11 @@ class aam_View_Extension extends aam_View_Abstract {
      * @access public
      */
     public function install(){
-        $extension = new aam_Core_Extension;
+        $repo = new aam_Core_Repository;
         $license = aam_Core_Request::post('license');
         $ext = aam_Core_Request::post('extension');
 
-        if ($license && $extension->add($ext, $license)){
+        if ($license && $repo->add($ext, $license)){
             $response = array('status' => 'success');
         } else {
             $response = array('status' => 'failure');
@@ -72,11 +72,11 @@ class aam_View_Extension extends aam_View_Abstract {
      * @access public
      */
     public function remove(){
-        $extension = new aam_Core_Extension;
+        $repo = new aam_Core_Repository;
         $license = aam_Core_Request::post('license');
         $ext = aam_Core_Request::post('extension');
 
-        if ($extension && $extension->remove($ext, $license)){
+        if ($repo && $repo->remove($ext, $license)){
             $response = array('status' => 'success');
         } else {
             $response = array('status' => 'failure');

@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: access manager, access, access control, comments, capability, widget, filter menu, role manager, user access, user control, user
 Requires at least: 3.4.2
 Tested up to: 3.8.1
-Stable tag: 2.3
+Stable tag: 2.4
 
 Graphic interface to manage Access control to your Front-end and Back-end
 
@@ -30,6 +30,9 @@ As example you can restrict access for Role Editor to Menu "Pages" or does not a
 **Filter Widgets & Metaboxes.**
 Filter the list of metaboxes that User can see during Post/Page editing. At the same
 time you can filter the list of Dashboard and Frontend widgets.
+
+**Filter Post or Page content**
+You can filter Post's or Page's content based on currently logged in user or visitor.
 
 **Manage Role's or User's Capabilities.**
 AAM, with simple interface, allows you to grand or remove capabilities from Role or User.
@@ -64,7 +67,8 @@ The AAM support also these languages:
  * Polish (by Gustaw Lasek www.servitium.pl)
  * French (by Moskito7)
  * Russian (by Maxim Kernozhickii www.aeromultimedia.com)
- * Persian (by Ghaem Omidi www.forum.wp-parsi.com) 
+ * Persian (by Ghaem Omidi www.forum.wp-parsi.com)
+ * Norwegian (by Christer Berg Johannesen www.improbus.com)
 
 == Installation ==
 
@@ -91,6 +95,15 @@ the list of additional metaboxes can be picked by AAM.
 5. ConfigPress
 
 == Changelog ==
+
+= 2.4 =
+* Added Norwegian language Norwegian (by Christer Berg Johannesen)
+* Localize the default Roles
+* Regenerated .pod file 
+* Added AAM Media Manager Extension
+* Added AAM Content Manager Extension
+* Standardized Extension Modules
+* Fixed issue with Media list
 
 = 2.3 =
 * Added Persian translation by Ghaem Omidi

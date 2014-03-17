@@ -72,8 +72,8 @@ final class aam_Core_Update {
         $response = true;
         if ($extensions = aam_Core_API::getBlogOption('aam_extensions')) {
             if (is_array($extensions)){
-                $extension = new aam_Core_Extension();
-                $extension->download();
+                $repo = new aam_Core_Repository();
+                $repo->download();
             }
         }
 
