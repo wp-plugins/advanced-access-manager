@@ -17,52 +17,36 @@
 class aam_View_Post extends aam_View_Abstract {
 
     /**
+     * Type of browsing object
      *
-     * @var type
+     * It can be either post or term
+     *
+     * @var string
+     *
+     * @access private
      */
     private $_post_type = 'post';
 
     /**
+     * Term ID
      *
-     * @var type
+     * @var int
+     *
+     * @access private
      */
     private $_term = 0;
 
     /**
+     * Constructor
      *
+     * @return void
+     *
+     * @access public
      */
     public function __construct() {
         parent::__construct();
         $this->_post_type = aam_Core_Request::request('post_type');
         $this->_term = intval(aam_Core_Request::request('term'));
-    }
-
-    /**
-     *
-     * @global type $wp_post_types
-     * @return type
-     */
-    public function retrievePostTypeList() {
-        global $wp_post_types;
-
-        $response = array(
-            'aaData' => array()
-        );
-
-        if (is_array($wp_post_types)) {
-            foreach ($wp_post_types as $post_type => $data) {
-                //show only list of post type which have User Interface
-                if ($data->show_ui) {
-                    $response['aaData'][] = array(
-                        $post_type,
-                        $data->label,
-                        ''
-                    );
-                }
-            }
-        }
-
-        return json_encode($response);
     }
 
     /**
@@ -75,24 +59,24 @@ class aam_View_Post extends aam_View_Abstract {
         global $wp_post_statuses, $wp_post_types, $wp_taxonomies;
 
         $term = trim(aam_Core_Request::request('term'));
-        
+
         //default behavior
         if (empty($term)) {
             $post_type = 'post';
-        //root for each Post Type
+            //root for each Post Type
         } elseif (isset($wp_post_types[$term])) {
             $post_type = $term;
             $term = '';
         } else {
             $taxonomy = $this->getTaxonomy($term);
-            if (isset($wp_taxonomies[$taxonomy])){
+            if (isset($wp_taxonomies[$taxonomy])) {
                 //take in consideration only first object type
                 $post_type = $wp_taxonomies[$taxonomy]->object_type[0];
             } else {
                 $post_type = 'post';
             }
         }
-        
+
         $args = array(
             'numberposts' => aam_Core_Request::request('iDisplayLength'),
             'offset' => aam_Core_Request::request('iDisplayStart'),
@@ -115,7 +99,7 @@ class aam_View_Post extends aam_View_Abstract {
             'post_status' => array()
         );
 
-        if ($post_type != 'attachment'){ //attachment has only inherit status
+        if ($post_type != 'attachment') { //attachment has only inherit status
             foreach ($wp_post_statuses as $status => $data) {
                 if ($data->show_in_admin_status_list) {
                     $args['post_status'][] = $status;
@@ -130,7 +114,7 @@ class aam_View_Post extends aam_View_Abstract {
                 $total += $number;
             }
         }
-        
+
         //get displayed total
         $displayTotal = count(get_posts($argsAll));
 
@@ -140,7 +124,7 @@ class aam_View_Post extends aam_View_Abstract {
             'sEcho' => aam_Core_Request::request('sEcho'),
             'aaData' => array(),
         );
-        
+
         foreach (get_posts($args) as $post_id) {
             $post = $this->getSubject()->getObject(
                     aam_Control_Object_Post::UID, $post_id
@@ -158,10 +142,10 @@ class aam_View_Post extends aam_View_Abstract {
 
         return json_encode($response);
     }
-    
+
     /**
      * Get Taxonomy by Term ID
-     * 
+     *
      * @global type $wpdb
      * @param type $object_id
      * @return type
@@ -183,7 +167,7 @@ class aam_View_Post extends aam_View_Abstract {
     public function getPostTree() {
         global $wp_post_types;
 
-        $type = $_REQUEST['root'];
+        $type = aam_Core_Request::request('root');
         $tree = array();
 
         if ($type == "source") {
@@ -221,23 +205,23 @@ class aam_View_Post extends aam_View_Abstract {
 
         return json_encode($tree);
     }
-    
+
     /**
      * Delete Post
-     * 
+     *
      * @return string
-     * 
+     *
      * @access public
      */
-    public function deletePost(){
+    public function deletePost() {
         $post_id = aam_Core_Request::post('post');
-        
-        if (aam_Core_Request::post('force')){
+
+        if (aam_Core_Request::post('force')) {
             $result = wp_delete_post($post_id, true);
         } else {
             $result = wp_trash_post($post_id);
         }
-        
+
         return json_encode(array('status' => ($result ? 'success' : 'failure')));
     }
 
@@ -356,7 +340,8 @@ class aam_View_Post extends aam_View_Abstract {
         global $wpdb;
 
         //get number of categories
-        $query = "SELECT COUNT(*) FROM {$wpdb->term_taxonomy} WHERE parent={$cat->term_id}";
+        $query = "SELECT COUNT(*) FROM {$wpdb->term_taxonomy} ";
+        $query .= "WHERE parent={$cat->term_id}";
         $counter = $wpdb->get_var($query);
 
         return ($counter ? TRUE : FALSE);
@@ -438,8 +423,11 @@ class aam_View_Post extends aam_View_Abstract {
     }
 
     /**
-     *
-     * @return type
+     * Save Post or Term access
+     * 
+     * @return string
+     * 
+     * @access public
      */
     public function saveAccess() {
         $object_id = aam_Core_Request::post('id');
@@ -455,7 +443,7 @@ class aam_View_Post extends aam_View_Abstract {
                 $object = $this->getSubject()->getObject(
                         aam_Control_Object_Term::UID, $object_id
                 );
-                if ($limit_counter !== -1 && isset($access['post'])){
+                if ($limit_counter !== -1 && isset($access['post'])) {
                     unset($access['post']);
                 }
             } else {
@@ -468,7 +456,7 @@ class aam_View_Post extends aam_View_Abstract {
 
             //clear cache
             $this->getSubject()->clearCache();
-
+            
             $response = array('status' => 'success');
         } else {
             $response = array(
@@ -482,25 +470,17 @@ class aam_View_Post extends aam_View_Abstract {
     }
 
     /**
+     * Get Post or Term access
      *
-     * @return type
+     * @return string
+     *
+     * @access public
      */
     public function getAccess() {
-        $type = aam_Core_Request::post('type');
-        $object_id = aam_Core_Request::post('id');
-
-        if ($type === 'term') {
-            $object = $this->getSubject()->getObject(
-                    aam_Control_Object_Term::UID, $object_id
-            );
-        } else {
-            $object = $this->getSubject()->getObject(
-                    aam_Control_Object_Post::UID, $object_id
-            );
-        }
-
         return json_encode(array(
-            'settings' => $object->getOption(),
+            'html' => $this->loadTemplate(
+                    dirname(__FILE__) . '/tmpl/control_area.phtml'
+            ),
             'counter' => apply_filters(
                     'wpaccess_restrict_limit',
                     aam_Core_API::getBlogOption('aam_access_limit', 0)
@@ -509,14 +489,17 @@ class aam_View_Post extends aam_View_Abstract {
     }
 
     /**
+     * Restore default access level for object
      *
-     * @return type
+     * @return string
+     *
+     * @access public
      */
     public function clearAccess() {
         $type = aam_Core_Request::post('type');
         $object_id = aam_Core_Request::post('id');
 
-        if ($type === 'term') {
+        if ($type === aam_Control_Object_Term::UID) {
             $object = $this->getSubject()->getObject(
                     aam_Control_Object_Term::UID, $object_id
             );
@@ -529,6 +512,38 @@ class aam_View_Post extends aam_View_Abstract {
         return json_encode(array(
             'status' => ($object->delete() ? 'success' : 'failure')
         ));
+    }
+
+    /**
+     * Get Object Title
+     *
+     * @param string $type
+     * @param string $name
+     *
+     * @return string
+     *
+     * @access public
+     * @global array $wp_post_types
+     * @global array $wp_taxonomies
+     */
+    public function getObjectTitle($type, $name) {
+        global $wp_post_types, $wp_taxonomies;
+
+        if ($type == aam_Control_Object_Term::UID) {
+            if (!empty($wp_taxonomies[$name]->labels->name)) {
+                $title = $wp_taxonomies[$name]->labels->name;
+            } else {
+                $title = 'term';
+            }
+        } else {
+            if (!empty($wp_post_types[$name]->labels->name)) {
+                $title = $wp_post_types[$name]->labels->name;
+            } else {
+                $title = 'post';
+            }
+        }
+
+        return $title;
     }
 
 }

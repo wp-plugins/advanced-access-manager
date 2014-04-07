@@ -43,11 +43,11 @@ class aam_Control_Subject_Role extends aam_Control_Subject {
 
     /**
      * Delete User Role and all User's in role if requested
-     * 
+     *
      * @param boolean $delete_users
-     * 
+     *
      * @return boolean
-     * 
+     *
      * @access public
      */
     public function delete($delete_users = false) {
@@ -64,7 +64,7 @@ class aam_Control_Subject_Role extends aam_Control_Subject {
                     ));
                     foreach ($users->get_results() as $user) {
                         //user can not delete himself
-                        if (($user instanceof WP_User) 
+                        if (($user instanceof WP_User)
                                 && ($user->ID != get_current_user_id())) {
                             wp_delete_user($user->ID);
                         }
@@ -187,6 +187,48 @@ class aam_Control_Subject_Role extends aam_Control_Subject {
         $name .= self::UID . '_' . $this->getId();
 
         return $name;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function hasFlag($flag){
+        $option = 'aam_' . self::UID . '_' . $this->getId() . "_{$flag}";
+        return aam_Core_API::getBlogOption($option);
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function setFlag($flag, $value = true) {
+        $option = 'aam_' . self::UID . '_' . $this->getId() . "_{$flag}";
+        if ($value === true){
+            aam_Core_API::updateBlogOption($option, $value);
+        } else {
+            aam_Core_API::deleteBlogOption($option);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function clearAllOptions(){
+        global $wpdb;
+
+        //prepare option mask
+        $mask = 'aam_%_' . $this->getId();
+        
+        //clear all settings in options table
+        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '{$mask}'");
+
+        //clear all settings in postmeta table
+        $wpdb->query("DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE '{$mask}'");
+
+        $this->clearCache(); //delete cache
+        //clear modifield flag
+        $this->setFlag(aam_Control_Subject::FLAG_MODIFIED, false);
+
+        do_action('aam_clear_all_options', $this);
     }
 
     /**

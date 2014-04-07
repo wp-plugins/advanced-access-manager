@@ -5,7 +5,7 @@
  * ======================================================================
 */
 
-.alpha-notice{
+.aam-beta-version{
     margin: 15px 10px;
     border: 1px solid #FF8888;
     border-radius: 4px;
@@ -78,25 +78,6 @@
 .dialog-fieldset{
     width: 100%;
     margin: 10px 0px;
-}
-
-.aam-help{
-    width: 100%;
-    border: 1px solid #CCCCCC;
-    border-radius: 5px;
-    background: transparent url('images/help.png') no-repeat 10px center;
-    height: 40px;
-    padding: 5px 0;
-    margin-bottom: 10px;
-    display: table;
-}
-
-.aam-help span{
-    display: none;
-    vertical-align: middle;
-    font-family: 'Lucida Console', Monaco, monospace;
-    text-align: justify;
-    padding: 0 20px 0 50px;
 }
 
 .wrap a{
@@ -222,6 +203,13 @@
     position: relative;
 }
 
+.feature-list-empty{
+    text-align: center;
+    font-size: 1.1em;
+    color: #AAAAAA;
+    padding: 10px;
+}
+
 /** CONTROL PANEL STYLES */
 .cpanel-major{
     display: table;
@@ -244,6 +232,13 @@
     color: #333333;
     background-repeat: no-repeat;
     background-position: center top;
+}
+
+.cpanel-major .cpanel-item-disabled{
+    opacity: 0.8;
+    cursor: none;
+    pointer-events: none;
+    text-decoration: line-through;
 }
 
 .cpanel-minor{
@@ -582,6 +577,10 @@
 
 .user-action-select:hover{
     background-image: url('images/cmanager/select-active.png');
+}
+
+.user-action-locked{
+    background-image: url('images/cmanager/lock.png');
 }
 
 .user-settings{

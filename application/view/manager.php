@@ -7,25 +7,44 @@
  */
 
 /**
+ * Main UI Controller
  *
  * @package AAM
  * @author Vasyl Martyniuk <support@wpaam.com>
- * @copyright Copyright C 2013 Vasyl Martyniuk
+ * @copyright Copyright C Vasyl Martyniuk
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
 class aam_View_Manager extends aam_View_Abstract {
 
     /**
-     *
-     * @var type
+     * Admin Menu Feature
      */
-    private $_cmanager = array();
+    const FEATURE_ADMIN_MENU = 'admin_menu';
 
     /**
-     *
-     * @var type
+     * Metaboxes & Widgetst Feature
      */
-    private $_features = array();
+    const FEATURE_METABOX = 'metabox';
+
+    /**
+     * Capability Feature
+     */
+    const FEATURE_CAPABILITY = 'capability';
+
+    /**
+     * Post Access Feature
+     */
+    const FEATURE_POST_ACCESS = 'post_access';
+
+    /**
+     * Event Manager Feature
+     */
+    const FEATURE_EVENT_MANAGER = 'event_manager';
+
+    /**
+     * Default ajax response
+     */
+    const DEFAULT_AJAX_RESPONSE = -1;
 
     /**
      * Constructor
@@ -39,161 +58,122 @@ class aam_View_Manager extends aam_View_Abstract {
     public function __construct() {
         parent::__construct();
 
-        $this->setCManager(
-                apply_filters('aam_ui_subjects', $this->getDefaultSubjects())
-        );
-        $this->setFeatures(
-                apply_filters('aam_ui_features', $this->getDefaultFeatures())
-        );
+        $this->registerDefaultSubjects();
+        $this->registerDefaultFeatures();
     }
 
     /**
-     *
-     * @return type
-     */
-    protected function getDefaultSubjects() {
-        return array(
-            'roles' => array(
-                'position' => 5,
-                'segment' => 'role',
-                'label' => __('Roles', 'aam'),
-                'title' => __('Role Manager', 'aam'),
-                'class' => 'manager-item manager-item-role',
-                'id' => 'aam_role',
-                'content' => array(new aam_View_Role(), 'content')
-            ),
-            'users' => array(
-                'position' => 10,
-                'segment' => 'user',
-                'label' => __('Users', 'aam'),
-                'title' => __('User Manager', 'aam'),
-                'class' => 'manager-item manager-item-user',
-                'id' => 'aam_user',
-                'content' => array(new aam_View_User(), 'content')
-            ),
-            'visitor' => array(
-                'position' => 15,
-                'segment' => 'visitor',
-                'label' => __('Visitor', 'aam'),
-                'title' => __('Visitor Manager', 'aam'),
-                'class' => 'manager-item manager-item-visitor',
-                'id' => 'aam_visitor',
-                'content' => array(new aam_View_Visitor(), 'content')
-            )
-        );
-    }
-
-    /**
-     *
-     * @return type
-     */
-    protected function getDefaultFeatures() {
-        return array(
-            'admin_menu' => array(
-                'id' => 'admin_menu',
-                'position' => 5,
-                'title' => __('Admin Menu', 'aam'),
-                'anonimus' => false,
-                'content' => array(new aam_View_Menu(), 'content'),
-                'help' => __('Control Access to Admin Menu. Restrict access to entire Menu or Submenu. <b>Notice</b>, the menu is rendered based on Role\'s or User\'s capabilities.', 'aam')
-            ),
-            'metabox' => array(
-                'id' => 'metabox',
-                'position' => 10,
-                'title' => __('Metabox & Widget', 'aam'),
-                'anonimus' => true,
-                'content' => array(new aam_View_Metabox(), 'content'),
-                'help' => __('Filter the list of Metaboxes or Widgets for selected Role or User. If metabox or widget is not listed, try to click <b>Refresh the List</b> button or Copy & Paste direct link to page where specific metabox or widget is shown and hit <b>Retrieve Metaboxes from Link</b> button.', 'aam')
-            ),
-            'capability' => array(
-                'id' => 'capability',
-                'position' => 15,
-                'title' => __('Capability', 'aam'),
-                'anonimus' => false,
-                'content' => array(new aam_View_Capability(), 'content'),
-                'help' => __('Manage the list of Capabilities for selected User or Role. <b>Notice</b>, list of user\'s capabilities are inherited from user\'s Role.<br/><b>Warning!</b> Be very careful with capabilities. Deleting or unchecking any capability may cause temporary or permanent constrol lost over some features or WordPress dashboard.', 'aam')
-            ),
-            'post_access' => array(
-                'id' => 'post_access',
-                'position' => 20,
-                'title' => __('Posts & Pages', 'aam'),
-                'anonimus' => true,
-                'content' => array(new aam_View_Post(), 'content'),
-                'help' => __('Manage access to individual <b>Post</b> or <b>Term</b>. Notice, under <b>Post</b>, we assume any post, page or custom post type. And under <b>Term</b> - any term like Post Categories.', 'aam')
-            ),
-            'event_manager' => array(
-                'id' => 'event_manager',
-                'position' => 25,
-                'title' => __('Event Manager', 'aam'),
-                'anonimus' => false,
-                'content' => array(new aam_View_Event(), 'content'),
-                'help' => __('Define your own action when some event appeared in your WordPress blog. This sections allows you to trigger an action on event like post content change, or page status update. You can setup to send email notification, change the post status or write your own custom event handler.', 'aam')
-            )
-        );
-    }
-
-    /**
-     * Set Control Panel items
-     *
-     * @param array $cpanel
+     * Registet default list of subjects
      *
      * @return void
      *
-     * @access public
+     * @access protected
      */
-    public function setCManager(array $cmanager) {
-        $final = array();
-        foreach ($cmanager as $item) {
-            if (!isset($final[$item['position']])) {
-                $final[$item['position']] = $item;
-            } else {
-                aam_Extension_Console::log(
-                        "Control Manager position {$item['position']} reserved already"
-                );
-            }
-        }
-        ksort($final);
+    protected function registerDefaultSubjects() {
+        aam_View_Collection::registerSubject((object)array(
+            'position' => 5,
+            'segment' => aam_Control_Subject_Role::UID,
+            'label' => __('Roles', 'aam'),
+            'title' => __('Role Manager', 'aam'),
+            'class' => 'manager-item manager-item-role',
+            'uid' => 'role',
+            'controller' => 'aam_View_Role'
+        ));
 
-        $this->_cmanager = $final;
+        aam_View_Collection::registerSubject((object)array(
+            'position' => 10,
+            'segment' => aam_Control_Subject_User::UID,
+            'label' => __('Users', 'aam'),
+            'title' => __('User Manager', 'aam'),
+            'class' => 'manager-item manager-item-user',
+            'uid' => 'user',
+            'controller' => 'aam_View_User'
+        ));
+
+        aam_View_Collection::registerSubject((object)array(
+            'position' => 15,
+            'segment' => aam_Control_Subject_Visitor::UID,
+            'label' => __('Visitor', 'aam'),
+            'title' => __('Visitor Manager', 'aam'),
+            'class' => 'manager-item manager-item-visitor',
+            'uid' => 'visitor',
+            'controller' => 'aam_View_Visitor'
+        ));
     }
 
     /**
-     * Get Control Panel items
+     * Prepare default list of features
+     *
+     * Check if current user has proper capability to use the feature
      *
      * @return array
      *
-     * @access public
+     * @access protected
      */
-    public function getCManager() {
-        return $this->_cmanager;
-    }
+    protected function registerDefaultFeatures() {
+        $features = array();
 
-    /**
-     *
-     * @param type $list
-     */
-    public function setFeatures($list) {
-        $final = array();
-        foreach ($list as $item) {
-            if (!isset($final[$item['position']])) {
-                $final[$item['position']] = $item;
-            } else {
-                aam_Extension_Console::log(
-                        "Feature position {$item['position']} reserved already"
-                );
-            }
-        }
-        ksort($final);
+        //Main Menu Tab
+        aam_View_Collection::registerFeature((object)array(
+            'uid' => self::FEATURE_ADMIN_MENU,
+            'position' => 5,
+            'title' => __('Admin Menu', 'aam'),
+            'subjects' => array(
+                aam_Control_Subject_Role::UID, aam_Control_Subject_User::UID
+            ),
+            'controller' => 'aam_View_Menu'
+        ));
 
-        $this->_features = $final;
-    }
 
-    /**
-     *
-     * @return type
-     */
-    public function getFeatures() {
-        return $this->_features;
+        //Metaboxes & Widgets Tab
+        aam_View_Collection::registerFeature((object)array(
+            'uid' => self::FEATURE_METABOX,
+            'position' => 10,
+            'title' => __('Metabox & Widget', 'aam'),
+            'subjects' => array(
+                aam_Control_Subject_Role::UID,
+                aam_Control_Subject_User::UID,
+                aam_Control_Subject_Visitor::UID
+            ),
+            'controller' => 'aam_View_Metabox'
+        ));
+
+        //Capability Tab
+        aam_View_Collection::registerFeature((object)array(
+            'uid' => self::FEATURE_CAPABILITY,
+            'position' => 15,
+            'title' => __('Capability', 'aam'),
+            'subjects' => array(
+                aam_Control_Subject_Role::UID, aam_Control_Subject_User::UID
+            ),
+            'controller' => 'aam_View_Capability'
+        ));
+
+        //Posts & Pages Tab
+        aam_View_Collection::registerFeature((object)array(
+            'uid' => self::FEATURE_POST_ACCESS,
+            'position' => 20,
+            'title' => __('Posts & Pages', 'aam'),
+            'subjects' => array(
+                aam_Control_Subject_Role::UID,
+                aam_Control_Subject_User::UID,
+                aam_Control_Subject_Visitor::UID
+            ),
+            'controller' => 'aam_View_Post'
+        ));
+
+        //Event Manager Tab
+        aam_View_Collection::registerFeature((object)array(
+            'uid' => self::FEATURE_EVENT_MANAGER,
+            'position' => 25,
+            'title' => __('Event Manager', 'aam'),
+            'subjects' => array(
+                aam_Control_Subject_Role::UID, aam_Control_Subject_User::UID
+            ),
+            'controller' =>'aam_View_Event'
+        ));
+
+        return $features;
     }
 
     /**
@@ -208,125 +188,624 @@ class aam_View_Manager extends aam_View_Abstract {
     }
 
     /**
+     * Process the ajax call
      *
-     * @return type
+     * @return string
+     *
+     * @access public
      */
-    public function isVisitor() {
-        return ($this->getSubject()->getUID() === 'visitor' ? true : false);
+    public function processAjax()
+    {
+        $sub_method = aam_Core_Request::request('sub_action');
+
+        if (method_exists($this, $sub_method)) {
+            $response = call_user_func(array($this, $sub_method));
+        } else {
+            $response = apply_filters(
+                'aam_ajax_call', self::DEFAULT_AJAX_RESPONSE, $this->getSubject()
+            );
+        }
+
+        return $response;
     }
 
     /**
+     * Render the Main Control Area
      *
+     * @return void
+     *
+     * @access public
      */
     public function retrieveFeatures() {
+        $features = aam_View_Collection::retriveFeatures($this->getSubject());
+        if (count($features)){
         ?>
-        <div class="aam-help">
-            <?php
-            foreach ($this->getFeatures() as $feature) {
-                if (!$this->isVisitor() || $feature['anonimus']) {
-                    echo '<span id="feature_help_' . $feature['id'] . '">', $feature['help'], '</span>';
+            <div class="feature-list">
+                <?php
+                foreach ($features as $feature) {
+                    echo '<div class="feature-item" feature="' . $feature->uid . '">';
+                    echo '<span>' . $feature->title . '</span></div>';
                 }
-            }
-            ?>
-        </div>
-        <div class="feature-list">
-            <?php
-            foreach ($this->getFeatures() as $feature) {
-                if (!$this->isVisitor() || $feature['anonimus']) {
-                    echo '<div class="feature-item" feature="' . $feature['id'] . '">';
-                    echo '<span>' . $feature['title'] . '</span></div>';
+                ?>
+            </div>
+            <div class="feature-content">
+                <?php
+                foreach ($features as $feature) {
+                    echo $feature->controller->content();
                 }
-            }
-            ?>
-        </div>
-        <div class="feature-content">
-            <?php
-            foreach ($this->getFeatures() as $feature) {
-                if (!$this->isVisitor() || $feature['anonimus']) {
-                    echo call_user_func($feature['content']);
-                }
-            }
-            ?>
-        </div>
-        <br class="clear" />
+                ?>
+            </div>
+            <br class="clear" />
         <?php
-        do_action('aam_retrieve_features');
+        } else {
+            echo '<p class="feature-list-empty">';
+            echo __('You are not allowed to manage any AAM Features.', 'aam');
+            echo '</p>';
+        }
+        do_action('aam_post_features_render');
     }
 
     /**
+     * Load List of Metaboxes
      *
-     * @return type
+     * @return string
+     *
+     * @access public
+     */
+    public function loadMetaboxes(){
+        if (aam_View_Collection::hasFeature(self::FEATURE_METABOX)){
+            $metabox = new aam_View_Metabox;
+            $response = $metabox->retrieveList();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Initialize list of metaboxes from individual link
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function initLink(){
+        if (aam_View_Collection::hasFeature(self::FEATURE_METABOX)){
+            $metabox = new aam_View_Metabox;
+            $response = $metabox->initLink();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Retrieve Available for Editing Role List
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function roleList(){
+        if (aam_View_Collection::hasSubject(aam_Control_Subject_Role::UID)){
+            $role = new aam_View_Role;
+            $response = $role->retrieveList();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Retrieve Pure Role List
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function plainRoleList(){
+        if (aam_View_Collection::hasSubject(aam_Control_Subject_Role::UID)){
+            $role = new aam_View_Role;
+            $response = $role->retrievePureList();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Add New Role
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function addRole()
+    {
+        if (aam_View_Collection::hasSubject(aam_Control_Subject_Role::UID)) {
+            $role = new aam_View_Role;
+            $response = $role->add();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Edit Existing Role
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function editRole()
+    {
+        if (aam_View_Collection::hasSubject(aam_Control_Subject_Role::UID)) {
+            $role = new aam_View_Role;
+            $response = $role->edit();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Delete Existing Role
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function deleteRole()
+    {
+        if (aam_View_Collection::hasSubject(aam_Control_Subject_Role::UID)) {
+            $role = new aam_View_Role;
+            $response = $role->delete();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Retrieve Available User List
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function userList()
+    {
+        if (aam_View_Collection::hasSubject(aam_Control_Subject_User::UID)) {
+            $user = new aam_View_User;
+            $response = $user->retrieveList();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Block Selected User
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function blockUser()
+    {
+        if (aam_View_Collection::hasSubject(aam_Control_Subject_User::UID)) {
+            $user = new aam_View_User;
+            $response = $user->block();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Delete Selected User
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function deleteList()
+    {
+        if (aam_View_Collection::hasSubject(aam_Control_Subject_User::UID)) {
+            $user = new aam_View_User;
+            $response = $user->delete();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Load list of capabilities
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function loadCapabilities()
+    {
+        if (aam_View_Collection::hasFeature(self::FEATURE_CAPABILITY)){
+            $capability = new aam_View_Capability;
+            $response = $capability->retrieveList();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Get list of Capabilities by selected Role
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function roleCapabilities()
+    {
+        if (aam_View_Collection::hasFeature(self::FEATURE_CAPABILITY)){
+            $capability = new aam_View_Capability;
+            $response = $capability->retrieveRoleCapabilities();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Add New Capability
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function addCapability()
+    {
+        if (aam_View_Collection::hasFeature(self::FEATURE_CAPABILITY)){
+            $capability = new aam_View_Capability;
+            $response = $capability->addCapability();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Delete Capability
+     *
+     * @return string
+     *
+     * @access protected
+     */
+    public function deleteCapability()
+    {
+        if (aam_View_Collection::hasFeature(self::FEATURE_CAPABILITY)){
+            $capability = new aam_View_Capability;
+            $response = $capability->deleteCapability();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Restore Capabilities
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function restoreCapabilities()
+    {
+        if (aam_View_Collection::hasFeature(self::FEATURE_CAPABILITY)){
+            $capability = new aam_View_Capability;
+            $response = $capability->restoreCapability();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Get the List of Posts
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function postList()
+    {
+        if (aam_View_Collection::hasFeature(self::FEATURE_POST_ACCESS)){
+            $post = new aam_View_Post;
+            $response = $post->retrievePostList();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Get Post Tree
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function postTree()
+    {
+        if (aam_View_Collection::hasFeature(self::FEATURE_POST_ACCESS)){
+            $post = new aam_View_Post;
+            $response = $post->getPostTree();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Save Access settings for Post or Term
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function saveAccess()
+    {
+        if (aam_View_Collection::hasFeature(self::FEATURE_POST_ACCESS)){
+            $post = new aam_View_Post;
+            $response = $post->saveAccess();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Get Access settings for Post or Term
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function getAccess()
+    {
+        if (aam_View_Collection::hasFeature(self::FEATURE_POST_ACCESS)){
+            $post = new aam_View_Post;
+            $response = $post->getAccess();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Restore default access level for Post or Term
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function clearAccess()
+    {
+        if (aam_View_Collection::hasFeature(self::FEATURE_POST_ACCESS)){
+            $post = new aam_View_Post;
+            $response = $post->clearAccess();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Delete Post
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function deletePost()
+    {
+        if (aam_View_Collection::hasFeature(self::FEATURE_POST_ACCESS)){
+            $post = new aam_View_Post;
+            $response = $post->deletePost();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Prepare and generate the post breadcrumb
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function postBreadcrumb()
+    {
+        if (aam_View_Collection::hasFeature(self::FEATURE_POST_ACCESS)){
+            $post = new aam_View_Post;
+            $response = $post->getPostBreadcrumb();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Get Event List
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function eventList()
+    {
+        if (aam_View_Collection::hasFeature(self::FEATURE_EVENT_MANAGER)){
+            $event = new aam_View_Event;
+            $response = $event->retrieveEventList();
+        }  else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Save AAM options
+     *
+     * @return string
+     *
+     * @access public
      */
     public function save() {
         $this->getSubject()->save(
-                $this->prepareSaveOptions(aam_Core_Request::post('aam'))
-        );
+                apply_filters(
+                        'aam_default_option_list', aam_Core_Request::post('aam')
+        ));
         return json_encode(array('status' => 'success'));
     }
 
     /**
+     * Roleback changes
      *
-     * @param type $options
-     * @return type
-     */
-    protected function prepareSaveOptions($options) {
-        //make sure that some parts are always in place
-        if (!isset($options[aam_Control_Object_Menu::UID])) {
-            $options[aam_Control_Object_Menu::UID] = array();
-        }
-        if (!isset($options[aam_Control_Object_Metabox::UID])) {
-            $options[aam_Control_Object_Metabox::UID] = array();
-        }
-        if (!isset($options[aam_Control_Object_Event::UID])) {
-            $options[aam_Control_Object_Event::UID] = array();
-        }
-
-        return apply_filters('aam_prepare_option_list', $options);
-    }
-
-    /**
+     * Restore default settings for current Subject
      *
-     * @return type
+     * @return string
+     *
+     * @access public
      */
     public function roleback() {
-        $params = $this->getSubject()->getObject(
-                        aam_Control_Object_Backup::UID)->roleback();
-
-        $this->getSubject()->save($this->prepareSaveOptions($params));
-
+        //clear all settings
+        $this->getSubject()->clearAllOptions();
         //clear cache
         $this->getSubject()->clearCache();
 
-        return json_encode(
-                array(
-                    'status' => 'success',
-                    'more' => intval(
-                            $this->getSubject()->getObject(
-                                    aam_Control_Object_Backup::UID)->has()
-                    )
-                )
-        );
+        return json_encode(array('status' => 'success'));
     }
 
     /**
+     * Check if current subject can perform roleback
      *
-     * @return type
+     * This function checks if there is any saved set of settings and return
+     * true if roleback feature can be performed
+     *
+     * @return string
+     *
+     * @access public
      */
-    public function checkRoleback() {
+    public function hasRoleback() {
         return json_encode(
-                array(
-                    'status' => intval($this->getSubject()->getObject(
-                                    aam_Control_Object_Backup::UID)->has()
-                    )
+            array(
+                'status' => intval(
+                        $this->getSubject()->hasFlag(
+                                aam_Control_Subject::FLAG_MODIFIED
+                        )
                 )
-        );
+        ));
     }
 
     /**
+     * Install extension
      *
-     * @return type
+     * @return string
+     *
+     * @access public
      */
-    public static function uiLabels(){
+    public function installExtension()
+    {
+        if (current_user_can(aam_Core_ConfigPress::getParam(
+                        'aam.menu.extensions.capability', 'administrator'
+        ))){
+            $model = new aam_View_Extension();
+            $response = $model->install();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Remove extension
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function removeExtension()
+    {
+        if (current_user_can(aam_Core_ConfigPress::getParam(
+                        'aam.menu.extensions.capability', 'administrator'
+        ))){
+            $model = new aam_View_Extension();
+            $response = $model->remove();
+        } else {
+            $response = self::DEFAULT_AJAX_RESPONSE;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Save ConfigPress
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function saveConfigPress()
+    {
+        if (current_user_can(aam_Core_ConfigPress::getParam(
+                        'aam.menu.configpress.capability', 'administrator'
+        ))){
+            $result = aam_Core_ConfigPress::write(aam_Core_Request::post('config'));
+        } else {
+            $result = false;
+        }
+
+        return json_encode(array(
+            'status' => ($result === false ? 'failure' : 'success')
+        ));
+    }
+
+    /**
+     * UI Javascript labels
+     *
+     * @return array
+     *
+     * @access public
+     * @static
+     * @todo Move to other file
+     */
+    public static function uiLabels() {
         return apply_filters('aam_localization_labels', array(
             'Rollback Settings' => __('Rollback Settings', 'aam'),
             'Cancel' => __('Cancel', 'aam'),
@@ -375,7 +854,8 @@ class aam_View_Manager extends aam_View_Abstract {
             'Delete Permanently' => __('Delete Permanently', 'aam'),
             'Trash Post' => __('Trash Post', 'aam'),
             'Restore Default Access' => __('Restore Default Access', 'aam'),
-            'Duplicate' => __('Duplicate', 'aam')
+            'Duplicate' => __('Duplicate', 'aam'),
+            'Actions Locked' => __('Actions Locked', 'aam')
         ));
     }
 

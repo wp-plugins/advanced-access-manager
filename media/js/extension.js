@@ -28,6 +28,7 @@ jQuery(document).ready(function() {
                 var extension = jQuery(this).attr('extension');
 
                 jQuery(this).bind('click', function() {
+                    jQuery('.extension-error-list').hide();
                     //show the dialog
                     jQuery('#install_extension').dialog({
                         resizable: false,
@@ -61,7 +62,7 @@ jQuery(document).ready(function() {
                                             dataType: 'json',
                                             data: {
                                                 action: 'aam',
-                                                sub_action: 'install_extension',
+                                                sub_action: 'installExtension',
                                                 extension: extension,
                                                 license: license,
                                                 _ajax_nonce: aamLocal.nonce
@@ -70,10 +71,20 @@ jQuery(document).ready(function() {
                                                 if (response.status === 'success') {
                                                     location.reload();
                                                 } else {
+                                                    showErrorMessage(
+                                                            response.reasons, 
+                                                            '#install_extension .extension-error-list'
+                                                    );
                                                     jQuery('#license_key').effect('highlight', 2000);
                                                 }
                                             },
                                             error: function() {
+                                                var reasons = new Array();
+                                                reasons.push('Unexpected Application Error');
+                                                showErrorMessage(
+                                                            reasons,
+                                                            '#install_extension .extension-error-list'
+                                                );
                                                 jQuery('#license_key').effect('highlight', 2000);
                                             },
                                             complete: function(){
@@ -103,6 +114,8 @@ jQuery(document).ready(function() {
                     var dialog = this;
 
                     jQuery('#installed_license_key').html(license);
+                    jQuery('.extension-error-list').hide();
+                    
                     //show the dialog
                     jQuery('#update_extension').dialog({
                         resizable: false,
@@ -119,7 +132,7 @@ jQuery(document).ready(function() {
                                         dataType: 'json',
                                         data: {
                                             action: 'aam',
-                                            sub_action: 'remove_extension',
+                                            sub_action: 'removeExtension',
                                             extension: extension,
                                             license: license,
                                             _ajax_nonce: aamLocal.nonce
@@ -128,6 +141,10 @@ jQuery(document).ready(function() {
                                             if (response.status === 'success') {
                                                 location.reload();
                                             } else {
+                                                showErrorMessage(
+                                                    response.reasons, 
+                                                    '#update_extension .extension-error-list'
+                                                );
                                                 jQuery(dialog).dialog('close');
                                             }
                                         },
@@ -182,4 +199,19 @@ function initTooltip(selector) {
             left: e.pageX + 15 //Get X coordinates
         });
     });
+}
+
+/**
+ * Display error list
+ * 
+ * @param {Array} reasons
+ * 
+ * @returns void
+ */
+function showErrorMessage(reasons, container){
+    jQuery(container).empty();
+    for(var i in reasons){
+        jQuery(container).append(jQuery('<li/>').html(reasons[i]));
+    }
+    jQuery(container).show();
 }

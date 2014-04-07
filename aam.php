@@ -3,15 +3,15 @@
 /**
   Plugin Name: Advanced Access Manager
   Description: Manage User and Role Access to WordPress Backend and Frontend.
-  Version: 2.4
+  Version: 2.5 Beta
   Author: Vasyl Martyniuk <support@wpaam.com>
   Author URI: http://www.wpaam.com
 
+  ===========================================================================
+  LICENSE: This file is subject to the terms and conditions defined in      *
+  file 'license.txt', which is part of this source code package.            *
+  ===========================================================================
  *
- * ======================================================================
- * LICENSE: This file is subject to the terms and conditions defined in *
- * file 'license.txt', which is part of this source code package.       *
- * ======================================================================
  */
 require(dirname(__FILE__) . '/config.php');
 
@@ -95,6 +95,7 @@ class aam {
             add_filter('wp_die_handler', array($this, 'wpDie'), 10);
             //***For UI purposes***
             add_action('parse_tax_query', array($this, 'parseTaxQuery'), 10, 1);
+            add_filter('editable_roles', array($this, 'editableRoles'), 999);
             //control Admin area
             add_action('admin_init', array($this, 'adminInit'));
         } else {
@@ -115,21 +116,21 @@ class aam {
 
         //load extensions only when admin
         $this->loadExtensions();
-        
+
         //add shutdown action
         add_action('shutdown', array($this, 'shutdown'), 1);
     }
-    
+
     /**
      * Control Admin Area access
-     * 
+     *
      * @return void
-     * 
+     *
      * @access public
      */
     public function adminInit() {
         global $plugin_page;
-        
+
         //compile menu
         if (empty($plugin_page)){
             $menu = basename(aam_Core_Request::server('SCRIPT_NAME'));
@@ -143,7 +144,7 @@ class aam {
         $has = $this->getUser()->getObject(aam_Control_Object_Menu::UID)->has($menu);
         if ($has === true){
             $this->reject();
-        } elseif(is_null($has) 
+        } elseif(is_null($has)
                 && aam_Core_ConfigPress::getParam('aam.menu.undefined') == 'deny'){
             $this->reject();
         }
@@ -384,7 +385,8 @@ class aam {
                             'frontend.access.deny.redirect'
             );
             $message = aam_Core_ConfigPress::getParam(
-                            'frontend.access.deny.message', __('Access denied', 'aam')
+                            'frontend.access.deny.message',
+                            __('Access denied', 'aam')
             );
         }
 
@@ -413,7 +415,7 @@ class aam {
         $message = aam_Core_ConfigPress::getParam(
                         'backend.access.deny.message', __('Access denied', 'aam')
         );
-
+        
         if (filter_var($redirect, FILTER_VALIDATE_URL)) {
             wp_redirect($redirect);
             exit;
@@ -608,7 +610,9 @@ class aam {
             wp_mail($event['action_specifier'], $subject, $message);
         } else if ($event['action'] == 'change_status') {
             $wpdb->update(
-                    $wpdb->posts, array('post_status' => $event['action_specifier']), array('ID' => $post_ID)
+                    $wpdb->posts,
+                    array('post_status' => $event['action_specifier']),
+                    array('ID' => $post_ID)
             );
         } else if ($event['action'] == 'custom') {
             if (is_callable($event['callback'])) {
@@ -754,7 +758,7 @@ class aam {
                 'addUserURI' => admin_url('user-new.php'),
                 'editUserURI' => admin_url('user-edit.php'),
                 'defaultSegment' => array(
-                    'role' => 'administrator',
+                    'role' => $this->getDefaultEditableRole(),
                     'blog' => get_current_blog_id(),
                     'user' => 0
                 ),
@@ -796,6 +800,19 @@ class aam {
     }
 
     /**
+     * Get first editable role
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function getDefaultEditableRole(){
+        $role_keys = array_keys(get_editable_roles());
+
+        return array_shift($role_keys);
+    }
+
+    /**
      * Render list of AAM Features
      *
      * Must be separate from Ajax call because WordPress ajax does not load a lot of
@@ -807,9 +824,12 @@ class aam {
      */
     public function features() {
         check_ajax_referer('aam_ajax');
-        
-        $model = new aam_View_Manager;
-        $model->retrieveFeatures();
+        try{
+            $model = new aam_View_Manager;
+            $model->retrieveFeatures();
+        } catch (Exception $e){
+            echo $e->getMessage();
+        }
         die();
     }
 
@@ -827,8 +847,12 @@ class aam {
         while (@ob_end_clean());
 
         //process ajax request
-        $model = new aam_View_Ajax;
-        echo $model->run();
+        try{
+            $model = new aam_View_Manager();
+            echo $model->processAjax();
+        } catch (Exception $e){
+            echo '-1';
+        }
         die();
     }
 
@@ -852,8 +876,10 @@ class aam {
         }
 
         if (aam_Core_Request::get('aam_meta_init')) {
-            $model = new aam_View_Metabox;
-            $model->run($screen);
+            try {
+                $model = new aam_View_Metabox;
+                $model->run($screen);
+            } catch (Exception $e){}
         } else {
             $this->getUser()->getObject(aam_Control_Object_Metabox::UID)
                     ->filterBackend($screen);
@@ -870,69 +896,77 @@ class aam {
     public function adminMenu() {
         //register the menu
         add_menu_page(
-                __('AAM', 'aam'), 
-                __('AAM', 'aam'), 
-                'administrator', 
-                'aam', 
-                array($this, 'content'), 
+                __('AAM', 'aam'),
+                __('AAM', 'aam'),
+                aam_Core_ConfigPress::getParam(
+                        'aam.page.access_control.capability', 'administrator'
+                ),
+                'aam',
+                array($this, 'content'),
                 AAM_BASE_URL . 'active-menu.png'
         );
         //register submenus
         add_submenu_page(
-                'aam', 
-                __('Access Control', 'aam'), 
-                __('Access Control', 'aam'), 
-                'administrator', 
-                'aam', 
+                'aam',
+                __('Access Control', 'aam'),
+                __('Access Control', 'aam'),
+                aam_Core_ConfigPress::getParam(
+                        'aam.page.access_control.capability', 'administrator'
+                ),
+                'aam',
                 array($this, 'content')
         );
         add_submenu_page(
-                'aam', 
-                __('ConfigPress', 'aam'), 
-                __('ConfigPress', 'aam'), 
-                'administrator', 
-                'aam-configpress', 
+                'aam',
+                __('ConfigPress', 'aam'),
+                __('ConfigPress', 'aam'),
+                aam_Core_ConfigPress::getParam(
+                        'aam.page.configpress.capability', 'administrator'
+                ),
+                'aam-configpress',
                 array($this, 'configPressContent')
         );
         add_submenu_page(
-                'aam', 
-                __('Extensions', 'aam'), 
-                __('Extensions', 'aam'), 
-                'administrator', 
-                'aam-ext', 
+                'aam',
+                __('Extensions', 'aam'),
+                __('Extensions', 'aam'),
+                aam_Core_ConfigPress::getParam(
+                        'aam.page.extensions.capability', 'administrator'
+                ),
+                'aam-ext',
                 array($this, 'extensionContent')
         );
-        
+
     }
-    
+
     /**
      * Filter the Admin Menu
-     * 
+     *
      * @param string $parent_file
-     * 
+     *
      * @return string
-     * 
+     *
      * @access public
      */
     public function filterMenu($parent_file){
         //filter admin menu
         $this->getUser()->getObject(aam_Control_Object_Menu::UID)->filter();
-        
+
         return $parent_file;
     }
 
     /**
      * Take control over Tax Query parser
-     * 
+     *
      * By default WordPress consider non-empty term & category pair as search by
      * slug. This is weird assumption and there is no other way to force core to
      * search posts within custom taxonomy rather than take control over it with
      * action parse_tax_query.
-     * 
+     *
      * @param WP_Query $query
-     * 
+     *
      * @return void
-     * 
+     *
      * @access public
      */
     public function parseTaxQuery($query) {
@@ -944,6 +978,37 @@ class aam {
     }
 
     /**
+     * Filter list of editable roles
+     *
+     * Does not allow for current user manager roles that have same or higher Level
+     *
+     * @param array $roles
+     *
+     * @return array
+     *
+     * @access public
+     */
+    public function editableRoles($roles){
+        $filtered = array();
+        $level = aam_Core_API::getUserLevel();
+        
+        
+        //check if super admin is specified
+        if (aam_Core_API::isSuperAdmin() === false){
+            foreach ($roles as $role => $info) {
+                if (empty($info['capabilities']["level_{$level}"])
+                        || !$info['capabilities']["level_{$level}"]) {
+                    $filtered[$role] = $info;
+                }
+            }
+        } else {
+            $filtered = $roles;
+        }
+
+        return $filtered;
+    }
+
+    /**
      * Render Main Content page
      *
      * @return void
@@ -951,15 +1016,19 @@ class aam {
      * @access public
      */
     public function content() {
-        $manager = new aam_View_Manager();
-        echo $manager->run();
+        try {
+            $manager = new aam_View_Manager();
+            echo $manager->run();
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
     }
 
     /**
      * Render ConfigPress Page
-     * 
+     *
      * @return void
-     * 
+     *
      * @access public
      */
     public function configPressContent() {
@@ -1077,8 +1146,9 @@ class aam {
 
 }
 
-//the highest priority
-add_action('init', 'aam::initialize', 0); 
+//the highest priority (higher the core)
+//this is important to have to catch events like register core post types
+add_action('init', 'aam::initialize', -1);
 
 //register_activation_hook(__FILE__, array('aam', 'activate'));
 register_uninstall_hook(__FILE__, array('aam', 'uninstall'));

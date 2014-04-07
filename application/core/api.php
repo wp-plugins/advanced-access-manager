@@ -74,13 +74,13 @@ final class aam_Core_API {
      * @static
      */
     public static function deleteBlogOption($option, $blog_id = null) {
-         if (is_multisite()) {
+        if (is_multisite()) {
             $blog = (is_null($blog_id) ? get_current_blog_id() : $blog_id);
             $response = delete_blog_option($blog, $option);
         } else {
             $response = delete_option($option);
         }
-        
+
         return $response;
     }
 
@@ -141,7 +141,7 @@ final class aam_Core_API {
     public static function isNetworkPanel() {
         return (is_multisite() && is_network_admin() ? TRUE : FALSE);
     }
-    
+
     /**
      * Check if SSL is used
      * 
@@ -150,18 +150,66 @@ final class aam_Core_API {
      * @access public
      * @static
      */
-    public static function isSSL(){
-       if (force_ssl_admin()){
-           $response = true;
-       } elseif (aam_Core_Request::server('HTTPS')){
-           $response = true;
-       } elseif (aam_Core_Request::server('REQUEST_SCHEME') == 'https'){
-           $response = true;
-       } else {
-           $response = false;
-       }
+    public static function isSSL() {
+        if (force_ssl_admin()) {
+            $response = true;
+        } elseif (aam_Core_Request::server('HTTPS')) {
+            $response = true;
+        } elseif (aam_Core_Request::server('REQUEST_SCHEME') == 'https') {
+            $response = true;
+        } else {
+            $response = false;
+        }
 
-       return $response;
-   }
+        return $response;
+    }
+    
+    /**
+     * Get User Capability Level
+     * 
+     * Iterate throught User Capabilities and find out the higher User Level
+     * 
+     * @param WP_User $user
+     * 
+     * @return int
+     * 
+     * @access public
+     * @static
+     */
+    public static function getUserLevel(WP_User $user = null){
+        if (is_null($user) ){
+            $user = wp_get_current_user();
+        }
+              
+        $caps = $user->allcaps;
+        //get users highest level
+        $level = 0;
+        do {
+            $level++;
+        } while (isset($caps["level_{$level}"]) && $caps["level_{$level}"]);
+        
+        return $level - 1;
+    }
 
+    /**
+     * Check if current user is super admin
+     * 
+     * Super admin is someone who is allowed to manage all roles and users. This
+     * user is defined in ConfigPress parameter aam.super_admin
+     * 
+     * @return boolean
+     * 
+     * @access public
+     * @static
+     */
+    public static function isSuperAdmin(){
+        if (is_multisite()){
+            $response = is_super_admin();
+        } else {
+            $super_admin = aam_Core_ConfigPress::getParam('aam.super_admin', 0);
+            $response = ($super_admin == get_current_user_id() ? true : false);
+        }
+        
+        return $response;
+    }
 }

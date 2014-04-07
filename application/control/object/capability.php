@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
@@ -57,14 +58,6 @@ class aam_Control_Object_Capability extends aam_Control_Object {
         if (empty($this->_option)) {
             $this->setOption($this->getSubject()->getCapabilities());
         }
-    }
-
-    /**
-     *
-     * @return type
-     */
-    public function backup() {
-        return $this->getSubject()->getCapabilities();
     }
 
     /**

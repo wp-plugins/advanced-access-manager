@@ -17,16 +17,24 @@
 class aam_View_User extends aam_View_Abstract {
 
     /**
-     *
-     * @return type
+     * Generate UI content
+     * 
+     * @return string
+     * 
+     * @access public
      */
     public function content() {
         return $this->loadTemplate(dirname(__FILE__) . '/tmpl/user.phtml');
     }
 
     /**
-     *
-     * @return type
+     * Retrieve list of users
+     * 
+     * Based on filters, get list of users
+     * 
+     * @return string JSON encoded list of users
+     * 
+     * @access public
      */
     public function retrieveList() {
         //get total number of users
@@ -44,16 +52,49 @@ class aam_View_User extends aam_View_Abstract {
                 $user->user_login,
                 ($user->display_name ? $user->display_name : $user->user_nicename),
                 '',
-                $user->user_status
+                $user->user_status,
+                ($this->canManage($user) ? 1 : 0)
             );
         }
 
         return json_encode($response);
     }
+    
+    /**
+     * Check if specified user can be managed by current user
+     * 
+     * @param WP_User $user
+     * 
+     * @return boolean
+     * 
+     * @access public
+     */
+    public function canManage(WP_User $user = null){
+        //AAM does not support multi-roles. Get only one first role
+        $roles = $user->roles;
+        $role = get_role(array_shift($roles));
+        //get user's highest level
+        $level = aam_Core_API::getUserLevel();
+        
+        if (empty($role->capabilities['level_' . $level]) 
+                    || !$role->capabilities['level_' . $level]
+                    || aam_Core_API::isSuperAdmin()){
+            $response = true;
+        } else {
+            $response = false;
+        }
+        
+        return $response;
+    }
 
     /**
-     *
+     * Query database for list of users
+     * 
+     * Based on filters and settings get the list of users from database
+     * 
      * @return \WP_User_Query
+     * 
+     * @access public
      */
     public function query() {
         if ($search = trim(aam_Core_Request::request('sSearch'))) {
@@ -76,11 +117,15 @@ class aam_View_User extends aam_View_Abstract {
     }
 
     /**
-     *
-     * @return type
+     * Block user
+     * 
+     * @return string
+     * 
+     * @access public
      */
     public function block() {
-        if ($this->getSubject()->block()){
+        if ($this->isManagable($this->getSubject()->getUser())
+                                && $this->getSubject()->block()){
             $response = array(
                 'status' => 'success',
                 'user_status' => $this->getSubject()->user_status
@@ -93,15 +138,20 @@ class aam_View_User extends aam_View_Abstract {
     }
 
     /**
-     *
-     * @return type
+     * Delete user
+     * 
+     * @return string
+     * 
+     * @access public
      */
     public function delete() {
-        return json_encode(
-                array(
-                    'status' => $this->getSubject()->delete() ? 'success' : 'failure'
-                )
-        );
+        if ($this->isManagable($this->getSubject()->getUser())){
+            $response = $this->getSubject()->delete();
+        } else {
+            $response = false;
+        }
+        
+        return json_encode(array('status' => $response ? 'success' : 'failure'));
     }
 
 }

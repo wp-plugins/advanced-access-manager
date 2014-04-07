@@ -17,16 +17,22 @@
 class aam_View_Role extends aam_View_Abstract {
 
     /**
-     *
-     * @return type
+     * Generate UI Content
+     * 
+     * @return string
+     * 
+     * @access public
      */
     public function content() {
         return $this->loadTemplate(dirname(__FILE__) . '/tmpl/role.phtml');
     }
 
     /**
-     *
-     * @return type
+     * Get Role List
+     * 
+     * @return string JSON Encoded role list
+     * 
+     * @access public
      */
     public function retrieveList() {
         //retrieve list of users
@@ -72,8 +78,11 @@ class aam_View_Role extends aam_View_Abstract {
     }
 
     /**
-     *
-     * @return type
+     * Add New Role
+     * 
+     * @return string
+     * 
+     * @access public
      */
     public function add() {
         $name = trim(aam_Core_Request::post('name'));

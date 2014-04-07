@@ -105,12 +105,13 @@ class aam_Control_Object_Menu extends aam_Control_Object {
     }
 
     /**
-     *
-     * @param type $menu
+     * @inheritdoc
      */
     public function save($menu = null) {
         if (is_array($menu)) {
             $this->getSubject()->updateOption($menu, self::UID);
+            //set flag that this subject has custom settings
+            $this->getSubject()->setFlag(aam_Control_Subject::FLAG_MODIFIED);
         }
     }
 
@@ -119,14 +120,6 @@ class aam_Control_Object_Menu extends aam_Control_Object {
      */
     public function cacheObject(){
         return true;
-    }
-
-    /**
-     *
-     * @return type
-     */
-    public function backup() {
-        return $this->getSubject()->readOption(self::UID, '', array());
     }
 
     /**

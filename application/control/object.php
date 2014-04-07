@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
@@ -14,7 +15,7 @@
  *
  * @package AAM
  * @author Vasyl Martyniuk <support@wpaam.com>
- * @copyright Copyright C 2013 Vasyl Martyniuk
+ * @copyright Copyright C Vasyl Martyniuk
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
 abstract class aam_Control_Object {
@@ -116,17 +117,33 @@ abstract class aam_Control_Object {
     abstract public function getUID();
 
     /**
-     *
+     * Set Object options
+     * 
+     * @param mixed $option
+     * 
+     * @return void
+     * 
+     * @access public
      */
     abstract public function setOption($option);
 
     /**
-     *
+     * Get Object options
+     * 
+     * @return mixed
+     * 
+     * @access public
      */
     abstract public function getOption();
 
     /**
-     *
+     * Save Object options
+     * 
+     * @param mixed $params
+     * 
+     * @return void
+     * 
+     * @access public
      */
     abstract public function save($params = array());
 

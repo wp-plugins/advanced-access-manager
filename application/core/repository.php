@@ -42,10 +42,22 @@ class aam_Core_Repository {
     private $_basedir = '';
 
     /**
-     *
-     * @var type
+     * Extension list cache
+     * 
+     * @var array
+     * 
+     * @access private
      */
     private $_cache = array();
+    
+    /**
+     * Repository Errors
+     * 
+     * @var array
+     * 
+     * @access private 
+     */
+    private $_errors = array();
 
     /**
      * Main AAM class
@@ -90,7 +102,11 @@ class aam_Core_Repository {
     }
 
     /**
-     *
+     * Download extension from the external server
+     * 
+     * @return void
+     * 
+     * @access public
      */
     public function download() {
         $this->initFilesystem();
@@ -162,6 +178,8 @@ class aam_Core_Repository {
                 $response = true;
                 unset($repository[$extension]);
                 aam_Core_API::updateBlogOption('aam_extensions', $repository, 1);
+            } else {
+                $this->addError(__('Failed to Remove Extension', 'aam'));
             }
         }
 
@@ -205,7 +223,15 @@ class aam_Core_Repository {
             if ($content && $wp_filesystem->put_contents($zip, $content)) {
                 $response = $this->insert($zip);
                 $wp_filesystem->delete($zip);
+            } elseif (empty($content)){
+                $this->addError(__('Invalid License Key', 'aam'));
+            } else {
+                $this->addError(
+                        __('Failed to write file to wp-content/aam folder', 'aam')
+                );
             }
+        } else {
+            $this->addError(__('Failed to reach the WPAAM Server', 'aam'));
         }
 
         return $response;
@@ -220,6 +246,9 @@ class aam_Core_Repository {
         $response = true;
         if (is_wp_error(unzip_file($zip, $this->_basedir))) {
             $response = false;
+            $this->addError(
+                    __('Failed to insert extension to extension folder', 'aam')
+            );
         }
 
         return $response;
@@ -272,6 +301,28 @@ class aam_Core_Repository {
      */
     public function getParent(){
         return $this->_parent;
+    }
+    
+    /**
+     * Add error
+     * 
+     * @param string $message
+     * 
+     * @access public
+     */
+    public function addError($message){
+        $this->_errors[] = $message;
+    }
+    
+    /**
+     * Get all errors
+     * 
+     * @return array
+     * 
+     * @access public
+     */
+    public function getErrors(){
+        return $this->_errors;
     }
 
 }

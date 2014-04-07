@@ -8,10 +8,11 @@
  */
 
 /**
+ * AAM Plugin Update Hook
  *
  * @package AAM
  * @author Vasyl Martyniuk <support@wpaam.com>
- * @copyright Copyright C 2013 Vasyl Martyniuk
+ * @copyright Copyright C Vasyl Martyniuk
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
 final class aam_Core_Update {
@@ -37,7 +38,6 @@ final class aam_Core_Update {
         $this->_stages = apply_filters('aam_update_stages', array(
             array($this, 'downloadRepository'),
             array($this, 'flashCache'),
-            //array($this, 'muPlugin'), - TODO. Deactivated for futher use
             array($this, 'updateFlag')
         ));
     }
@@ -96,15 +96,20 @@ final class aam_Core_Update {
             $query = 'SELECT blog_id FROM ' . $wpdb->blogs;
             $blog_list = $wpdb->get_results($query);
             if (is_array($blog_list)) {
+                $query = 'DELETE FROM %s WHERE `option_name` = "aam_%s_cache"';
                 foreach ($blog_list as $blog) {
-                    $query = 'DELETE FROM ' . $wpdb->get_blog_prefix($blog->blog_id) . 'options ';
-                    $query .= 'WHERE `option_name` = "aam_visitor_cache"';
-                    $wpdb->query($query);
+                    $wpdb->query(
+                        sprintf(
+                            $query,
+                            $wpdb->get_blog_prefix($blog->blog_id) . 'options',
+                            aam_Control_Subject_Visitor::UID
+                        )
+                    );
                 }
             }
         } else {
             $query = 'DELETE FROM ' . $wpdb->options . ' ';
-            $query .= 'WHERE `option_name` = "aam_visitor_cache"';
+            $query .= 'WHERE `option_name` = "aam_' . aam_Control_Subject_Visitor::UID . '_cache"';
             $wpdb->query($query);
         }
 
@@ -112,32 +117,6 @@ final class aam_Core_Update {
         $query = 'DELETE FROM ' . $wpdb->usermeta . ' ';
         $query .= 'WHERE `meta_key` = "aam_cache"';
         $wpdb->query($query);
-
-        return true;
-    }
-    
-    /**
-     * Create Must-Use Plugin
-     * 
-     * Is used to hook into the earliest system load
-     * 
-     * @return boolean
-     * 
-     * @access public
-     */
-    public function muPlugin() {
-        $base_dir = WP_CONTENT_DIR . '/mu-plugins';
-
-        $continue = (file_exists($base_dir) ? true : @mkdir($base_dir, 0755));
-
-        if ($continue) {
-            $hook_file = $base_dir . '/aam.php';
-            //remove current hook and replace with newer version
-            if (file_exists($hook_file)) {
-                @unlink($hook_file);
-            }
-            @copy(dirname(__FILE__) . '/mu.php', $base_dir . '/aam.php');
-        }
 
         return true;
     }

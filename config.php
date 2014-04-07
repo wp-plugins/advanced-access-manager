@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
@@ -7,7 +8,7 @@
  */
 
 //AAM Version for Update purpose
-define('AAM_VERSION', '2.4');
+define('AAM_VERSION', '2.5');
 
 define('AAM_BASE_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 

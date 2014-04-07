@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
@@ -65,5 +66,18 @@ class aam_View_Event extends aam_View_Abstract {
     public function content() {
         return $this->loadTemplate(dirname(__FILE__) . '/tmpl/event.phtml');
     }
+    
+    /**
+     * @inheritdoc
+     */
+    public function defaultOption($options) {
+         //make sure that some parts are always in place
+        if (!isset($options[aam_Control_Object_Event::UID])) {
+            $options[aam_Control_Object_Event::UID] = array();
+        }
+        
+        return $options;
+    }
+
 
 }

@@ -8,6 +8,7 @@
  */
 
 /**
+ * Activity Log Controller
  *
  * @package AAM
  * @author Vasyl Martyniuk <support@wpaam.com>
@@ -17,8 +18,9 @@
 class AAM_Extension_ActivityLog extends AAM_Core_Extension {
 
     /**
+     * Current subject
      *
-     * @var type
+     * @var aam_Control_Subject
      */
     private $_subject = null;
 
@@ -33,11 +35,7 @@ class AAM_Extension_ActivityLog extends AAM_Core_Extension {
         require_once(dirname(__FILE__) . '/activity.php');
 
         if (is_admin()) {
-            add_action('admin_print_scripts', array($this, 'printScripts'));
-            add_action('admin_print_styles', array($this, 'printStyles'));
-            add_filter('aam_ui_features', array($this, 'feature'), 10);
-            add_filter('aam_ajax_call', array($this, 'ajax'), 10, 2);
-            add_action('aam_localization_labels', array($this, 'localizationLabels'));
+            $this->registerFeature();
         }
 
         //define new Activity Object
@@ -46,6 +44,38 @@ class AAM_Extension_ActivityLog extends AAM_Core_Extension {
         //login & logout hooks
         add_action('wp_login', array($this, 'login'), 10, 2);
         add_action('wp_logout', array($this, 'logout'));
+    }
+
+    /**
+     * Register new UI feature
+     *
+     * @return void
+     *
+     * @access protected
+     */
+    protected function registerFeature() {
+        $capability = aam_Core_ConfigPress::getParam(
+                        'aam.feature.activity_log.capability', 'administrator'
+        );
+
+        if (current_user_can($capability)) {
+            add_action('admin_print_scripts', array($this, 'printScripts'));
+            add_action('admin_print_styles', array($this, 'printStyles'));
+            add_filter('aam_ajax_call', array($this, 'ajax'), 10, 2);
+            add_action(
+                    'aam_localization_labels', array($this, 'localizationLabels')
+            );
+
+            aam_View_Collection::registerFeature((object)array(
+                'uid' => 'activity_log',
+                'position' => 35,
+                'title' => __('Activity Log', 'aam'),
+                'subjects' => array(
+                    aam_Control_Subject_Role::UID, aam_Control_Subject_User::UID
+                ),
+                'controller' => $this
+            ));
+        }
     }
 
     /**
@@ -59,8 +89,7 @@ class AAM_Extension_ActivityLog extends AAM_Core_Extension {
                 time(),
                 array(
                     'action' => aam_Control_Object_Activity::ACTIVITY_LOGIN
-                )
-        );
+        ));
     }
 
     /**
@@ -72,8 +101,7 @@ class AAM_Extension_ActivityLog extends AAM_Core_Extension {
                 time(),
                 array(
                     'action' => aam_Control_Object_Activity::ACTIVITY_LOGOUT
-                )
-        );
+        ));
     }
 
     /**
@@ -91,29 +119,6 @@ class AAM_Extension_ActivityLog extends AAM_Core_Extension {
         }
 
         return $object;
-    }
-
-    /**
-     *
-     * @param type $features
-     * @return string
-     */
-    public function feature($features) {
-        //add feature
-        $features['activity_log'] = array(
-            'id' => 'activity_log',
-            'position' => 35,
-            'title' => __('Activity Log', 'aam'),
-            'anonimus' => false,
-            'content' => array($this, 'content'),
-            'help' => __(
-                    'Tracks User Activities like user login/logout or post changes. '
-                    . 'Check <b>AAM Activities</b> Extension to get advanced list of possible '
-                    . 'activities.', 'aam'
-            )
-        );
-
-        return $features;
     }
 
     /**
@@ -256,7 +261,7 @@ class AAM_Extension_ActivityLog extends AAM_Core_Extension {
 
     /**
      *
-     * @param type $subject
+     * @param aam_Control_Subject $subject
      */
     public function setSubject($subject) {
         $this->_subject = $subject;
@@ -264,7 +269,7 @@ class AAM_Extension_ActivityLog extends AAM_Core_Extension {
 
     /**
      *
-     * @return type
+     * @return aam_Control_Subject
      */
     public function getSubject() {
         return $this->_subject;

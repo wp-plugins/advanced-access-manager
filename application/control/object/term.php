@@ -61,41 +61,24 @@ class aam_Control_Object_Term extends aam_Control_Object {
     }
 
     /**
-     *
-     * @param type $params
+     * @inheritdoc
      */
     public function save($params = null) {
         if (is_array($params)) {
             $this->getSubject()->updateOption(
                     $params, self::UID, $this->getTerm()->term_id
             );
+            //set flag that this subject has custom settings
+            $this->getSubject()->setFlag(aam_Control_Subject::FLAG_MODIFIED);
         }
     }
 
     /**
-     *
-     * @param type $area
-     * @return type
-     */
-    public function getAccessList($area) {
-        if ($area == 'frontend') {
-            $response = array(
-                self::ACTION_BROWSE, self::ACTION_EXCLUDE, self::ACTION_LIST
-            );
-        } elseif ($area == 'backend') {
-            $response = array(
-                self::ACTION_BROWSE, self::ACTION_EDIT, self::ACTION_LIST
-            );
-        } else {
-            $response = array();
-        }
-
-        return apply_filters('aam_term_access_list', $response, $area);
-    }
-
-    /**
-     *
-     * @return type
+     * Get Object Unique ID
+     * 
+     * @return string
+     * 
+     * @access public
      */
     public function getUID() {
         return self::UID;
@@ -108,12 +91,16 @@ class aam_Control_Object_Term extends aam_Control_Object {
     public function init($object_id) {
         if ($object_id) {
             //initialize term first
-            $this->setTerm(get_term($object_id, $this->getTaxonomy($object_id)));
-            if ($this->getTerm()) {
+            $term = get_term($object_id, $this->getTaxonomy($object_id));
+            if ($term && !is_wp_error($term)) {
+                $this->setTerm($term);
                 $access = $this->getSubject()->readOption(
                         self::UID, $this->getTerm()->term_id
                 );
-                if (empty($access)) {
+                $inherit = aam_Core_ConfigPress::getParam(
+                        'aam.term.inherit', 'true'
+                );
+                if (empty($access) && ($inherit == 'true')) {
                     //try to get any parent restriction
                     $access = $this->inheritAccess($this->getTerm()->parent);
                 }

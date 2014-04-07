@@ -1,3 +1,12 @@
+<?php
+
+/**
+ * ======================================================================
+ * LICENSE: This file is subject to the terms and conditions defined in *
+ * file 'license.txt', which is part of this source code package.       *
+ * ======================================================================
+ */
+?>
 <div class="wrap" id="aam">
     <div class="postbox-container" style="width:70%;">
         <div class="metabox-holder">
@@ -116,12 +125,14 @@
                                 <?php echo __('If you already have license key for current extension, please enter it below. Othewise click <b>Purchase</b> button to checkout your order.', 'aam'); ?>
                                 <input type="text" class="license-input" id="license_key" placeholder="License Key" />
                             </p>
+                            <ul class="extension-error-list"></ul>
                         </div>
                         <div id="update_extension" class="aam-dialog" title="<?php echo __('Update Extension', 'aam'); ?>">
                             <p class="dialog-content" style="text-align: center;">
                                 <?php echo __('Extension has been installed. Your license key: ', 'aam'); ?><br/>
                                 <b><span id="installed_license_key"></span></b>
                             </p>
+                            <ul class="extension-error-list"></ul>
                         </div>
                     </div>
                 </div>

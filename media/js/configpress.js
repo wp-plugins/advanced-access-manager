@@ -40,7 +40,7 @@ jQuery(document).ready(function() {
             dataType: 'json',
             data: {
                 action: 'aam',
-                sub_action: 'save_configpress',
+                sub_action: 'saveConfigpress',
                 config: editor.getValue(),
                 _ajax_nonce: aamLocal.nonce
             },

@@ -191,14 +191,6 @@ class aam_Control_Object_Activity extends aam_Control_Object {
      *
      * @return type
      */
-    public function backup() {
-        return array();
-    }
-
-    /**
-     *
-     * @return type
-     */
     public function getUID() {
         return self::UID;
     }

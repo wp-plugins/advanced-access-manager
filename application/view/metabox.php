@@ -8,10 +8,11 @@
  */
 
 /**
- *
+ * Metaboxes & Widgets Tab Controller
+ * 
  * @package AAM
  * @author Vasyl Martyniuk <support@wpaam.com>
- * @copyright Copyright C 2013 Vasyl Martyniuk
+ * @copyright Copyright C Vasyl Martyniuk
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
 class aam_View_Metabox extends aam_View_Abstract {
@@ -271,6 +272,18 @@ class aam_View_Metabox extends aam_View_Abstract {
      */
     public function content() {
         return $this->loadTemplate(dirname(__FILE__) . '/tmpl/metabox.phtml');
+    }
+    
+        /**
+     * @inheritdoc
+     */
+    public function defaultOption($options) {
+         //make sure that some parts are always in place
+        if (!isset($options[aam_Control_Object_Metabox::UID])) {
+            $options[aam_Control_Object_Metabox::UID] = array();
+        }
+        
+        return $options;
     }
 
 }

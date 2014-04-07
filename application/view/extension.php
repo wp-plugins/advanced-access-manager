@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
@@ -7,10 +8,11 @@
  */
 
 /**
- *
+ * Extension UI controller
+ * 
  * @package AAM
  * @author Vasyl Martyniuk <support@wpaam.com>
- * @copyright Copyright C 2013 Vasyl Martyniuk
+ * @copyright Copyright C Vasyl Martyniuk
  * @license GNU General Public License {@link http://www.gnu.org/licenses/}
  */
 class aam_View_Extension extends aam_View_Abstract {
@@ -58,7 +60,10 @@ class aam_View_Extension extends aam_View_Abstract {
         if ($license && $repo->add($ext, $license)){
             $response = array('status' => 'success');
         } else {
-            $response = array('status' => 'failure');
+            $response = array(
+                'status' => 'failure',
+                'reasons' => $repo->getErrors()
+            );
         }
 
         return json_encode($response);
@@ -79,7 +84,10 @@ class aam_View_Extension extends aam_View_Abstract {
         if ($repo && $repo->remove($ext, $license)){
             $response = array('status' => 'success');
         } else {
-            $response = array('status' => 'failure');
+            $response = array(
+                'status' => 'failure',
+                'reasons' => $repo->getErrors()
+            );
         }
 
         return json_encode($response);

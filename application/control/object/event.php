@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
@@ -41,14 +42,6 @@ class aam_Control_Object_Event extends aam_Control_Object {
      */
     public function cacheObject(){
         return true;
-    }
-
-    /**
-     *
-     * @return type
-     */
-    public function backup() {
-        return $this->getSubject()->readOption(self::UID, '', array());
     }
 
     /**

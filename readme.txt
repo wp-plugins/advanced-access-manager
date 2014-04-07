@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: access manager, access, access control, comments, capability, widget, filter menu, role manager, user access, user control, user
 Requires at least: 3.4.2
 Tested up to: 3.8.1
-Stable tag: 2.4
+Stable tag: 2.5 Beta
 
 Graphic interface to manage Access control to your Front-end and Back-end
 
@@ -96,10 +96,27 @@ the list of additional metaboxes can be picked by AAM.
 
 == Changelog ==
 
+= 2.5 Beta =
+* Refactored Post & Pages Access List
+* Extended ConfigPress with Post & Pages Access List Options
+* Refactored internal UI hander
+* Fixed issue with Restore Default flag and AAM Plus Package
+* Added LIST Restriction for AAM Plus Package
+* Added ADD Restriction for AAM Plus Package
+* Filter list of editable roles based on current user level
+* Gives ability for non-admin users manage AAM if admin granted access
+* Removed Backup object. Replaces with Restore Default
+* Merged ajax handler with UI manager
+* Implemented Clear All Settings feature (one step closer to Import/Export)
+* Added Error notification for Extension page
+* Fixed bug with Multisite and AAM Plus Package ajax call
+* Regenerated language file
+* Fixed bug with non-existing term
+
 = 2.4 =
 * Added Norwegian language Norwegian (by Christer Berg Johannesen)
 * Localize the default Roles
-* Regenerated .pod file 
+* Regenerated .pod file
 * Added AAM Media Manager Extension
 * Added AAM Content Manager Extension
 * Standardized Extension Modules
@@ -108,7 +125,7 @@ the list of additional metaboxes can be picked by AAM.
 = 2.3 =
 * Added Persian translation by Ghaem Omidi
 * Added Inherit Capabilities From Role drop-down on Add New Role Dialog
-* Small Cosmetic CSS changes 
+* Small Cosmetic CSS changes
 
 = 2.2.3 =
 * Improved Admin Menu access control

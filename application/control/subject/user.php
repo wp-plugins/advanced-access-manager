@@ -8,6 +8,7 @@
  */
 
 /**
+ * User's Subject
  *
  * @package AAM
  * @author Vasyl Martyniuk <support@wpaam.com>
@@ -36,8 +37,7 @@ class aam_Control_Subject_User extends aam_Control_Subject {
     private $_cap_key = '';
 
     /**
-     *
-     * @param type $id
+     * @inheritdoc
      */
     public function __construct($id) {
         parent::__construct($id);
@@ -55,8 +55,11 @@ class aam_Control_Subject_User extends aam_Control_Subject {
     }
 
     /**
+     * Delete User
      *
-     * @return type
+     * @return boolean
+     *
+     * @access public
      */
     public function delete() {
         $response = false;
@@ -69,9 +72,12 @@ class aam_Control_Subject_User extends aam_Control_Subject {
     }
 
     /**
+     * Block User
      *
-     * @global type $wpdb
      * @return boolean
+     *
+     * @access public
+     * @global wpdb $wpdb
      */
     public function block() {
         global $wpdb;
@@ -104,7 +110,8 @@ class aam_Control_Subject_User extends aam_Control_Subject {
     protected function retrieveSubject() {
         global $current_user;
 
-        if ($current_user instanceof WP_User && $current_user->ID == $this->getId()) {
+        if (($current_user instanceof WP_User)
+                && ($current_user->ID == $this->getId())) {
             $subject = $current_user;
         } else {
             $subject = new WP_User($this->getId());
@@ -130,16 +137,20 @@ class aam_Control_Subject_User extends aam_Control_Subject {
 
     /**
      *
-     * @return type
+     * @return array
      */
     public function getCapabilities() {
         return $this->getSubject()->allcaps;
     }
 
     /**
+     * Check if user has specified capability
      *
-     * @param type $capability
-     * @return type
+     * @param string $capability
+     *
+     * @return boolean
+     *
+     * @access public
      */
     public function hasCapability($capability) {
         return user_can($this->getSubject(), $capability);
@@ -228,7 +239,7 @@ class aam_Control_Subject_User extends aam_Control_Subject {
      * @param type $object
      * @param type $object_id
      * @param bool $inherit
-     * 
+     *
      * @return mixed
      */
     public function readOption($object, $object_id = 0, $inherit = true) {
@@ -261,12 +272,63 @@ class aam_Control_Subject_User extends aam_Control_Subject {
             $this->getId(), $this->getOptionName($object, $object_id)
         );
     }
+    
+    /**
+    * @inheritdoc
+    */
+    public function hasFlag($flag){
+        return get_user_option("aam_{$flag}", $this->getId());
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function setFlag($flag, $value = true) {
+        if ($value === true){
+           update_user_option($this->getId(), "aam_{$flag}", $value);
+        } else {
+           delete_user_option($this->getId(), "aam_{$flag}");
+        }
+    }
 
     /**
+     * @inheritdoc
+     */
+    public function clearAllOptions()
+    {
+        global $wpdb;
+
+        $mask = 'aam_%_' . $this->getId();
+        
+        //clear all settings in usermeta table
+        $prefix = $wpdb->get_blog_prefix();
+        $wpdb->query(
+            "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE '{$prefix}{$mask}'"
+        );
+
+        //clear all settings in postmeta table
+        $wpdb->query("DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE '{$mask}'");
+
+        $this->clearCache(); //delete cache
+        $this->resetCapability(); //reset default capabilities
+        $this->setFlag(aam_Control_Subject::FLAG_MODIFIED, false); //clear flag
+
+        do_action('aam_clear_all_options', $this);
+    }
+
+    /**
+     * Prepare option's name
      *
-     * @param type $object
-     * @param type $object_id
-     * @return type
+     * Compile option's name based on object name and object ID. As example if
+     * object name is "post" and object ID is "5", the compiled option's name is
+     * aam_post_5.
+     *
+     * @param string     $object
+     * @param string|int $object_id
+     *
+     * @return string
+     *
+     * @access protected
      */
     protected function getOptionName($object, $object_id) {
         return "aam_{$object}" . ($object_id ? "_{$object_id}" : '');
@@ -294,6 +356,7 @@ class aam_Control_Subject_User extends aam_Control_Subject {
      */
     public function readCache(){
         $cache = get_user_option('aam_cache', $this->getId());
+
         return (is_array($cache) ? $cache : array());
     }
 

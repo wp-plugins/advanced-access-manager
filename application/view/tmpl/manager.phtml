@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
@@ -22,6 +23,12 @@
                         </h3>
                         <div class="inside main-inside">
                             <div class="aam-main-loader"></div>
+                            <p class="aam-beta-version">
+                                <b>Warning!</b> This is Beta version for release AAM 2.5. Please make sure that you
+                                have backed up your database and appreciate any feedback that will help us to
+                                improve AAM.<br/>
+                                Any issues with Extensions is our highest priority tasks and will be resolved within 48 hours. 
+                            </p>
                             <div class="aam-main-content"></div>
                         </div>
                     </div>
@@ -59,7 +66,7 @@
                         </h3>
                         <div class="inside">
                             <div class="cpanel-major">
-                                <a href="#" class="cpanel-item cpanel-item-restore" id="aam_roleback" aam-tooltip="<?php echo __('Undo Change', 'aam'); ?>"><?php echo __('Undo Change', 'aam'); ?></a>
+                                <a href="#" class="cpanel-item cpanel-item-restore" id="aam_roleback" aam-tooltip="<?php echo __('Restore Default', 'aam'); ?>"><?php echo __('Default', 'aam'); ?></a>
                                 <a href="#" class="cpanel-item cpanel-item-save" id="aam_save" ><?php echo __('Save', 'aam'); ?></a>
                             </div>
                             <div class="cpanel-minor">
@@ -91,18 +98,19 @@
                             <div id="minor-publishing">
                                 <div id="misc-publishing-actions" class="control-manager">
                                     <?php
-                                    foreach ($this->getCManager() as $item) {
-                                        echo '<a href="#" class="', $item['class'], '" ';
-                                        echo 'id="', $item['id'], '" aam-tooltip="', $item['title'], '" segment="' . $item['segment'] . '">';
-                                        echo $item['label'], '</a>';
+                                    $subjects = aam_View_Collection::retrieveSubjects();
+                                    foreach ($subjects as $subject) {
+                                        echo '<a href="#" class="', $subject->class, '" ';
+                                        echo '" aam-tooltip="', $subject->title, '" segment="' . $subject->segment . '">';
+                                        echo $subject->label, '</a>';
                                     }
                                     ?>
                                 </div>
                             </div>
                             <div class="control-manager-content">
                                 <?php
-                                foreach ($this->getCManager() as $item) {
-                                    echo call_user_func($item['content']);
+                                foreach ($subjects as $subject) {
+                                    echo $subject->controller->content();
                                 }
                                 ?>
                             </div>

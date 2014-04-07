@@ -209,3 +209,11 @@ input.license-input{
     padding-left: 30px;
     font-size: 0.9em;
 }
+
+.extension-error-list{
+    margin-top: 5px;
+    display: none;
+    font-size: 0.8em;
+    color: #FF8888;
+    font-weight: bold;
+}

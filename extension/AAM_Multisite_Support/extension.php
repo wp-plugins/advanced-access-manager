@@ -9,7 +9,7 @@
 
 /**
  * AAM Multisite Support Extension
- * 
+ *
  * @package AAM
  * @author Vasyl Martyniuk <support@wpaam.com>
  * @copyright Copyright C 2014 Vasyl Martyniuk
@@ -19,7 +19,7 @@ class AAM_Extension_Multisite extends AAM_Core_Extension {
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $_subject = null;
 
@@ -33,15 +33,15 @@ class AAM_Extension_Multisite extends AAM_Core_Extension {
             add_action('admin_print_scripts', array($this, 'printScripts'));
             add_action('admin_print_styles', array($this, 'printStyles'));
             add_action('aam_localization_labels', array($this, 'localizationLabels'));
-            add_filter('aam_ui_subjects', array($this, 'addUISubject'), 10, 1);
             add_action('wpmu_new_blog', array($this, 'newBlog'), 10, 6);
+            $this->registerSubject();
         } elseif (is_admin()) {
             add_filter('aam_ajax_call', array($this, 'ajax'), 10, 2);
         }
     }
 
     /**
-     * 
+     *
      * @param type $blog_id
      * @param type $user_id
      * @param type $domain
@@ -51,13 +51,13 @@ class AAM_Extension_Multisite extends AAM_Core_Extension {
      */
     public function newBlog($blog_id, $user_id, $domain, $path, $site_id, $meta) {
         global $wpdb;
-        
+
         if ($default_id = aam_Core_API::getBlogOption('aam_default_site', 0, 1)){
             $default_option = $wpdb->get_blog_prefix($default_id) . 'user_roles';
             $roles = aam_Core_API::getBlogOption($default_option, null, $default_id);
             if ($roles){
                 aam_Core_API::updateBlogOption(
-                        $wpdb->get_blog_prefix($blog_id) . 'user_roles', 
+                        $wpdb->get_blog_prefix($blog_id) . 'user_roles',
                         $roles, $blog_id
                 );
             }
@@ -65,13 +65,13 @@ class AAM_Extension_Multisite extends AAM_Core_Extension {
     }
 
     /**
-     * 
+     *
      * @return type
      */
     protected function getSiteList() {
         //retrieve site list first
         $blog_list = $this->retrieveSiteList();
-        
+
         $response = array(
             'iTotalRecords' => count($blog_list),
             'iTotalDisplayRecords' => count($blog_list),
@@ -94,41 +94,41 @@ class AAM_Extension_Multisite extends AAM_Core_Extension {
 
         return json_encode($response);
     }
-    
+
     /**
      * Retieve the list of sites
-     * 
+     *
      * @return array
-     * 
+     *
      * @access public
      */
     public function retrieveSiteList(){
         global $wpdb;
-        
+
         return $wpdb->get_results('SELECT blog_id FROM ' . $wpdb->blogs);
     }
 
     /**
-     * 
-     * @param type $subjects
-     * @return type
+     * Register new subject Multisite
+     *
+     * @return void
+     *
+     * @access public
      */
-    public function addUISubject($subjects) {
-        $subjects['multisite'] = array(
+    public function registerSubject() {
+        aam_View_Collection::registerSubject((object)array(
             'position' => 1,
             'segment' => 'multisite',
             'label' => __('Sites', 'aam'),
             'title' => __('Site Manager', 'aam'),
             'class' => 'manager-item manager-item-multisite',
-            'id' => 'aam_multisite',
-            'content' => array($this, 'content')
-        );
-
-        return $subjects;
+            'uid' => 'multisite',
+            'controller' => $this
+        ));
     }
 
     /**
-     * 
+     *
      * @return type
      */
     public function content() {
@@ -150,8 +150,8 @@ class AAM_Extension_Multisite extends AAM_Core_Extension {
     public function printScripts() {
         if ($this->getParent()->isAAMScreen()) {
             wp_enqueue_script(
-                    'aam-multisite-admin', 
-                    AAM_MULTISITE_BASE_URL . '/multisite.js', 
+                    'aam-multisite-admin',
+                    AAM_MULTISITE_BASE_URL . '/multisite.js',
                     array('aam-admin')
             );
             $localization = array(
@@ -167,7 +167,7 @@ class AAM_Extension_Multisite extends AAM_Core_Extension {
     }
 
     /**
-     * 
+     *
      */
     public function printStyles() {
         if ($this->getParent()->isAAMScreen()) {
@@ -178,7 +178,7 @@ class AAM_Extension_Multisite extends AAM_Core_Extension {
     }
 
     /**
-     * 
+     *
      * @param type $labels
      * @return type
      */
@@ -191,7 +191,7 @@ class AAM_Extension_Multisite extends AAM_Core_Extension {
     }
 
     /**
-     * 
+     *
      * @param type $default
      * @param aam_Control_Subject $subject
      * @return type
@@ -235,7 +235,7 @@ class AAM_Extension_Multisite extends AAM_Core_Extension {
     }
 
     /**
-     * 
+     *
      * @param type $subject
      */
     public function setSubject($subject) {
@@ -243,7 +243,7 @@ class AAM_Extension_Multisite extends AAM_Core_Extension {
     }
 
     /**
-     * 
+     *
      * @return type
      */
     public function getSubject() {

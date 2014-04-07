@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
@@ -17,8 +18,11 @@ class aam_View_Visitor extends aam_View_Abstract
 {
 
     /**
-     *
-     * @return type
+     * Get View content
+     * 
+     * @return string
+     * 
+     * @access public
      */
     public function content()
     {

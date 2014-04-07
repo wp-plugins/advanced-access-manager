@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
@@ -16,27 +17,35 @@
 class aam_Control_Object_Post extends aam_Control_Object {
 
     /**
-     *
+     * Object Identifier
      */
     const UID = 'post';
 
     /**
+     * Object Action: COMMENT
      *
+     * Control access to commenting ability
      */
     const ACTION_COMMENT = 'comment';
 
     /**
+     * Object Action: READ
      *
+     * Either Object can be read by user or not
      */
     const ACTION_READ = 'read';
 
     /**
+     * Object Action: EXCLUDE
      *
+     * If object is a part of frontend menu either exclude it from menu or not
      */
     const ACTION_EXCLUDE = 'exclude';
 
     /**
+     * Object Action: TRASH
      *
+     * Manage access to object trash ability
      */
     const ACTION_TRASH = 'trash';
 
@@ -61,89 +70,15 @@ class aam_Control_Object_Post extends aam_Control_Object {
      * @var type
      */
     private $_option = array();
-    
+
     /**
      * Indicator that settings where inherited
-     * 
+     *
      * @var boolean
-     * 
-     * @access private 
+     *
+     * @access private
      */
     private $_inherited = false;
-
-    /**
-     * @inheritdoc
-     */
-    public function __sleep(){
-        return array('_post', '_option', '_inherited');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function cacheObject(){
-        return true;
-    }
-
-    /**
-     * Save Post Options
-     * 
-     * @param array $params
-     * 
-     * @return void
-     * 
-     * @access public
-     */
-    public function save($params = null) {
-        if (is_array($params)) {
-            $this->setInherited(false);
-            update_post_meta($this->getPost()->ID, $this->getOptionName(), $params);
-        }
-        //fire internal hook
-        do_action_ref_array('aam_object_saved', $this, $params);
-    }
-
-    /**
-     *
-     * @param type $area
-     * @return type
-     */
-    public function getAccessList($area) {
-        if ($area == 'frontend') {
-            $response = array(
-                self::ACTION_READ, self::ACTION_EXCLUDE, self::ACTION_COMMENT
-            );
-        } elseif ($area == 'backend') {
-            $response = array(
-                self::ACTION_TRASH, self::ACTION_DELETE, self::ACTION_EDIT
-            );
-        } else {
-            $response = array();
-        }
-
-        return apply_filters('aam_post_access_list', $response, $area);
-    }
-
-    /**
-     *
-     * @return type
-     */
-    public function getUID() {
-        return self::UID;
-    }
-
-    /**
-     *
-     * @return type
-     */
-    protected function getOptionName() {
-        $subject = $this->getSubject();
-        //prepare option name
-        $meta_key = 'aam_' . self::UID . '_access_' . $subject->getUID();
-        $meta_key .= ($subject->getId() ? $subject->getId() : '');
-
-        return $meta_key;
-    }
 
     /**
      * Init Post Object
@@ -161,8 +96,8 @@ class aam_Control_Object_Post extends aam_Control_Object {
         } elseif (intval($object)) {
             $this->setPost(get_post($object));
         }
-        //read options
-        if ($this->getPost()) {
+
+        if ($this->getPost()){
             $this->read();
         }
     }
@@ -179,7 +114,8 @@ class aam_Control_Object_Post extends aam_Control_Object {
     public function read() {
         $option = get_post_meta($this->getPost()->ID, $this->getOptionName(), true);
         //try to inherit it from parent category
-        if (empty($option)) {
+        if (empty($option)
+                && (aam_Core_ConfigPress::getParam('aam.post.inherit', 'true') == 'true')) {
             $terms = $this->retrievePostTerms();
             //use only first term for inheritance
             $term_id = array_shift($terms);
@@ -193,35 +129,19 @@ class aam_Control_Object_Post extends aam_Control_Object {
     }
 
     /**
-     *
-     * @return type
+     * Generate option name
+     * 
+     * @return string
+     * 
+     * @access protected
      */
-    public function delete() {
-        return delete_post_meta($this->getPost()->ID, $this->getOptionName());
-    }
+    protected function getOptionName() {
+        $subject = $this->getSubject();
+        //prepare option name
+        $meta_key = 'aam_' . self::UID . '_access_' . $subject->getUID();
+        $meta_key .= ($subject->getId() ? $subject->getId() : '');
 
-    /**
-     *
-     * @return array
-     */
-    private function retrievePostTerms() {
-        $taxonomies = get_object_taxonomies($this->getPost());
-        if (is_array($taxonomies) && count($taxonomies)) {
-            //filter taxonomies to hierarchical only
-            $filtered = array();
-            foreach ($taxonomies as $taxonomy) {
-                if (is_taxonomy_hierarchical($taxonomy)) {
-                    $filtered[] = $taxonomy;
-                }
-            }
-            $terms = wp_get_object_terms(
-                    $this->getPost()->ID, $filtered, array('fields' => 'ids')
-            );
-        } else {
-            $terms = array();
-        }
-
-        return $terms;
+        return $meta_key;
     }
 
     /**
@@ -242,6 +162,80 @@ class aam_Control_Object_Post extends aam_Control_Object {
         }
 
         return $result;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __sleep(){
+        return array('_post', '_option', '_inherited');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function cacheObject(){
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function save($params = null) {
+        if (is_array($params)) {
+            $this->setInherited(false);
+            update_post_meta($this->getPost()->ID, $this->getOptionName(), $params);
+            //set flag that this subject has custom settings
+            $this->getSubject()->setFlag(aam_Control_Subject::FLAG_MODIFIED);
+        }
+        //fire internal hook
+        do_action_ref_array('aam_object_saved', $this, $params);
+    }
+
+    /**
+     * Get Object Unique ID
+     *
+     * @return string
+     *
+     * @access public
+     */
+    public function getUID() {
+        return self::UID;
+    }
+
+    /**
+     *
+     * @return type
+     */
+    public function delete() {
+        return delete_post_meta($this->getPost()->ID, $this->getOptionName());
+    }
+
+    /**
+     * Retrieve list of all hierarchical terms the object belongs to
+     *
+     * @return array
+     *
+     * @access private
+     */
+    private function retrievePostTerms() {
+        $taxonomies = get_object_taxonomies($this->getPost());
+        if (is_array($taxonomies) && count($taxonomies)) {
+            //filter taxonomies to hierarchical only
+            $filtered = array();
+            foreach ($taxonomies as $taxonomy) {
+                if (is_taxonomy_hierarchical($taxonomy)) {
+                    $filtered[] = $taxonomy;
+                }
+            }
+            $terms = wp_get_object_terms(
+                    $this->getPost()->ID, $filtered, array('fields' => 'ids')
+            );
+        } else {
+            $terms = array();
+        }
+
+        return $terms;
     }
 
     /**
@@ -287,17 +281,26 @@ class aam_Control_Object_Post extends aam_Control_Object {
     public function getOption() {
         return $this->_option;
     }
-    
+
     /**
-     * 
-     * @param type $flag
+     * Set inherited flag
+     *
+     * If post does not have access specified, it'll try to inherit it from the
+     * parent category and if parent category has access defined it'll inherit all
+     * settings and set _inherited flag to true.
+     *
+     * @param boolean $flag
+     *
+     * @return void
+     *
+     * @access public
      */
     public function setInherited($flag){
         $this->_inherited = $flag;
     }
-    
+
     /**
-     * 
+     *
      * @return type
      */
     public function getInherited(){
