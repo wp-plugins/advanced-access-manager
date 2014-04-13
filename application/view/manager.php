@@ -231,7 +231,7 @@ class aam_View_Manager extends aam_View_Abstract {
             <div class="feature-content">
                 <?php
                 foreach ($features as $feature) {
-                    echo $feature->controller->content();
+                    echo $feature->controller->content($this->getSubject());
                 }
                 ?>
             </div>

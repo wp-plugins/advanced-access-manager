@@ -3,7 +3,7 @@
 /**
   Plugin Name: Advanced Access Manager
   Description: Manage User and Role Access to WordPress Backend and Frontend.
-  Version: 2.5 Beta
+  Version: 2.5
   Author: Vasyl Martyniuk <support@wpaam.com>
   Author URI: http://www.wpaam.com
 
@@ -99,6 +99,8 @@ class aam {
             //control Admin area
             add_action('admin_init', array($this, 'adminInit'));
         } else {
+            //make sure that subject is initiated during the login
+            add_action('wp_login', array($this, 'login'), 0, 2);
             //control WordPress frontend
             add_action('wp', array($this, 'wp'), 999);
             //filter navigation pages & taxonomies
@@ -1077,6 +1079,22 @@ class aam {
         } else {
             $this->setUser(new aam_Control_Subject_Visitor(''));
         }
+    }
+    
+    /**
+     * User Login Hook
+     * 
+     * This hook track the user's successfull login and update current subject
+     * 
+     * @param string  $username User Login name
+     * @param Wp_User $user     Current user object
+     * 
+     * @return void
+     * 
+     * @access public
+     */
+    public function login($username, $user) {
+        $this->setUser(new aam_Control_Subject_User($user->ID));
     }
 
     /**

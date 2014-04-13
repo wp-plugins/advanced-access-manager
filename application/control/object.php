@@ -145,6 +145,6 @@ abstract class aam_Control_Object {
      * 
      * @access public
      */
-    abstract public function save($params = array());
+    abstract public function save($params = null);
 
 }

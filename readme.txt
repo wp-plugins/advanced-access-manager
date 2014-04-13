@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: access manager, access, access control, comments, capability, widget, filter menu, role manager, user access, user control, user
 Requires at least: 3.4.2
 Tested up to: 3.8.1
-Stable tag: 2.5 Beta
+Stable tag: 2.5
 
 Graphic interface to manage Access control to your Front-end and Back-end
 
@@ -95,6 +95,11 @@ the list of additional metaboxes can be picked by AAM.
 5. ConfigPress
 
 == Changelog ==
+
+= 2.5 =
+* Fixed issue with AAM Plus Package and Multisite
+* Introduced Development License
+* Minor internal adjustment for AAM Development Community
 
 = 2.5 Beta =
 * Refactored Post & Pages Access List

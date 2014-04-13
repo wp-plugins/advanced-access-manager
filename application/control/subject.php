@@ -151,8 +151,9 @@ abstract class aam_Control_Subject {
      */
     public function __get($name) {
         $subject = $this->getSubject();
-        
-        return $subject->$name;
+        //TODO - In multisite Wp_User roles are not initialized if admin not a part
+        //of the site
+        return @$subject->$name;
     }
 
     /**
@@ -261,11 +262,11 @@ abstract class aam_Control_Subject {
             $class_name = 'aam_Control_Object_' . ucfirst($object);
             if (class_exists($class_name)) {
                 $this->_objects[$object][$object_id] = new $class_name(
-                    $this, $object_id
+                    $this, $object_id, $this
                 );
             } else {
                 $this->_objects[$object][$object_id] = apply_filters(
-                        'aam_object', null, $object, $object_id
+                        'aam_object', null, $object, $object_id, $this
                 );
             }
 
@@ -290,6 +291,22 @@ abstract class aam_Control_Subject {
      */
     public function setObject(aam_Control_Object $object, $uid) {
         $this->_objects[$uid] = $object;
+    }
+    
+    /**
+     * Release the object
+     * 
+     * @param string      $uid
+     * @param string|int  $object_id
+     * 
+     * @return void
+     * 
+     * @access public
+     */
+    public function releaseObject($uid, $object_id = 0){
+        if (isset($this->_objects[$uid][$object_id])){
+            unset($this->_objects[$uid][$object_id]);
+        }
     }
 
     /**

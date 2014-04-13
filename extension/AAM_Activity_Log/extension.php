@@ -84,12 +84,13 @@ class AAM_Extension_ActivityLog extends AAM_Core_Extension {
      * @param type $user
      */
     public function login($username, $user) {
-        $subject = new aam_Control_Subject_User($user->ID);
-        $subject->getObject(aam_Control_Object_Activity::UID)->add(
-                time(),
-                array(
-                    'action' => aam_Control_Object_Activity::ACTIVITY_LOGIN
-        ));
+        $this->getParent()->getUser()
+                ->getObject(aam_Control_Object_Activity::UID)->add(
+                    time(),
+                    array(
+                        'action' => aam_Control_Object_Activity::ACTIVITY_LOGIN
+                    )
+      );
     }
 
     /**
