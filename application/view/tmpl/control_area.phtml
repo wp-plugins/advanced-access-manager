@@ -25,8 +25,16 @@ if (aam_Core_Request::post('type') === aam_Control_Object_Term::UID) {
     $post_type = $object->getPost()->post_type;
 }
 
+if ($post_type == 'attachment'){
 ?>
-<?php if ($object->getUID() == aam_Control_Object_Term::UID) { ?>
+    <div class="attachment-access-block">
+        Get better access control over your media files with 
+        <b><a href="http://wpaam.com/aam-extensions/aam-media-manager/" target="_blank">AAM Media Manager</a></b>
+        extension.
+    </div>
+<?php 
+}
+if ($object->getUID() == aam_Control_Object_Term::UID) { ?>
     <div id="term_access">
         <table class="dataTable" id="term_access_frontend">
             <thead>

@@ -1293,6 +1293,19 @@ a.capability-action{
     width: 100%;
 }
 
+.attachment-access-block{
+    border: 1px solid #257DA6;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    padding-left: 22px;
+    box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    background: transparent url('images/post/info-active.png') no-repeat 2px center;
+    font-size: 0.8em; 
+}
+
 .aam-lock-message span{
     font-weight: bold;
     vertical-align: middle;

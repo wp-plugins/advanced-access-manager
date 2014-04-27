@@ -2710,6 +2710,8 @@ AAM.prototype.launchManageAccessDialog = function(button, nRow, aData, type) {
                     );
                 }
             });
+            
+            _this.doAction('aam_get_access_loaded');
         },
         error: function() {
             _this.highlight(nRow, 'failure');
