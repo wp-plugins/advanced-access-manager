@@ -433,4 +433,34 @@ abstract class aam_Control_Subject {
      */
     abstract protected function retrieveSubject();
     
+    /**
+     * Read object from parent subject
+     * 
+     * @param string $object
+     * @param mixed  $object_id
+     * 
+     * @return mixed
+     * 
+     * @access public
+     */
+    public function readParentSubject($object, $object_id){
+        if ($subject = $this->getParentSubject()){
+            $option = $subject->getObject($object, $object_id)->getOption();
+        } else {
+            $option = null;
+        }
+        
+        return $option;
+    }
+    
+    /**
+     * Retrive parent subject
+     * 
+     * If there is no parent subject, return null
+     * 
+     * @return aam_Control_Subject|null
+     * 
+     * @access public
+     */
+    abstract public function getParentSubject();
 }

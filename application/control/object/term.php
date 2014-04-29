@@ -104,6 +104,13 @@ class aam_Control_Object_Term extends aam_Control_Object {
                     //try to get any parent restriction
                     $access = $this->inheritAccess($this->getTerm()->parent);
                 }
+                
+                //even if parent category is empty, try to read the parent subject
+                if (empty($access)){
+                    $access = $this->getSubject()->readParentSubject(
+                            self::UID, $this->getTerm()->term_id
+                    );
+                }
 
                 $this->setOption(
                         apply_filters('aam_term_access_option', $access, $this)

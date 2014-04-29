@@ -190,5 +190,12 @@ class aam_Control_Subject_Visitor extends aam_Control_Subject
 
         do_action('aam_clear_all_options', $this);
     }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getParentSubject(){
+        return null;
+    }
 
 }

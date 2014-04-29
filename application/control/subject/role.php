@@ -278,5 +278,12 @@ class aam_Control_Subject_Role extends aam_Control_Subject {
     public function clearCache(){
         return true;
     }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getParentSubject(){
+        return null;
+    }
 
 }

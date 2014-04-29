@@ -122,6 +122,12 @@ class aam_Control_Object_Post extends aam_Control_Object {
             //try to get any parent access
             $option = $this->inheritAccess($term_id);
         }
+        //even if parent category is empty, try to read the parent subject
+        if (empty($option)){
+            $option = $this->getSubject()->readParentSubject(
+                    self::UID, $this->getPost()->ID
+            );
+        }
 
         $this->setOption(
                 apply_filters('aam_post_access_option', $option, $this)
@@ -145,9 +151,16 @@ class aam_Control_Object_Post extends aam_Control_Object {
     }
 
     /**
-     *
-     * @param type $term_id
+     * Inherit access from parent term
+     * 
+     * Go throught the hierarchical branch of terms and retrieve access from the 
+     * first parent term that has access defined.
+     * 
+     * @param int $term_id
+     * 
      * @return array
+     * 
+     * @access private
      */
     private function inheritAccess($term_id) {
         $term = new aam_Control_Object_Term($this->getSubject(), $term_id);

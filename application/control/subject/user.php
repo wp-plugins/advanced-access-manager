@@ -247,18 +247,29 @@ class aam_Control_Subject_User extends aam_Control_Subject {
                 $this->getOptionName($object, $object_id), $this->getId()
         );
         if (empty($option) && $inherit) {
-            //try to get this option from the User's Role
-            $roles = $this->getSubject()->roles;
-            //first user role is counted only. AAM does not support multi-roles
-            $subject_role = array_shift($roles);
-            //in case of multisite & current user does not belong to the site
-            if ($subject_role){
-                $role = new aam_Control_Subject_Role($subject_role);
-                $option = $role->getObject($object, $object_id)->getOption();
-            }
+            $option = $this->readParentSubject($object, $object_id);
         }
 
         return $option;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getParentSubject() {
+        //try to get this option from the User's Role
+        $roles = $this->getSubject()->roles;
+        //first user role is counted only. AAM does not support multi-roles
+        $subject_role = array_shift($roles);
+        
+        if ($subject_role){
+            //in case of multisite & current user does not belong to the site
+            $role = new aam_Control_Subject_Role($subject_role);
+        } else {
+            $role = null;
+        }
+        
+        return $role;
     }
 
     /**

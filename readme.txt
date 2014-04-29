@@ -5,7 +5,7 @@ Requires at least: 3.4.2
 Tested up to: 3.9
 Stable tag: 2.5.2
 
-Graphic interface to manage Access control to your Front-end and Back-end
+The enhanced easy-to-use tool for access control to your backend and frontend.
 
 == Description ==
 
@@ -95,6 +95,10 @@ the list of additional metaboxes can be picked by AAM.
 5. ConfigPress
 
 == Changelog ==
+
+= 2.6 Dev =
+* Fixed bug with user inheritance
+* Improved subject inheritance mechanism
 
 = 2.5.2 =
 * Fixed issue with AAM Media Manager
