@@ -28,7 +28,7 @@ define('AAM_APPL_ENV', (getenv('APPL_ENV') ? getenv('APPL_ENV') : 'production'))
 if (AAM_APPL_ENV === 'production') {
     define('WPAAM_REST_API', 'http://rest.wpaam.com');
 } else {
-    define('WPAAM_REST_API', 'http://wpaam.localhost/rest');
+    define('WPAAM_REST_API', 'http://wpaam.localhost/');
 }
 
 /**

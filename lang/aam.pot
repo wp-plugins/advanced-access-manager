@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: AAM\n"
-"POT-Creation-Date: 2014-04-06 20:42-0500\n"
+"POT-Creation-Date: 2014-05-04 19:41-0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: WPAAM <support@wpaam.com>\n"
 "Language-Team: WP AAM <support@wpaam.com>\n"
@@ -9,50 +9,50 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.6.4\n"
+"X-Generator: Poedit 1.6.5\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-Basepath: d:\\xampp\\htdocs\\aam\\wp-content\\plugins\\aam\\\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: aam.php:381 aam.php:389 aam.php:416
+#: aam.php:404 aam.php:412 aam.php:439
 msgid "Access denied"
 msgstr ""
 
-#: aam.php:899 aam.php:900
+#: aam.php:927 aam.php:928
 msgid "AAM"
 msgstr ""
 
-#: aam.php:911 aam.php:912
+#: aam.php:939 aam.php:940
 msgid "Access Control"
 msgstr ""
 
-#: aam.php:921 aam.php:922
+#: aam.php:949 aam.php:950
 msgid "ConfigPress"
 msgstr ""
 
-#: aam.php:931 aam.php:932
+#: aam.php:959 aam.php:960
 msgid "Extensions"
 msgstr ""
 
-#: application/core/repository.php:182
+#: application/core/repository.php:261
 msgid "Failed to Remove Extension"
 msgstr ""
 
-#: application/core/repository.php:227
+#: application/core/repository.php:306
 msgid "Invalid License Key"
 msgstr ""
 
-#: application/core/repository.php:230
+#: application/core/repository.php:309
 msgid "Failed to write file to wp-content/aam folder"
 msgstr ""
 
-#: application/core/repository.php:234
+#: application/core/repository.php:313
 msgid "Failed to reach the WPAAM Server"
 msgstr ""
 
-#: application/core/repository.php:250
+#: application/core/repository.php:329
 msgid "Failed to insert extension to extension folder"
 msgstr ""
 
@@ -76,7 +76,7 @@ msgstr ""
 msgid "Miscellaneous"
 msgstr ""
 
-#: application/view/extension.php:107
+#: application/view/extension.php:100
 msgid "Folder advanced-access-manager/extension is not writable"
 msgstr ""
 
@@ -113,10 +113,10 @@ msgid "Metabox & Widget"
 msgstr ""
 
 #: application/view/manager.php:145 application/view/tmpl/capability.phtml:17
-#: application/view/tmpl/control_area.phtml:39
-#: application/view/tmpl/control_area.phtml:85
-#: application/view/tmpl/control_area.phtml:138
-#: application/view/tmpl/control_area.phtml:188
+#: application/view/tmpl/control_area.phtml:47
+#: application/view/tmpl/control_area.phtml:94
+#: application/view/tmpl/control_area.phtml:148
+#: application/view/tmpl/control_area.phtml:199
 #: extension/AAM_Plus_Package/ui.phtml:28
 #: extension/AAM_Plus_Package/ui.phtml:60
 #: extension/AAM_Plus_Package/ui.phtml:93
@@ -132,201 +132,207 @@ msgstr ""
 msgid "Event Manager"
 msgstr ""
 
-#: application/view/manager.php:242
+#: application/view/manager.php:241
 msgid "You are not allowed to manage any AAM Features."
 msgstr ""
 
-#: application/view/manager.php:810
+#: application/view/manager.php:820
 msgid "Rollback Settings"
 msgstr ""
 
-#: application/view/manager.php:811
+#: application/view/manager.php:821
 msgid "Cancel"
 msgstr ""
 
-#: application/view/manager.php:812
+#: application/view/manager.php:822
 msgid "Send E-mail"
 msgstr ""
 
-#: application/view/manager.php:813 application/view/manager.php:819
+#: application/view/manager.php:823 application/view/manager.php:829
 msgid "Add New Role"
 msgstr ""
 
-#: application/view/manager.php:814
+#: application/view/manager.php:824
 msgid "Manage"
 msgstr ""
 
-#: application/view/manager.php:815
+#: application/view/manager.php:825
 msgid "Edit"
 msgstr ""
 
-#: application/view/manager.php:816
+#: application/view/manager.php:826
 msgid "Delete"
 msgstr ""
 
-#: application/view/manager.php:817
+#: application/view/manager.php:827
 msgid "Filtered"
 msgstr ""
 
-#: application/view/manager.php:818
+#: application/view/manager.php:828
 msgid "Clear"
 msgstr ""
 
-#: application/view/manager.php:820
+#: application/view/manager.php:830
 msgid "Save Changes"
 msgstr ""
 
-#: application/view/manager.php:821
+#: application/view/manager.php:831
 #, php-format
 msgid ""
 "System detected %d user(s) with this role. All Users with Role <b>%s</b> "
 "will be deleted automatically!"
 msgstr ""
 
-#: application/view/manager.php:822
+#: application/view/manager.php:832
 #, php-format
 msgid "Are you sure that you want to delete role <b>%s</b>?"
 msgstr ""
 
-#: application/view/manager.php:823 application/view/tmpl/role.phtml:53
+#: application/view/manager.php:833 application/view/tmpl/role.phtml:53
 msgid "Delete Role"
 msgstr ""
 
-#: application/view/manager.php:824
+#: application/view/manager.php:834
 msgid "Add User"
 msgstr ""
 
-#: application/view/manager.php:825
+#: application/view/manager.php:835
 msgid "Filter Users"
 msgstr ""
 
-#: application/view/manager.php:826 application/view/manager.php:842
+#: application/view/manager.php:836 application/view/manager.php:852
 msgid "Refresh List"
 msgstr ""
 
-#: application/view/manager.php:827
+#: application/view/manager.php:837
 msgid "Block"
 msgstr ""
 
-#: application/view/manager.php:828
+#: application/view/manager.php:838
 #, php-format
 msgid "Are you sure you want to delete user <b>%s</b>?"
 msgstr ""
 
-#: application/view/manager.php:829
+#: application/view/manager.php:839
 msgid "Filter Capabilities by Category"
 msgstr ""
 
-#: application/view/manager.php:830 application/view/tmpl/capability.phtml:47
+#: application/view/manager.php:840 application/view/tmpl/capability.phtml:47
 msgid "Inherit Capabilities"
 msgstr ""
 
-#: application/view/manager.php:831 application/view/tmpl/capability.phtml:62
+#: application/view/manager.php:841 application/view/tmpl/capability.phtml:62
 msgid "Add New Capability"
 msgstr ""
 
-#: application/view/manager.php:832
+#: application/view/manager.php:842
 #, php-format
 msgid "Are you sure that you want to delete capability <b>%s</b>?"
 msgstr ""
 
-#: application/view/manager.php:833 application/view/tmpl/capability.phtml:81
+#: application/view/manager.php:843 application/view/tmpl/capability.phtml:81
 msgid "Delete Capability"
 msgstr ""
 
-#: application/view/manager.php:834
+#: application/view/manager.php:844
 msgid "Select Role"
 msgstr ""
 
-#: application/view/manager.php:835
+#: application/view/manager.php:845
 msgid "Add Capability"
 msgstr ""
 
-#: application/view/manager.php:836
+#: application/view/manager.php:846
 msgid "Add Event"
 msgstr ""
 
-#: application/view/manager.php:837
+#: application/view/manager.php:847
 msgid "Edit Event"
 msgstr ""
 
-#: application/view/manager.php:838 application/view/manager.php:840
+#: application/view/manager.php:848 application/view/manager.php:850
 #: application/view/tmpl/event.phtml:105
 msgid "Delete Event"
 msgstr ""
 
-#: application/view/manager.php:839
+#: application/view/manager.php:849
 msgid "Save Event"
 msgstr ""
 
-#: application/view/manager.php:841
+#: application/view/manager.php:851
 msgid "Filter Posts by Post Type"
 msgstr ""
 
-#: application/view/manager.php:843 application/view/tmpl/manager.phtml:68
+#: application/view/manager.php:853 application/view/tmpl/manager.phtml:63
 msgid "Restore Default"
 msgstr ""
 
-#: application/view/manager.php:844
+#: application/view/manager.php:854
 msgid "Apply"
 msgstr ""
 
-#: application/view/manager.php:845
+#: application/view/manager.php:855
 msgid "Edit Term"
 msgstr ""
 
-#: application/view/manager.php:846
+#: application/view/manager.php:856
 msgid "Manager Access"
 msgstr ""
 
-#: application/view/manager.php:847
+#: application/view/manager.php:857
 msgid "Unlock Default Accesss Control"
 msgstr ""
 
-#: application/view/manager.php:848
+#: application/view/manager.php:858
 msgid "Close"
 msgstr ""
 
-#: application/view/manager.php:849
+#: application/view/manager.php:859
 msgid "Edit Role"
 msgstr ""
 
-#: application/view/manager.php:850
+#: application/view/manager.php:860
 msgid "Restore Default Capabilities"
 msgstr ""
 
-#: application/view/manager.php:851
+#: application/view/manager.php:861
 #, php-format
 msgid "Are you sure you want to delete <b>%s</b>?"
 msgstr ""
 
-#: application/view/manager.php:852
+#: application/view/manager.php:862
 #, php-format
 msgid "Are you sure you want to move <b>%s</b> to trash?"
 msgstr ""
 
-#: application/view/manager.php:853 application/view/tmpl/post.phtml:27
+#: application/view/manager.php:863 application/view/tmpl/post.phtml:27
 msgid "Delete Post"
 msgstr ""
 
-#: application/view/manager.php:854
+#: application/view/manager.php:864
 msgid "Delete Permanently"
 msgstr ""
 
-#: application/view/manager.php:855
+#: application/view/manager.php:865
 msgid "Trash Post"
 msgstr ""
 
-#: application/view/manager.php:856
+#: application/view/manager.php:866
 msgid "Restore Default Access"
 msgstr ""
 
-#: application/view/manager.php:857
+#: application/view/manager.php:867
 msgid "Duplicate"
 msgstr ""
 
-#: application/view/manager.php:858
+#: application/view/manager.php:868
 msgid "Actions Locked"
+msgstr ""
+
+#: application/view/manager.php:869
+msgid ""
+"<h3>AAM Documentation</h3><div class=\"inner\">Find more information about "
+"Advanced Access Manager here.</div>"
 msgstr ""
 
 #: application/view/metabox.php:191
@@ -353,36 +359,6 @@ msgstr ""
 msgid "Folder wp-content/aam is not writable"
 msgstr ""
 
-#: extension/AAM_Activities/extension.php:133
-#: extension/AAM_Activities/extension.php:146
-#: extension/AAM_Activities/extension.php:160
-msgid "Post does not exist."
-msgstr ""
-
-#: extension/AAM_Activities/extension.php:136
-#, php-format
-msgid "Updated %s: %s"
-msgstr ""
-
-#: extension/AAM_Activities/extension.php:149
-#, php-format
-msgid "Trashed %s: %s"
-msgstr ""
-
-#: extension/AAM_Activities/extension.php:163
-#, php-format
-msgid "Untrashed %s: %s"
-msgstr ""
-
-#: extension/AAM_Activities/extension.php:172
-#, php-format
-msgid "Deleted %s %s"
-msgstr ""
-
-#: extension/AAM_Activities/extension.php:229
-msgid "Undefined Type"
-msgstr ""
-
 #: extension/AAM_Activity_Log/activity.php:98
 msgid "System Login"
 msgstr ""
@@ -399,11 +375,11 @@ msgstr ""
 msgid "Activity Log"
 msgstr ""
 
-#: extension/AAM_Activity_Log/extension.php:176
+#: extension/AAM_Activity_Log/extension.php:177
 msgid "Clear Logs"
 msgstr ""
 
-#: extension/AAM_Activity_Log/extension.php:177
+#: extension/AAM_Activity_Log/extension.php:178
 msgid "Get More"
 msgstr ""
 
@@ -431,7 +407,7 @@ msgstr ""
 msgid "My Feature"
 msgstr ""
 
-#: extension/AAM_Plus_Package/extension.php:165
+#: extension/AAM_Plus_Package/extension.php:168
 msgid "Comments"
 msgstr ""
 
@@ -484,10 +460,11 @@ msgstr ""
 #: application/view/tmpl/extension.phtml:15
 #: application/view/tmpl/extension.phtml:148
 #: application/view/tmpl/extension.phtml:167
+#: application/view/tmpl/extension.phtml:187
 #: application/view/tmpl/manager.phtml:17
-#: application/view/tmpl/manager.phtml:43
-#: application/view/tmpl/manager.phtml:62
-#: application/view/tmpl/manager.phtml:92
+#: application/view/tmpl/manager.phtml:38
+#: application/view/tmpl/manager.phtml:57
+#: application/view/tmpl/manager.phtml:87
 msgid "Click to toggle"
 msgstr ""
 
@@ -497,71 +474,67 @@ msgstr ""
 
 #: application/view/tmpl/configpress.phtml:36
 #: application/view/tmpl/extension.phtml:150
-#: application/view/tmpl/manager.phtml:45
+#: application/view/tmpl/manager.phtml:40
 msgid "AAM Warnings"
 msgstr ""
 
 #: application/view/tmpl/configpress.phtml:55
-#: application/view/tmpl/manager.phtml:64
+#: application/view/tmpl/manager.phtml:59
 msgid "Control Panel"
 msgstr ""
 
 #: application/view/tmpl/configpress.phtml:59
-msgid "Tutorial"
-msgstr ""
-
-#: application/view/tmpl/configpress.phtml:60
-#: application/view/tmpl/manager.phtml:69
+#: application/view/tmpl/manager.phtml:64
 msgid "Save"
 msgstr ""
 
-#: application/view/tmpl/configpress.phtml:63
-#: application/view/tmpl/manager.phtml:72
+#: application/view/tmpl/configpress.phtml:62
+#: application/view/tmpl/manager.phtml:67
 msgid "Follow @wpaam"
 msgstr ""
 
-#: application/view/tmpl/configpress.phtml:63
-#: application/view/tmpl/manager.phtml:72
+#: application/view/tmpl/configpress.phtml:62
+#: application/view/tmpl/manager.phtml:67
 msgid "Follow"
 msgstr ""
 
-#: application/view/tmpl/configpress.phtml:64
-#: application/view/tmpl/manager.phtml:73
+#: application/view/tmpl/configpress.phtml:63
+#: application/view/tmpl/manager.phtml:68
 msgid "Help Forum"
 msgstr ""
 
-#: application/view/tmpl/configpress.phtml:64
-#: application/view/tmpl/manager.phtml:73
+#: application/view/tmpl/configpress.phtml:63
+#: application/view/tmpl/manager.phtml:68
 msgid "Help"
 msgstr ""
 
-#: application/view/tmpl/configpress.phtml:65
-#: application/view/tmpl/manager.phtml:74
-#: application/view/tmpl/manager.phtml:82
+#: application/view/tmpl/configpress.phtml:64
+#: application/view/tmpl/manager.phtml:69
+#: application/view/tmpl/manager.phtml:77
 msgid "E-mail Us"
 msgstr ""
 
-#: application/view/tmpl/configpress.phtml:66
-#: application/view/tmpl/manager.phtml:75
+#: application/view/tmpl/configpress.phtml:65
+#: application/view/tmpl/manager.phtml:70
 msgid "Rate AAM"
 msgstr ""
 
-#: application/view/tmpl/configpress.phtml:66
-#: application/view/tmpl/manager.phtml:75
+#: application/view/tmpl/configpress.phtml:65
+#: application/view/tmpl/manager.phtml:70
 msgid "Rate Us"
 msgstr ""
 
-#: application/view/tmpl/control_area.phtml:35
-#: application/view/tmpl/control_area.phtml:81
-#: application/view/tmpl/control_area.phtml:132
-#: application/view/tmpl/control_area.phtml:182
+#: application/view/tmpl/control_area.phtml:43
+#: application/view/tmpl/control_area.phtml:90
+#: application/view/tmpl/control_area.phtml:142
+#: application/view/tmpl/control_area.phtml:193
 msgid "Access"
 msgstr ""
 
-#: application/view/tmpl/control_area.phtml:40
-#: application/view/tmpl/control_area.phtml:86
-#: application/view/tmpl/control_area.phtml:139
-#: application/view/tmpl/control_area.phtml:189
+#: application/view/tmpl/control_area.phtml:48
+#: application/view/tmpl/control_area.phtml:95
+#: application/view/tmpl/control_area.phtml:149
+#: application/view/tmpl/control_area.phtml:200
 #: extension/AAM_Plus_Package/ui.phtml:29
 #: extension/AAM_Plus_Package/ui.phtml:61
 #: extension/AAM_Plus_Package/ui.phtml:94
@@ -569,13 +542,13 @@ msgstr ""
 msgid "Restrict"
 msgstr ""
 
-#: application/view/tmpl/control_area.phtml:130
-#: application/view/tmpl/control_area.phtml:180
+#: application/view/tmpl/control_area.phtml:140
+#: application/view/tmpl/control_area.phtml:191
 #, php-format
 msgid "All %s in Term"
 msgstr ""
 
-#: application/view/tmpl/control_area.phtml:227
+#: application/view/tmpl/control_area.phtml:239
 msgid "Get AAM Plus Package"
 msgstr ""
 
@@ -686,23 +659,38 @@ msgstr ""
 msgid "Connect with AAM"
 msgstr ""
 
-#: application/view/tmpl/manager.phtml:68
+#: application/view/tmpl/extension.phtml:189
+msgid "Development License"
+msgstr ""
+
+#: application/view/tmpl/extension.phtml:193
+msgid ""
+"Become a member of <b>AAM Community</b>. Obtain <b>Development License</b> "
+"today for $119 and get access to all extensions that are available today and "
+"will be developed witin a year."
+msgstr ""
+
+#: application/view/tmpl/extension.phtml:196
+msgid "Read More"
+msgstr ""
+
+#: application/view/tmpl/manager.phtml:63
 msgid "Default"
 msgstr ""
 
-#: application/view/tmpl/manager.phtml:79
+#: application/view/tmpl/manager.phtml:74
 msgid "Undo Change"
 msgstr ""
 
-#: application/view/tmpl/manager.phtml:80
+#: application/view/tmpl/manager.phtml:75
 msgid "Would your like to role back current settings?"
 msgstr ""
 
-#: application/view/tmpl/manager.phtml:83
+#: application/view/tmpl/manager.phtml:78
 msgid "Our E-mail address is <b>support@wpaam.com</b>"
 msgstr ""
 
-#: application/view/tmpl/manager.phtml:94
+#: application/view/tmpl/manager.phtml:89
 msgid "Control Manager"
 msgstr ""
 
@@ -840,15 +828,15 @@ msgid "All newly created sites will inherit list of Roles & Capabilities."
 msgstr ""
 
 #: extension/AAM_My_Feature/ui.phtml:13
-msgid "Do you need a custom feature? Ask us and we will develop it for you."
+msgid "Do you need a custom feature?"
 msgstr ""
 
-#: extension/AAM_My_Feature/ui.phtml:18
-msgid "Email Us"
+#: extension/AAM_My_Feature/ui.phtml:15
+msgid "Create your own extension "
 msgstr ""
 
-#: extension/AAM_My_Feature/ui.phtml:21
-msgid "Ask on Forum"
+#: extension/AAM_My_Feature/ui.phtml:16
+msgid "or ask us and we will develop it for you."
 msgstr ""
 
 #: extension/AAM_Plus_Package/ui.phtml:24

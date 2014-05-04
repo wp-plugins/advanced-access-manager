@@ -69,7 +69,7 @@ if ($object->getUID() == aam_Control_Object_Term::UID) { ?>
                             </div>
                         </td>
                         <td>
-                            <div class="post-actions">
+                            <div class="aam-list-row-actions">
                                 <div class="post-action">
                                     <input type="checkbox" id="term_frontend_<?php echo $action; ?>" name="access[term][frontend][<?php echo $action; ?>]" <?php echo ($object->has('frontend', $action) ? 'checked="checked"' : ''); ?> />
                                     <label for="term_frontend_<?php echo $action; ?>">
@@ -116,7 +116,7 @@ if ($object->getUID() == aam_Control_Object_Term::UID) { ?>
                         </div>
                     </td>
                     <td>
-                        <div class="post-actions">
+                        <div class="aam-list-row-actions">
                             <div class="post-action">
                                 <input type="checkbox" id="term_backend_<?php echo $action ?>" name="access[term][backend][<?php echo $action; ?>]" <?php echo ($object->has('backend', $action) ? 'checked="checked"' : ''); ?> />
                                 <label for="term_backend_<?php echo $action ?>">
@@ -170,7 +170,7 @@ if ($object->getUID() == aam_Control_Object_Term::UID) { ?>
                     </div>
                 </td>
                 <td>
-                    <div class="post-actions">
+                    <div class="aam-list-row-actions">
                         <div class="post-action post-action-check">
                             <input type="checkbox" id="post_frontend_<?php echo $action ?>" name="access[post][frontend][<?php echo $action; ?>]" <?php echo ($object->has('frontend', $action) ? 'checked="checked"' : ''); ?> />
                             <label for="post_frontend_<?php echo $action ?>">
@@ -221,7 +221,7 @@ if ($object->getUID() == aam_Control_Object_Term::UID) { ?>
                     </div>
                 </td>
                 <td>
-                    <div class="post-actions">
+                    <div class="aam-list-row-actions">
                         <div class="post-action post-action-check">
                             <input type="checkbox" id="post_backend_<?php echo $action ?>" name="access[post][backend][<?php echo $action; ?>]" <?php echo ($object->has('backend', $action) ? 'checked="checked"' : ''); ?> />
                             <label for="post_backend_<?php echo $action ?>">

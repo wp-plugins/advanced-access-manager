@@ -20,11 +20,11 @@ class aam_View_Extension extends aam_View_Abstract {
     /**
      * Extensions Repository
      *
-     * @var array
+     * @var aam_Core_Repository
      *
      * @access private
      */
-    private $_repository = array();
+    private $_repository;
     
     /**
      * Constructor
@@ -37,12 +37,7 @@ class aam_View_Extension extends aam_View_Abstract {
      */
     public function __construct() {
         parent::__construct();
-
-        //get repository
-        $repository = aam_Core_API::getBlogOption('aam_extensions', array(), 1);
-        if (is_array($repository)){
-            $this->_repository = $repository;
-        }
+        $this->_repository = aam_Core_Repository::getInstance();
     }
 
     /**
@@ -53,16 +48,15 @@ class aam_View_Extension extends aam_View_Abstract {
      * @access public
      */
     public function install(){
-        $repo = new aam_Core_Repository;
         $license = aam_Core_Request::post('license');
         $ext = aam_Core_Request::post('extension');
 
-        if ($license && $repo->add($ext, $license)){
+        if ($license && $this->getRepository()->add($ext, $license)){
             $response = array('status' => 'success');
         } else {
             $response = array(
                 'status' => 'failure',
-                'reasons' => $repo->getErrors()
+                'reasons' => $this->getRepository()->getErrors()
             );
         }
 
@@ -77,16 +71,15 @@ class aam_View_Extension extends aam_View_Abstract {
      * @access public
      */
     public function remove(){
-        $repo = new aam_Core_Repository;
         $license = aam_Core_Request::post('license');
         $ext = aam_Core_Request::post('extension');
 
-        if ($repo && $repo->remove($ext, $license)){
+        if ($this->getRepository()->remove($ext, $license)){
             $response = array('status' => 'success');
         } else {
             $response = array(
                 'status' => 'failure',
-                'reasons' => $repo->getErrors()
+                'reasons' => $this->getRepository()->getErrors()
             );
         }
 
@@ -112,29 +105,11 @@ class aam_View_Extension extends aam_View_Abstract {
     }
     
     /**
-     * Check if extensions exists
-     *
-     * @param string $extension
-     *
-     * @return boolean
-     *
-     * @access public
+     * 
+     * @return aam_Core_Respository
      */
-    public function hasExtension($extension){
-        return (isset($this->_repository[$extension]) ? true : false);
+    public function getRepository(){
+        return $this->_repository;
     }
-
-    /**
-     * Get Extension
-     *
-     * @param string $extension
-     *
-     * @return stdClass
-     *
-     * @access public
-     */
-    public function getExtension($extension){
-        return ($this->hasExtension($extension) ? $this->_repository[$extension] : new stdClass);
-    }
-
+    
 }

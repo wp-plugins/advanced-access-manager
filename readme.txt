@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: access manager, access, access control, comments, capability, widget, filter menu, role manager, user access, user control, user
 Requires at least: 3.4.2
 Tested up to: 3.9
-Stable tag: 2.5.2
+Stable tag: 2.6
 
 The enhanced easy-to-use tool for access control to your backend and frontend.
 
@@ -96,9 +96,15 @@ the list of additional metaboxes can be picked by AAM.
 
 == Changelog ==
 
-= 2.6 Dev =
+= 2.6 =
 * Fixed bug with user inheritance
+* Fixed bug with user restore default settings
+* Fixed bug with installed extension detection
+* Improved core extension handling
 * Improved subject inheritance mechanism
+* Removed deprecated ConfigPress Tutorial
+* Optimized CSS
+* Regenerated translation pot file
 
 = 2.5.2 =
 * Fixed issue with AAM Media Manager

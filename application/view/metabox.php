@@ -176,7 +176,7 @@ class aam_View_Metabox extends aam_View_Abstract {
         global $wp_post_types;
 
         $cache = aam_Core_API::getBlogOption('aam_metabox_cache', array());
-        if ($this->getSubject()->getUID() == 'visitor') {
+        if ($this->getSubject()->getUID() == aam_Control_Subject_Visitor::UID) {
             $list = array(
                 'widgets' => (isset($cache['widgets']) ? $cache['widgets'] : array())
             );

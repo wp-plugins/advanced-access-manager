@@ -309,15 +309,14 @@ class aam_Control_Subject_User extends aam_Control_Subject {
     {
         global $wpdb;
 
-        $mask = 'aam_%_' . $this->getId();
-        
         //clear all settings in usermeta table
         $prefix = $wpdb->get_blog_prefix();
-        $wpdb->query(
-            "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE '{$prefix}{$mask}'"
-        );
+        $query  = "DELETE FROM {$wpdb->usermeta} WHERE ";
+        $query .= "meta_key LIKE '{$prefix}aam_%' AND user_id = " . $this->getId();
+        $wpdb->query($query);
 
         //clear all settings in postmeta table
+        $mask = 'aam_%_' . $this->getId();
         $wpdb->query("DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE '{$mask}'");
 
         $this->clearCache(); //delete cache

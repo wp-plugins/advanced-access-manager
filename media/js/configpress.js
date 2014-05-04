@@ -51,6 +51,5 @@ jQuery(document).ready(function() {
                 highlight('#control_panel', 'failure');
             }
         });
-    })
+    });
 });
-

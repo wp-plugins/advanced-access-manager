@@ -17,6 +17,11 @@
 class AAM_Core_Extension {
 
     /**
+     * Extension iterator
+     */
+    const ITERATOR = 1;
+    
+    /**
      * Parent AAM object
      * 
      * @var aam
@@ -36,6 +41,20 @@ class AAM_Core_Extension {
      */
     public function __construct(aam $parent) {
         $this->setParent($parent);
+    }
+    
+    /**
+     * Get extension iterator
+     * 
+     * Extension iterator is kind of extension's version with the only difference:
+     * the iterator is incremented only when activation hook has to be fired.
+     * 
+     * @return int
+     * 
+     * @access public
+     */
+    public function getInterator(){
+        return self::ITERATOR;
     }
 
     /**

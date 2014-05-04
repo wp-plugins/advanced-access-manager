@@ -42,14 +42,6 @@
     background-position: center top;
 }
 
-.cpanel-item-tutorial{
-    background-image: url('images/configpress/pdf.png');
-}
-
-.cpanel-item-tutorial:hover{
-    background-image: url('images/configpress/pdf-active.png');
-}
-
 .cpanel-item-save{
     background-image: url('images/cpanel/save.png');
 }
