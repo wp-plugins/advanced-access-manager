@@ -99,6 +99,7 @@ the list of additional metaboxes can be picked by AAM.
 = 2.6.1 =
 * Fixed bug with subject managing check 
 * Fixed bug with update hook
+* Fixed issue with extension activation hook
 
 = 2.6 =
 * Fixed bug with user inheritance

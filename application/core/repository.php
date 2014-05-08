@@ -221,7 +221,6 @@ class aam_Core_Repository {
             $repository[$extension] = (object) array(
                 'status' => self::STATUS_INSTALLED,
                 'license' => $license,
-                'iteration' => 0, //this counter is used for extension activation
                 //ugly way but quick
                 'basedir' => "{$this->_basedir}/" . str_replace(' ', '_', $extension)
             );
@@ -349,13 +348,7 @@ class aam_Core_Repository {
         if (file_exists($bootstrap) && !isset($this->_cache[$extension])) {
             //bootstrap the extension
             $this->_cache[$extension] = require_once($bootstrap);
-            //TODO - Implement Iterator here!!
-            //check if activation hook still present and trigger warning if yes
-            if (file_exists($this->_basedir . "/{$extension}/activation.php")){
-                aam_Core_Console::add(
-                        "Activation hook for {$extension} is not deleted"
-                );
-            }
+            $this->_cache[$extension]->activate();
         }
     }
 
