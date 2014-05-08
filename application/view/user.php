@@ -124,8 +124,7 @@ class aam_View_User extends aam_View_Abstract {
      * @access public
      */
     public function block() {
-        if ($this->isManagable($this->getSubject()->getUser())
-                                && $this->getSubject()->block()){
+        if ($this->isManagable() && $this->getSubject()->block()){
             $response = array(
                 'status' => 'success',
                 'user_status' => $this->getSubject()->user_status

@@ -18,6 +18,15 @@
 final class aam_Core_Update {
 
     /**
+     * Reference to AAM
+     * 
+     * @var aam
+     * 
+     * @access private
+     */
+    
+    private $_parent = null;
+    /**
      * List of stages
      *
      * @var array
@@ -33,7 +42,8 @@ final class aam_Core_Update {
      *
      * @access public
      */
-    public function __construct() {
+    public function __construct($parent) {
+        $this->_parent = $parent;
         //register update stages
         $this->_stages = apply_filters('aam_update_stages', array(
             array($this, 'downloadRepository'),
@@ -72,7 +82,7 @@ final class aam_Core_Update {
         $response = true;
         if ($extensions = aam_Core_API::getBlogOption('aam_extensions')) {
             if (is_array($extensions)){
-                $repo = new aam_Core_Repository();
+                $repo = aam_Core_Repository::getInstance($this->_parent);
                 $repo->download();
             }
         }

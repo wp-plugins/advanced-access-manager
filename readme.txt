@@ -96,6 +96,10 @@ the list of additional metaboxes can be picked by AAM.
 
 == Changelog ==
 
+= 2.6.1 =
+* Fixed bug with subject managing check 
+* Fixed bug with update hook
+
 = 2.6 =
 * Fixed bug with user inheritance
 * Fixed bug with user restore default settings

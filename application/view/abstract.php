@@ -82,6 +82,8 @@ abstract class aam_View_Abstract {
                 );
             }
         }
+        
+        return true;
     }
     
     /**
