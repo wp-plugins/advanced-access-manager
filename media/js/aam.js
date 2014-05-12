@@ -283,7 +283,7 @@ AAM.prototype.compileAjaxPackage = function(action, include_subject) {
  * @access public
  */
 AAM.prototype.disableRoleback = function(){
-    jQuery('#aam_roleback').addClass('cpanel-item-disabled');
+    jQuery('#aam_roleback').addClass('disabled');
 };
 
 /**
@@ -294,7 +294,7 @@ AAM.prototype.disableRoleback = function(){
  * @access public
  */
 AAM.prototype.enableRoleback = function(){
-    jQuery('#aam_roleback').removeClass('cpanel-item-disabled');
+    jQuery('#aam_roleback').removeClass('disabled');
 };
 
 /**
@@ -307,7 +307,7 @@ AAM.prototype.enableRoleback = function(){
 AAM.prototype.initControlPanel = function() {
     var _this = this;
     //Role Back feature
-    jQuery('#aam_roleback').bind('click', function(event) {
+    var roleback = this.createIcon('large', 'roleback').append('Roleback').bind('click', function(event) {
         event.preventDefault();
         if (!jQuery(this).hasClass('cpanel-item-disabled')){
             var buttons = {};
@@ -345,9 +345,10 @@ AAM.prototype.initControlPanel = function() {
             });
         }
     });
+    jQuery('#cpanel_major').append(roleback);
 
     //Save the AAM settings
-    jQuery('#aam_save').bind('click', function(event) {
+     var save = this.createIcon('large', 'save').append('Save').bind('click', function(event) {
         event.preventDefault();
         _this.showMetaboxLoader('#control_panel');
 
@@ -406,22 +407,44 @@ AAM.prototype.initControlPanel = function() {
             }
         });
     });
-    //Send Email to Us
-    jQuery('#aam_message').bind('click', function(event) {
-        event.preventDefault();
-        var buttons = {};
-        buttons[aamLocal.labels['Send E-mail']] = function() {
-            location.href = 'mailto:support@wpaam.com';
-            jQuery("#message_dialog").dialog("close");
-        };
-        jQuery("#message_dialog").dialog({
-            resizable: false,
-            height: 'auto',
-            width: '20%',
-            modal: true,
-            buttons: buttons
-        });
-    });
+    jQuery('#cpanel_major').append(save);
+    
+    //create minor actions
+    jQuery('#cpanel_minor').append(
+            this.createIcon('medium', 'twitter', 'Follow Us').attr({
+                href: 'https://twitter.com/wpaam',
+                target: '_blank'
+            }).append('Twitter')
+    );
+    jQuery('#cpanel_minor').append(
+            this.createIcon('medium', 'help', 'Support').attr({
+                href: 'http://wpaam.com/support',
+                target: '_blank'
+            }).append('Support')
+    );
+    jQuery('#cpanel_minor').append(
+            this.createIcon('medium', 'message', 'Message').append('Support').bind('click', function(event) {
+                event.preventDefault();
+                var buttons = {};
+                buttons[aamLocal.labels['Send E-mail']] = function() {
+                    location.href = 'mailto:support@wpaam.com';
+                    jQuery("#message_dialog").dialog("close");
+                };
+                jQuery("#message_dialog").dialog({
+                    resizable: false,
+                    height: 'auto',
+                    width: '20%',
+                    modal: true,
+                    buttons: buttons
+                });
+    }));
+    jQuery('#cpanel_minor').append(
+            this.createIcon('medium', 'star', 'Rate Us').attr({
+                href: 'http://wordpress.org/support/view/plugin-reviews/advanced-access-manager',
+                target: '_blank'
+            }).append('Rate')
+    );
+    
     //Init Tooltip
     this.initTooltip('#control_panel');
 };
@@ -1515,7 +1538,7 @@ AAM.prototype.initCapabilityTab = function() {
                 //add Restore Default Capability button
                 var restore = _this.createIcon(
                     'medium', 
-                    'restore', 
+                    'roleback', 
                     aamLocal.labels['Restore Default Capabilities']
                 ).bind('click', function(event) {
                     event.preventDefault();
@@ -2478,7 +2501,7 @@ AAM.prototype.initPostTab = function() {
             if (parseInt(aData[6]) === 1) {
                 jQuery('.aam-list-row-actions', nRow).append(_this.createIcon(
                     'small', 
-                    'default',
+                    'roleback',
                     aamLocal.labels['Restore Default Access']
                 ).bind('click', function(event) {
                     event.preventDefault();
@@ -2905,7 +2928,7 @@ AAM.prototype.initPostTree = function() {
  */
 AAM.prototype.createIcon = function(size, qualifier, tooltip){
     var icon = jQuery('<a/>', {
-        class: 'aam-icon aam-icon-' + size + ' aam-icon-' + qualifier,
+        class: 'aam-icon aam-icon-' + size + ' aam-icon-' + size + '-' + qualifier,
         href: '#'
     });
     //add tooltip if defined
@@ -2977,8 +3000,10 @@ AAM.prototype.activateIcon = function(element, size) {
 AAM.prototype.deactivateIcon = function(element) {
     if (jQuery(element).hasClass('aam-icon-small-active')){
         jQuery(element).removeClass('aam-icon-small-active');
-    }else if (jQuery(element).hasClass('aam-icon-medium-active')){
+    } else if (jQuery(element).hasClass('aam-icon-medium-active')){
         jQuery(element).removeClass('aam-icon-medium-active');
+    } else if (jQuery(element).hasClass('aam-icon-minor-active')){
+        jQuery(element).removeClass('aam-icon-minor-active');
     }
 };
 

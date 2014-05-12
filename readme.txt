@@ -2,8 +2,8 @@
 Contributors: vasyl_m
 Tags: access manager, access, access control, comments, capability, widget, filter menu, role manager, user access, user control, user
 Requires at least: 3.4.2
-Tested up to: 3.9
-Stable tag: 2.6
+Tested up to: 3.9.1
+Stable tag: 2.7
 
 The enhanced easy-to-use tool for access control to your backend and frontend.
 
@@ -96,10 +96,12 @@ the list of additional metaboxes can be picked by AAM.
 
 == Changelog ==
 
-= 2.6.1 =
+= 2.7 =
 * Fixed bug with subject managing check 
 * Fixed bug with update hook
 * Fixed issue with extension activation hook
+* Added AAM Security Feature. First iteration
+* Improved CSS
 
 = 2.6 =
 * Fixed bug with user inheritance

@@ -3,7 +3,7 @@
 /**
   Plugin Name: Advanced Access Manager
   Description: Manage User and Role Access to WordPress Backend and Frontend.
-  Version: 2.6.1
+  Version: 2.7
   Author: Vasyl Martyniuk <support@wpaam.com>
   Author URI: http://www.wpaam.com
 
@@ -727,7 +727,12 @@ class aam {
             wp_enqueue_style('global');
             wp_enqueue_style('wp-admin');
             wp_enqueue_style('aam-ui-style', AAM_MEDIA_URL . 'css/jquery-ui.css');
-            wp_enqueue_style('aam-style', AAM_MEDIA_URL . 'css/aam.css');
+            wp_enqueue_style('aam-common-style', AAM_MEDIA_URL . 'css/common.css');
+            wp_enqueue_style(
+                    'aam-style', 
+                    AAM_MEDIA_URL . 'css/aam.css', 
+                    array('aam-common-style')
+            );
             wp_enqueue_style('aam-datatables', AAM_MEDIA_URL . 'css/jquery.dt.css');
             wp_enqueue_style('wp-pointer');
             wp_enqueue_style(
@@ -738,10 +743,20 @@ class aam {
             wp_enqueue_style('global');
             wp_enqueue_style('wp-admin');
             wp_enqueue_style('aam-ui-style', AAM_MEDIA_URL . 'css/jquery-ui.css');
-            wp_enqueue_style('aam-style', AAM_MEDIA_URL . 'css/extension.css');
+            wp_enqueue_style('aam-common-style', AAM_MEDIA_URL . 'css/common.css');
+            wp_enqueue_style(
+                    'aam-style', 
+                    AAM_MEDIA_URL . 'css/extension.css', 
+                    array('aam-common-style')
+            );
             wp_enqueue_style('aam-datatables', AAM_MEDIA_URL . 'css/jquery.dt.css');
         } elseif ($this->isAAMConfigPressScreen()) {
-            wp_enqueue_style('aam-style', AAM_MEDIA_URL . 'css/configpress.css');
+            wp_enqueue_style('aam-common-style', AAM_MEDIA_URL . 'css/common.css');
+            wp_enqueue_style(
+                    'aam-style', 
+                    AAM_MEDIA_URL . 'css/configpress.css', 
+                    array('aam-common-style')
+            );
             wp_enqueue_style('aam-codemirror', AAM_MEDIA_URL . 'css/codemirror.css');
         }
 
