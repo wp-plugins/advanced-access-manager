@@ -1,65 +1,67 @@
 === Advanced Access Manager ===
 Contributors: vasyl_m
-Tags: access manager, access, access control, comments, capability, widget, filter menu, role manager, user access, user control, user
+Tags: security, login, access manager, access, access control, capability, role, user, post filter, category 
 Requires at least: 3.4.2
 Tested up to: 3.9.1
 Stable tag: 2.7
 
-The enhanced easy-to-use tool for access control to your backend and frontend.
+The powerful and easy-to-use tool to improve security and define access to your 
+posts, pages and backend areas for single blog or multisite network.
 
 == Description ==
 
-Are you looking for free and powerful plugin for WordPress Access Control?
+''Advanced Access Manager'' (aka ''AAM'') is known nowadays as one of the best  
+access control and security enhancement tool. It is easy-to-use and at the same  
+time very powerful plugin that gives you the flexible control over your single  
+blog or ''multisite network''.
 
-Nowadays AAM is one of the most popular access control plugins. It is easy-to-use but
-at the same time very powerful tool that gives you a flexible control over your either
-single WordPress site or Multisite Network. With AAM you are allowed to configure access
-to different parts of your website for any Role or individual User.
+With ''AAM'' you can control access to different areas of your website like posts, 
+pages, categories, widgets or menus. The access can be defined for any user, role 
+or visitor.
 
-**Please Notice!**
-If you have any issues with AAM or you have any questions related to it, we offer
-free and fast support. You can either send us an email or leave a message on WordPress
-Forum. We always ready to help you and to improve your experience with AAM.
+Below is the list of highlighted features that has been implemented and proved in
+current ''AAM'' version:
 
-In Current version you are allowed to do next:
+''Secure Admin Login''.
+Control the login process to your website. Define the number or possible login
+attempts, trace the failed login request's geographical location, lockout IP 
+addresses for potential hacker attacks.
 
-**Control Access to Admin Menu (including submenu).**
-As example you can restrict access for Role Editor to Menu "Pages" or does not allow
- individual User to manage Post's Categories.
+''Control Access to Posts, Pages or Categories''.
+Restrict access to your posts, pages, custom post types of categories for any
+user, role or visitor. Define whether the viewer can ''see'', ''read'' or ''comment'' 
+on any post or page. For more extended list of possible options consider to get 
+the [AAM Plus Package](http://wpaam.com/aam-extensions/aam-plus-package/). To 
+learn more about this feature check our 
+[Posts and Pages Tutorial](http://wpaam.com/tutorials/posts-pages-general-overview/).
 
-**Filter Widgets & Metaboxes.**
-Filter the list of metaboxes that User can see during Post/Page editing. At the same
-time you can filter the list of Dashboard and Frontend widgets.
+''Control Access to Media Files''.
+Define your custom access to media files for any user, role or visitor. The feature 
+works without any extra configurations to your server .htaccess file. Find more 
+information about this topic in our 
+[Tutorial](http://wpaam.com/tutorials/control-access-to-media-files/).
 
-**Filter Post or Page content**
-You can filter Post's or Page's content based on currently logged in user or visitor.
+''Manage Roles and Capabilities''.
+Manage the list of roles and capabilities. This feature has been designed and tested 
+by hundreds of experienced WordPress user and developers. It gives you possibility 
+to create, update or delete any role or capability. For security reasons, this 
+feature is limited by default but can be easily activated. Read more about it in 
+our [AAM Super Admin Tutorial](http://wpaam.com/tutorials/aam-super-admin/).
 
-**Manage Role's or User's Capabilities.**
-AAM, with simple interface, allows you to grand or remove capabilities from Role or User.
-You can also create new capabilities or remove existing.
+''Track User Activity''.
+Track logged in user activities like when user was logged in or logged out. Explore 
+more tracking options with [AAM Activities](http://wpaam.com/aam-extensions/aam-activities/).
 
-**Control Access to Posts, Pages, CPTs or Terms.**
-You can restrict access to individual page or post for any user or role as well as
-restrict access to entire Term and all posts inside it. You can also restrict
-page commenting for individual pages or exclude them from Frontend menu. We are
-extending the list of possible restrictions with each new version.
+''Filter Backend Menu''.
+Control access to backend menu (including submenus). For more information check  
+[How to Manage Admin Menu](http://wpaam.com/tutorials/how-to-manage-admin-menu/).
 
-**Create custom actions for system events.**
-As example your system can trigger email to you if some user published Post/Page or
-modified content. You are also allowed to develop your own custom action for event.
+''Filter Metaboxes and Widgets''.
+Filter available metaboxes or widgets for any user, role or visitor.
 
-**Track User Activities.**
-With AAM you can track user activities within your website. So you can easily find out
-when user was logged in or modified some Post/Page. There are many activities that can
-be tracked. We constantly adding more and more.
+And many, many more...
 
-**Manage Role List.**
-AAM allows you to create new Roles or Delete existing.
-
-There are a lot of small and hidden features included in AAM that we are not listing
-here but you can find more about them on our [Forum](http://wpaam.com/forum).
-
-The AAM support also these languages:
+The ''AAM'' has multi-language UI:
 
  * English
  * German (by Kolja www.Reggae-Party.de)
@@ -74,7 +76,6 @@ The AAM support also these languages:
 
 1. Upload `advanced-access-manager` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Find Access Manager under AWM Group Menu
 
 == Frequently Asked Questions ==
 
