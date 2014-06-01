@@ -87,8 +87,11 @@ class aam_View_Role extends aam_View_Abstract {
     public function add() {
         $name = trim(aam_Core_Request::post('name'));
         $roles = new WP_Roles;
-        $role_id = 'aamrole_' . uniqid();
-        
+        if (aam_Core_ConfigPress::getParam('aam.native_role_id') === 'true'){
+            $role_id = strtolower($name);
+        } else {
+            $role_id = 'aamrole_' . uniqid();
+        }
         //if inherited role is set get capabilities from it
         $parent = trim(aam_Core_Request::post('inherit'));
         if ($parent && $roles->get_role($parent)){

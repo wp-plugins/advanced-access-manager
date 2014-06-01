@@ -135,7 +135,7 @@ class AAM_Secure extends AAM_Core_Extension {
                             'aam_security_login_stats', array()
             );
             $info = $this->retrieveGeoData();
-            if (!is_null($info)) {
+            if ($info instanceof stdClass) {
                 if (!isset($this->_stats[$info->countryCode])) {
                     $this->_stats[$info->countryCode] = array(
                         'failed' => 0

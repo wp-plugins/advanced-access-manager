@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: security, login, access manager, access, access control, capability, role, user, post filter, category 
 Requires at least: 3.4.2
 Tested up to: 3.9.1
-Stable tag: 2.7
+Stable tag: 2.7.1
 
 The powerful and easy-to-use tool to improve security and define access to your 
 posts, pages and backend areas for single blog or multisite network.
@@ -96,6 +96,11 @@ the list of additional metaboxes can be picked by AAM.
 5. ConfigPress
 
 == Changelog ==
+
+= 2.7.1 =
+* Improved SSL handling
+* Added ConfigPress property aam.native_role_id
+* Fixed bug with countryCode in AAM Security Extension
 
 = 2.7 =
 * Fixed bug with subject managing check 

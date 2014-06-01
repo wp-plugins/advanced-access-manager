@@ -3,7 +3,7 @@
 /**
   Plugin Name: Advanced Access Manager
   Description: Manage User and Role Access to WordPress Backend and Frontend.
-  Version: 2.7
+  Version: 2.7.1
   Author: Vasyl Martyniuk <support@wpaam.com>
   Author URI: http://www.wpaam.com
 
@@ -401,7 +401,7 @@ class aam {
                             'backend.access.deny.redirect'
             );
             $message = aam_Core_ConfigPress::getParam(
-                            'backend.access.deny.message', __('Access denied', 'aam')
+                            'backend.access.deny.message', __('Access Denied', 'aam')
             );
         } else {
             $redirect = aam_Core_ConfigPress::getParam(
@@ -409,7 +409,7 @@ class aam {
             );
             $message = aam_Core_ConfigPress::getParam(
                             'frontend.access.deny.message',
-                            __('Access denied', 'aam')
+                            __('Access Denied', 'aam')
             );
         }
 
@@ -436,7 +436,7 @@ class aam {
     public function wpDie($function) {
         $redirect = aam_Core_ConfigPress::getParam('backend.access.deny.redirect');
         $message = aam_Core_ConfigPress::getParam(
-                        'backend.access.deny.message', __('Access denied', 'aam')
+                        'backend.access.deny.message', __('Access Denied', 'aam')
         );
         
         if (filter_var($redirect, FILTER_VALIDATE_URL)) {
