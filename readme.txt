@@ -3,31 +3,31 @@ Contributors: vasyl_m
 Tags: security, login, access manager, access, access control, capability, role, user, post filter, category 
 Requires at least: 3.4.2
 Tested up to: 3.9.1
-Stable tag: 2.7.1
+Stable tag: 2.7.2
 
 The powerful and easy-to-use tool to improve security and define access to your 
 posts, pages and backend areas for single blog or multisite network.
 
 == Description ==
 
-''Advanced Access Manager'' (aka ''AAM'') is known nowadays as one of the best  
+**Advanced Access Manager** (aka **AAM**) is known nowadays as one of the best  
 access control and security enhancement tool. It is easy-to-use and at the same  
 time very powerful plugin that gives you the flexible control over your single  
-blog or ''multisite network''.
+blog or multisite network.
 
-With ''AAM'' you can control access to different areas of your website like posts, 
+With **AAM** you can control access to different areas of your website like posts, 
 pages, categories, widgets or menus. The access can be defined for any user, role 
 or visitor.
 
 Below is the list of highlighted features that has been implemented and proved in
-current ''AAM'' version:
+current **AAM** version:
 
-''Secure Admin Login''.
+**Secure Admin Login**.
 Control the login process to your website. Define the number or possible login
 attempts, trace the failed login request's geographical location, lockout IP 
 addresses for potential hacker attacks.
 
-''Control Access to Posts, Pages or Categories''.
+**Control Access to Posts, Pages or Categories**.
 Restrict access to your posts, pages, custom post types of categories for any
 user, role or visitor. Define whether the viewer can ''see'', ''read'' or ''comment'' 
 on any post or page. For more extended list of possible options consider to get 
@@ -35,33 +35,33 @@ the [AAM Plus Package](http://wpaam.com/aam-extensions/aam-plus-package/). To
 learn more about this feature check our 
 [Posts and Pages Tutorial](http://wpaam.com/tutorials/posts-pages-general-overview/).
 
-''Control Access to Media Files''.
+**Control Access to Media Files**.
 Define your custom access to media files for any user, role or visitor. The feature 
 works without any extra configurations to your server .htaccess file. Find more 
 information about this topic in our 
 [Tutorial](http://wpaam.com/tutorials/control-access-to-media-files/).
 
-''Manage Roles and Capabilities''.
+**Manage Roles and Capabilities**.
 Manage the list of roles and capabilities. This feature has been designed and tested 
 by hundreds of experienced WordPress user and developers. It gives you possibility 
 to create, update or delete any role or capability. For security reasons, this 
 feature is limited by default but can be easily activated. Read more about it in 
 our [AAM Super Admin Tutorial](http://wpaam.com/tutorials/aam-super-admin/).
 
-''Track User Activity''.
+**Track User Activity**.
 Track logged in user activities like when user was logged in or logged out. Explore 
 more tracking options with [AAM Activities](http://wpaam.com/aam-extensions/aam-activities/).
 
-''Filter Backend Menu''.
+**Filter Backend Menu**.
 Control access to backend menu (including submenus). For more information check  
 [How to Manage Admin Menu](http://wpaam.com/tutorials/how-to-manage-admin-menu/).
 
-''Filter Metaboxes and Widgets''.
+**Filter Metaboxes and Widgets**.
 Filter available metaboxes or widgets for any user, role or visitor.
 
 And many, many more...
 
-The ''AAM'' has multi-language UI:
+The **AAM** has multi-language UI:
 
  * English
  * German (by Kolja www.Reggae-Party.de)
@@ -96,6 +96,9 @@ the list of additional metaboxes can be picked by AAM.
 5. ConfigPress
 
 == Changelog ==
+
+= 2.7.2 =
+* Maintenance release
 
 = 2.7.1 =
 * Improved SSL handling
