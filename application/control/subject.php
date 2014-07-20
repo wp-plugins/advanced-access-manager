@@ -96,7 +96,9 @@ abstract class aam_Control_Subject {
             $this->setObjects($this->readCache());
             foreach($this->_objects as $objects){
                 foreach($objects as $object){
-                    $object->setSubject($this);
+                    if (!($object instanceof __PHP_Incomplete_Class)) {
+                        $object->setSubject($this);
+                    }
                 }
             }
         }

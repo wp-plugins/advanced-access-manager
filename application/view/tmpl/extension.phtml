@@ -1,5 +1,4 @@
 <?php
-
 /**
  * ======================================================================
  * LICENSE: This file is subject to the terms and conditions defined in *
@@ -107,13 +106,33 @@
                                     </td>
                                     <td class="extension-price payed">$15.00</td>
                                     <td>
-                                        
+
                                         <div class="extension-actions">
                                             <a href="http://wpaam.com/aam-extensions/aam-content-filter/" target="_blank" class="extension-action extension-action-forum" aam-tooltip="Visit Our Website"></a>
                                             <?php if ($this->getRepository()->hasExtension('AAM Content Filter')) { ?>
                                                 <a href="#" extension="AAM Content Filter" license="<?php echo $this->getRepository()->getExtension('AAM Content Filter')->license; ?>" class="extension-action extension-action-ok" aam-tooltip="Installed Successfully"></a>
                                             <?php } else { ?>
                                                 <a href="#" extension="AAM Content Filter" link="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=X7NZ7QF8A9CVS" class="extension-action extension-action-purchase" aam-tooltip="Get it Today"></a>
+                                            <?php } ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="extension-name">AAM Plugin Manager</span>
+                                    </td>
+                                    <td class="extension-description">
+                                        Control access to individual plugins in your list of Plugins. Hide, restrict to activate, deactivate or delete any existing plugin for user or role.
+                                        Check our <a href="http://wpaam.com/aam-development/aam-plugin-manager/" target="_blank">website</a> for more information.
+                                    </td>
+                                    <td class="extension-price payed">$10.00</td>
+                                    <td>
+                                        <div class="extension-actions">
+                                            <a href="http://wpaam.com/aam-development/aam-plugin-manager/" target="_blank" class="extension-action extension-action-forum" aam-tooltip="Visit Our Website"></a>
+                                            <?php if ($this->getRepository()->hasExtension('AAM Plugin Manager')) { ?>
+                                                <a href="#" extension="AAM Plugin Manager" license="<?php echo $this->getRepository()->getExtension('AAM Content Filter')->license; ?>" class="extension-action extension-action-ok" aam-tooltip="Installed Successfully"></a>
+                                            <?php } else { ?>
+                                                <a href="#" extension="AAM Plugin Manager" link="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QJ2H2J483VXPL" class="extension-action extension-action-purchase" aam-tooltip="Get it Today"></a>
                                             <?php } ?>
                                         </div>
                                     </td>
@@ -185,7 +204,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="postbox-container" style="width:25%; margin-left: 2%;">
         <div class="metabox-holder">
             <div class="meta-box-sortables">
@@ -200,7 +219,7 @@
                         </p>
                         <div style="text-align: center;">
                             <a href="http://wpaam.com/aam-development/aam-development-license/" target="_blank" class="button button-primary button-large"><?php echo __('Read More', 'aam'); ?></a>
-                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

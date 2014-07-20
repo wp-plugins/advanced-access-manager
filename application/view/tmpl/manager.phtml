@@ -88,7 +88,7 @@
                                     $subjects = aam_View_Collection::retrieveSubjects();
                                     foreach ($subjects as $subject) {
                                         echo '<a href="#" class="', $subject->class, '" ';
-                                        echo '" aam-tooltip="', $subject->title, '" segment="' . $subject->segment . '">';
+                                        echo 'aam-tooltip="', $subject->title, '" segment="' . $subject->segment . '">';
                                         echo $subject->label, '</a>';
                                     }
                                     ?>
