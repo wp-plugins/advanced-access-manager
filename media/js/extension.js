@@ -23,14 +23,16 @@ jQuery(document).ready(function() {
             }
         },
         fnDrawCallback: function() {
-            jQuery('.extension-action-purchase').each(function() {
+            jQuery('.add-license-btn').each(function() {
                 var link = jQuery(this).attr('link');
                 var extension = jQuery(this).attr('extension');
 
-                jQuery(this).bind('click', function() {
-                    jQuery('.extension-error-list').hide();
+                jQuery(this).bind('click', function(event) {
+                    event.preventDefault();
+                    
+                    jQuery('.license-error-list').hide();
                     //show the dialog
-                    jQuery('#install_extension').dialog({
+                    jQuery('#install_license').dialog({
                         resizable: false,
                         height: 'auto',
                         width: '30%',
@@ -53,7 +55,7 @@ jQuery(document).ready(function() {
 
                                     if (license) {
                                         //add loader
-                                        jQuery('#install_extension').append(jQuery('<div/>', {
+                                        jQuery('#install_license').append(jQuery('<div/>', {
                                             'class' : 'loading-extension'
                                         }));
 
@@ -62,7 +64,7 @@ jQuery(document).ready(function() {
                                             dataType: 'json',
                                             data: {
                                                 action: 'aam',
-                                                sub_action: 'installExtension',
+                                                sub_action: 'installLicense',
                                                 extension: extension,
                                                 license: license,
                                                 _ajax_nonce: aamLocal.nonce
@@ -73,7 +75,7 @@ jQuery(document).ready(function() {
                                                 } else {
                                                     showErrorMessage(
                                                             response.reasons, 
-                                                            '#install_extension .extension-error-list'
+                                                            '#install_license .license-error-list'
                                                     );
                                                     jQuery('#license_key').effect('highlight', 2000);
                                                 }
@@ -83,12 +85,12 @@ jQuery(document).ready(function() {
                                                 reasons.push('Unexpected Application Error');
                                                 showErrorMessage(
                                                             reasons,
-                                                            '#install_extension .extension-error-list'
+                                                            '#install_license .license-error-list'
                                                 );
                                                 jQuery('#license_key').effect('highlight', 2000);
                                             },
                                             complete: function(){
-                                                jQuery('.loading-extension', '#install_extension').remove();
+                                                jQuery('.loading-extension', '#install_license').remove();
                                             }
                                         });
                                     } else {
@@ -107,17 +109,21 @@ jQuery(document).ready(function() {
                     });
                 });
             });
-            jQuery('.extension-action-ok').each(function() {
-                jQuery(this).bind('click', function() {
+            jQuery('.view-license-btn').each(function() {
+                jQuery(this).bind('click', function(event) {
+                    event.preventDefault();
+                    
                     var license = jQuery(this).attr('license');
                     var extension = jQuery(this).attr('extension');
                     var dialog = this;
 
-                    jQuery('#installed_license_key').html(license);
-                    jQuery('.extension-error-list').hide();
+                    jQuery('#installed_license_key').html(
+                            (license ? license : 'undefined')
+                    );
+                    jQuery('.license-error-list').hide();
                     
                     //show the dialog
-                    jQuery('#update_extension').dialog({
+                    jQuery('#update_license').dialog({
                         resizable: false,
                         height: 'auto',
                         width: '25%',
@@ -132,7 +138,7 @@ jQuery(document).ready(function() {
                                         dataType: 'json',
                                         data: {
                                             action: 'aam',
-                                            sub_action: 'removeExtension',
+                                            sub_action: 'removeLicense',
                                             extension: extension,
                                             license: license,
                                             _ajax_nonce: aamLocal.nonce
@@ -143,7 +149,7 @@ jQuery(document).ready(function() {
                                             } else {
                                                 showErrorMessage(
                                                     response.reasons, 
-                                                    '#update_extension .extension-error-list'
+                                                    '#update_license .license-error-list'
                                                 );
                                                 jQuery(dialog).dialog('close');
                                             }

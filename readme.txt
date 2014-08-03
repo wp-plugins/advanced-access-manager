@@ -3,7 +3,7 @@ Contributors: vasyl_m
 Tags: security, login, access manager, access, access control, capability, role, user, post filter, category 
 Requires at least: 3.4.2
 Tested up to: 3.9.1
-Stable tag: 2.8
+Stable tag: 2.8.1
 
 The powerful and easy-to-use tool to improve security and define access to your 
 posts, pages and backend areas for single blog or multisite network.
@@ -97,10 +97,14 @@ the list of additional metaboxes can be picked by AAM.
 
 == Changelog ==
 
+= 2.8.1 =
+* Simplified the Repository internal handling
+* Added Development License Support
+
 = 2.8 =
 * Fixed issue with AAM Control Manage HTML
 * Fixed issue with __PHP_Incomplete_Class
-* Addedd AAM Plugin Manager Extension
+* Added AAM Plugin Manager Extension
 * Removed Deprecated ConfigPress Object from the core
 
 = 2.7.3 =

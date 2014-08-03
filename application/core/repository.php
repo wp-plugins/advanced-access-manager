@@ -18,21 +18,6 @@
 class aam_Core_Repository {
 
     /**
-     * Extensions download Failed
-     */
-    const STATUS_FAILED = 'failed';
-
-    /**
-     * Extensions status pending
-     */
-    const STATUS_PENDING = 'pending';
-
-    /**
-     * Extensions installed successfully
-     */
-    const STATUS_INSTALLED = 'installed';
-    
-    /**
      * Single instance of itself
      * 
      * @var aam_Core_Repository
@@ -153,17 +138,22 @@ class aam_Core_Repository {
      * @access public
      */
     public function hasExtension($extension){
-        $response = false;
-        
-        if (isset($this->_repository[$extension])){
-            $info = $this->_repository[$extension];
-            if ($info->status == self::STATUS_INSTALLED 
-                                && file_exists($info->basedir)){
-                $response = true;
-            }
-        }
-        
-        return $response;
+        return file_exists(
+                $this->_basedir . '/' . $this->prepareExtFName($extension)
+        );
+    }
+    
+    /**
+     * Check if license exists
+     * 
+     * @param string $extension
+     * 
+     * @return boolean
+     * 
+     * @access public
+     */
+    public function hasLicense($extension) {
+        return (isset($this->_repository[$extension]) ? true : false);
     }
     
     /**
@@ -175,8 +165,8 @@ class aam_Core_Repository {
      * 
      * @access public
      */
-    public function getExtension($ext){
-        return ($this->hasExtension($ext) ? $this->_repository[$ext] : new stdClass);
+    public function getLicense($ext){
+        return ($this->hasLicense($ext) ? $this->_repository[$ext]->license : '');
     }
 
     /**
@@ -192,12 +182,8 @@ class aam_Core_Repository {
 
         if (is_array($repository)) {
             //get the list of extensions
-            foreach ($repository as $extension => $data) {
-                if ($this->retrieve($data->license)) {
-                    $repository[$extension]->status = self::STATUS_INSTALLED;
-                } else {
-                    $repository[$extension]->status = self::STATUS_FAILED;
-                }
+            foreach ($repository as $data) {
+                $this->retrieve($data->license);
             }
             aam_Core_API::updateBlogOption('aam_extensions', $repository, 1);
         }
@@ -219,10 +205,7 @@ class aam_Core_Repository {
 
         if ($this->retrieve($license)){
             $repository[$extension] = (object) array(
-                'status' => self::STATUS_INSTALLED,
-                'license' => $license,
-                //ugly way but quick
-                'basedir' => "{$this->_basedir}/" . str_replace(' ', '_', $extension)
+                'license' => $license
             );
             aam_Core_API::updateBlogOption('aam_extensions', $repository, 1);
             $response = true;
@@ -237,31 +220,40 @@ class aam_Core_Repository {
      * Remove Extension from the repository
      *
      * @param string $extension
-     * @param string $license
      *
      * @return boolean
      *
      * @access public
      */
-    public function remove($extension, $license){
+    public function remove($extension){
         global $wp_filesystem;
 
-        $this->initFilesystem();
         $repository = aam_Core_API::getBlogOption('aam_extensions', array(), 1);
-        $response = false;
 
+        //if extension has been downloaded as part of dev license, it'll be
+        //not present in the repository list
         if (isset($repository[$extension])){
-            $basedir = $repository[$extension]->basedir;
-            if ($wp_filesystem->rmdir($basedir, true)){
-                $response = true;
-                unset($repository[$extension]);
-                aam_Core_API::updateBlogOption('aam_extensions', $repository, 1);
-            } else {
-                $this->addError(__('Failed to Remove Extension', 'aam'));
-            }
+            unset($repository[$extension]);
+            aam_Core_API::updateBlogOption('aam_extensions', $repository, 1);
+        }
+                
+        if ($this->hasExtension($extension)){
+            $this->initFilesystem();
+            $wp_filesystem->rmdir(
+                    $this->_basedir . '/' . $this->prepareExtFName($extension), true
+            );
         }
 
-        return $response;
+        return true;
+    }
+    
+    /**
+     * 
+     * @param type $extension
+     * @return type
+     */
+    protected function prepareExtFName($extension) {
+        return str_replace(' ', '_', $extension);
     }
 
     /**
@@ -291,7 +283,7 @@ class aam_Core_Repository {
     protected function retrieve($license) {
         global $wp_filesystem;
         
-        $url = WPAAM_REST_API . '?method=extension&license=' . $license;
+        $url = WPAAM_REST_API . '?method=exchange&license=' . $license;
         $res = wp_remote_request($url, array('timeout' => 10));
         $response = false;
         if (!is_wp_error($res)) {

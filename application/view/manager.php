@@ -732,13 +732,13 @@ class aam_View_Manager extends aam_View_Abstract {
     }
 
     /**
-     * Install extension
+     * Install license
      *
      * @return string
      *
      * @access public
      */
-    public function installExtension()
+    public function installLicense()
     {
         if (current_user_can(aam_Core_ConfigPress::getParam(
                         'aam.menu.extensions.capability', 'administrator'
@@ -753,13 +753,13 @@ class aam_View_Manager extends aam_View_Abstract {
     }
 
     /**
-     * Remove extension
+     * Remove license
      *
      * @return string
      *
      * @access public
      */
-    public function removeExtension()
+    public function removeLicense()
     {
         if (current_user_can(aam_Core_ConfigPress::getParam(
                         'aam.menu.extensions.capability', 'administrator'

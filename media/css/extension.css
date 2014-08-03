@@ -146,7 +146,7 @@ input.license-input{
     opacity: 0.8;
 }
 
-.extension-error-list{
+.license-error-list{
     margin-top: 5px;
     display: none;
     font-size: 0.8em;
