@@ -59,7 +59,8 @@ final class aam_Core_ConfigPress {
     public static function write($content) {
         if (is_writable(AAM_TEMP_DIR)) {
             $filename = aam_Core_API::getBlogOption('aam_configpress', '');
-            if (!$filename) { //file already was created
+            //file already was created and name is valid
+            if (preg_match('/^[a-z0-9]{40}$/i', $filename) === 0) {
                 $filename = sha1(uniqid('aam'));
                 aam_Core_API::updateBlogOption('aam_configpress', $filename);
             }

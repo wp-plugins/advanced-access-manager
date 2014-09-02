@@ -3,7 +3,7 @@
 /**
   Plugin Name: Advanced Access Manager
   Description: Manage User and Role Access to WordPress Backend and Frontend.
-  Version: 2.8.2
+  Version: 2.8.3
   Author: Vasyl Martyniuk <support@wpaam.com>
   Author URI: http://www.wpaam.com
 
@@ -94,6 +94,10 @@ class aam {
             add_filter('post_row_actions', array($this, 'postRowActions'), 10, 2);
             add_filter('tag_row_actions', array($this, 'tagRowActions'), 10, 2);
             add_action('admin_action_edit', array($this, 'adminActionEdit'), 10);
+            //control permalink editing
+            add_filter(
+                    'get_sample_permalink_html', array($this, 'permalinkHTML'), 10, 4
+            );
             //wp die hook
             add_filter('wp_die_handler', array($this, 'wpDie'), 10);
             //***For UI purposes***
@@ -188,6 +192,26 @@ class aam {
         }
 
         return $open;
+    }
+    
+    /**
+     * Control edit permalink feature
+     * 
+     * @param string $html
+     * @param int    $id
+     * @param type $new_title
+     * @param type $new_slug
+     * 
+     * @return string
+     */
+    public function permalinkHTML($html, $id, $new_title, $new_slug) {
+        if (aam_Core_ConfigPress::getParam('aam.control_permalink') === 'true') {
+            if ($this->getUser()->hasCapability('manage_permalink') === false) {
+                $html = '';
+            }
+        }
+        
+        return $html;
     }
 
     /**
