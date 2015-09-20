@@ -1,0 +1,33 @@
+/**
+  Copyright (C) <2013-2014>  Vasyl Martyniuk <support@wpaam.com>
+
+  This program is commercial software: you are not allowed to redistribute it
+  and/or modify. Unauthorized copying of this file, via any medium is strictly
+  prohibited.
+  For any questions or concerns contact Vasyl Martyniuk <support@wpaam.com>
+ */
+
+#plugin_list td {
+    text-align: center;
+}
+
+#plugin_list td:first-child {
+    text-align: left;
+}
+
+#plugin_list input[type="checkbox"] {
+    display:none;
+}
+
+#plugin_list input[type="checkbox"] + label span {
+    display:inline-block;
+    width:16px;
+    height:16px;
+    background:url(images/unchecked.png) no-repeat center;
+    cursor:pointer;
+    margin-top: 4px;
+}
+
+#plugin_list input[type="checkbox"]:checked + label span {
+    background:url(images/checked.png) no-repeat center;
+}

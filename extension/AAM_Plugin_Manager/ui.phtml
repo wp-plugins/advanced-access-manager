@@ -1,0 +1,56 @@
+<?php
+/**
+  Copyright (C) <2013-2014>  Vasyl Martyniuk <support@wpaam.com>
+
+  This program is commercial software: you are not allowed to redistribute it
+  and/or modify. Unauthorized copying of this file, via any medium is strictly
+  prohibited.
+  For any questions or concerns contact Vasyl Martyniuk <support@wpaam.com>
+ */
+?>
+<div class="feature-content-container" id="<?php echo self::FEATURE_ID; ?>_content">
+    <?php if ($subject->hasCapability('activate_plugins')) { ?>
+        <table id="plugin_list">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th style="width:40%;">Plugin Name</th>
+                    <th style="width:15%;"><?php echo __('List', 'aam'); ?></th>
+                    <th>List Checked</th>
+                    <th style="width:15%;"><?php echo __('Activate', 'aam'); ?></th>
+                    <th>Activate Checked</th>
+                    <th style="width:15%;"><?php echo __('Deactivate', 'aam'); ?></th>
+                    <th>Deactivate Checked</th>
+                    <th style="width:15%;"><?php echo __('Delete', 'aam'); ?></th>
+                    <th>Delete Checked</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $plugins = get_plugins();
+                $object = $this->getSubject()->getObject(aam_Control_Object_Plugin::UID);
+                if (is_array($plugins)) {
+                    foreach ($plugins as $id => $plugin) {
+                        ?>
+                        <tr>
+                            <td><?php echo $id; ?></td>
+                            <td><?php echo $plugin['Name']; ?></td>
+                            <td></td>
+                            <td><?php echo ($object->has($id, 'hide') ? 1 : 0); ?></td>
+                            <td></td>
+                            <td><?php echo ($object->has($id, 'activate') ? 1 : 0); ?></td>
+                            <td></td>
+                            <td><?php echo ($object->has($id, 'deactivate') ? 1 : 0); ?></td>
+                            <td></td>
+                            <td><?php echo ($object->has($id, 'delete') ? 1 : 0); ?></td>
+                        </tr>
+                        <?php
+                    }
+                }
+                ?>
+            </tbody>
+        </table>
+    <?php } else { ?>
+        <p>Current <?php echo $subject->getUID(); ?> does not have enough permissions to manage Plugins section. Please make sure that <?php echo $subject->getUID(); ?> has capability <b>Activate Plugins</b> checked.</p>
+    <?php } ?>
+</div>
