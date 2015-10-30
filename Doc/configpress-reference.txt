@@ -1,0 +1,8 @@
+AAM ConfigPress Options
+=======================
+
+"aam.page.capability"
+    Capability that is assigned to AAM backend page during the admin menu
+    initialization. The default value is "administrator".
+
+
