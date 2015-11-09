@@ -1,6 +1,6 @@
 === Advanced Access Manager ===
 Contributors: vasyltech
-Tags: access control, manager role, manage user
+Tags: access control, access manager, role, user, capability, admin, page, post
 Requires at least: 3.2
 Tested up to: 4.3.1
 Stable tag: 3.0 Alpha
