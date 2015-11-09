@@ -58,6 +58,33 @@
                 'data-type' : object,
                 'data-id' : id
             });
+            
+            //initialize each access property
+            $(this).unbind('click').bind('click', function (event) {
+                event.preventDefault();
+
+                var checked = !$(this).hasClass('icon-check');
+
+                $(this).attr('class', 'aam-row-action icon-spin4 animate-spin');
+                var response = save(
+                        $(this).data('property'),
+                        checked,
+                        object,
+                        id
+                );
+                if (response.status === 'success') {
+                    if (checked) {
+                        $(this).attr(
+                            'class', 'aam-row-action text-danger icon-check'
+                        );
+                    } else {
+                        $(this).attr(
+                            'class', 'aam-row-action text-muted icon-check-empty'
+                        );
+                    }
+                }
+            });
+            
         });
         
         $.ajax(aamLocal.ajaxurl, {
@@ -315,32 +342,6 @@
             $('.aam-post-manager[data-type="' + type + '"]').removeClass('active');
             $('#post-list_wrapper').removeClass('aam-hidden');
             $('.aam-post-breadcrumb span:last').remove();
-        });
-
-        //initialize each access property
-        $('.aam-post-manager').delegate('.aam-row-action', 'click', function (event) {
-            event.preventDefault();
-            
-            var checked = !$(this).hasClass('icon-check');
-            
-            $(this).attr('class', 'aam-row-action icon-spin4 animate-spin');
-            var response = save(
-                    $(this).data('property'),
-                    checked,
-                    $(this).data('type'),
-                    $(this).data('id')
-            );
-            if (response.status === 'success') {
-                if (checked) {
-                    $(this).attr(
-                        'class', 'aam-row-action text-danger icon-check'
-                    );
-                } else {
-                    $(this).attr(
-                        'class', 'aam-row-action text-muted icon-check-empty'
-                    );
-                }
-            }
         });
     }
 
