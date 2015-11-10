@@ -159,14 +159,14 @@ class AAM_Backend_Post {
         foreach (get_object_taxonomies($type, 'objects') as $tax) {
             if (is_taxonomy_hierarchical($tax->name)) {
                 //get all terms that have no parent category
-                $list = array_merge(
-                        $list, $this->retrieveTermList($tax->name)
-                );
+                $list = array_merge($list, $this->retrieveTermList($tax->name));
             }
         }
 
         //retrieve all posts that do not have parent category
-        $posts = get_posts(array('post_type' => $type, 'category' => 0));
+        $posts = get_posts(array(
+            'post_type' => $type, 'category' => 0, 'numberposts' => -1
+        ));
 
         foreach ($posts as $post) {
             $list[] = array(

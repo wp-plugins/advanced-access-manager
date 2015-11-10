@@ -3,7 +3,7 @@ Contributors: vasyltech
 Tags: access control, access manager, role, user, capability, admin, page, post
 Requires at least: 3.2
 Tested up to: 4.3.1
-Stable tag: 3.0.1 Alpha
+Stable tag: 3.0 Alpha 2
 
 The powerful and easy-to-use tool to improve security and manage access to your 
 posts, pages and backend area.
@@ -32,8 +32,10 @@ about the Advanced Access Manager.
 
 == Changelog ==
 
-= 3.0.1 Alpha =
-* Fixed the bug with Posts & Pages access manager
+= 3.0 Alpha 2 =
+* Fixed bug with Posts & Pages access manager
+* Fixed bug with Posts & Pages pagination
+* Fixed bug with Menu & Submenus filters
 
 = 3.0 Alpha =
 * Brand new and much more intuitive user interface
