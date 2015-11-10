@@ -1,0 +1,54 @@
+AAM Hooks (Actions & Filters)
+=============================
+
+List of all actions and filters that AAM registers grouped by main purpose.
+
+UI Hooks
+--------------
+
+"aam-sidebar-ui-action"
+    An action for rendering sidebar panels. Passes one parameter with value "top"
+    or "bottom" to indicate either content should be rendered before User/Role Manager
+    or after. For more information check Application/View/Tmpl/index.phtml
+
+"aam-ajax-action"
+    UI ajax call. This filter can be used to hook to the UI ajax call to the
+    backend. $_REQUEST var "sub_action" contains a method name inside AAM_View_Manager
+    class and this filter triggers if the method does not exist. For more information
+    check AAM_View_Manager::processAjax method.
+
+"aam-capability-groups-filter"
+    Filter the list of capability groups. Each defined in WordPress core capability
+    belongs to one of the next groups: System, Posts & Pages, Backend Interface or
+    Miscellaneous. You are allowed to create a custom group by utilizing this filter.
+
+"aam-object-filter"
+    Custom AAM object can use with filter to return the instance of itself. For more
+    information check AAM_Core_Subject::getObject method for more information.
+
+"aam-post-type-ui-filter"
+    Filter the HTML content for the Post Type access form on the Posts & Pages tab.
+
+"aam-term-type-ui-filter"
+    Filter the HTML content for the Term (Category) access form on the Posts & Pages 
+    tab.
+
+
+Core Hooks
+--------------
+
+"aam-read-cache-filter"
+    AAM caching mechanism. Read cache. Accepts one parameter which is an option name. 
+    For more information check the AAM Cache Extension.
+
+"aam-write-cache-action"
+    AAM caching mechanism. Write data to cache. Accepts two parameters where first is
+    a option name and second the data to cache. For more information check the 
+    AAM Cache Extension.
+
+"aam-post-access-filter"
+    Filter default Post Access option list. For more information check 
+    AAM_Core_Object_Post::read method
+
+"aam-uninstall-action"
+    Action that is triggered when AAM is uninstalled by the administrator.
