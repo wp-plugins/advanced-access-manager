@@ -77,12 +77,12 @@ class AAM_Core_Subject_Visitor extends AAM_Core_Subject {
     }
 
     /**
-     *
+     * 
      * @param type $object
      * @param type $id
      * @return type
      */
-    protected function getOptionName($object, $id) {
+    public function getOptionName($object, $id) {
         return 'aam_' . self::UID . "_{$object}" . ($id ? "_{$id}" : '');
     }
 

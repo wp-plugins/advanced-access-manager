@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-xs-8">
             <div class="form-group">
-                <input type="text" class="form-control" id="extension-key" placeholder="<?php echo __('License Key or PayPal Transaction ID', AAM_KEY); ?>" />
+                <input type="text" class="form-control" id="extension-key" placeholder="<?php echo __('License Key', AAM_KEY); ?>" />
             </div>
         </div>
         <div class="col-xs-4">
@@ -27,8 +27,8 @@
             </tr>
         </thead>
         <tbody>
-            <?php $dev = $this->extensionStatus('AAM Development License'); ?>
-            <?php if ($dev !== self::STATUS_INSTALLED) { ?>
+            <?php $dev = AAM_Core_Repository::getInstance()->extensionStatus('AAM Development License'); ?>
+            <?php if ($dev !== AAM_Core_Repository::STATUS_INSTALLED) { ?>
                 <tr>
                     <td>
                         <strong>AAM Development License - $150 <small>USD</small></strong>
@@ -37,7 +37,7 @@
                         </p>
                     </td>
                     <td>
-                        <?php if ($dev == self::STATUS_UPDATE) { ?>
+                        <?php if ($dev == AAM_Core_Repository::STATUS_UPDATE) { ?>
                             <a href="#" class="btn btn-success btn-block aam-update-extension" data-product="AAM Development License"><i class="icon-arrows-cw"></i> <?php echo __('Update', AAM_KEY); ?></a>
                         <?php } else { ?>
                             <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZX9RCWU6BTE52" target="_blank" class="btn btn-success btn-block"><i class="icon-basket"></i> <?php echo __('Purchase', AAM_KEY); ?></a>
@@ -45,8 +45,8 @@
                     </td>
                 </tr>
             <?php } ?>
-            <?php $plusPackage = $this->extensionStatus('AAM Plus Package'); ?>
-            <?php if ($plusPackage !== self::STATUS_INSTALLED) { ?>
+            <?php $plusPackage = AAM_Core_Repository::getInstance()->extensionStatus('AAM Plus Package'); ?>
+            <?php if ($plusPackage !== AAM_Core_Repository::STATUS_INSTALLED) { ?>
                 <tr>
                     <td>
                         <strong>AAM Plus Package - $30 <small>USD</small></strong>
@@ -55,7 +55,7 @@
                         </p>
                     </td>
                     <td>
-                        <?php if ($plusPackage == self::STATUS_UPDATE) { ?>
+                        <?php if ($plusPackage == AAM_Core_Repository::STATUS_UPDATE) { ?>
                             <a href="#" class="btn btn-success btn-block aam-update-extension" data-product="AAM Plus Package"><i class="icon-arrows-cw"></i> <?php echo __('Update', AAM_KEY); ?></a>
                         <?php } else { ?>
                             <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FGAHULDEFZV4U" target="_blank" class="btn btn-success btn-block"><i class="icon-basket"></i> <?php echo __('Purchase', AAM_KEY); ?></a>
@@ -63,8 +63,8 @@
                     </td>
                 </tr>
             <?php } ?>
-            <?php $utilities = $this->extensionStatus('AAM Utilities'); ?>
-            <?php if ($utilities !== self::STATUS_INSTALLED) { ?>
+            <?php $utilities = AAM_Core_Repository::getInstance()->extensionStatus('AAM Utilities'); ?>
+            <?php if ($utilities !== AAM_Core_Repository::STATUS_INSTALLED) { ?>
                 <tr>
                     <td>
                         <strong>AAM Utilities - <span class="text-success">Free</span></strong>
@@ -73,7 +73,7 @@
                         </p>
                     </td>
                     <td>
-                        <?php if ($utilities == self::STATUS_UPDATE) { ?>
+                        <?php if ($utilities == AAM_Core_Repository::STATUS_UPDATE) { ?>
                             <a href="#" class="btn btn-success btn-block aam-update-extension" data-product="AAM Utilities"><i class="icon-arrows-cw"></i> <?php echo __('Update', AAM_KEY); ?></a>
                         <?php } else { ?>
                             <a href="#" class="btn btn-success btn-block aam-download-extension" data-license="AAMUTILITIES"><i class="icon-download-cloud"></i> <?php echo __('Download', AAM_KEY); ?></a>
@@ -81,8 +81,8 @@
                     </td>
                 </tr>
             <?php } ?>
-            <?php $multisite = $this->extensionStatus('AAM Multisite'); ?>
-            <?php if ($multisite !== self::STATUS_INSTALLED) { ?>
+            <?php $multisite = AAM_Core_Repository::getInstance()->extensionStatus('AAM Multisite'); ?>
+            <?php if ($multisite !== AAM_Core_Repository::STATUS_INSTALLED) { ?>
                 <tr>
                     <td>
                         <strong>AAM Multisite - <span class="text-success">Free</span></strong>
@@ -91,7 +91,7 @@
                         </p>
                     </td>
                     <td>
-                        <?php if ($multisite == self::STATUS_UPDATE) { ?>
+                        <?php if ($multisite == AAM_Core_Repository::STATUS_UPDATE) { ?>
                             <a href="#" class="btn btn-success btn-block aam-update-extension" data-product="AAM Multisite"><i class="icon-arrows-cw"></i> <?php echo __('Update', AAM_KEY); ?></a>
                         <?php } else { ?>
                             <a href="#" class="btn btn-success btn-block aam-download-extension" data-license="AAMMULTISITE"><i class="icon-download-cloud"></i> <?php echo __('Download', AAM_KEY); ?></a>

@@ -1,9 +1,9 @@
 === Advanced Access Manager ===
 Contributors: vasyltech
 Tags: access control, access manager, role, user, capability, admin, page, post
-Requires at least: 3.2
+Requires at least: 3.8
 Tested up to: 4.3.1
-Stable tag: 3.0 Alpha 2
+Stable tag: 3.0 Beta
 
 The powerful and easy-to-use tool to improve security and manage access to your 
 posts, pages and backend area.
@@ -31,6 +31,16 @@ about the Advanced Access Manager.
 4. Posts & Pages interface
 
 == Changelog ==
+
+= 3.0 Beta =
+* Localized Javascript labels
+* Added visual header for current editable subject (user/role)
+* Extended capability update check
+* Tested against WP 3.8 version
+* Fixed bug with protected method for user and role subjects
+* Added notification when extension update is available
+* Updated main localization file
+* Hide the backend post & pages access options for visitor
 
 = 3.0 Alpha 2 =
 * Fixed bug with Posts & Pages access manager

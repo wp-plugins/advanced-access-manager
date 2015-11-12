@@ -47,9 +47,32 @@ class AAM_Backend_Manager {
         add_filter('user_search_columns', array($this, 'searchColumns'));
         //manage access action to the user list
         add_filter('user_row_actions', array($this, 'userActions'), 10, 2);
+        
+        //check extension version
+        $this->checkExtensionList();
 
         //register backend hooks and filters
         AAM_Backend_Filter::register();
+    }
+    
+    /**
+     * 
+     */
+    protected function checkExtensionList() {
+        $list = AAM_Core_API::getOption('aam-extension-list', array());
+        $repo = AAM_Core_Repository::getInstance();
+        
+        foreach($list as $extension) {
+            $status = $repo->extensionStatus($extension->title);
+            if ($status == AAM_Core_Repository::STATUS_UPDATE) {
+                AAM_Core_Console::add(
+                    sprintf(
+                        __('Extension %s has new update available for download.'), 
+                        $extension->title
+                    )
+                );
+            }
+        }
     }
 
     /**
@@ -116,26 +139,53 @@ class AAM_Backend_Manager {
      * @access protected
      */
     protected function printLocalization($localKey) {
-        $user  = AAM_Core_Request::get('user');
-        $roles = array_keys(get_editable_roles());
-        $role  = array_shift($roles);
-
+        $subject = $this->getCurrentSubject();
+        
         wp_localize_script($localKey, 'aamLocal', array(
             'nonce' => wp_create_nonce('aam_ajax'),
             'ajaxurl' => admin_url('admin-ajax.php'),
             'url' => array(
                 'site' => admin_url('index.php'),
-                'jsbase' => AAM_MEDIA . '/js/aam',
+                'jsbase' => AAM_MEDIA . '/js',
                 'editUser' => admin_url('user-edit.php'),
                 'addUser' => admin_url('user-new.php')
             ),
             'subject' => array(
-                'type' => ($user ? 'user' : 'role'),
-                'id' => ($user ? $user : $role),
+                'type' => $subject->type,
+                'id' => $subject->id,
+                'name'=> $subject->name,
                 'blog' => get_current_blog_id()
             ),
-            'welcome' => AAM_Core_API::getOption('aam-welcome', 1)
+            'welcome' => AAM_Core_API::getOption('aam-welcome', 1),
+            'translation' => require (dirname(__FILE__) . '/Localization.php')
         ));
+    }
+    
+    /**
+     * 
+     * @return type
+     */
+    protected function getCurrentSubject() {
+        $userId  = AAM_Core_Request::get('user');
+        if ($userId) {
+            $u = get_user_by('id', $userId);
+            $subject = array(
+                'type' => 'user',
+                'id' => $userId,
+                'name' => ($u->display_name ? $u->display_name : $u->user_nicename)
+            );
+        } else {
+            $roles = array_keys(get_editable_roles());
+            $role  = array_shift($roles);
+            
+            $subject = array(
+                'type' => 'role',
+                'id' => $role,
+                'name' => AAM_Core_API::getRoles()->get_role($role)->name
+            );
+        }
+        
+        return (object) $subject;
     }
 
     /**

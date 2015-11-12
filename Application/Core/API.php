@@ -115,6 +115,26 @@ final class AAM_Core_API {
         );
     }
     
+    /**
+     * 
+     * @global WP_Roles $wp_roles
+     * 
+     * @return \WP_Roles
+     */
+    public static function getRoles() {
+        global $wp_roles;
+        
+        if (function_exists('wp_roles')) {
+            $roles = wp_roles();
+        } elseif(isset($wp_roles)) {
+            $roles = $wp_roles;
+        } else {
+            $roles = $wp_roles = new WP_Roles();
+        }
+        
+        return $roles;
+    }
+    
      /**
      * Reject the request
      *

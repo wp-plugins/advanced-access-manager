@@ -617,7 +617,7 @@ input[type="checkbox"]:focus, input[type="radio"]:focus {
 }
 
 .aam-notification-icon {
-    font-size: 10em;
+    font-size: 6em;
     color: #F04748;
     text-align: center;
 }
@@ -707,4 +707,12 @@ input[type="checkbox"]:focus, input[type="radio"]:focus {
     font-size:8em; 
     padding: 30px; 
     color: rgba(220, 220, 220, 0.8);
+}
+
+.aam-current-subject {
+    border-bottom: 3px solid #EEEEEE;
+}
+
+.aam-current-subject strong {
+    text-transform: capitalize;
 }

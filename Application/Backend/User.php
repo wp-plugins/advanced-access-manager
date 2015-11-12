@@ -60,7 +60,7 @@ class AAM_Backend_User {
     protected function getUserRoles($roles) {
         $response = array();
         
-        $names = wp_roles()->get_names();
+        $names = AAM_Core_API::getRoles()->get_names();
         
         foreach($roles as $role) {
             if (isset($names[$role])) {

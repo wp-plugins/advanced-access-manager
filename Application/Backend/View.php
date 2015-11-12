@@ -157,9 +157,9 @@ class AAM_Backend_View {
                 AAM_Core_Request::post('value'), FILTER_VALIDATE_BOOLEAN
         );
         
-        $this->getSubject()->save($param, $value, $object, $objectId);
+        $result = $this->getSubject()->save($param, $value, $object, $objectId);
 
-        return json_encode(array('status' => 'success'));
+        return json_encode(array('status' => ($result ? 'success' : 'failure')));
     }
     
     /**

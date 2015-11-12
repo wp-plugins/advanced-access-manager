@@ -111,7 +111,7 @@ class AAM_Core_Object_Menu extends AAM_Core_Object {
         $option = $this->getOption();
         $option[$menu] = $granted;
 
-        $this->getSubject()->updateOption($option, 'menu');
+        return $this->getSubject()->updateOption($option, 'menu');
     }
 
 }

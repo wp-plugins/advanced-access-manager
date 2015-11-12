@@ -63,19 +63,14 @@
      */
     AAM.prototype.initialize = function () {
         //read default subject and set it for AAM object
-        this.setSubject(aamLocal.subject.type, aamLocal.subject.id);
+        this.setSubject(
+                aamLocal.subject.type, 
+                aamLocal.subject.id,
+                aamLocal.subject.name
+        );
         
-        this.load(new Array(
-            '/role-list.js',
-            '/user-list.js',
-            '/visitor.js',
-            '/menu.js',
-            '/metabox.js',
-            '/capability.js',
-            '/post.js',
-            '/extension.js',
-            '/main-panel.js'
-        ));
+        //load the UI javascript support
+        $.getScript(aamLocal.url.jsbase + '/aam-ui.js');
 
         //initialize help context
         $('.aam-help-menu').each(function() {
@@ -133,22 +128,7 @@
      * @returns {unresolved}
      */
     AAM.prototype.__ = function (label) {
-        return label;
-    };
-
-    /**
-     * 
-     * @param {Array} file
-     * @returns {undefined}
-     */
-    AAM.prototype.load = function (files) {
-        var _this = this;
-
-        $.getScript(aamLocal.url.jsbase + files.shift(), function () {
-            if (files.length) {
-                _this.load(files);
-            }
-        });
+        return (aamLocal.translation[label] ? aamLocal.translation[label] : label);
     };
 
     /**
@@ -157,11 +137,17 @@
      * @param {type} id
      * @returns {undefined}
      */
-    AAM.prototype.setSubject = function (type, id) {
+    AAM.prototype.setSubject = function (type, id, name) {
         this.subject = {
             type: type,
-            id: id
+            id: id,
+            name: name
         };
+        
+        //update the header
+        $('.aam-current-subject').html(
+                aam.__('Current ' + type) + ': <strong>' + name + '</strong>'
+        );
 
         this.triggerHook('setSubject');
     };
@@ -221,9 +207,7 @@
                 result = response;
             },
             error: function () {
-                aam.notification(
-                    'danger', aam.__('Application Error. Contact Support.')
-               );
+                aam.notification('danger', aam.__('Application error'));
             }
         });
         
