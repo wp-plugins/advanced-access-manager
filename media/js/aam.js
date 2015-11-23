@@ -120,6 +120,16 @@
         } else {
             $('.aam-welcome-message').remove();
         }
+        
+        //if there is an error detected during the AAM load, show it
+        if (AAM_PageError) {
+            $('.aam-error-list').append(
+                $('<li/>').html(
+                    this.__('Javascript error detected during the page load. AAM may not function properly.')
+                )
+            );
+            $('.aam-notification-container').removeClass('hidden');
+        }
     };
 
     /**

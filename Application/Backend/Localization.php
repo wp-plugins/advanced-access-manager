@@ -40,5 +40,6 @@ return array(
     'Anonymous' => __('Anonymous', AAM_KEY),
     'Current user' => __('Current user', AAM_KEY),
     'Current role' => __('Current role', AAM_KEY),
+    'Javascript error detected during the page load. AAM may not function properly.' => __('Javascript error detected during the page load. AAM may not function properly.', AAM_KEY),
     'Failed to grand capability - WordPress policy' => __('Failed to grand capability - WordPress policy', AAM_KEY),
 );

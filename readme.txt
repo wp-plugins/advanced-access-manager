@@ -3,16 +3,16 @@ Contributors: vasyltech
 Tags: access, access manager, role, user, capability, admin, page, post, widget
 Requires at least: 3.8
 Tested up to: 4.3.1
-Stable tag: 3.0 Beta
+Stable tag: 3.0
 
 One of the best tools in WordPress repository to manage access to your posts, 
 pages, categories and backend area for users, roles and visitors.
 
 == Description ==
 
-> Advanced Access Manager (aka AAM) is known as the only free plugin that allows
-> you to control access to your posts, pages or backend area on user, visitor and
-> role levels.
+> Advanced Access Manager (aka AAM) is the only free plugin that allows you to
+> control access to your posts, pages or backend area on user, visitor and role
+> levels.
 
 AAM is well documented so even unexperienced WordPress user can easily understand 
 how to use it in the most efficient way.

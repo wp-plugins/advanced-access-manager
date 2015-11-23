@@ -33,6 +33,7 @@ class AAM_Backend_Manager {
      */
     protected function __construct() {
         //print required JS & CSS
+        add_action('admin_enqueue_scripts', array($this, 'enqueueScript'));
         add_action('admin_print_scripts', array($this, 'printJavascript'));
         add_action('admin_print_styles', array($this, 'printStylesheet'));
 
@@ -53,6 +54,24 @@ class AAM_Backend_Manager {
 
         //register backend hooks and filters
         AAM_Backend_Filter::register();
+    }
+    
+    /**
+     * Enqueue global js
+     * 
+     * Very important to track the JS errors on page to notify the customer that
+     * plugin might not function properly because of the javascript error on the page
+     * 
+     * @return void
+     * 
+     * @access public
+     */
+    public function enqueueScript() {
+        if (AAM::isAAM()) {
+            echo "<script type=\"text/javascript\">\n";
+            echo file_get_contents(AAM_MEDIA . '/js/aam-hook.js');
+            echo "</script>\n";
+        }
     }
     
     /**

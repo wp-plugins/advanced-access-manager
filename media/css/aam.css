@@ -86,6 +86,8 @@
 .icon-eye:before { content: '\e816'; } /* '' */
 .icon-basket:before { content: '\e817'; } /* '' */
 .icon-download-cloud:before { content: '\e818'; } /* '' */
+.icon-github:before { content: '\e819'; } /* '' */
+.icon-twitter:before { content: '\e81a'; } /* '' */
 
 .animate-spin {
     -moz-animation: spin 2s infinite linear;
@@ -599,9 +601,6 @@ input[type="checkbox"]:focus, input[type="radio"]:focus {
     background-color: #F5F5F5;
     padding: 10px;
     position: relative;
-    border-radius: 4px;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
     font-size: 1.2em;
     margin-bottom: 20px;
 }
@@ -617,7 +616,7 @@ input[type="checkbox"]:focus, input[type="radio"]:focus {
 }
 
 .aam-notification-icon {
-    font-size: 6em;
+    font-size: 4em;
     color: #F04748;
     text-align: center;
 }
@@ -626,6 +625,16 @@ input[type="checkbox"]:focus, input[type="radio"]:focus {
     content: ' ';
     display: block;
     clear:both;
+}
+
+.aam-social {
+    font-size: 1.4em;
+    text-align: center;
+}
+
+.aam-social a {
+    text-decoration: none;
+    margin: 0 10px;
 }
 
 .aam-error-list li {
@@ -686,6 +695,10 @@ input[type="checkbox"]:focus, input[type="radio"]:focus {
     list-style: disc;
     margin-left: 30px;
     font-size: 1.2em;
+}
+
+.aam-welcome-message .aam-notification-container ul {
+    list-style: none;
 }
 
 .aam-welcome-message p {
