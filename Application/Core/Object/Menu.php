@@ -52,7 +52,7 @@ class AAM_Core_Object_Menu extends AAM_Core_Object {
      */
     public function filter() {
         global $menu, $submenu;
-
+        
         foreach ($menu as $id => $item) {
             if ($this->has('menu-' . $item[2])) {
                 unset($menu[$id]);
@@ -60,24 +60,6 @@ class AAM_Core_Object_Menu extends AAM_Core_Object {
 
             if (!empty($submenu[$item[2]])) {
                 $this->filterSubmenu($item[2]);
-                
-                //update parent menu to the first available submenu
-                $sub  = $submenu[$item[2]];
-                
-                //get the first available subitem
-                $vals = array_values($submenu[$item[2]]);
-                $subitem  = array_shift($vals);
-                
-                if (!empty($subitem)) {
-                    //update menu array
-                    $menu[$id][2] = $subitem[2];
-                    $menu[$id][1] = $subitem[1];
-                    //update submenu array
-                    //It is very important to delete the submenu first and 
-                    //reinit it because the $menu id has been changed 
-                    unset($submenu[$item[2]]);
-                    $submenu[$subitem[2]] = $sub;
-                }
             }
         }
     }
@@ -129,7 +111,7 @@ class AAM_Core_Object_Menu extends AAM_Core_Object {
         $option = $this->getOption();
         $option[$menu] = $granted;
 
-        $this->getSubject()->updateOption($option, 'menu');
+        return $this->getSubject()->updateOption($option, 'menu');
     }
 
 }

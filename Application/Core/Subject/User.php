@@ -123,7 +123,17 @@ class AAM_Core_Subject_User extends AAM_Core_Subject {
      * @access public
      */
     public function addCapability($capability) {
-        return $this->updateCapability($capability, true);
+        //check if user is capable to have this capability
+        $map = call_user_func_array(
+                'map_meta_cap', array($capability, $this->getSubject()->ID)
+        );
+        if (!in_array('do_not_allow', $map)) {
+            $response = $this->updateCapability($capability, true);
+        } else {
+            $response = false;
+        }
+        
+        return $response;
     }
 
     /**
@@ -218,9 +228,9 @@ class AAM_Core_Subject_User extends AAM_Core_Subject {
      *
      * @return string
      *
-     * @access protected
+     * @access public
      */
-    protected function getOptionName($object, $id) {
+    public function getOptionName($object, $id) {
         return "aam_{$object}" . ($id ? "_{$id}" : '');
     }
 

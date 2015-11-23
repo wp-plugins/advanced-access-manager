@@ -59,10 +59,11 @@ class AAM_Core_Object_Post extends AAM_Core_Object {
      * @access public
      */
     public function read() {
+        $subject = $this->getSubject();
         $opname = $this->getOptionName();
 
         //cache extension in place first
-        $option = apply_filters('aam-read-cache-filter', null, $opname);
+        $option = apply_filters('aam-read-cache-filter', null, $opname, $subject);
 
         if (empty($option)) { //no cache, than try to read it from DB
             $option = get_post_meta($this->getPost()->ID, $opname, true);
@@ -70,17 +71,13 @@ class AAM_Core_Object_Post extends AAM_Core_Object {
         
         //try to inherit from parent
         if (empty($option)) {
-            $option = $this->getSubject()->inheritFromParent(
-                    'post', $this->getPost()->ID
-            );
+            $option = $subject->inheritFromParent('post', $this->getPost()->ID);
         }
 
-        $this->setOption(
-                apply_filters('aam-post-access-filter', $option, $this)
-        );
+        $this->setOption(apply_filters('aam-post-access-filter', $option, $this));
 
         //trigger caching mechanism
-        do_action('aam-write-cache-action', $opname, $option);
+        do_action('aam-write-cache-action', $opname, $option, $subject);
     }
 
     /**
@@ -101,6 +98,9 @@ class AAM_Core_Object_Post extends AAM_Core_Object {
             //implement "Reset Settings" feature
             unset($option[$property]); //remove it
         }
+        
+        //clear cache
+        do_action('aam-clear-cache-action', $this->getSubject());
         
         return update_post_meta(
                 $this->getPost()->ID, $this->getOptionName(), $option

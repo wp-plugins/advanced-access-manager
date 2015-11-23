@@ -1,8 +1,10 @@
 <?php
 
 /**
-  LICENSE: This file is subject to the terms and conditions defined in
-  file 'license.txt', which is part of Advanced Access Manager source package.
+ * ======================================================================
+ * LICENSE: This file is subject to the terms and conditions defined in *
+ * file 'license.txt', which is part of this source code package.       *
+ * ======================================================================
  */
 
 /**
@@ -43,7 +45,7 @@ class AAM_Autoloader {
             $prefix = array_shift($chunks);
 
             if ($prefix === 'AAM') {
-                $base_path = __DIR__ . '/Application';
+                $base_path = dirname(__FILE__) . '/Application';
                 $filename = $base_path . '/' . implode('/', $chunks) . '.php';
             }
         }

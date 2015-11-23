@@ -37,10 +37,12 @@ class AAM_Core_Object_Capability extends AAM_Core_Object {
      */
     public function save($capability, $granted) {
         if (intval($granted)) {
-            $this->getSubject()->addCapability($capability);
+            $result = $this->getSubject()->addCapability($capability);
         } else {
-            $this->getSubject()->removeCapability($capability);
+            $result = $this->getSubject()->removeCapability($capability);
         }
+        
+        return $result;
     }
 
     /**

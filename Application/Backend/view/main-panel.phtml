@@ -4,7 +4,9 @@
             <?php
             foreach (AAM_Backend_Feature::retriveList() as $i => $feature) {
                 echo '<li class="list-group-item" data-feature="' . $feature->uid . '">';
-                echo $feature->title . '</li>';
+                echo $feature->title;
+                echo (empty($feature->notification) ? '' : ' <span class="badge">' . $feature->notification . '</span>');
+                echo '</li>';
             }
             ?>
         </ul>

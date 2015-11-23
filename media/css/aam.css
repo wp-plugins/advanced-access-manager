@@ -1,3 +1,10 @@
+/**
+ * ======================================================================
+ * LICENSE: This file is subject to the terms and conditions defined in *
+ * file 'license.txt', which is part of this source code package.       *
+ * ======================================================================
+ */
+
 @font-face {
     font-family: 'fontello';
     src: url('../font/fontello.eot?99287648');
@@ -79,6 +86,8 @@
 .icon-eye:before { content: '\e816'; } /* '' */
 .icon-basket:before { content: '\e817'; } /* '' */
 .icon-download-cloud:before { content: '\e818'; } /* '' */
+.icon-github:before { content: '\e819'; } /* '' */
+.icon-twitter:before { content: '\e81a'; } /* '' */
 
 .animate-spin {
     -moz-animation: spin 2s infinite linear;
@@ -592,9 +601,6 @@ input[type="checkbox"]:focus, input[type="radio"]:focus {
     background-color: #F5F5F5;
     padding: 10px;
     position: relative;
-    border-radius: 4px;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
     font-size: 1.2em;
     margin-bottom: 20px;
 }
@@ -610,7 +616,7 @@ input[type="checkbox"]:focus, input[type="radio"]:focus {
 }
 
 .aam-notification-icon {
-    font-size: 10em;
+    font-size: 4em;
     color: #F04748;
     text-align: center;
 }
@@ -619,6 +625,16 @@ input[type="checkbox"]:focus, input[type="radio"]:focus {
     content: ' ';
     display: block;
     clear:both;
+}
+
+.aam-social {
+    font-size: 1.4em;
+    text-align: center;
+}
+
+.aam-social a {
+    text-decoration: none;
+    margin: 0 10px;
 }
 
 .aam-error-list li {
@@ -679,4 +695,37 @@ input[type="checkbox"]:focus, input[type="radio"]:focus {
     list-style: disc;
     margin-left: 30px;
     font-size: 1.2em;
+}
+
+.aam-welcome-message .aam-notification-container ul {
+    list-style: none;
+}
+
+.aam-welcome-message p {
+    font-size: 1.2em;
+}
+
+.dataTables_processing {
+    border: 1px solid #cccccc;
+    color: #337ab7;
+    font-size: 0.8em;
+    font-weight: 700;
+    margin-top: -8px;
+    padding: 2px 5px;
+}
+
+.aam-loading {
+    width: 100%; 
+    text-align: center; 
+    font-size:8em; 
+    padding: 30px; 
+    color: rgba(220, 220, 220, 0.8);
+}
+
+.aam-current-subject {
+    border-bottom: 3px solid #EEEEEE;
+}
+
+.aam-current-subject strong {
+    text-transform: capitalize;
 }

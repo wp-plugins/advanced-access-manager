@@ -57,7 +57,7 @@ class AAM_Backend_Capability {
      */
     public function getContent() {
         ob_start();
-        require_once(dirname(__FILE__) . '/view/capability.phtml');
+        require_once(dirname(__FILE__) . '/view/object/capability.phtml');
         $content = ob_get_contents();
         ob_end_clean();
 
@@ -76,7 +76,7 @@ class AAM_Backend_Capability {
             $response['data'] = $this->retrieveAllCaps();
         } else {
             $role_list = $subject->roles;
-            $role = wp_roles()->get_role(array_shift($role_list));
+            $role = AAM_Core_API::getRoles()->get_role(array_shift($role_list));
             foreach (array_keys($role->capabilities) as $cap) {
                 $response['data'][] = array(
                     $cap,
@@ -97,7 +97,7 @@ class AAM_Backend_Capability {
     protected function retrieveAllCaps() {
         $caps = $response = array();
         
-        foreach (wp_roles()->role_objects as $role) {
+        foreach (AAM_Core_API::getRoles()->role_objects as $role) {
             $caps = array_merge($caps, $role->capabilities);
         }
         
@@ -142,7 +142,7 @@ class AAM_Backend_Capability {
 
         if ($capability) {
             //add the capability to administrator's role as default behavior
-            wp_roles()->add_cap('administrator', $capability);
+            AAM_Core_API::getRoles()->add_cap('administrator', $capability);
             $response = array('status' => 'success');
         } else {
             $response = array('status' => 'failure');

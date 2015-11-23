@@ -40,7 +40,7 @@ class AAM_Backend_User {
             $response['data'][] = array(
                 $user->ID,
                 implode(', ', $this->getUserRoles($user->roles)),
-                ($user->display_name ?: $user->user_nicename),
+                ($user->display_name ? $user->display_name : $user->user_nicename),
                 implode(',', $this->prepareRowActions($user))
             );
         }
@@ -60,7 +60,7 @@ class AAM_Backend_User {
     protected function getUserRoles($roles) {
         $response = array();
         
-        $names = wp_roles()->get_names();
+        $names = AAM_Core_API::getRoles()->get_names();
         
         foreach($roles as $role) {
             if (isset($names[$role])) {
@@ -81,12 +81,18 @@ class AAM_Backend_User {
      * @access protected
      */
     protected function prepareRowActions(WP_User $user) {
-        $actions = array('manage');
+        $max = AAM_Core_API::maxLevel(wp_get_current_user()->allcaps);
         
-        $prefix = ($user->ID == get_current_user_id() ? 'no-' : '');
-        $actions[] = $prefix . ($user->user_status ? 'unlock' : 'lock');
-        
-        $actions[] = 'edit';
+        if ($max < AAM_Core_API::maxLevel($user->allcaps)) {
+            $actions = array('no-manage', 'no-lock', 'no-edit');
+        } else {
+            $actions = array('manage');
+
+            $prefix = ($user->ID == get_current_user_id() ? 'no-' : '');
+            $actions[] = $prefix . ($user->user_status ? 'unlock' : 'lock');
+
+            $actions[] = 'edit';
+        }
         
         return $actions;
     }

@@ -1,4 +1,11 @@
 <div class="aam-feature" id="capability-content">
+    <div class="row hidden" id="user-capability-note">
+        <div class="col-xs-12">
+            <p class="aam-info">
+                <?php echo AAM_Backend_Helper::preparePhrase(__('[Please notice!] You are not allowed to assign or create a new capability that does not belong to user\'s role. Consider creating a new role with desired list of capabilities and then assign that role to user.', AAM_KEY), 'strong'); ?>
+            </p>
+        </div>
+    </div>
     <div class="aam-feature-top-actions text-right">
         <div class="btn-group">
             <a href="#" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="capability-filter">

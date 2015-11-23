@@ -14,6 +14,28 @@
  * @author Vasyl Martyniuk <vasyl@vasyltech.com>
  */
 class AAM_Core_Repository {
+    
+    /**
+     * Extension status: installed
+     * 
+     * Extension has been installed and is up to date
+     */
+    const STATUS_INSTALLED = 'installed';
+    
+    /**
+     * Extension status: download
+     * 
+     * Extension is not installed and either needs to be purchased or 
+     * downloaded for free.
+     */
+    const STATUS_DOWNLOAD = 'download';
+    
+    /**
+     * Extension status: update
+     * 
+     * New version of the extension has been detected.
+     */
+    const STATUS_UPDATE = 'update';
 
     /**
      * Relative path to extension directory
@@ -118,6 +140,68 @@ class AAM_Core_Repository {
         }
 
         return $response;
+    }
+    
+    /**
+     * Check extension status
+     * 
+     * The list of extensions is comming from the external server. This list is
+     * updated daily by the registered cron-job.
+     * Each extension is following by next naming convension and stardard - the 
+     * title of an extension contains only latin letters and spaces and name is 
+     * no longer than 50 characters. As a standard, each extension defines the 
+     * global contant that indicates an extension version. The name of the 
+     * contants derives from the extension title by transforming all letters to 
+     * upper case and replacing the white spaces with underscore "_" 
+     * (e.g AAM Plus Package defines the contant AAM_PLUS_PACKAGE). 
+     * 
+     * @param string $title
+     * 
+     * @return string
+     * 
+     * @access public
+     */
+    public function extensionStatus($title) {
+        static $cache = null;
+        
+        $status = self::STATUS_INSTALLED;
+        $const = str_replace(' ', '_', strtoupper($title));
+        
+        if (is_null($cache)) {
+            $cache = $this->prepareExtensionCache();
+        }
+        
+        if (!defined($const)) { //extension does not exist
+            $status = self::STATUS_DOWNLOAD;
+        } elseif (!empty($cache[$title])) {
+            $ver = constant($const);
+            //Check if there is a version mismatch. Also ignore if there is no 
+            //license stored for this extension
+            if ($ver != $cache[$title]->version && !empty($cache[$title]->license)) { 
+                $status = self::STATUS_UPDATE;
+            }
+        }
+        
+        return $status;
+    }
+    
+    /**
+     * 
+     * @return type
+     */
+    protected function prepareExtensionCache() {
+        $list = AAM_Core_API::getOption('aam-extension-list', array());
+        $licenses = AAM_Core_API::getOption('aam-extension-license', array());
+
+        $cache = array();
+        foreach ($list as $row) {
+            $cache[$row->title] = $row;
+            if (isset($licenses[$row->title])) {
+                $cache[$row->title]->license = $licenses[$row->title];
+            }
+        }
+        
+        return $cache;
     }
 
     /**

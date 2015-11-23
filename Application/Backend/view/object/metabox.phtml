@@ -4,10 +4,11 @@
     </div>
 
     <?php $object = AAM_Backend_View::getSubject()->getObject('metabox'); ?>
+    <?php $metaboxList = $this->getMetaboxList(); ?>
 
-    <?php if (!empty($this->getMetaboxList())) { ?>
+    <?php if (!empty($metaboxList)) { ?>
         <div class="panel-group" id="metabox-list" role="tablist">
-            <?php foreach ($this->getMetaboxList() as $screen => $metaboxes) { ?>
+            <?php foreach ($metaboxList as $screen => $metaboxes) { ?>
                 <div class="panel panel-default">
                     <div class="panel-heading" role="tab" id="group-<?php echo $screen; ?>-heading">
                         <h4 class="panel-title">

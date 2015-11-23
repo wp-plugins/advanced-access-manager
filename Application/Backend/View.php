@@ -118,7 +118,7 @@ class AAM_Backend_View {
      */
     public function renderContent() {
         ob_start();
-        require_once(dirname(__FILE__) . '/view/content.phtml');
+        require_once(dirname(__FILE__) . '/view/main-panel.phtml');
         $content = ob_get_contents();
         ob_end_clean();
 
@@ -157,9 +157,9 @@ class AAM_Backend_View {
                 AAM_Core_Request::post('value'), FILTER_VALIDATE_BOOLEAN
         );
         
-        $this->getSubject()->save($param, $value, $object, $objectId);
+        $result = $this->getSubject()->save($param, $value, $object, $objectId);
 
-        return json_encode(array('status' => 'success'));
+        return json_encode(array('status' => ($result ? 'success' : 'failure')));
     }
     
     /**

@@ -24,7 +24,7 @@ class AAM_Backend_Post {
      */
     public function getContent() {
         ob_start();
-        require_once(dirname(__FILE__) . '/view/post.phtml');
+        require_once(dirname(__FILE__) . '/view/object/post.phtml');
         $content = ob_get_contents();
         ob_end_clean();
 
@@ -67,10 +67,10 @@ class AAM_Backend_Post {
         }
 
         return json_encode(
-                array(
-                    'status' => 'success',
-                    'breadcrumb' => ($breadcrub ? : __('Base Level', AAM_KEY))
-                )
+            array(
+                'status' => 'success',
+                'breadcrumb' => ($breadcrub ? $breadcrub : __('Base Level', AAM_KEY))
+            )
         );
     }
 
@@ -159,14 +159,15 @@ class AAM_Backend_Post {
         foreach (get_object_taxonomies($type, 'objects') as $tax) {
             if (is_taxonomy_hierarchical($tax->name)) {
                 //get all terms that have no parent category
-                $list = array_merge(
-                        $list, $this->retrieveTermList($tax->name)
-                );
+                $list = array_merge($list, $this->retrieveTermList($tax->name));
             }
         }
 
-        //retrieve all posts that do not have parent category
-        $posts = get_posts(array('post_type' => $type, 'category' => 0));
+        //retrieve all posts
+        $posts = get_posts(array(
+            'post_type' => $type, 'category' => 0, 
+            'numberposts' => -1, 'post_status' => 'any'
+        ));
 
         foreach ($posts as $post) {
             $list[] = array(
@@ -275,12 +276,10 @@ class AAM_Backend_Post {
             $error  = __('You reached your limitation.', AAM_KEY);
         }
 
-        return json_encode(
-                array(
+        return json_encode(array(
                     'status' => ($result ? 'success' : 'failure'),
                     'error' => (empty($error) ? '' : $error)
-                )
-        );
+        ));
     }
 
     /**

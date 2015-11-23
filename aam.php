@@ -3,14 +3,13 @@
 /**
   Plugin Name: Advanced Access Manager
   Description: Manage User and Role Access to WordPress Backend and Frontend.
-  Version: 3.0 Alpha
+  Version: 3.0
   Author: Vasyl Martyniuk <vasyl@vasyltech.com>
   Author URI: http://www.vasyltech.com
 
   -------
   LICENSE: This file is subject to the terms and conditions defined in
   file 'license.txt', which is part of Advanced Access Manager source package.
-
  *
  */
 
@@ -55,15 +54,15 @@ class AAM {
             $this->setUser(new AAM_Core_Subject_Visitor(''));
         }
         
+        //load all installed extension
+        AAM_Core_Repository::getInstance()->load();
+        
         //bootstrap the correct interface
         if (is_admin()) {
             AAM_Backend_Manager::bootstrap();
         } else {
             AAM_Frontend_Manager::bootstrap();
         }
-
-        //load all installed extension
-        AAM_Core_Repository::getInstance()->load();
     }
 
     /**
@@ -111,7 +110,7 @@ class AAM {
      */
     public static function getInstance() {
         if (is_null(self::$_instance)) {
-            load_plugin_textdomain('aam', false, __DIR__ . '/Lang');
+            load_plugin_textdomain(AAM_KEY, false, dirname(__FILE__) . '/Lang');
             self::$_instance = new self;
         }
 
@@ -143,7 +142,14 @@ class AAM {
      * @access public
      */
     public static function activate() {
-        global $wp_filesystem;
+        global $wp_filesystem, $wp_version;
+        
+        //check PHP Version
+        if (version_compare(PHP_VERSION, '5.2') == -1) {
+            exit(__('PHP 5.2 or higher is required.', AAM_KEY));
+        } elseif (version_compare($wp_version, '3.8') == -1) {
+            exit(__('WP 3.8 or higher is required.', AAM_KEY));
+        }
 
         //create an wp-content/aam folder if does not exist
         WP_Filesystem(); //initialize the WordPress filesystem
@@ -167,6 +173,9 @@ class AAM {
      */
     public static function uninstall() {
         global $wp_filesystem;
+        
+        //trigger any uninstall hook that is registered by any extension
+        do_action('aam-uninstall-action');
 
         WP_Filesystem(); //initialize the WordPress filesystem
 
