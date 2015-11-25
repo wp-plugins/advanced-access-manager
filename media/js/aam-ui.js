@@ -137,6 +137,9 @@
                             );
                             //Show add capability that may be hidden after manager user
                             $('#add-capability').show();
+                        }).attr({
+                                'data-toggle' :"tooltip",
+                                'title' : aam.__('Manage Role')
                         }));
                         break;
 
@@ -149,6 +152,9 @@
                             $('#edit-role-modal').modal('show').on('shown.bs.modal', function () {
                                 $('#edit-role-name').focus();
                             });
+                        }).attr({
+                                'data-toggle' :"tooltip",
+                                'title' : aam.__('Edit Role Name')
                         }));
                         break;
 
@@ -166,6 +172,9 @@
                             );
 
                             $('#delete-role-modal').modal('show');
+                        }).attr({
+                                'data-toggle' :"tooltip",
+                                'title' : aam.__('Delete Role')
                         }));
                         break;
 
@@ -376,15 +385,17 @@
             success: function (response) {
                 if (response.status === 'success') {
                     if (state === 1) {
-                        $(btn).attr(
-                                'class', 
-                                'aam-row-action icon-lock text-danger'
-                        );
+                        $(btn).attr({
+                            'class' : 'aam-row-action icon-lock text-danger',
+                            'title' : aam.__('Unlock User'),
+                            'data-original-title' : aam.__('Unlock User')
+                        });
                     } else {
-                        $(btn).attr(
-                                'class', 
-                                'aam-row-action icon-lock-open-alt text-warning'
-                        );
+                        $(btn).attr({
+                            'class' : 'aam-row-action icon-lock-open-alt text-warning',
+                            'title' : aam.__('Lock User'),
+                            'data-original-title' : aam.__('Lock User')
+                        });
                     }
                 } else {
                     aam.notification(
@@ -467,6 +478,9 @@
                             $('i.icon-spin4', container).attr('class', 'aam-row-action icon-cog text-info');
                             //make sure that there is no way user add's new capability
                             $('#add-capability').hide();
+                        }).attr({
+                                'data-toggle' :"tooltip",
+                                'title' : aam.__('Manage User')
                         }));
                         break;
                         
@@ -485,6 +499,9 @@
                             window.open(
                                 aamLocal.url.editUser + '?user_id=' + data[0], '_blank'
                             );
+                        }).attr({
+                                'data-toggle' :"tooltip",
+                                'title' : aam.__('Edit User')
                         }));
                         break;
                     
@@ -501,6 +518,9 @@
                             'class': 'aam-row-action icon-lock-open-alt text-warning'
                         }).bind('click', function () {
                             blockUser(data[0], $(this));
+                        }).attr({
+                                'data-toggle' :"tooltip",
+                                'title' : aam.__('Lock User')
                         }));
                         break;
                         
@@ -509,6 +529,9 @@
                             'class': 'aam-row-action icon-lock text-danger'
                         }).bind('click', function () {
                             blockUser(data[0], $(this));
+                        }).attr({
+                                'data-toggle' :"tooltip",
+                                'title' : aam.__('Unlock User')
                         }));
                         break;
                         
@@ -847,11 +870,6 @@
                 });
                 $('td:eq(2)', row).html(container);
             }
-        });
-
-        //filter capability dropdown
-        $('#capability-filter').bind('click', function () {
-            $('.dropdown-menu').dropdown('toggle');
         });
 
         $('a', '#capability-groups').each(function () {
@@ -1234,6 +1252,9 @@
                             }).bind('click', function () {
                                 loadAccessForm(data[2], data[0], $(this));
                                 addBreadcrumbLevel('edit', data[2], data[3]);
+                            }).attr({
+                                'data-toggle' :"tooltip",
+                                'title' : aam.__('Manage Access')
                             }));
                             break;
 
@@ -1242,8 +1263,10 @@
                                 'class': 'aam-row-action text-warning icon-pencil'
                             }).bind('click', function () {
                                 window.open(data[1], '_blank');
+                            }).attr({
+                                'data-toggle' :"tooltip",
+                                'title' : aam.__('Edit')
                             }));
-                            break;
                             break;
 
                         default:

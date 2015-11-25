@@ -361,6 +361,11 @@ table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td
 }
 
 /** AAM **/
+#capability-groups {
+    right: 0;
+    left: auto;
+}
+
 input[type=checkbox] { /* to hide the checkbox itself */
     display:none; 
 } 

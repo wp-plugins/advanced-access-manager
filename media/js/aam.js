@@ -121,8 +121,18 @@
             $('.aam-welcome-message').remove();
         }
         
+        //help tooltips
+        $('body').delegate('[data-toggle="tooltip"]', 'hover', function (event) {
+            event.preventDefault();
+            $(this).tooltip({
+                'placement' : 'top',
+                'container' : 'body'
+            });
+            $(this).tooltip('show');
+        });
+        
         //if there is an error detected during the AAM load, show it
-        if (AAM_PageError) {
+        if (typeof AAM_PageError !== 'undefined' && AAM_PageError) {
             $('.aam-error-list').append(
                 $('<li/>').html(
                     this.__('Javascript error detected during the page load. AAM may not function properly.')

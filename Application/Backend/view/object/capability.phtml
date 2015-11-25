@@ -11,7 +11,7 @@
             <a href="#" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="capability-filter">
                 <i class="icon-filter"></i> <?php echo __('Filter', AAM_KEY); ?> <span class="caret"></span>
             </a>
-            <ul class="dropdown-menu" id="capability-groups">
+            <ul class="dropdown-menu" id="capability-groups" aria-labelledby="capability-filter">
                 <?php foreach ($this->getGroupList() as $group) { ?>
                     <li><a href="#"><?php echo $group; ?></a></li>
                 <?php } ?>
