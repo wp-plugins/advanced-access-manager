@@ -1423,7 +1423,7 @@
                     dump.title + '.zip',
                     'application/zip'
                     );
-            $('#extension-notification-modal').hide();
+            $('#extension-notification-modal').modal('hide');
         });
     }
 

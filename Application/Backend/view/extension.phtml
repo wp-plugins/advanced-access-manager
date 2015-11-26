@@ -117,9 +117,16 @@
                     <h4 class="modal-title"><?php echo __('Notification', AAM_KEY); ?></h4>
                 </div>
                 <div class="modal-body">
-                    <p class="text-center aam-notification-message">
-                        <strong><span id="installation-error"></span></strong>. <?php echo sprintf(__('Click "Download" button below for a manual installation. Simply unzip the archive to wp-content%s directory.', AAM_KEY), AAM_Core_Repository::RELPATH); ?>
+                    <p class="text-center aam-notification">
+                        <strong><span id="installation-error"></span>.</strong> <?php echo __('Extension requires manual installation. Please follow few simple steps below.', AAM_KEY); ?>
                     </p>
+                    
+                    <ul class="aam-outer-top-xs aam-numeric-list">
+                        <li><?php echo AAM_Backend_Helper::preparePhrase(__('Click [Download] button below and save the zip archive on your computer', AAM_KEY), 'b'); ?>;</li>
+                        <li><?php echo AAM_Backend_Helper::preparePhrase(__('Connect to your website via FTP and navigate to [wp-content] folder', AAM_KEY), 'b'); ?>;</li>
+                        <li><?php echo AAM_Backend_Helper::preparePhrase(__('Create [aam/extension] folder inside [wp-content] and make sure it is writable by your server', AAM_KEY), 'b', 'b'); ?>;</li>
+                        <li><?php echo AAM_Backend_Helper::preparePhrase(__('Unzip downloaded archive and transfer the folder inside the [wp-content/aam/extension] folder', AAM_KEY), 'b'); ?>.</li>
+                    </ul>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" id="download-extension"><?php echo __('Download', AAM_KEY); ?></button>

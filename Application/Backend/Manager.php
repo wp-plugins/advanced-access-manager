@@ -51,6 +51,9 @@ class AAM_Backend_Manager {
         
         //check extension version
         $this->checkExtensionList();
+        
+        //check cache status
+        $this->checkCacheStatus();
 
         //register backend hooks and filters
         AAM_Backend_Filter::register();
@@ -91,6 +94,18 @@ class AAM_Backend_Manager {
                     )
                 );
             }
+        }
+    }
+    
+    protected function checkCacheStatus() {
+        if (apply_filters('aam-cache-status-action', false) === false) {
+            $message  = __(
+                'AAM caching is off. To speed-up the website turn it on.', AAM_KEY
+            );
+            $message .= '&nbsp;<a href="#cache-info-modal" data-toggle="modal">';
+            $message .= __('Read more.', AAM_KEY) . '</a>';
+            
+            AAM_Core_Console::add($message);
         }
     }
 
